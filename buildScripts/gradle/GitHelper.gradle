@@ -1,0 +1,50 @@
+def gitBranch() {
+    if ("${System.env.CI}".equalsIgnoreCase("true")) {
+        //tag_svn='http://oauth2_cubershi@git.code.oa.com/HYDevTeam/huayang-android.git@bugfix/pushhook_failed'
+        String tagSVN = "${System.env.tag_svn}"
+        def branch = tagSVN.substring(tagSVN.lastIndexOf('@') + 1, tagSVN.length())
+        return branch
+    } else {
+        def branch = ""
+        def proc = "git rev-parse --abbrev-ref HEAD".execute()
+        proc.in.eachLine { line -> branch = line }
+        proc.err.eachLine { line -> println line }
+        proc.waitFor()
+        return branch
+    }
+
+}
+
+def gitShortRev() {
+    def gitCommit = ""
+    def proc = "git rev-parse --short HEAD".execute()
+    proc.in.eachLine { line -> gitCommit = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    return gitCommit
+}
+
+def gitDescribe() {
+    def describe = ""
+    def proc = "git describe HEAD".execute()
+    proc.in.eachLine { line -> describe = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    describe
+}
+
+def isCleanWorkspace() {
+    def output = ""
+    def proc = "git status -s".execute()
+    proc.in.eachLine { line -> output = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    return output.isEmpty()
+}
+
+ext {
+    GIT_BRANCH = gitBranch()
+    GIT_SHORT_REV = gitShortRev()
+    GIT_DESCRIBE = gitDescribe()
+    GIT_IS_CLEAN_WORKSPACE = isCleanWorkspace()
+}
