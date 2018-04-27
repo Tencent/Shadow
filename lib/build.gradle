@@ -10,12 +10,13 @@ android {
         versionName project.VERSION_NAME
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'lib.pro'
 
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -23,8 +24,62 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+}
+
+apply plugin: 'maven-publish'
+
+def getDependencyNode(scope, groupId, artifactId, version) {
+    Node node = new Node(null, 'dependency')
+    node.appendNode('groupId', groupId)
+    node.appendNode('artifactId', artifactId)
+    node.appendNode('version', version)
+    node.appendNode('scope', scope)
+    return node
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'com.tencent.libexample'
+            artifactId "example-lib"
+            version project.ARTIFACT_VERSION
+            if ("${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")) {
+                artifact("build/outputs/aar/lib-release.aar")
+            } else {
+                artifact("build/outputs/aar/lib-debug.aar")
+            }
+
+            pom.withXml {
+                def root = asNode()
+                def slf4j = getDependencyNode('compile', 'org.slf4j', 'slf4j-api', '1.7.25')
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(slf4j)
+                def scm = root.appendNode('scm')
+                scm.appendNode('connection', 'http://git.code.oa.com/cubershi/android-lib-example.git')
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username "rdm"
+                password "rdm"
+            }
+            if ("${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")) {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
+            } else {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots"
+            }
+        }
+    }
+}
+
+model {
+    tasks.generatePomFileForMavenPublication {
+        destination = file("$buildDir/generated-pom.xml")
+    }
 }
