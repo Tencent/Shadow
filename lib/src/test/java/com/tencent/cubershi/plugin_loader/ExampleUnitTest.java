@@ -1,4 +1,4 @@
-package com.tencent.lib;
+package com.tencent.cubershi.plugin_loader;
 
 import org.junit.Test;
 

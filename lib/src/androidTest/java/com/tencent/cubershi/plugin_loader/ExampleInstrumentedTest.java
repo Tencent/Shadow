@@ -1,4 +1,4 @@
-package com.tencent.lib;
+package com.tencent.cubershi.plugin_loader;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

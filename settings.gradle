@@ -1,1 +1,1 @@
-include ':example', ':lib'
+include ':example', ':lib', ':demo-plugin', ':slf4j-logcat'
