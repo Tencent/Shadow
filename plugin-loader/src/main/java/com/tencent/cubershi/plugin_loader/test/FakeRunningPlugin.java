@@ -1,6 +1,5 @@
 package com.tencent.cubershi.plugin_loader.test;
 
-import android.app.Application;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
@@ -18,9 +17,9 @@ import java.util.concurrent.TimeoutException;
 public class FakeRunningPlugin implements RunningPlugin {
     private static final Logger mLogger = LoggerFactory.getLogger(FakeRunningPlugin.class);
     InstalledPlugin installedPlugin;
-    Application mockApplication;
+    Object mockApplication;
 
-    public FakeRunningPlugin(Application mockApplication, InstalledPlugin installedPlugin) {
+    public FakeRunningPlugin(Object mockApplication, InstalledPlugin installedPlugin) {
         this.mockApplication = mockApplication;
         this.installedPlugin = installedPlugin;
     }

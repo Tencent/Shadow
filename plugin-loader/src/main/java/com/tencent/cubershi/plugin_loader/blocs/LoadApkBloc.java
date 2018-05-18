@@ -1,10 +1,10 @@
 package com.tencent.cubershi.plugin_loader.blocs;
 
-import com.tencent.cubershi.plugin_loader.classloaders.MockBootClassLoader;
-import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader;
 import com.tencent.cubershi.plugin_loader.exceptions.LoadApkException;
 
 import java.io.File;
+
+import dalvik.system.DexClassLoader;
 
 /**
  * 加载插件到ClassLoader中
@@ -19,25 +19,16 @@ public class LoadApkBloc {
      * @param apk    插件apk
      * @return 加载了插件的ClassLoader
      */
-    public static PluginClassLoader loadPlugin(ClassLoader parent, File apk, MockBootClassLoader mockBootClassLoader) throws LoadApkException {
+    public static DexClassLoader loadPlugin(ClassLoader parent, File apk) throws LoadApkException {
         File odexDir = new File(apk.getParent(), apk.getName() + "_odex");
         File libDir = new File(apk.getParent(), apk.getName() + "_lib");
         prepareDirs(odexDir, libDir);
-        return new PluginClassLoader(parent, mockBootClassLoader, apk, odexDir, libDir);
-    }
-
-    /**
-     * 加载MockAndroid到ClassLoader中.
-     *
-     * @param parent 父ClassLoader
-     * @param apk    插件apk
-     * @return 加载了插件的ClassLoader
-     */
-    public static MockBootClassLoader loadMockAndroid(ClassLoader parent, File apk) throws LoadApkException {
-        File odexDir = new File(apk.getParent(), apk.getName() + "_odex");
-        File libDir = new File(apk.getParent(), apk.getName() + "_lib");
-        prepareDirs(odexDir, libDir);
-        return new MockBootClassLoader(apk.getAbsolutePath(), odexDir.getAbsolutePath(), libDir.getAbsolutePath(), parent);
+        return new DexClassLoader(
+                apk.getAbsolutePath(),
+                odexDir.getAbsolutePath(),
+                libDir.getAbsolutePath(),
+                parent
+        );
     }
 
     private static void prepareDirs(File odexDir, File libDir) throws LoadApkException {
