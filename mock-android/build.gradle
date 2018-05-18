@@ -25,3 +25,7 @@ android {
     }
 
 }
+
+dependencies {
+    implementation project(':mock-interface')
+}

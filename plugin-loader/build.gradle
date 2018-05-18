@@ -31,6 +31,8 @@ dependencies {
     compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:'+PLUGINMANAGER_VERSION
     compileOnly 'com.tencent.hydevteam.pluginframework:plugincontainer:'+PLUGINMANAGER_VERSION
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
+
+    compileOnly project(':mock-interface')
 }
 
 apply plugin: 'maven-publish'
