@@ -19,12 +19,4 @@ public class CreateApplicationBloc {
             throw new CreateApplicationException(e);
         }
     }
-
-    private static Class<?> getMockApplicationClass(ClassLoader classLoader) throws CreateApplicationException {
-        try {
-            return classLoader.loadClass("android.app.Application");
-        } catch (ClassNotFoundException e) {
-            throw new CreateApplicationException(e);
-        }
-    }
 }
