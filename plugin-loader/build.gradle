@@ -20,16 +20,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    sourceSets {
-        debug {
-            assets.srcDir('build/generated/assets/mock-android/debug/')
-        }
-        release {
-            assets.srcDir('build/generated/assets/mock-android/release/')
-        }
-    }
-
 }
 
 dependencies {
@@ -94,30 +84,5 @@ publishing {
 model {
     tasks.generatePomFileForMavenPublication {
         destination = file("$buildDir/generated-pom.xml")
-    }
-}
-
-def createCopyMockAndroidTask(buildType) {
-    def outputFile = file("${getBuildDir()}/generated/assets/mock-android/${buildType}/mock-android.apk")
-    outputFile.getParentFile().mkdirs()
-    def inputFile = file("${project(':mock-android').getBuildDir()}/outputs/apk/${buildType}/mock-android-${buildType}.apk")
-    return tasks.create("copy${buildType.capitalize()}DemoPluginTask", Copy) {
-        group = 'build'
-        description = '复制mock-android到assets中.'
-        from(inputFile.getParent()) {
-            include(inputFile.name)
-            rename { outputFile.name }
-        }
-        into(outputFile.getParent())
-
-    }.dependsOn(":mock-android:assemble${buildType.capitalize()}")
-}
-
-tasks.whenTaskAdded { task ->
-    if (task.name == "generateDebugAssets") {
-        task.dependsOn createCopyMockAndroidTask('debug')
-    }
-    if (task.name == "generateReleaseAssets") {
-        task.dependsOn createCopyMockAndroidTask('release')
     }
 }

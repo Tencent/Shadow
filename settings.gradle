@@ -1,1 +1,1 @@
-include ':example', ':plugin-loader', ':demo-plugin', ':slf4j-logcat', ':mock-android'
+include ':example', ':plugin-loader', ':demo-plugin', ':slf4j-logcat', ':mock-android', ':plugin-loader-apk'
