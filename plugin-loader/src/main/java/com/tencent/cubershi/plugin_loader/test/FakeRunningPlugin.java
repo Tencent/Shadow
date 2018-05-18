@@ -1,8 +1,10 @@
 package com.tencent.cubershi.plugin_loader.test;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.tencent.cubershi.mock_interface.MockApplication;
 import com.tencent.hydevteam.common.progress.ProgressFuture;
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin;
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin;
@@ -16,16 +18,23 @@ import java.util.concurrent.TimeoutException;
 
 public class FakeRunningPlugin implements RunningPlugin {
     private static final Logger mLogger = LoggerFactory.getLogger(FakeRunningPlugin.class);
+    public static final String ARG = "TEST_ARG_LAUNCHER_ACTIVITY";
     InstalledPlugin installedPlugin;
-    Object mockApplication;
+    MockApplication mockApplication;
 
-    public FakeRunningPlugin(Object mockApplication, InstalledPlugin installedPlugin) {
+    public FakeRunningPlugin(MockApplication mockApplication, InstalledPlugin installedPlugin) {
         this.mockApplication = mockApplication;
         this.installedPlugin = installedPlugin;
     }
 
     @Override
     public ProgressFuture startLauncherActivity(Intent intent) {
+        Intent startContainerActivity = new Intent();
+        startContainerActivity.setClassName("com.tencent.libexample", "com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity");
+        startContainerActivity.putExtra(ARG, "com.example.android.basicglsurfaceview.BasicGLSurfaceViewActivity");
+        Context hostApplicationContext = mockApplication.getHostApplicationContext();
+        hostApplicationContext.startActivity(startContainerActivity);
+
         return new ProgressFuture() {
             @Override
             public double getProgress() {

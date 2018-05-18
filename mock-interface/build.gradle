@@ -29,3 +29,6 @@ android {
 
 }
 
+dependencies {
+    compileOnly 'com.tencent.hydevteam.pluginframework:plugincontainer:' + PLUGINMANAGER_VERSION
+}

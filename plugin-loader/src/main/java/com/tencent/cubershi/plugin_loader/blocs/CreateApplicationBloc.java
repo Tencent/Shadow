@@ -9,7 +9,7 @@ import com.tencent.cubershi.plugin_loader.exceptions.CreateApplicationException;
  * @author cubershi
  */
 public class CreateApplicationBloc {
-    public static Object callPluginApplicationOnCreate(ClassLoader pluginClassLoader, String appClassName) throws CreateApplicationException {
+    public static MockApplication callPluginApplicationOnCreate(ClassLoader pluginClassLoader, String appClassName) throws CreateApplicationException {
         try {
             final Class<?> appClass = pluginClassLoader.loadClass(appClassName);
             final MockApplication mockApplication = MockApplication.class.cast(appClass.newInstance());
