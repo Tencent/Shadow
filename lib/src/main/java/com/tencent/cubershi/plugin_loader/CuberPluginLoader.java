@@ -2,6 +2,11 @@ package com.tencent.cubershi.plugin_loader;
 
 import android.content.Context;
 
+import com.tencent.cubershi.plugin_loader.blocs.CreateApplicationBloc;
+import com.tencent.cubershi.plugin_loader.blocs.LoadApkBloc;
+import com.tencent.cubershi.plugin_loader.blocs.ParsePluginApkBloc;
+import com.tencent.cubershi.plugin_loader.infos.ApkInfo;
+import com.tencent.cubershi.plugin_loader.mocks.MockApplication;
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin;
 import com.tencent.hydevteam.common.progress.ProgressFuture;
 import com.tencent.hydevteam.common.progress.ProgressFutureImpl;
@@ -29,7 +34,7 @@ public class CuberPluginLoader implements PluginLoader, DelegateProvider {
     private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
 
     @Override
-    public ProgressFuture<RunningPlugin> loadPlugin(Context context, final InstalledPlugin installedPlugin) throws LoadPluginException {
+    public ProgressFuture<RunningPlugin> loadPlugin(final Context context, final InstalledPlugin installedPlugin) throws LoadPluginException {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadPlugin installedPlugin=={}", installedPlugin);
         }
@@ -37,7 +42,10 @@ public class CuberPluginLoader implements PluginLoader, DelegateProvider {
             final Future<RunningPlugin> submit = mExecutorService.submit(new Callable<RunningPlugin>() {
                 @Override
                 public RunningPlugin call() throws Exception {
-                    return new FakeRunningPlugin(installedPlugin);
+                    final ApkInfo apkInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile);
+                    final ClassLoader pluginClassLoader = LoadApkBloc.load(context.getClass().getClassLoader(), installedPlugin.pluginFile);
+                    final MockApplication mockApplication = CreateApplicationBloc.callPluginApplicationOnCreate(pluginClassLoader, apkInfo.getApplicationClassName());
+                    return new FakeRunningPlugin(mockApplication, installedPlugin);
                 }
             });
             return new ProgressFutureImpl<>(submit, null);
