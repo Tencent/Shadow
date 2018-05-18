@@ -15,15 +15,29 @@ public class LoadApkBloc {
     /**
      * 加载插件到ClassLoader中.
      *
-     * @param classLoader
-     * @param apk         插件apk
+     * @param parent 父ClassLoader
+     * @param apk    插件apk
      * @return 加载了插件的ClassLoader
      */
-    public static ClassLoader load(ClassLoader classLoader, File apk) throws LoadApkException {
+    public static PluginClassLoader loadPlugin(ClassLoader parent, File apk, MockBootClassLoader mockBootClassLoader) throws LoadApkException {
         File odexDir = new File(apk.getParent(), apk.getName() + "_odex");
         File libDir = new File(apk.getParent(), apk.getName() + "_lib");
         prepareDirs(odexDir, libDir);
-        return new PluginClassLoader(classLoader, new MockBootClassLoader(), apk, odexDir, libDir);
+        return new PluginClassLoader(parent, mockBootClassLoader, apk, odexDir, libDir);
+    }
+
+    /**
+     * 加载MockAndroid到ClassLoader中.
+     *
+     * @param parent 父ClassLoader
+     * @param apk    插件apk
+     * @return 加载了插件的ClassLoader
+     */
+    public static MockBootClassLoader loadMockAndroid(ClassLoader parent, File apk) throws LoadApkException {
+        File odexDir = new File(apk.getParent(), apk.getName() + "_odex");
+        File libDir = new File(apk.getParent(), apk.getName() + "_lib");
+        prepareDirs(odexDir, libDir);
+        return new MockBootClassLoader(apk.getAbsolutePath(), odexDir.getAbsolutePath(), libDir.getAbsolutePath(), parent);
     }
 
     private static void prepareDirs(File odexDir, File libDir) throws LoadApkException {
