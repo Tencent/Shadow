@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,6 +25,8 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 import dalvik.system.DexClassLoader;
 
 public class DefaultHostActivityDelegate implements HostActivityDelegate {
+    @SuppressWarnings("NullableProblems")
+    @NonNull//HostActivityDelegate被传递给HostActivity后应立刻被调用setDelegator()方法传入HostActivityDelegator.
     private HostActivityDelegator mHostActivityDelegator;
     final private DexClassLoader mPluginClassLoader;
 
@@ -52,7 +55,7 @@ public class DefaultHostActivityDelegate implements HostActivityDelegate {
 
     @Override
     public void onResume() {
-
+        mHostActivityDelegator.superOnResume();
     }
 
     @Override
@@ -67,37 +70,37 @@ public class DefaultHostActivityDelegate implements HostActivityDelegate {
 
     @Override
     public void onPause() {
-
+        mHostActivityDelegator.superOnPause();
     }
 
     @Override
     public void onStop() {
-
+        mHostActivityDelegator.superOnStop();
     }
 
     @Override
     public void onDestroy() {
-
+        mHostActivityDelegator.superOnDestroy();
     }
 
     @Override
     public void onConfigurationChanged(Configuration configuration) {
-
+        mHostActivityDelegator.superOnConfigurationChanged(configuration);
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {
-        return false;
+        return mHostActivityDelegator.superDispatchKeyEvent(keyEvent);
     }
 
     @Override
     public void finish() {
-
+        mHostActivityDelegator.superFinish();
     }
 
     @Override
     public void onActivityResult(int i, int i1, Intent intent) {
-
+        mHostActivityDelegator.superOnActivityResult(i, i1, intent);
     }
 
     @Override
@@ -107,116 +110,116 @@ public class DefaultHostActivityDelegate implements HostActivityDelegate {
 
     @Override
     public void onRestoreInstanceState(Bundle bundle) {
-
+        mHostActivityDelegator.superOnRestoreInstanceState(bundle);
     }
 
     @Override
     public void onPostCreate(Bundle bundle) {
-
+        mHostActivityDelegator.superOnPostCreate(bundle);
     }
 
     @Override
     public void onRestart() {
-
+        mHostActivityDelegator.superOnRestart();
     }
 
     @Override
     public void onUserLeaveHint() {
-
+        mHostActivityDelegator.superOnUserLeaveHint();
     }
 
     @Override
     public boolean onCreateThumbnail(Bitmap bitmap, Canvas canvas) {
-        return false;
+        return mHostActivityDelegator.superOnCreateThumbnail(bitmap, canvas);
     }
 
     @Override
     public CharSequence onCreateDescription() {
-        return null;
+        return mHostActivityDelegator.superOnCreateDescription();
     }
 
     @Override
     public Object onRetainNonConfigurationInstance() {
-        return null;
+        return mHostActivityDelegator.superOnRetainNonConfigurationInstance();
     }
 
     @Override
     public void onLowMemory() {
-
+        mHostActivityDelegator.superOnLowMemory();
     }
 
     @Override
     public boolean onTrackballEvent(MotionEvent motionEvent) {
-        return false;
+        return mHostActivityDelegator.superOnTrackballEvent(motionEvent);
     }
 
     @Override
     public void onUserInteraction() {
-
+        mHostActivityDelegator.superOnUserInteraction();
     }
 
     @Override
     public void onWindowAttributesChanged(WindowManager.LayoutParams layoutParams) {
-
+        mHostActivityDelegator.superOnWindowAttributesChanged(layoutParams);
     }
 
     @Override
     public void onContentChanged() {
-
+        mHostActivityDelegator.superOnContentChanged();
     }
 
     @Override
     public void onWindowFocusChanged(boolean b) {
-
+        mHostActivityDelegator.superOnWindowFocusChanged(b);
     }
 
     @Override
     public View onCreatePanelView(int i) {
-        return null;
+        return mHostActivityDelegator.superOnCreatePanelView(i);
     }
 
     @Override
     public boolean onCreatePanelMenu(int i, Menu menu) {
-        return false;
+        return mHostActivityDelegator.superOnCreatePanelMenu(i, menu);
     }
 
     @Override
     public boolean onPreparePanel(int i, View view, Menu menu) {
-        return false;
+        return mHostActivityDelegator.superOnPreparePanel(i, view, menu);
     }
 
     @Override
     public void onPanelClosed(int i, Menu menu) {
-
+        mHostActivityDelegator.superOnPanelClosed(i, menu);
     }
 
     @Override
     public Dialog onCreateDialog(int i) {
-        return null;
+        return mHostActivityDelegator.superOnCreateDialog(i);
     }
 
     @Override
     public void onPrepareDialog(int i, Dialog dialog) {
-
+        mHostActivityDelegator.superOnPrepareDialog(i, dialog);
     }
 
     @Override
     public void onApplyThemeResource(Resources.Theme theme, int i, boolean b) {
-
+        mHostActivityDelegator.superOnApplyThemeResource(theme, i, b);
     }
 
     @Override
     public View onCreateView(String s, Context context, AttributeSet attributeSet) {
-        return null;
+        return mHostActivityDelegator.superOnCreateView(s, context, attributeSet);
     }
 
     @Override
     public void startActivityFromChild(Activity activity, Intent intent, int i) {
-
+        mHostActivityDelegator.superStartActivityFromChild(activity, intent, i);
     }
 
     @Override
     public ClassLoader getClassLoader() {
-        return null;
+        return mHostActivityDelegator.superGetClassLoader();
     }
 }
