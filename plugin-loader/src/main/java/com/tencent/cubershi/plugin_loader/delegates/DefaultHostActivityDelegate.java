@@ -50,6 +50,7 @@ public class DefaultHostActivityDelegate implements HostActivityDelegate {
             MockActivity mockActivity = MockActivity.class.cast(aClass.newInstance());
             mockActivity.setContainerActivity(mHostActivityDelegator);
             mockActivity.setPluginResources(mPluginResources);
+            mockActivity.setHostContextAsBase((Context) mHostActivityDelegator.getHostActivity());
             mockActivity.performOnCreate(bundle);
         } catch (Exception e) {
             throw new RuntimeException(e);
