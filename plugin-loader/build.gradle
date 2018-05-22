@@ -29,7 +29,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:'+PLUGINMANAGER_VERSION
-    compileOnly 'com.tencent.hydevteam.pluginframework:plugincontainer:'+PLUGINMANAGER_VERSION
+    compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
 
     compileOnly project(':mock-interface')
@@ -86,5 +86,11 @@ publishing {
 model {
     tasks.generatePomFileForMavenPublication {
         destination = file("$buildDir/generated-pom.xml")
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'preBuild') {
+        task.dependsOn tasks.findByName(":plugincontainer-neo:jarDebugPackage")
     }
 }

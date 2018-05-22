@@ -28,5 +28,5 @@ android {
 
 dependencies {
     implementation project(':mock-interface')
-    compileOnly 'com.tencent.hydevteam.pluginframework:plugincontainer:' + PLUGINMANAGER_VERSION
+    compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
 }

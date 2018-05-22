@@ -1,15 +1,14 @@
 package android.app;
 
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.widget.TextView;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.tencent.cubershi.mock_interface.MockActivity;
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
 public class Activity extends MockActivity {
     HostActivityDelegator mHostActivityDelegator;
-    Resources mPluginResources;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,9 +17,8 @@ public class Activity extends MockActivity {
 
     @Override
     public void setContentView(int layoutResID) {
-        TextView textView = new TextView(mHostActivityDelegator.getApplicationContext());
-        textView.setText("setContentView:" + layoutResID);
-        mHostActivityDelegator.setContentView(textView);
+        final View inflate = LayoutInflater.from(this).inflate(layoutResID, null);
+        mHostActivityDelegator.setContentView(inflate);
     }
 
     @Override
@@ -33,12 +31,4 @@ public class Activity extends MockActivity {
         onCreate(bundle);
     }
 
-    @Override
-    public void setPluginResources(Resources resources) {
-        mPluginResources = resources;
-    }
-
-    public Resources getResources() {
-        return mPluginResources;
-    }
 }

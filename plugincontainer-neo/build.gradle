@@ -1,0 +1,82 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion project.COMPILE_SDK_VERSION
+
+    defaultConfig {
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        versionCode project.VERSION_CODE
+        versionName project.VERSION_NAME
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+def jarPackage(buildType) {
+    return tasks.create("jar${buildType.capitalize()}Package", Jar) {
+        group = 'build'
+        description = '生成jar包'
+        archiveName = "${project.name}-${project.ARTIFACT_VERSION}-${buildType}.jar"
+        destinationDir = file("build/outputs/jar/")
+        from file("build/intermediates/classes/${buildType}")
+    }
+}
+
+afterEvaluate {
+    android {
+        buildTypes.findAll().each { buildType ->
+            def buildTypeName = buildType.getName()
+            jarPackage(buildTypeName)
+        }
+    }
+}
+
+def TjarDebugPackage = null
+def TjarReleasePackage = null
+def TcompileDebugSources = null
+def TcompileReleaseSources = null
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("jarDebugPackage")) {
+        TjarDebugPackage = theTask
+    }
+    if (theTask.name.equals("jarReleasePackage")) {
+        TjarReleasePackage = theTask
+    }
+    if (theTask.name.equals("compileDebugSources")) {
+        TcompileDebugSources = theTask
+    }
+    if (theTask.name.equals("compileReleaseSources")) {
+        TcompileReleaseSources = theTask
+    }
+    if (TjarDebugPackage != null && TcompileDebugSources != null) {
+        TjarDebugPackage.dependsOn TcompileDebugSources
+    }
+    if (TjarReleasePackage != null && TcompileReleaseSources != null) {
+        TjarReleasePackage.dependsOn TcompileReleaseSources
+    }
+}
+
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from files(android.sourceSets.main.java.srcDirs)
+    classifier "sources"
+}
+
+def getDependencyNode(scope, groupId, artifactId, version) {
+    Node node = new Node(null, 'dependency')
+    node.appendNode('groupId', groupId)
+    node.appendNode('artifactId', artifactId)
+    node.appendNode('version', version)
+    node.appendNode('scope', scope)
+    return node
+}
+

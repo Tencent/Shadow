@@ -12,17 +12,21 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
 import com.tencent.cubershi.mock_interface.MockActivity;
+import com.tencent.cubershi.plugin_loader.FixedContextLayoutInflater;
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin;
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate;
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
 import dalvik.system.DexClassLoader;
+
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class DefaultHostActivityDelegate implements HostActivityDelegate {
     @SuppressWarnings("NullableProblems")
@@ -30,6 +34,7 @@ public class DefaultHostActivityDelegate implements HostActivityDelegate {
     private HostActivityDelegator mHostActivityDelegator;
     final private DexClassLoader mPluginClassLoader;
     final private Resources mPluginResources;
+    private MockActivity mMockActivity;
 
     public DefaultHostActivityDelegate(DexClassLoader pluginClassLoader, Resources pluginResources) {
         mPluginClassLoader = pluginClassLoader;
@@ -51,6 +56,8 @@ public class DefaultHostActivityDelegate implements HostActivityDelegate {
             mockActivity.setContainerActivity(mHostActivityDelegator);
             mockActivity.setPluginResources(mPluginResources);
             mockActivity.setHostContextAsBase((Context) mHostActivityDelegator.getHostActivity());
+            mockActivity.setPluginClassLoader(mPluginClassLoader);
+            mMockActivity = mockActivity;
             mockActivity.performOnCreate(bundle);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -225,5 +232,13 @@ public class DefaultHostActivityDelegate implements HostActivityDelegate {
     @Override
     public ClassLoader getClassLoader() {
         return mHostActivityDelegator.superGetClassLoader();
+    }
+
+    @Override
+    public LayoutInflater getLayoutInflater() {
+        LayoutInflater inflater = (LayoutInflater) mHostActivityDelegator.getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        assert inflater != null;
+        inflater.cloneInContext(mMockActivity);
+        return new FixedContextLayoutInflater(inflater, mMockActivity);
     }
 }
