@@ -1,5 +1,6 @@
 package android.app;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -8,6 +9,7 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 
 public class Activity extends MockActivity {
     HostActivityDelegator mHostActivityDelegator;
+    Resources mPluginResources;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,5 +31,14 @@ public class Activity extends MockActivity {
     @Override
     public void performOnCreate(Bundle bundle) {
         onCreate(bundle);
+    }
+
+    @Override
+    public void setPluginResources(Resources resources) {
+        mPluginResources = resources;
+    }
+
+    public Resources getResources() {
+        return mPluginResources;
     }
 }

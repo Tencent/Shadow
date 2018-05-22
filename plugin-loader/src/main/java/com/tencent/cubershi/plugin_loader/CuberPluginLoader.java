@@ -1,9 +1,11 @@
 package com.tencent.cubershi.plugin_loader;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import com.tencent.cubershi.mock_interface.MockApplication;
 import com.tencent.cubershi.plugin_loader.blocs.CreateApplicationBloc;
+import com.tencent.cubershi.plugin_loader.blocs.CreateResourceBloc;
 import com.tencent.cubershi.plugin_loader.blocs.LoadApkBloc;
 import com.tencent.cubershi.plugin_loader.blocs.ParsePluginApkBloc;
 import com.tencent.cubershi.plugin_loader.delegates.DefaultHostActivityDelegate;
@@ -38,6 +40,8 @@ public class CuberPluginLoader implements PluginLoader, DelegateProvider {
 
     private DexClassLoader mPluginClassLoader;
 
+    private Resources mPluginResources;
+
     @Override
     public ProgressFuture<RunningPlugin> loadPlugin(final Context hostAppContext, final InstalledPlugin installedPlugin) throws LoadPluginException {
         if (mLogger.isInfoEnabled()) {
@@ -50,9 +54,11 @@ public class CuberPluginLoader implements PluginLoader, DelegateProvider {
                     final ApkInfo apkInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile);
                     final ClassLoader mockAndroidClassLoader = CuberPluginLoader.class.getClassLoader().getParent();
                     final DexClassLoader pluginClassLoader = LoadApkBloc.loadPlugin(mockAndroidClassLoader, installedPlugin.pluginFile);
-                    final MockApplication mockApplication = CreateApplicationBloc.callPluginApplicationOnCreate(pluginClassLoader, apkInfo.getApplicationClassName());
-                    mockApplication.setHostApplicationContext(hostAppContext);
                     mPluginClassLoader = pluginClassLoader;
+                    final Resources resources = CreateResourceBloc.create(installedPlugin.pluginFile.getAbsolutePath(), hostAppContext);
+                    mPluginResources = resources;
+                    final MockApplication mockApplication = CreateApplicationBloc.callPluginApplicationOnCreate(pluginClassLoader, apkInfo.getApplicationClassName(), resources);
+                    mockApplication.setHostApplicationContext(hostAppContext);
                     return new FakeRunningPlugin(mockApplication, installedPlugin);
                 }
             });
@@ -70,7 +76,7 @@ public class CuberPluginLoader implements PluginLoader, DelegateProvider {
 
     @Override
     public HostActivityDelegate getHostActivityDelegate(Class<? extends HostActivityDelegator> aClass) {
-        return new DefaultHostActivityDelegate(mPluginClassLoader);
+        return new DefaultHostActivityDelegate(mPluginClassLoader, mPluginResources);
     }
 
     @Override

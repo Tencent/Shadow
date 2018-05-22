@@ -29,9 +29,11 @@ public class DefaultHostActivityDelegate implements HostActivityDelegate {
     @NonNull//HostActivityDelegate被传递给HostActivity后应立刻被调用setDelegator()方法传入HostActivityDelegator.
     private HostActivityDelegator mHostActivityDelegator;
     final private DexClassLoader mPluginClassLoader;
+    final private Resources mPluginResources;
 
-    public DefaultHostActivityDelegate(DexClassLoader pluginClassLoader) {
+    public DefaultHostActivityDelegate(DexClassLoader pluginClassLoader, Resources pluginResources) {
         mPluginClassLoader = pluginClassLoader;
+        mPluginResources = pluginResources;
     }
 
     @Override
@@ -47,6 +49,7 @@ public class DefaultHostActivityDelegate implements HostActivityDelegate {
             Class<?> aClass = mPluginClassLoader.loadClass(pluginLauncherActivityName);
             MockActivity mockActivity = MockActivity.class.cast(aClass.newInstance());
             mockActivity.setContainerActivity(mHostActivityDelegator);
+            mockActivity.setPluginResources(mPluginResources);
             mockActivity.performOnCreate(bundle);
         } catch (Exception e) {
             throw new RuntimeException(e);
