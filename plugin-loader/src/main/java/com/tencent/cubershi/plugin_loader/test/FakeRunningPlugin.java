@@ -31,7 +31,7 @@ public class FakeRunningPlugin implements RunningPlugin {
     public ProgressFuture startLauncherActivity(Intent intent) {
         Intent startContainerActivity = new Intent();
         startContainerActivity.setClassName("com.tencent.libexample", "com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity");
-        startContainerActivity.putExtra(ARG, "com.example.android.basicglsurfaceview.BasicGLSurfaceViewActivity");
+        startContainerActivity.putExtra(ARG, "com.example.android.basicglsurfaceview.TestSoLoadActivity");
         Context hostApplicationContext = mockApplication.getHostApplicationContext();
         hostApplicationContext.startActivity(startContainerActivity);
 
