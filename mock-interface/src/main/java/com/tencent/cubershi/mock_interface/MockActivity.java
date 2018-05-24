@@ -5,11 +5,14 @@ import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
 public abstract class MockActivity extends ContextWrapper {
-    protected Resources mPluginResources;
+    private HostActivityDelegator mHostActivityDelegator;
+
+    private Resources mPluginResources;
 
     private LayoutInflater mLayoutInflater;
 
@@ -19,13 +22,26 @@ public abstract class MockActivity extends ContextWrapper {
         super(null);
     }
 
-    protected abstract void onCreate(Bundle savedInstanceState);
+    public void setContainerActivity(HostActivityDelegator delegator) {
+        mHostActivityDelegator = delegator;
+    }
 
-    public abstract void setContentView(int layoutResID);
+    protected void onCreate(Bundle savedInstanceState) {
+        //do nothing.
+    }
 
-    public abstract void setContainerActivity(HostActivityDelegator delegator);
+    public void performOnCreate(Bundle bundle) {
+        onCreate(bundle);
+    }
 
-    public abstract void performOnCreate(Bundle bundle);
+    public void setContentView(int layoutResID) {
+        final View inflate = LayoutInflater.from(this).inflate(layoutResID, null);
+        mHostActivityDelegator.setContentView(inflate);
+    }
+
+    public void setContentView(View view) {
+        mHostActivityDelegator.setContentView(view);
+    }
 
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;

@@ -1,34 +1,11 @@
 package android.app;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-
 import com.tencent.cubershi.mock_interface.MockActivity;
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
+/**
+ * 用于替换系统的Activity类.它不用定义任何行为,只是为了将MockActivity改个名字,以便继承自它的类承认它.
+ *
+ * @author cubershi
+ */
 public class Activity extends MockActivity {
-    HostActivityDelegator mHostActivityDelegator;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        //do nothing.
-    }
-
-    @Override
-    public void setContentView(int layoutResID) {
-        final View inflate = LayoutInflater.from(this).inflate(layoutResID, null);
-        mHostActivityDelegator.setContentView(inflate);
-    }
-
-    @Override
-    public void setContainerActivity(HostActivityDelegator delegator) {
-        mHostActivityDelegator = delegator;
-    }
-
-    @Override
-    public void performOnCreate(Bundle bundle) {
-        onCreate(bundle);
-    }
-
 }
