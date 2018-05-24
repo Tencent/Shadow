@@ -1,5 +1,6 @@
 package com.tencent.cubershi.plugin_loader.blocs;
 
+import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader;
 import com.tencent.cubershi.plugin_loader.exceptions.LoadApkException;
 
 import java.io.File;
@@ -15,19 +16,29 @@ public class LoadApkBloc {
     /**
      * 加载插件到ClassLoader中.
      *
-     * @param parent 父ClassLoader
      * @param apk    插件apk
      * @return 加载了插件的ClassLoader
      */
-    public static DexClassLoader loadPlugin(ClassLoader parent, File apk) throws LoadApkException {
+    public static DexClassLoader loadPlugin(File apk) throws LoadApkException {
+        final ClassLoader pluginLoaderClassLoader = LoadApkBloc.class.getClassLoader();
+        final ClassLoader mockClassLoader = pluginLoaderClassLoader.getParent();
+        final ClassLoader hostAppClassLoader = mockClassLoader.getParent();
+        final ClassLoader bootClassLoader = hostAppClassLoader.getParent();
         File odexDir = new File(apk.getParent(), apk.getName() + "_odex");
         File libDir = new File(apk.getParent(), apk.getName() + "_lib");
         prepareDirs(odexDir, libDir);
-        return new DexClassLoader(
+        return new PluginClassLoader(
                 apk.getAbsolutePath(),
                 odexDir.getAbsolutePath(),
                 libDir.getAbsolutePath(),
-                parent
+                bootClassLoader,
+                mockClassLoader,
+                new String[]{
+                        "android.app.Activity",
+                        "android.app.Application",
+                        "com.tencent.cubershi.mock_interface.MockActivity",
+                        "com.tencent.cubershi.mock_interface.MockApplication",
+                }
         );
     }
 

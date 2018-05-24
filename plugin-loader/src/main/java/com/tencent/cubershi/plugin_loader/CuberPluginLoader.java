@@ -52,8 +52,7 @@ public class CuberPluginLoader implements PluginLoader, DelegateProvider {
                 @Override
                 public RunningPlugin call() throws Exception {
                     final ApkInfo apkInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile);
-                    final ClassLoader mockAndroidClassLoader = CuberPluginLoader.class.getClassLoader().getParent();
-                    final DexClassLoader pluginClassLoader = LoadApkBloc.loadPlugin(mockAndroidClassLoader, installedPlugin.pluginFile);
+                    final DexClassLoader pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile);
                     mPluginClassLoader = pluginClassLoader;
                     final Resources resources = CreateResourceBloc.create(installedPlugin.pluginFile.getAbsolutePath(), hostAppContext);
                     mPluginResources = resources;
