@@ -21,7 +21,7 @@ object ParsePluginApkBloc {
     @Throws(ParsePluginApkException::class)
     fun parse(pluginFile: File): ApkInfo {
         return if (pluginFile.exists() && pluginFile.length() > 0) {
-            ApkInfo("android.app.Application")
+            ApkInfo("com.example.android.basicglsurfaceview.MyApplication")
         } else {
             throw ParsePluginApkException("测试代码,但文件不合法")
         }

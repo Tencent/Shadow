@@ -32,13 +32,13 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
         }
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
-                val (applicationClassName) = ParsePluginApkBloc.parse(installedPlugin.pluginFile)
+                val apkInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile)
                 CopySoBloc.copySo(installedPlugin.pluginFile, "armeabi")
                 val pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile)
                 mPluginClassLoader = pluginClassLoader
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 mPluginResources = resources
-                val mockApplication = CreateApplicationBloc.callPluginApplicationOnCreate(pluginClassLoader, applicationClassName, resources)
+                val mockApplication = CreateApplicationBloc.callPluginApplicationOnCreate(pluginClassLoader, apkInfo.applicationClassName, resources)
                 mockApplication.hostApplicationContext = hostAppContext
                 FakeRunningPlugin(mockApplication, installedPlugin)
             })
