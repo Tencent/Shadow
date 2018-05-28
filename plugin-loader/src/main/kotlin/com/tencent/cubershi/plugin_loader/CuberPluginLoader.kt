@@ -2,10 +2,7 @@ package com.tencent.cubershi.plugin_loader
 
 import android.content.Context
 import android.content.res.Resources
-import com.tencent.cubershi.plugin_loader.blocs.CreateApplicationBloc
-import com.tencent.cubershi.plugin_loader.blocs.CreateResourceBloc
-import com.tencent.cubershi.plugin_loader.blocs.LoadApkBloc
-import com.tencent.cubershi.plugin_loader.blocs.ParsePluginApkBloc
+import com.tencent.cubershi.plugin_loader.blocs.*
 import com.tencent.cubershi.plugin_loader.delegates.DefaultHostActivityDelegate
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
 import com.tencent.hydevteam.common.progress.ProgressFuture
@@ -36,6 +33,7 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 val (applicationClassName) = ParsePluginApkBloc.parse(installedPlugin.pluginFile)
+                CopySoBloc.copySo(installedPlugin.pluginFile, "armeabi")
                 val pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile)
                 mPluginClassLoader = pluginClassLoader
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)

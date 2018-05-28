@@ -15,7 +15,7 @@ class FakeRunningPlugin(internal var mockApplication: MockApplication, internal 
     override fun startLauncherActivity(intent: Intent): ProgressFuture<*> {
         val startContainerActivity = Intent()
         startContainerActivity.setClassName("com.tencent.libexample", "com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity")
-        startContainerActivity.putExtra(ARG, "com.example.android.basicglsurfaceview.BasicGLSurfaceViewActivity")
+        startContainerActivity.putExtra(ARG, "com.example.android.basicglsurfaceview.TestSoLoadActivity")
         val hostApplicationContext = mockApplication.hostApplicationContext
         hostApplicationContext.startActivity(startContainerActivity)
 
