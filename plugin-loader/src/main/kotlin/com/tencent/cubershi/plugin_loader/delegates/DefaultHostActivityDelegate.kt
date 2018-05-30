@@ -15,6 +15,7 @@ import android.view.*
 import com.tencent.cubershi.mock_interface.MockActivity
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.FixedContextLayoutInflater
+import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
@@ -36,9 +37,16 @@ class DefaultHostActivityDelegate(
 
     override fun onCreate(bundle: Bundle?) {
         mHostActivityDelegator.superOnCreate(bundle)
+
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
-        val pluginActivityClassName = mHostActivityDelegator.intent.getStringExtra(PLUGIN_ACTIVITY_CLASS_NAME_KEY)
-        mHostActivityDelegator.intent.removeExtra(PLUGIN_ACTIVITY_CLASS_NAME_KEY)
+
+        val bundleForPluginLoader = mHostActivityDelegator.intent.getBundleExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
+        mHostActivityDelegator.intent.removeExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
+        bundleForPluginLoader.classLoader = this.javaClass.classLoader
+
+        val pluginActivityClassName = bundleForPluginLoader.getString(PLUGIN_ACTIVITY_CLASS_NAME_KEY)
+        val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(PluginActivitiesManager.PLUGIN_ACTIVITY_INFO_KEY)
+
         try {
             val aClass = mPluginClassLoader.loadClass(pluginActivityClassName)
             val mockActivity = MockActivity::class.java.cast(aClass.newInstance())

@@ -3,11 +3,15 @@ package com.tencent.cubershi.plugin_loader.managers
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import com.tencent.cubershi.mock_interface.MockActivity
+import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
 
 class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
     companion object {
+        const val PLUGIN_LOADER_BUNDLE_KEY = "PLUGIN_LOADER_BUNDLE_KEY"
+        const val PLUGIN_ACTIVITY_INFO_KEY = "PLUGIN_ACTIVITY_INFO_KEY"
         const val PLUGIN_ACTIVITY_CLASS_NAME_KEY = "PLUGIN_ACTIVITY_CLASS_NAME_KEY"
     }
 
@@ -23,12 +27,21 @@ class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
      */
     private val packageNameMap: MutableMap<String, String> = HashMap()
 
+    /**
+     * key:插件ComponentName
+     * value:PluginActivityInfo
+     */
+    private val activityInfoMap: MutableMap<ComponentName, PluginActivityInfo> = HashMap()
+
+
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
         val containerActivity = ComponentName("com.tencent.libexample", "com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity")
 
         pluginInfo.mActivities.forEach {
-            activitiesMap.put(ComponentName(pluginInfo.packageName, it.className), containerActivity)
+            val componentName = ComponentName(pluginInfo.packageName, it.className)
+            activitiesMap.put(componentName, containerActivity)
             packageNameMap.put(it.className, pluginInfo.packageName)
+            activityInfoMap.put(componentName, it)
         }
     }
 
@@ -46,7 +59,13 @@ class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
         val containerActivity = getContainerActivity(pluginIntent.component)
         val containerActivityIntent = Intent(pluginIntent)
         containerActivityIntent.setComponent(containerActivity)
-        containerActivityIntent.putExtra(PLUGIN_ACTIVITY_CLASS_NAME_KEY, className)
+
+        val bundleForPluginLoader = Bundle()
+
+        bundleForPluginLoader.putString(PLUGIN_ACTIVITY_CLASS_NAME_KEY, className)
+        bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[pluginIntent.component])
+
+        containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
         context.startActivity(containerActivityIntent)
         return true
     }
