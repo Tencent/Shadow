@@ -34,6 +34,7 @@ class DefaultHostActivityDelegate(
 
     override fun onCreate(bundle: Bundle?) {
         mHostActivityDelegator.superOnCreate(bundle)
+        mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
         val pluginLauncherActivityName = mHostActivityDelegator.intent.getStringExtra(FakeRunningPlugin.ARG)
         mHostActivityDelegator.intent.removeExtra(FakeRunningPlugin.ARG)
         try {

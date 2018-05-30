@@ -96,6 +96,7 @@ public abstract class MockActivity extends ContextWrapper {
         final ComponentName component = pluginIntent.getComponent();
         assert component != null;
         pluginIntent.setComponent(new ComponentName("com.example.android.basicglsurfaceview", component.getClassName()));
+        pluginIntent.setExtrasClassLoader(mPluginClassLoader);
         final boolean success = mPluginActivityLauncher.startActivity(this, pluginIntent);
         if (!success) {
             super.startActivity(intent);
