@@ -14,13 +14,16 @@ import android.util.AttributeSet
 import android.view.*
 import com.tencent.cubershi.mock_interface.MockActivity
 import com.tencent.cubershi.plugin_loader.FixedContextLayoutInflater
+import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import dalvik.system.DexClassLoader
 
 class DefaultHostActivityDelegate(
-        private val mPluginClassLoader: DexClassLoader, private val mPluginResources: Resources
+        private val mPluginClassLoader: DexClassLoader,
+        private val mPluginResources: Resources,
+        private val mPluginActivitiesManager: PluginActivitiesManager
 ) : HostActivityDelegate {
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mMockActivity: MockActivity
@@ -32,6 +35,7 @@ class DefaultHostActivityDelegate(
     override fun onCreate(bundle: Bundle?) {
         mHostActivityDelegator.superOnCreate(bundle)
         val pluginLauncherActivityName = mHostActivityDelegator.intent.getStringExtra(FakeRunningPlugin.ARG)
+        mHostActivityDelegator.intent.removeExtra(FakeRunningPlugin.ARG)
         try {
             val aClass = mPluginClassLoader.loadClass(pluginLauncherActivityName)
             val mockActivity = MockActivity::class.java.cast(aClass.newInstance())
@@ -39,6 +43,7 @@ class DefaultHostActivityDelegate(
             mockActivity.setPluginResources(mPluginResources)
             mockActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
             mockActivity.setPluginClassLoader(mPluginClassLoader)
+            mockActivity.setPluginActivityLauncher(mPluginActivitiesManager)
             mMockActivity = mockActivity
             mockActivity.performOnCreate(bundle)
         } catch (e: Exception) {
@@ -111,7 +116,7 @@ class DefaultHostActivityDelegate(
         return mHostActivityDelegator.superOnCreateThumbnail(bitmap, canvas)
     }
 
-    override fun onCreateDescription(): CharSequence {
+    override fun onCreateDescription(): CharSequence? {
         return mHostActivityDelegator.superOnCreateDescription()
     }
 

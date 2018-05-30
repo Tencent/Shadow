@@ -1,7 +1,9 @@
 package com.tencent.cubershi.mock_interface;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,12 +20,18 @@ public abstract class MockActivity extends ContextWrapper {
 
     private ClassLoader mPluginClassLoader;
 
+    private PluginActivityLauncher mPluginActivityLauncher;
+
     public MockActivity() {
         super(null);
     }
 
     public void setContainerActivity(HostActivityDelegator delegator) {
         mHostActivityDelegator = delegator;
+    }
+
+    public void setPluginActivityLauncher(PluginActivityLauncher pluginActivityLauncher) {
+        mPluginActivityLauncher = pluginActivityLauncher;
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +45,10 @@ public abstract class MockActivity extends ContextWrapper {
     public void setContentView(int layoutResID) {
         final View inflate = LayoutInflater.from(this).inflate(layoutResID, null);
         mHostActivityDelegator.setContentView(inflate);
+    }
+
+    public Intent getIntent() {
+        return mHostActivityDelegator.getIntent();
     }
 
     public void setContentView(View view) {
@@ -76,5 +88,30 @@ public abstract class MockActivity extends ContextWrapper {
     @Override
     public ClassLoader getClassLoader() {
         return mPluginClassLoader;
+    }
+
+    @Override
+    public void startActivity(Intent intent) {
+        final Intent pluginIntent = new Intent(intent);
+        final ComponentName component = pluginIntent.getComponent();
+        assert component != null;
+        pluginIntent.setComponent(new ComponentName("com.example.android.basicglsurfaceview", component.getClassName()));
+        final boolean success = mPluginActivityLauncher.startActivity(this, pluginIntent);
+        if (!success) {
+            super.startActivity(intent);
+        }
+    }
+
+    public interface PluginActivityLauncher {
+        /**
+         * 启动Actvity
+         *
+         * @param context 启动context
+         * @param intent  插件内传来的Intent.
+         * @return <code>true</code>表示该Intent是为了启动插件内Activity的,已经被正确消费了.
+         * <code>false</code>表示该Intent不是插件内的Activity.
+         */
+        boolean startActivity(Context context, Intent intent);
+
     }
 }

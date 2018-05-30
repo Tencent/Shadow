@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import com.tencent.cubershi.plugin_loader.blocs.*
 import com.tencent.cubershi.plugin_loader.delegates.DefaultHostActivityDelegate
+import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
 import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.common.progress.ProgressFutureImpl
@@ -25,6 +26,8 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     private lateinit var mPluginResources: Resources
 
+    private val mPluginActivitiesManager = PluginActivitiesManager()
+
     @Throws(LoadPluginException::class)
     override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
         if (mLogger.isInfoEnabled) {
@@ -32,7 +35,9 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
         }
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
+                //todo cubershi 下面这些步骤可能可以并发起来.
                 val apkInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile)
+                mPluginActivitiesManager.addPluginApkInfo(apkInfo)
                 CopySoBloc.copySo(installedPlugin.pluginFile, "armeabi")
                 val pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile)
                 mPluginClassLoader = pluginClassLoader
@@ -55,7 +60,7 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
     }
 
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {
-        return DefaultHostActivityDelegate(mPluginClassLoader, mPluginResources)
+        return DefaultHostActivityDelegate(mPluginClassLoader, mPluginResources, mPluginActivitiesManager)
     }
 
     override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate? {
