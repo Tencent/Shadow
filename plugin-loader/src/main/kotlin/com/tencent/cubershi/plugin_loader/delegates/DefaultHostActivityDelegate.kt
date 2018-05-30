@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.*
 import com.tencent.cubershi.mock_interface.MockActivity
+import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.FixedContextLayoutInflater
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
@@ -21,6 +22,7 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 import dalvik.system.DexClassLoader
 
 class DefaultHostActivityDelegate(
+        private val mPluginApplication: MockApplication,
         private val mPluginClassLoader: DexClassLoader,
         private val mPluginResources: Resources,
         private val mPluginActivitiesManager: PluginActivitiesManager
@@ -45,6 +47,7 @@ class DefaultHostActivityDelegate(
             mockActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
             mockActivity.setPluginClassLoader(mPluginClassLoader)
             mockActivity.setPluginActivityLauncher(mPluginActivitiesManager)
+            mockActivity.setPluginApplication(mPluginApplication)
             mMockActivity = mockActivity
             mockActivity.performOnCreate(bundle)
         } catch (e: Exception) {

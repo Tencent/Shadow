@@ -2,6 +2,7 @@ package com.tencent.cubershi.plugin_loader
 
 import android.content.Context
 import android.content.res.Resources
+import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.blocs.*
 import com.tencent.cubershi.plugin_loader.delegates.DefaultHostActivityDelegate
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
@@ -17,16 +18,22 @@ import dalvik.system.DexClassLoader
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     private val mExecutorService = Executors.newSingleThreadExecutor()
+
+    private val mLock = ReentrantLock()
 
     private lateinit var mPluginClassLoader: DexClassLoader
 
     private lateinit var mPluginResources: Resources
 
     private val mPluginActivitiesManager = PluginActivitiesManager()
+
+    private lateinit var mPluginApplication: MockApplication
 
     @Throws(LoadPluginException::class)
     override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
@@ -37,14 +44,19 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 //todo cubershi 下面这些步骤可能可以并发起来.
                 val pluginInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile.absolutePath, hostAppContext)
-                mPluginActivitiesManager.addPluginApkInfo(pluginInfo)
                 CopySoBloc.copySo(installedPlugin.pluginFile, "armeabi")
                 val pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile)
-                mPluginClassLoader = pluginClassLoader
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
-                mPluginResources = resources
                 val mockApplication = CreateApplicationBloc.callPluginApplicationOnCreate(pluginClassLoader, pluginInfo.applicationClassName, resources)
                 mockApplication.hostApplicationContext = hostAppContext
+
+                mLock.withLock {
+                    mPluginActivitiesManager.addPluginApkInfo(pluginInfo)
+                    mPluginClassLoader = pluginClassLoader
+                    mPluginResources = resources
+                    mPluginApplication = mockApplication
+                }
+
                 FakeRunningPlugin(mockApplication, installedPlugin)
             })
             return ProgressFutureImpl(submit, null)
@@ -60,7 +72,15 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
     }
 
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {
-        return DefaultHostActivityDelegate(mPluginClassLoader, mPluginResources, mPluginActivitiesManager)
+        //todo cubershi 这里返回的DefaultHostActivityDelegate直接绑定了mPluginClassLoader限制了多插件的实现
+        mLock.withLock {
+            return DefaultHostActivityDelegate(
+                    mPluginApplication,
+                    mPluginClassLoader,
+                    mPluginResources,
+                    mPluginActivitiesManager
+            )
+        }
     }
 
     override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate? {

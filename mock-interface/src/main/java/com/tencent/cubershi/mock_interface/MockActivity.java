@@ -1,5 +1,6 @@
 package com.tencent.cubershi.mock_interface;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -21,6 +22,8 @@ public abstract class MockActivity extends ContextWrapper {
 
     private PluginActivityLauncher mPluginActivityLauncher;
 
+    private Application mPluginApplication;
+
     public MockActivity() {
         super(null);
     }
@@ -31,6 +34,10 @@ public abstract class MockActivity extends ContextWrapper {
 
     public void setPluginActivityLauncher(PluginActivityLauncher pluginActivityLauncher) {
         mPluginActivityLauncher = pluginActivityLauncher;
+    }
+
+    public void setPluginApplication(MockApplication pluginApplication) {
+        mPluginApplication = (Application) pluginApplication;
     }
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +94,10 @@ public abstract class MockActivity extends ContextWrapper {
     @Override
     public ClassLoader getClassLoader() {
         return mPluginClassLoader;
+    }
+
+    public final Application getApplication() {
+        return mPluginApplication;
     }
 
     @Override
