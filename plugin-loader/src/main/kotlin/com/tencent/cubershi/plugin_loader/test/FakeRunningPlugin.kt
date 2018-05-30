@@ -2,6 +2,7 @@ package com.tencent.cubershi.plugin_loader.test
 
 import android.content.Intent
 import com.tencent.cubershi.mock_interface.MockApplication
+import com.tencent.cubershi.plugin_loader.infos.PluginInfo
 import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
@@ -10,12 +11,16 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-class FakeRunningPlugin(private var mockApplication: MockApplication, private var installedPlugin: InstalledPlugin) : RunningPlugin {
+class FakeRunningPlugin(
+        private val mockApplication: MockApplication
+        , private val installedPlugin: InstalledPlugin
+        , private val pluginInfo: PluginInfo
+) : RunningPlugin {
 
     override fun startLauncherActivity(intent: Intent): ProgressFuture<*> {
         val startContainerActivity = Intent()
         startContainerActivity.setClassName("com.tencent.libexample", "com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity")
-        startContainerActivity.putExtra(ARG, "com.example.android.basicglsurfaceview.BasicGLSurfaceViewActivity")
+        startContainerActivity.putExtra(ARG, pluginInfo.launcherActivityClassName)
         val hostApplicationContext = mockApplication.hostApplicationContext
         hostApplicationContext.startActivity(startContainerActivity)
 
