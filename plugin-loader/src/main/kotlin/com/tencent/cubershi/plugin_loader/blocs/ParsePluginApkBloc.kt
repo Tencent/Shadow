@@ -1,9 +1,10 @@
 package com.tencent.cubershi.plugin_loader.blocs
 
+import android.content.Context
+import android.content.pm.PackageManager.GET_ACTIVITIES
 import com.tencent.cubershi.plugin_loader.exceptions.ParsePluginApkException
-import com.tencent.cubershi.plugin_loader.infos.ApkInfo
-
-import java.io.File
+import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
+import com.tencent.cubershi.plugin_loader.infos.PluginInfo
 
 /**
  * 解析插件apk逻辑
@@ -19,12 +20,16 @@ object ParsePluginApkBloc {
      * @throws ParsePluginApkException 解析失败时抛出
      */
     @Throws(ParsePluginApkException::class)
-    fun parse(pluginFile: File): ApkInfo {
-        return if (pluginFile.exists() && pluginFile.length() > 0) {
-            ApkInfo("com.example.android.basicglsurfaceview.MyApplication")
-        } else {
-            throw ParsePluginApkException("测试代码,但文件不合法")
+    fun parse(archiveFilePath: String, hostAppContext: Context): PluginInfo {
+        val packageManager = hostAppContext.packageManager
+        val packageArchiveInfo = packageManager.getPackageArchiveInfo(archiveFilePath, GET_ACTIVITIES)
+        val pluginInfo = PluginInfo(
+                packageArchiveInfo.applicationInfo.packageName,
+                packageArchiveInfo.applicationInfo.className
+        )
+        packageArchiveInfo.activities.forEach {
+            pluginInfo.putActivityInfo(PluginActivityInfo(it.name))
         }
-
+        return pluginInfo
     }
 }

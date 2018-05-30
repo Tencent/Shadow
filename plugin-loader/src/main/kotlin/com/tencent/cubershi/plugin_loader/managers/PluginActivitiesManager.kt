@@ -4,37 +4,48 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import com.tencent.cubershi.mock_interface.MockActivity
-import com.tencent.cubershi.plugin_loader.infos.ApkInfo
+import com.tencent.cubershi.plugin_loader.infos.PluginInfo
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
 
 class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
 
-    val activityMap: MutableMap<ComponentName, ComponentName> = HashMap()
+    /**
+     * key:插件ComponentName
+     * value:壳子ComponentName
+     */
+    private val activitiesMap: MutableMap<ComponentName, ComponentName> = HashMap()
 
-    fun addPluginApkInfo(apkInfo: ApkInfo) {
-        val pluginActivity1 = ComponentName("com.example.android.basicglsurfaceview", "com.example.android.basicglsurfaceview.BasicGLSurfaceViewActivity")
-        val pluginActivity2 = ComponentName("com.example.android.basicglsurfaceview", "com.example.android.basicglsurfaceview.TestSoLoadActivity")
+    /**
+     * key:插件Activity类名
+     * value:插件PackageName
+     */
+    private val packageNameMap: MutableMap<String, String> = HashMap()
+
+    fun addPluginApkInfo(pluginInfo: PluginInfo) {
         val containerActivity = ComponentName("com.tencent.libexample", "com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity")
 
-        activityMap.put(pluginActivity1, containerActivity)
-        activityMap.put(pluginActivity2, containerActivity)
-
+        pluginInfo.mActivities.forEach {
+            activitiesMap.put(ComponentName(pluginInfo.packageName, it.className), containerActivity)
+            packageNameMap.put(it.className, pluginInfo.packageName)
+        }
     }
 
-    private fun getContainerActivity(pluginActivity: ComponentName): ComponentName? {
-        return activityMap.get(pluginActivity)
+    private fun getContainerActivity(pluginActivity: ComponentName): ComponentName {
+        return activitiesMap.get(pluginActivity)!!
     }
 
     override fun startActivity(context: Context, pluginIntent: Intent): Boolean {
-        val containerActivity = getContainerActivity(pluginIntent.component)
-        if (containerActivity == null) {
+        val className = pluginIntent.component.className
+        val packageName = packageNameMap[className]
+        if (packageName == null) {
             return false
-        } else {
-            val containerActivityIntent = Intent(pluginIntent)
-            containerActivityIntent.setComponent(containerActivity)
-            containerActivityIntent.putExtra(FakeRunningPlugin.ARG, pluginIntent.component.className)
-            context.startActivity(containerActivityIntent)
-            return true
         }
+        pluginIntent.component = ComponentName(packageName, className)
+        val containerActivity = getContainerActivity(pluginIntent.component)
+        val containerActivityIntent = Intent(pluginIntent)
+        containerActivityIntent.setComponent(containerActivity)
+        containerActivityIntent.putExtra(FakeRunningPlugin.ARG, className)
+        context.startActivity(containerActivityIntent)
+        return true
     }
 }

@@ -1,6 +1,5 @@
 package com.tencent.cubershi.mock_interface;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -93,9 +92,6 @@ public abstract class MockActivity extends ContextWrapper {
     @Override
     public void startActivity(Intent intent) {
         final Intent pluginIntent = new Intent(intent);
-        final ComponentName component = pluginIntent.getComponent();
-        assert component != null;
-        pluginIntent.setComponent(new ComponentName("com.example.android.basicglsurfaceview", component.getClassName()));
         pluginIntent.setExtrasClassLoader(mPluginClassLoader);
         final boolean success = mPluginActivityLauncher.startActivity(this, pluginIntent);
         if (!success) {
