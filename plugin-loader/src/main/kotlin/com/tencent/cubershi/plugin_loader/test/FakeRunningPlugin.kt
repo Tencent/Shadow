@@ -1,8 +1,10 @@
 package com.tencent.cubershi.plugin_loader.test
 
+import android.content.ComponentName
 import android.content.Intent
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
+import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
@@ -15,14 +17,15 @@ class FakeRunningPlugin(
         private val mockApplication: MockApplication
         , private val installedPlugin: InstalledPlugin
         , private val pluginInfo: PluginInfo
+        , private val mPluginActivitiesManager: PluginActivitiesManager
 ) : RunningPlugin {
 
     override fun startLauncherActivity(intent: Intent): ProgressFuture<*> {
-        val startContainerActivity = Intent()
-        startContainerActivity.setClassName("com.tencent.libexample", "com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity")
-        startContainerActivity.putExtra(ARG, pluginInfo.launcherActivityClassName)
+        val launcherActivity = ComponentName(pluginInfo.packageName, pluginInfo.launcherActivityClassName)
+        val pluginIntent = Intent()
+        pluginIntent.component = launcherActivity
         val hostApplicationContext = mockApplication.hostApplicationContext
-        hostApplicationContext.startActivity(startContainerActivity)
+        mPluginActivitiesManager.startActivity(hostApplicationContext, pluginIntent)
 
         return object : ProgressFuture<Any> {
             override fun getProgress(): Double {
@@ -66,6 +69,5 @@ class FakeRunningPlugin(
 
     companion object {
         private val mLogger = LoggerFactory.getLogger(FakeRunningPlugin::class.java)
-        val ARG = "TEST_ARG_LAUNCHER_ACTIVITY"
     }
 }

@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import com.tencent.cubershi.mock_interface.MockActivity
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
-import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
 
 class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
+    companion object {
+        const val PLUGIN_ACTIVITY_CLASS_NAME_KEY = "PLUGIN_ACTIVITY_CLASS_NAME_KEY"
+    }
 
     /**
      * key:插件ComponentName
@@ -44,7 +46,7 @@ class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
         val containerActivity = getContainerActivity(pluginIntent.component)
         val containerActivityIntent = Intent(pluginIntent)
         containerActivityIntent.setComponent(containerActivity)
-        containerActivityIntent.putExtra(FakeRunningPlugin.ARG, className)
+        containerActivityIntent.putExtra(PLUGIN_ACTIVITY_CLASS_NAME_KEY, className)
         context.startActivity(containerActivityIntent)
         return true
     }

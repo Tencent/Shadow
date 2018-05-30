@@ -57,7 +57,7 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
                     mPluginApplication = mockApplication
                 }
 
-                FakeRunningPlugin(mockApplication, installedPlugin, pluginInfo)
+                FakeRunningPlugin(mockApplication, installedPlugin, pluginInfo, mPluginActivitiesManager)
             })
             return ProgressFutureImpl(submit, null)
         } else if (installedPlugin.pluginFile != null)

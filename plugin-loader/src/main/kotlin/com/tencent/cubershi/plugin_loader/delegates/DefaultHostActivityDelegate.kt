@@ -16,7 +16,7 @@ import com.tencent.cubershi.mock_interface.MockActivity
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.FixedContextLayoutInflater
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
-import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
+import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import dalvik.system.DexClassLoader
@@ -37,10 +37,10 @@ class DefaultHostActivityDelegate(
     override fun onCreate(bundle: Bundle?) {
         mHostActivityDelegator.superOnCreate(bundle)
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
-        val pluginLauncherActivityName = mHostActivityDelegator.intent.getStringExtra(FakeRunningPlugin.ARG)
-        mHostActivityDelegator.intent.removeExtra(FakeRunningPlugin.ARG)
+        val pluginActivityClassName = mHostActivityDelegator.intent.getStringExtra(PLUGIN_ACTIVITY_CLASS_NAME_KEY)
+        mHostActivityDelegator.intent.removeExtra(PLUGIN_ACTIVITY_CLASS_NAME_KEY)
         try {
-            val aClass = mPluginClassLoader.loadClass(pluginLauncherActivityName)
+            val aClass = mPluginClassLoader.loadClass(pluginActivityClassName)
             val mockActivity = MockActivity::class.java.cast(aClass.newInstance())
             mockActivity.setContainerActivity(mHostActivityDelegator)
             mockActivity.setPluginResources(mPluginResources)
