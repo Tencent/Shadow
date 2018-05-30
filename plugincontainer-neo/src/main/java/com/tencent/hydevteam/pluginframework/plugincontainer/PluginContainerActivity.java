@@ -564,4 +564,13 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             return super.getLayoutInflater();
         }
     }
+
+    @Override
+    public Resources getResources() {
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.getResources();
+        } else {
+            return super.getResources();
+        }
+    }
 }

@@ -31,7 +31,7 @@ object ParsePluginApkBloc {
                 , launcherActivityClassName
         )
         packageArchiveInfo.activities.forEach {
-            pluginInfo.putActivityInfo(PluginActivityInfo(it.name))
+            pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource))
         }
         return pluginInfo
     }

@@ -2,16 +2,16 @@ package com.tencent.cubershi.mock_interface;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
-public abstract class MockActivity extends ContextWrapper {
+public abstract class MockActivity extends ContextThemeWrapper {
     private HostActivityDelegator mHostActivityDelegator;
 
     private Resources mPluginResources;
@@ -23,10 +23,6 @@ public abstract class MockActivity extends ContextWrapper {
     private PluginActivityLauncher mPluginActivityLauncher;
 
     private Application mPluginApplication;
-
-    public MockActivity() {
-        super(null);
-    }
 
     public void setContainerActivity(HostActivityDelegator delegator) {
         mHostActivityDelegator = delegator;

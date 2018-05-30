@@ -47,6 +47,7 @@ class DefaultHostActivityDelegate(
         val pluginActivityClassName = bundleForPluginLoader.getString(PLUGIN_ACTIVITY_CLASS_NAME_KEY)
         val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(PluginActivitiesManager.PLUGIN_ACTIVITY_INFO_KEY)
 
+        mHostActivityDelegator.setTheme(pluginActivityInfo.themeResource)
         try {
             val aClass = mPluginClassLoader.loadClass(pluginActivityClassName)
             val mockActivity = MockActivity::class.java.cast(aClass.newInstance())
@@ -56,6 +57,7 @@ class DefaultHostActivityDelegate(
             mockActivity.setPluginClassLoader(mPluginClassLoader)
             mockActivity.setPluginActivityLauncher(mPluginActivitiesManager)
             mockActivity.setPluginApplication(mPluginApplication)
+//            mockActivity.setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen)
             mMockActivity = mockActivity
             mockActivity.performOnCreate(bundle)
         } catch (e: Exception) {
@@ -204,5 +206,9 @@ class DefaultHostActivityDelegate(
         val inflater = mHostActivityDelegator.applicationContext.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
         inflater.cloneInContext(mMockActivity)
         return FixedContextLayoutInflater(inflater, mMockActivity)
+    }
+
+    override fun getResources(): Resources {
+        return mPluginResources
     }
 }

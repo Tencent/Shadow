@@ -98,4 +98,6 @@ public interface HostActivityDelegate {
     ClassLoader getClassLoader();
 
     LayoutInflater getLayoutInflater();
+
+    Resources getResources();
 }
