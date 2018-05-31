@@ -22,7 +22,13 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import dalvik.system.DexClassLoader
 
-class DefaultHostActivityDelegate(
+/**
+ * 壳子Activity与插件Activity转调关系的实现类
+ * 它是抽象的是因为它缺少必要的业务信息.业务必须继承这个类提供业务信息.
+ *
+ * @author cubershi
+ */
+class HostActivityDelegateImpl(
         private val mPluginApplication: MockApplication,
         private val mPluginClassLoader: DexClassLoader,
         private val mPluginResources: Resources,

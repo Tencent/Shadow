@@ -8,7 +8,7 @@ import com.tencent.cubershi.mock_interface.MockActivity
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
 
-class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
+abstract class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
     companion object {
         const val PLUGIN_LOADER_BUNDLE_KEY = "PLUGIN_LOADER_BUNDLE_KEY"
         const val PLUGIN_ACTIVITY_INFO_KEY = "PLUGIN_ACTIVITY_INFO_KEY"
@@ -35,15 +35,19 @@ class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
 
 
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
-        val containerActivity = ComponentName("com.tencent.libexample", "com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity")
-
         pluginInfo.mActivities.forEach {
             val componentName = ComponentName(pluginInfo.packageName, it.className)
-            activitiesMap.put(componentName, containerActivity)
+            activitiesMap.put(componentName, onBindContainerActivity(componentName))
             packageNameMap.put(it.className, pluginInfo.packageName)
             activityInfoMap.put(componentName, it)
         }
     }
+
+    /**
+     * @param pluginActivity 插件Activity
+     * @return 容器Activity
+     */
+    abstract fun onBindContainerActivity(pluginActivity: ComponentName): ComponentName
 
     private fun getContainerActivity(pluginActivity: ComponentName): ComponentName {
         return activitiesMap.get(pluginActivity)!!
@@ -69,4 +73,6 @@ class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
         context.startActivity(containerActivityIntent)
         return true
     }
+
+    abstract val launcherActivity: ComponentName
 }

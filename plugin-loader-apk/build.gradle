@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
 
@@ -26,8 +30,16 @@ android {
         }
     }
 
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 dependencies {
     implementation project(':plugin-loader')
+    //todo cubershi 这里不应该将:mock-interface打包进这个apk,需要把:mock-interface编成jar包才能compileOnly依赖.打包进来暂时不影响运行逻辑.
+    implementation project(':mock-interface')
+    compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:' + PLUGINMANAGER_VERSION
+    compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }

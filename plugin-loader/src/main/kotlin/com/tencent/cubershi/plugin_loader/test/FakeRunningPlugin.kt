@@ -1,6 +1,5 @@
 package com.tencent.cubershi.plugin_loader.test
 
-import android.content.ComponentName
 import android.content.Intent
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
@@ -21,7 +20,7 @@ class FakeRunningPlugin(
 ) : RunningPlugin {
 
     override fun startLauncherActivity(intent: Intent): ProgressFuture<*> {
-        val launcherActivity = ComponentName(pluginInfo.packageName, pluginInfo.launcherActivityClassName)
+        val launcherActivity = mPluginActivitiesManager.launcherActivity
         val pluginIntent = Intent()
         pluginIntent.component = launcherActivity
         val hostApplicationContext = mockApplication.hostApplicationContext

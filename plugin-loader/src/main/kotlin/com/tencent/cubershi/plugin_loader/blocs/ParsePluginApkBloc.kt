@@ -12,7 +12,6 @@ import com.tencent.cubershi.plugin_loader.infos.PluginInfo
  * @author cubershi
  */
 object ParsePluginApkBloc {
-    const val hardcodeLauncherActivityClassName = "com.example.android.basicglsurfaceview.BasicGLSurfaceViewActivity"
     /**
      * 解析插件apk
      *
@@ -22,13 +21,11 @@ object ParsePluginApkBloc {
      */
     @Throws(ParsePluginApkException::class)
     fun parse(archiveFilePath: String, hostAppContext: Context): PluginInfo {
-        val launcherActivityClassName = hardcodeLauncherActivityClassName
         val packageManager = hostAppContext.packageManager
         val packageArchiveInfo = packageManager.getPackageArchiveInfo(archiveFilePath, GET_ACTIVITIES)
         val pluginInfo = PluginInfo(
                 packageArchiveInfo.applicationInfo.packageName
                 , packageArchiveInfo.applicationInfo.className
-                , launcherActivityClassName
         )
         packageArchiveInfo.activities.forEach {
             pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource))

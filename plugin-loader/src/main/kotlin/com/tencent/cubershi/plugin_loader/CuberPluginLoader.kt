@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.blocs.*
-import com.tencent.cubershi.plugin_loader.delegates.DefaultHostActivityDelegate
+import com.tencent.cubershi.plugin_loader.delegates.HostActivityDelegateImpl
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
 import com.tencent.hydevteam.common.progress.ProgressFuture
@@ -21,7 +21,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-class CuberPluginLoader : PluginLoader, DelegateProvider {
+abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     private val mExecutorService = Executors.newSingleThreadExecutor()
 
@@ -31,7 +31,7 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     private lateinit var mPluginResources: Resources
 
-    private val mPluginActivitiesManager = PluginActivitiesManager()
+    abstract fun getBusinessPluginActivitiesManager(): PluginActivitiesManager
 
     private lateinit var mPluginApplication: MockApplication
 
@@ -51,13 +51,13 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
                 mockApplication.hostApplicationContext = hostAppContext
 
                 mLock.withLock {
-                    mPluginActivitiesManager.addPluginApkInfo(pluginInfo)
+                    getBusinessPluginActivitiesManager().addPluginApkInfo(pluginInfo)
                     mPluginClassLoader = pluginClassLoader
                     mPluginResources = resources
                     mPluginApplication = mockApplication
                 }
 
-                FakeRunningPlugin(mockApplication, installedPlugin, pluginInfo, mPluginActivitiesManager)
+                FakeRunningPlugin(mockApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
             })
             return ProgressFutureImpl(submit, null)
         } else if (installedPlugin.pluginFile != null)
@@ -74,11 +74,11 @@ class CuberPluginLoader : PluginLoader, DelegateProvider {
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {
         //todo cubershi 这里返回的DefaultHostActivityDelegate直接绑定了mPluginClassLoader限制了多插件的实现
         mLock.withLock {
-            return DefaultHostActivityDelegate(
+            return HostActivityDelegateImpl(
                     mPluginApplication,
                     mPluginClassLoader,
                     mPluginResources,
-                    mPluginActivitiesManager
+                    getBusinessPluginActivitiesManager()
             )
         }
     }
