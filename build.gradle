@@ -4,10 +4,10 @@ buildscript {
     ext.kotlin_version = '1.2.41'
     repositories {
         maven {
-            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
+            url "http://maven.oa.com/nexus/content/repositories/jcenter"
         }
         maven {
-            url "http://maven.oa.com/nexus/content/repositories/jcenter"
+            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
         }
     }
     dependencies {
