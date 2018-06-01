@@ -1,8 +1,10 @@
 package com.tencent.cubershi.plugin_loader.managers
 
+import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import com.tencent.cubershi.mock_interface.MockActivity
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
@@ -70,6 +72,9 @@ abstract class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
         bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[pluginIntent.component])
 
         containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
+        if (context is Application) {
+            containerActivityIntent.setFlags(FLAG_ACTIVITY_NEW_TASK)
+        }
         context.startActivity(containerActivityIntent)
         return true
     }
