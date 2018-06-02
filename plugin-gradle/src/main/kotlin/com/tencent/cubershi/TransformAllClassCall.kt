@@ -34,11 +34,10 @@ class TransformAllClassCall(
                 val methodrefClassName = cp.getMethodrefClassName(index)
                 val methodrefNameAndType = cp.getMethodrefNameAndType(index)
                 val nameAndTypeName = cp.getNameAndTypeName(methodrefNameAndType)
-                val methodrefName = cp.getUtf8Info(nameAndTypeName)
                 val memberNameAndType = cp.getMemberNameAndType(index)
                 val nameAndTypeDescriptor = cp.getNameAndTypeDescriptor(memberNameAndType)
 
-                if (methodrefClassName == classname && methodrefName != "<init>") {
+                if (methodrefClassName == classname) {
                     val log = StringBuilder()
                     log.append("In class:[").append(clazz.classFile.name)
                     log.append("],it calls ").append(printIndex(cp, index))

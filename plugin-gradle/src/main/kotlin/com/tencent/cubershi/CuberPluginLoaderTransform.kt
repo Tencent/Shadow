@@ -20,6 +20,12 @@ class CuberPluginLoaderTransform : CustomClassTransform() {
                 val classPool: ClassPool = ClassPool.getDefault()
                 val mockActivityClass: CtClass = classPool.makeClass("com.tencent.cubershi.mock_interface.MockActivity")
                 val ctClass: CtClass = classPool.makeClass(input, false)
+                val superclass = ctClass.classFile.superclass
+                if (superclass != null
+                        && superclass == "android.app.Activity") {
+                    System.out.println("找到一个" + superclass + ":" + ctClass.name + ",修改它的父类为" + mockActivityClass.name)
+                    ctClass.superclass = mockActivityClass
+                }
 
                 val codeConverter = MyCodeConverter()
 
