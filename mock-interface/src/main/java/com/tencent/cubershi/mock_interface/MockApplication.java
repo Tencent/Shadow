@@ -2,16 +2,28 @@ package com.tencent.cubershi.mock_interface;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 
 /**
  * 用于在plugin-loader中调用假的Application方法的接口
  */
-public interface MockApplication {
-    void onCreate();
+public abstract class MockApplication {
+    Context mHostAppContext;
+    Resources mPluginResources;
 
-    Context getHostApplicationContext();
+    public void onCreate() {
+        Log.i("MockApplication", "MockApplication test");
+    }
 
-    void setHostApplicationContext(Context hostAppContext);
+    public Context getHostApplicationContext() {
+        return mHostAppContext;
+    }
 
-    void setPluginResources(Resources resources);
+    public void setHostApplicationContext(Context hostAppContext) {
+        mHostAppContext = hostAppContext;
+    }
+
+    public void setPluginResources(Resources resources) {
+        mPluginResources = resources;
+    }
 }

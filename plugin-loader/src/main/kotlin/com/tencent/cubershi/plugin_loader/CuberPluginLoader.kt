@@ -37,9 +37,9 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     @Throws(LoadPluginException::class)
     override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
-        if (mLogger.isInfoEnabled) {
-            mLogger.info("loadPlugin installedPlugin=={}", installedPlugin)
-        }
+//        if (mLogger.isInfoEnabled) {
+//            mLogger.info("loadPlugin installedPlugin=={}", installedPlugin)
+//        }
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 //todo cubershi 下面这些步骤可能可以并发起来.
