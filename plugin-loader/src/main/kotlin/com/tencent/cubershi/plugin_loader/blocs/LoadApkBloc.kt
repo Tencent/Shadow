@@ -32,7 +32,10 @@ object LoadApkBloc {
                 libDir.absolutePath,
                 bootClassLoader,
                 mockClassLoader,
-                arrayOf("android.app.Activity", "android.app.Application", "com.tencent.cubershi.mock_interface.MockActivity", "com.tencent.cubershi.mock_interface.MockApplication")
+                arrayOf(
+                        "com.tencent.cubershi.mock_interface.MockActivity"
+                        , "com.tencent.cubershi.mock_interface.MockApplication"
+                )
         )
     }
 
