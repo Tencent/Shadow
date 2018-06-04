@@ -2,22 +2,12 @@ package com.tencent.cubershi.mock_interface;
 
 import android.content.Intent;
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
 public abstract class MockActivity extends PluginActivity {
 
     private LayoutInflater mLayoutInflater;
-
-    protected void onCreate(Bundle savedInstanceState) {
-        //do nothing.
-    }
-
-    @Override
-    public void performOnCreate(Bundle bundle) {
-        onCreate(bundle);
-    }
 
     public void setContentView(int layoutResID) {
         final View inflate = LayoutInflater.from(this).inflate(layoutResID, null);

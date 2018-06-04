@@ -36,6 +36,7 @@ class HostActivityDelegateImpl(
 ) : HostActivityDelegate {
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
+    private var mPluginActivityCreated = false
 
     override fun setDelegator(hostActivityDelegator: HostActivityDelegator) {
         mHostActivityDelegator = hostActivityDelegator
@@ -64,7 +65,8 @@ class HostActivityDelegateImpl(
             pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
             pluginActivity.setPluginApplication(mPluginApplication)
             mPluginActivity = pluginActivity
-            pluginActivity.performOnCreate(bundle)
+            pluginActivity.onCreate(bundle)
+            mPluginActivityCreated = true
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
@@ -73,138 +75,171 @@ class HostActivityDelegateImpl(
 
     override fun onResume() {
         mHostActivityDelegator.superOnResume()
+        mPluginActivity.onResume()
     }
 
     override fun onNewIntent(intent: Intent) {
-
+        mPluginActivity.onNewIntent(intent)
     }
 
     override fun onSaveInstanceState(bundle: Bundle) {
-
+        mHostActivityDelegator.superOnSaveInstanceState(bundle)
+        mPluginActivity.onSaveInstanceState(bundle)
     }
 
     override fun onPause() {
         mHostActivityDelegator.superOnPause()
+        mPluginActivity.onPause()
     }
 
     override fun onStop() {
         mHostActivityDelegator.superOnStop()
+        mPluginActivity.onStop()
     }
 
     override fun onDestroy() {
         mHostActivityDelegator.superOnDestroy()
+        mPluginActivity.onDestroy()
     }
 
     override fun onConfigurationChanged(configuration: Configuration) {
         mHostActivityDelegator.superOnConfigurationChanged(configuration)
+        mPluginActivity.onConfigurationChanged(configuration)
     }
 
     override fun dispatchKeyEvent(keyEvent: KeyEvent): Boolean {
-        return mHostActivityDelegator.superDispatchKeyEvent(keyEvent)
+        val dispatchKeyEvent = mPluginActivity.dispatchKeyEvent(keyEvent)
+        return when {
+            dispatchKeyEvent -> true
+            else -> mHostActivityDelegator.superDispatchKeyEvent(keyEvent)
+        }
     }
 
     override fun finish() {
+        mPluginActivity.finish()
         mHostActivityDelegator.superFinish()
     }
 
-    override fun onActivityResult(i: Int, i1: Int, intent: Intent) {
-        mHostActivityDelegator.superOnActivityResult(i, i1, intent)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        mPluginActivity.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onChildTitleChanged(activity: Activity, charSequence: CharSequence) {
-
+        mPluginActivity.onChildTitleChanged(activity, charSequence)
     }
 
     override fun onRestoreInstanceState(bundle: Bundle?) {
         mHostActivityDelegator.superOnRestoreInstanceState(bundle)
+        mPluginActivity.onRestoreInstanceState(bundle)
     }
 
     override fun onPostCreate(bundle: Bundle?) {
         mHostActivityDelegator.superOnPostCreate(bundle)
+        mPluginActivity.onPostCreate(bundle)
     }
 
     override fun onRestart() {
         mHostActivityDelegator.superOnRestart()
+        mPluginActivity.onRestart()
     }
 
     override fun onUserLeaveHint() {
         mHostActivityDelegator.superOnUserLeaveHint()
+        mPluginActivity.onUserLeaveHint()
     }
 
     override fun onCreateThumbnail(bitmap: Bitmap, canvas: Canvas): Boolean {
-        return mHostActivityDelegator.superOnCreateThumbnail(bitmap, canvas)
+        return mPluginActivity.onCreateThumbnail(bitmap, canvas)
     }
 
     override fun onCreateDescription(): CharSequence? {
-        return mHostActivityDelegator.superOnCreateDescription()
+        return mPluginActivity.onCreateDescription()
     }
 
-    override fun onRetainNonConfigurationInstance(): Any {
-        return mHostActivityDelegator.superOnRetainNonConfigurationInstance()
+    override fun onRetainNonConfigurationInstance(): Any? {
+        return mPluginActivity.onRetainNonConfigurationInstance()
     }
 
     override fun onLowMemory() {
         mHostActivityDelegator.superOnLowMemory()
+        mPluginActivity.onLowMemory()
     }
 
     override fun onTrackballEvent(motionEvent: MotionEvent): Boolean {
-        return mHostActivityDelegator.superOnTrackballEvent(motionEvent)
+        return mPluginActivity.onTrackballEvent(motionEvent)
     }
 
     override fun onUserInteraction() {
-        mHostActivityDelegator.superOnUserInteraction()
+        mPluginActivity.onUserInteraction()
     }
 
     override fun onWindowAttributesChanged(layoutParams: WindowManager.LayoutParams) {
         mHostActivityDelegator.superOnWindowAttributesChanged(layoutParams)
+        if (mPluginActivityCreated) {
+            mPluginActivity.onWindowAttributesChanged(layoutParams)
+        }
     }
 
     override fun onContentChanged() {
-        mHostActivityDelegator.superOnContentChanged()
+        mPluginActivity.onContentChanged()
     }
 
     override fun onWindowFocusChanged(b: Boolean) {
-        mHostActivityDelegator.superOnWindowFocusChanged(b)
+        mPluginActivity.onWindowFocusChanged(b)
     }
 
-    override fun onCreatePanelView(i: Int): View? {
-        return mHostActivityDelegator.superOnCreatePanelView(i)
+    override fun onCreatePanelView(featureId: Int): View? {
+        return mPluginActivity.onCreatePanelView(featureId)
     }
 
     override fun onCreatePanelMenu(i: Int, menu: Menu): Boolean {
-        return mHostActivityDelegator.superOnCreatePanelMenu(i, menu)
+        val onCreatePanelMenu = mPluginActivity.onCreatePanelMenu(i, menu)
+        return when {
+            onCreatePanelMenu -> true
+            else -> mHostActivityDelegator.superOnCreatePanelMenu(i, menu)
+        }
     }
 
     override fun onPreparePanel(i: Int, view: View?, menu: Menu): Boolean {
-        return mHostActivityDelegator.superOnPreparePanel(i, view, menu)
+        val onPreparePanel = mPluginActivity.onPreparePanel(i, view, menu)
+        return when {
+            onPreparePanel -> true
+            else -> mHostActivityDelegator.superOnPreparePanel(i, view, menu)
+        }
     }
 
     override fun onPanelClosed(i: Int, menu: Menu) {
         mHostActivityDelegator.superOnPanelClosed(i, menu)
+        mPluginActivity.onPanelClosed(i, menu)
     }
 
     override fun onCreateDialog(i: Int): Dialog {
-        return mHostActivityDelegator.superOnCreateDialog(i)
+        return mPluginActivity.onCreateDialog(i)
     }
 
     override fun onPrepareDialog(i: Int, dialog: Dialog) {
         mHostActivityDelegator.superOnPrepareDialog(i, dialog)
+        mPluginActivity.onPrepareDialog(i, dialog)
     }
 
     override fun onApplyThemeResource(theme: Resources.Theme, i: Int, b: Boolean) {
         mHostActivityDelegator.superOnApplyThemeResource(theme, i, b)
+        if (mPluginActivityCreated) {
+            mPluginActivity.onApplyThemeResource(theme, i, b)
+        }
     }
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
-        return mHostActivityDelegator.superOnCreateView(name, context, attrs)
+        return mPluginActivity.onCreateView(name, context, attrs)
     }
 
     override fun startActivityFromChild(activity: Activity, intent: Intent, i: Int) {
         mHostActivityDelegator.superStartActivityFromChild(activity, intent, i)
+        mPluginActivity.startActivityFromChild(activity, intent, i)
     }
 
     override fun getClassLoader(): ClassLoader {
-        return mHostActivityDelegator.superGetClassLoader()
+        return mPluginClassLoader
     }
 
     override fun getLayoutInflater(): LayoutInflater {
