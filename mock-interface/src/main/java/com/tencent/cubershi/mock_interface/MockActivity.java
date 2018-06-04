@@ -14,6 +14,7 @@ public abstract class MockActivity extends PluginActivity {
         //do nothing.
     }
 
+    @Override
     public void performOnCreate(Bundle bundle) {
         onCreate(bundle);
     }

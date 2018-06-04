@@ -6,11 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
-import com.tencent.cubershi.mock_interface.MockActivity
+import com.tencent.cubershi.mock_interface.PluginActivity
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
 
-abstract class PluginActivitiesManager : MockActivity.PluginActivityLauncher {
+abstract class PluginActivitiesManager : PluginActivity.PluginActivityLauncher {
     companion object {
         const val PLUGIN_LOADER_BUNDLE_KEY = "PLUGIN_LOADER_BUNDLE_KEY"
         const val PLUGIN_ACTIVITY_INFO_KEY = "PLUGIN_ACTIVITY_INFO_KEY"

@@ -3,11 +3,12 @@ package com.tencent.cubershi.mock_interface;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.view.ContextThemeWrapper;
 
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
-abstract class PluginActivity extends ContextThemeWrapper {
+public abstract class PluginActivity extends ContextThemeWrapper {
     HostActivityDelegator mHostActivityDelegator;
 
     Resources mPluginResources;
@@ -34,7 +35,7 @@ abstract class PluginActivity extends ContextThemeWrapper {
         mHostActivityDelegator = delegator;
     }
 
-    public void setPluginActivityLauncher(MockActivity.PluginActivityLauncher pluginActivityLauncher) {
+    public void setPluginActivityLauncher(PluginActivityLauncher pluginActivityLauncher) {
         mPluginActivityLauncher = pluginActivityLauncher;
     }
 
@@ -54,4 +55,6 @@ abstract class PluginActivity extends ContextThemeWrapper {
         boolean startActivity(Context context, Intent intent);
 
     }
+
+    public abstract void performOnCreate(Bundle bundle);
 }

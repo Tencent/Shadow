@@ -12,8 +12,8 @@ import android.graphics.Canvas
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.*
-import com.tencent.cubershi.mock_interface.MockActivity
 import com.tencent.cubershi.mock_interface.MockApplication
+import com.tencent.cubershi.mock_interface.PluginActivity
 import com.tencent.cubershi.plugin_loader.FixedContextLayoutInflater
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
@@ -35,7 +35,7 @@ class HostActivityDelegateImpl(
         private val mPluginActivitiesManager: PluginActivitiesManager
 ) : HostActivityDelegate {
     private lateinit var mHostActivityDelegator: HostActivityDelegator
-    private lateinit var mMockActivity: MockActivity
+    private lateinit var mPluginActivity: PluginActivity
 
     override fun setDelegator(hostActivityDelegator: HostActivityDelegator) {
         mHostActivityDelegator = hostActivityDelegator
@@ -56,16 +56,15 @@ class HostActivityDelegateImpl(
         mHostActivityDelegator.setTheme(pluginActivityInfo.themeResource)
         try {
             val aClass = mPluginClassLoader.loadClass(pluginActivityClassName)
-            val mockActivity = MockActivity::class.java.cast(aClass.newInstance())
-            mockActivity.setContainerActivity(mHostActivityDelegator)
-            mockActivity.setPluginResources(mPluginResources)
-            mockActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
-            mockActivity.setPluginClassLoader(mPluginClassLoader)
-            mockActivity.setPluginActivityLauncher(mPluginActivitiesManager)
-            mockActivity.setPluginApplication(mPluginApplication)
-//            mockActivity.setTheme(android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen)
-            mMockActivity = mockActivity
-            mockActivity.performOnCreate(bundle)
+            val pluginActivity = PluginActivity::class.java.cast(aClass.newInstance())
+            pluginActivity.setContainerActivity(mHostActivityDelegator)
+            pluginActivity.setPluginResources(mPluginResources)
+            pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
+            pluginActivity.setPluginClassLoader(mPluginClassLoader)
+            pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
+            pluginActivity.setPluginApplication(mPluginApplication)
+            mPluginActivity = pluginActivity
+            pluginActivity.performOnCreate(bundle)
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
@@ -210,8 +209,8 @@ class HostActivityDelegateImpl(
 
     override fun getLayoutInflater(): LayoutInflater {
         val inflater = mHostActivityDelegator.applicationContext.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        inflater.cloneInContext(mMockActivity)
-        return FixedContextLayoutInflater(inflater, mMockActivity)
+        inflater.cloneInContext(mPluginActivity)
+        return FixedContextLayoutInflater(inflater, mPluginActivity)
     }
 
     override fun getResources(): Resources {
