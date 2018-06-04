@@ -9,9 +9,11 @@ import android.os.Bundle
 import com.tencent.cubershi.mock_interface.PluginActivity
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
+import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity
 
 abstract class PluginActivitiesManager : PluginActivity.PluginActivityLauncher {
     companion object {
+        val AVOID_CLASS_VERIFY_EXCEPTION = PluginContainerActivity::class
         const val PLUGIN_LOADER_BUNDLE_KEY = "PLUGIN_LOADER_BUNDLE_KEY"
         const val PLUGIN_ACTIVITY_INFO_KEY = "PLUGIN_ACTIVITY_INFO_KEY"
         const val PLUGIN_ACTIVITY_CLASS_NAME_KEY = "PLUGIN_ACTIVITY_CLASS_NAME_KEY"
