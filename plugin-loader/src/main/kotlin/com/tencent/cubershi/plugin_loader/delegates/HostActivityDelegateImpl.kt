@@ -251,4 +251,9 @@ class HostActivityDelegateImpl(
     override fun getResources(): Resources {
         return mPluginResources
     }
+
+    override fun onBackPressed() {
+        mHostActivityDelegator.superOnBackPressed()
+        mPluginActivity.onBackPressed()
+    }
 }

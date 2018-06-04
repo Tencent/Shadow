@@ -193,4 +193,8 @@ public abstract class PluginActivity extends ContextThemeWrapper {
     public Resources getResources() {
         return null;
     }
+
+    public void onBackPressed() {
+
+    }
 }

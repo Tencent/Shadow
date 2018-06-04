@@ -454,6 +454,15 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onBackPressed();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     public Application superGetApplication() {
         return super.getApplication();
     }

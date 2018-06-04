@@ -100,4 +100,6 @@ public interface HostActivityDelegate {
     LayoutInflater getLayoutInflater();
 
     Resources getResources();
+
+    void onBackPressed();
 }
