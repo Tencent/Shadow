@@ -1,4 +1,4 @@
-# 此文件配置**构建**这个lib时应该使用的Proguard规则.
+# 此文件配置**使用**这个lib时应该添加的Proguard规则.
 
 #kotlin一般性配置 START
 -keep class kotlin.** { *; }
@@ -11,3 +11,7 @@
     public <methods>;
 }
 #kotlin一般性配置 END
+
+-keep class com.tencent.cubershi.mock_interface.**{*;}
+-keep class org.slf4j.**{*;}
+-dontwarn org.slf4j.impl.**
