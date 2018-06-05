@@ -13,7 +13,7 @@ class DemoPluginActivitiesManager : PluginActivitiesManager() {
         get() = _LauncherActivity
 
     override fun onBindContainerActivity(pluginActivity: ComponentName): ComponentName {
-        val containerActivity = ComponentName("com.tencent.libexample", "com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity")
+        val containerActivity = ComponentName("com.tencent.libexample", "com.tencent.intervideo.sixgodcontainer.proxyactivitys.PluginDefaultProxyActivity")
         if (pluginActivity.className == launcherActivityClassName) {
             _LauncherActivity = pluginActivity
         }
