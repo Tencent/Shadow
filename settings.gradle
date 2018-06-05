@@ -2,3 +2,4 @@ include ':example', ':plugin-loader', ':demo-plugin', ':slf4j-logcat', ':mock-an
 include ':plugincontainer-neo'
 include ':plugin-gradle'
 include ':test-groupvideo:wtlogin-demo'
+include ':gv-plugin-loader'
