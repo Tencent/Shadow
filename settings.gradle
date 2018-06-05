@@ -1,3 +1,4 @@
 include ':example', ':plugin-loader', ':demo-plugin', ':slf4j-logcat', ':mock-android', ':plugin-loader-apk', ':mock-interface'
 include ':plugincontainer-neo'
 include ':plugin-gradle'
+include ':test-groupvideo:wtlogin-demo'
