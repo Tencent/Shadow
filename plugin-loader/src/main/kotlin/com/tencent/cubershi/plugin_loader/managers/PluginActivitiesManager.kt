@@ -41,9 +41,9 @@ abstract class PluginActivitiesManager : PluginActivity.PluginActivityLauncher {
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
         pluginInfo.mActivities.forEach {
             val componentName = ComponentName(pluginInfo.packageName, it.className)
-            activitiesMap.put(componentName, onBindContainerActivity(componentName))
-            packageNameMap.put(it.className, pluginInfo.packageName)
-            activityInfoMap.put(componentName, it)
+            activitiesMap[componentName] = onBindContainerActivity(componentName)
+            packageNameMap[it.className] = pluginInfo.packageName
+            activityInfoMap[componentName] = it
         }
     }
 
@@ -53,20 +53,16 @@ abstract class PluginActivitiesManager : PluginActivity.PluginActivityLauncher {
      */
     abstract fun onBindContainerActivity(pluginActivity: ComponentName): ComponentName
 
-    private fun getContainerActivity(pluginActivity: ComponentName): ComponentName {
-        return activitiesMap.get(pluginActivity)!!
-    }
+    private fun getContainerActivity(pluginActivity: ComponentName): ComponentName =
+            activitiesMap[pluginActivity]!!
 
     override fun startActivity(context: Context, pluginIntent: Intent): Boolean {
         val className = pluginIntent.component.className
-        val packageName = packageNameMap[className]
-        if (packageName == null) {
-            return false
-        }
+        val packageName = packageNameMap[className] ?: return false
         pluginIntent.component = ComponentName(packageName, className)
         val containerActivity = getContainerActivity(pluginIntent.component)
         val containerActivityIntent = Intent(pluginIntent)
-        containerActivityIntent.setComponent(containerActivity)
+        containerActivityIntent.component = containerActivity
 
         val bundleForPluginLoader = Bundle()
 
@@ -75,7 +71,7 @@ abstract class PluginActivitiesManager : PluginActivity.PluginActivityLauncher {
 
         containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
         if (context is Application) {
-            containerActivityIntent.setFlags(FLAG_ACTIVITY_NEW_TASK)
+            containerActivityIntent.flags = FLAG_ACTIVITY_NEW_TASK
         }
         context.startActivity(containerActivityIntent)
         return true
