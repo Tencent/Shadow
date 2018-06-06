@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 
 public abstract class MockActivity extends PluginActivity {
 
@@ -75,5 +76,9 @@ public abstract class MockActivity extends PluginActivity {
 
     public <T extends View> T findViewById(int id) {
         return mHostActivityDelegator.findViewById(id);
+    }
+
+    public WindowManager getWindowManager() {
+        return mHostActivityDelegator.getWindowManager();
     }
 }
