@@ -19,9 +19,6 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
         const val MockActivityClassname = "com.tencent.cubershi.mock_interface.MockActivity"
         const val AndroidServiceClassname = "android.app.Service"
         const val MockServiceClassname = "com.tencent.cubershi.mock_interface.MockService"
-
-
-//        const val MockActivityClassname = "com.example.android.basicglsurfaceview.BaseActivity"
         val SpecialTransformMap = mapOf<String, SpecialTransform>(
                 "android.arch.lifecycle.ReportFragment" to ReportFragmentTransform()
         )
@@ -32,8 +29,6 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
                 val classPool: ClassPool = ClassPool.getDefault()
                 val ctClass: CtClass = classPool.makeClass(input, false)
 
-                ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
-                ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
                 ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
                 if (SpecialTransformMap.containsKey(ctClass.name)) {
                     SpecialTransformMap[ctClass.name]!!.transform(classPool, ctClass)
