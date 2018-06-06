@@ -26,7 +26,16 @@ class PluginClassLoader(
         return if (isMockClass) {
             mMockClassloader.loadClass(className)
         } else {
-            super.loadClass(className, resolve)
+            try {
+                return super.loadClass(className, resolve)
+            } catch (e: ClassNotFoundException) {
+                //org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
+                if (className.startsWith("org.apache.commons.logging")) {
+                    return mMockClassloader.parent.loadClass(className)
+                } else {
+                    throw e
+                }
+            }
         }
     }
 }
