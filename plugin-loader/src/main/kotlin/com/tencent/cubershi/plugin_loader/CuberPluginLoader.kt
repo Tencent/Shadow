@@ -48,7 +48,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                 val pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile)
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 val mockApplication = CreateApplicationBloc.callPluginApplicationOnCreate(pluginClassLoader, pluginInfo.applicationClassName, resources)
-                mockApplication.hostApplicationContext = hostAppContext
+                mockApplication.setHostApplicationContextAsBase(hostAppContext)
 
                 mLock.withLock {
                     getBusinessPluginActivitiesManager().addPluginApkInfo(pluginInfo)

@@ -23,7 +23,7 @@ class FakeRunningPlugin(
         val launcherActivity = mPluginActivitiesManager.launcherActivity
         val pluginIntent = Intent()
         pluginIntent.component = launcherActivity
-        val hostApplicationContext = mockApplication.hostApplicationContext
+        val hostApplicationContext = mockApplication
         mPluginActivitiesManager.startActivity(hostApplicationContext, pluginIntent)
 
         return object : ProgressFuture<Any> {
