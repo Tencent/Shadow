@@ -37,6 +37,8 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     private lateinit var mPluginPackageManager: PluginPackageManager
 
+    abstract val mAbi: String;
+
     @Throws(LoadPluginException::class)
     override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
 //        if (mLogger.isInfoEnabled) {
@@ -47,7 +49,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                 //todo cubershi 下面这些步骤可能可以并发起来.
                 val pluginInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 val pluginPackageManager = PluginPackageManager(pluginInfo)
-                CopySoBloc.copySo(installedPlugin.pluginFile, "armeabi")
+                CopySoBloc.copySo(installedPlugin.pluginFile, mAbi)
                 val pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile)
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 val mockApplication =
