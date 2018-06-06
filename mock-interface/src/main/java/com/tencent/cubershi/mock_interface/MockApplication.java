@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.ComponentCallbacks;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.util.Log;
  */
 public abstract class MockApplication extends ContextWrapper {
     Resources mPluginResources;
+
+    private MixPackageManager mMixPackageManager;
 
     public MockApplication() {
         super(null);
@@ -78,5 +81,14 @@ public abstract class MockApplication extends ContextWrapper {
 
     public void setPluginResources(Resources resources) {
         mPluginResources = resources;
+    }
+
+    public void setPluginPackageManager(PackageManager pluginPackageManager) {
+        mMixPackageManager = new MixPackageManager(super.getPackageManager(), pluginPackageManager);
+    }
+
+    @Override
+    public PackageManager getPackageManager() {
+        return mMixPackageManager;
     }
 }

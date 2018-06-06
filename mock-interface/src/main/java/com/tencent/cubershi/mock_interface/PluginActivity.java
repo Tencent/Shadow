@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -31,6 +32,8 @@ public abstract class PluginActivity extends ContextThemeWrapper {
 
     MockApplication mPluginApplication;
 
+    PackageManager mPluginPackageManager;
+
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;
     }
@@ -53,6 +56,10 @@ public abstract class PluginActivity extends ContextThemeWrapper {
 
     public void setPluginApplication(MockApplication pluginApplication) {
         mPluginApplication = pluginApplication;
+    }
+
+    public void setPluginPackageManager(PackageManager packageManager) {
+        mPluginPackageManager = packageManager;
     }
 
     public interface PluginActivityLauncher {

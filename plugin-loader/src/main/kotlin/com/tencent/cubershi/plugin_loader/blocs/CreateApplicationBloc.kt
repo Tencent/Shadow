@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 
 import com.tencent.cubershi.mock_interface.MockApplication
+import com.tencent.cubershi.plugin_loader.PluginPackageManager
 import com.tencent.cubershi.plugin_loader.exceptions.CreateApplicationException
 import java.util.concurrent.CountDownLatch
 
@@ -16,12 +17,19 @@ import java.util.concurrent.CountDownLatch
  */
 object CreateApplicationBloc {
     @Throws(CreateApplicationException::class)
-    fun callPluginApplicationOnCreate(pluginClassLoader: ClassLoader, appClassName: String, resources: Resources, hostAppContext: Context): MockApplication {
+    fun callPluginApplicationOnCreate(
+            pluginClassLoader: ClassLoader,
+            appClassName: String,
+            pluginPackageManager: PluginPackageManager,
+            resources: Resources,
+            hostAppContext: Context
+    ): MockApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
             val mockApplication = MockApplication::class.java.cast(appClass.newInstance())
             mockApplication.setPluginResources(resources)
             mockApplication.setHostApplicationContextAsBase(hostAppContext)
+            mockApplication.setPluginPackageManager(pluginPackageManager)
             val uiHandler = Handler(Looper.getMainLooper())
             val lock = CountDownLatch(1)
             uiHandler.post {

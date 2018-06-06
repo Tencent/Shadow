@@ -15,6 +15,7 @@ import android.view.*
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.mock_interface.PluginActivity
 import com.tencent.cubershi.plugin_loader.FixedContextLayoutInflater
+import com.tencent.cubershi.plugin_loader.PluginPackageManager
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
@@ -29,6 +30,7 @@ import dalvik.system.DexClassLoader
  * @author cubershi
  */
 class HostActivityDelegateImpl(
+        private val mPluginPackageManager: PluginPackageManager,
         private val mPluginApplication: MockApplication,
         private val mPluginClassLoader: DexClassLoader,
         private val mPluginResources: Resources,
@@ -64,6 +66,7 @@ class HostActivityDelegateImpl(
             pluginActivity.setPluginClassLoader(mPluginClassLoader)
             pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
             pluginActivity.setPluginApplication(mPluginApplication)
+            pluginActivity.setPluginPackageManager(mPluginPackageManager)
             mPluginActivity = pluginActivity
             pluginActivity.onCreate(bundle)
             mPluginActivityCreated = true

@@ -35,6 +35,8 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     private lateinit var mPluginApplication: MockApplication
 
+    private lateinit var mPluginPackageManager: PluginPackageManager
+
     @Throws(LoadPluginException::class)
     override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
 //        if (mLogger.isInfoEnabled) {
@@ -44,6 +46,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 //todo cubershi 下面这些步骤可能可以并发起来.
                 val pluginInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile.absolutePath, hostAppContext)
+                val pluginPackageManager = PluginPackageManager(pluginInfo)
                 CopySoBloc.copySo(installedPlugin.pluginFile, "armeabi")
                 val pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile)
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
@@ -51,6 +54,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                         CreateApplicationBloc.callPluginApplicationOnCreate(
                                 pluginClassLoader,
                                 pluginInfo.applicationClassName,
+                                pluginPackageManager,
                                 resources,
                                 hostAppContext
                         )
@@ -60,6 +64,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                     mPluginClassLoader = pluginClassLoader
                     mPluginResources = resources
                     mPluginApplication = mockApplication
+                    mPluginPackageManager = pluginPackageManager
                 }
 
                 FakeRunningPlugin(mockApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
@@ -80,6 +85,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
         //todo cubershi 这里返回的DefaultHostActivityDelegate直接绑定了mPluginClassLoader限制了多插件的实现
         mLock.withLock {
             return HostActivityDelegateImpl(
+                    mPluginPackageManager,
                     mPluginApplication,
                     mPluginClassLoader,
                     mPluginResources,
