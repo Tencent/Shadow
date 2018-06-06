@@ -17,6 +17,8 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
         const val MockApplicationClassname = "com.tencent.cubershi.mock_interface.MockApplication"
         const val AndroidActivityClassname = "android.app.Activity"
         const val MockActivityClassname = "com.tencent.cubershi.mock_interface.MockActivity"
+        const val AndroidFragmentClassname = "android.app.Fragment"
+        const val MockFragmentClassname = "com.tencent.cubershi.mock_interface.PluginFragment"
         const val AndroidServiceClassname = "android.app.Service"
         const val MockServiceClassname = "com.tencent.cubershi.mock_interface.MockService"
         val SpecialTransformMap = mapOf<String, SpecialTransform>(
@@ -35,6 +37,10 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
                 } else {
                     ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
                     ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
+
+                    if (ctClass.classFile.superclass == AndroidFragmentClassname) {
+                        ctClass.classFile.superclass = MockFragmentClassname
+                    }
                 }
                 ctClass.toBytecode(DataOutputStream(output))
             }
