@@ -1,5 +1,6 @@
 package com.tencent.cubershi.plugin_loader.blocs
 
+import android.content.Context
 import android.content.res.Resources
 
 import com.tencent.cubershi.mock_interface.MockApplication
@@ -12,11 +13,12 @@ import com.tencent.cubershi.plugin_loader.exceptions.CreateApplicationException
  */
 object CreateApplicationBloc {
     @Throws(CreateApplicationException::class)
-    fun callPluginApplicationOnCreate(pluginClassLoader: ClassLoader, appClassName: String, resources: Resources): MockApplication {
+    fun callPluginApplicationOnCreate(pluginClassLoader: ClassLoader, appClassName: String, resources: Resources, hostAppContext: Context): MockApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
             val mockApplication = MockApplication::class.java.cast(appClass.newInstance())
             mockApplication.setPluginResources(resources)
+            mockApplication.setHostApplicationContextAsBase(hostAppContext)
             mockApplication.onCreate()
             return mockApplication
         } catch (e: Exception) {
