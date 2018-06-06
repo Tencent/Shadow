@@ -60,6 +60,7 @@ public class PluginContainerService extends Service implements HostService, Host
         if (hostServiceDelegate != null) {
             hostServiceDelegate.onStartCommand(intent, flags, startId);
         } else {
+            // 这里可以不调用这个 tracyluo 2018/6/6
             super.onStartCommand(intent, flags, startId);
         }
         return Service.START_NOT_STICKY;

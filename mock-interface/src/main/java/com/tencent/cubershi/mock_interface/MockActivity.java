@@ -1,12 +1,11 @@
 package com.tencent.cubershi.mock_interface;
 
 import android.app.FragmentManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
 public abstract class MockActivity extends PluginActivity {
 
@@ -80,5 +79,24 @@ public abstract class MockActivity extends PluginActivity {
 
     public WindowManager getWindowManager() {
         return mHostActivityDelegator.getWindowManager();
+    }
+    @Override
+    public void unbindService(ServiceConnection conn) {
+        super.unbindService(conn);
+    }
+
+    @Override
+    public boolean bindService(Intent service, ServiceConnection conn, int flags) {
+        return super.bindService(service, conn, flags);
+    }
+
+    @Override
+    public boolean stopService(Intent name) {
+        return super.stopService(name);
+    }
+
+    @Override
+    public ComponentName startService(Intent service) {
+        return super.startService(service);
     }
 }
