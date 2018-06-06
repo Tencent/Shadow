@@ -3,9 +3,12 @@ package com.tencent.cubershi.mock_interface;
 import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 public abstract class MockActivity extends PluginActivity {
 
