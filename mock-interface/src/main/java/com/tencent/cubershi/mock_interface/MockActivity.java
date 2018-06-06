@@ -1,9 +1,11 @@
 package com.tencent.cubershi.mock_interface;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 
 public abstract class MockActivity extends PluginActivity {
 
@@ -59,4 +61,19 @@ public abstract class MockActivity extends PluginActivity {
         }
     }
 
+    public FragmentManager getFragmentManager() {
+        return mHostActivityDelegator.getFragmentManager();
+    }
+
+    public Object getLastNonConfigurationInstance() {
+        return mHostActivityDelegator.getLastNonConfigurationInstance();
+    }
+
+    public Window getWindow() {
+        return mHostActivityDelegator.getWindow();
+    }
+
+    public <T extends View> T findViewById(int id) {
+        return mHostActivityDelegator.findViewById(id);
+    }
 }
