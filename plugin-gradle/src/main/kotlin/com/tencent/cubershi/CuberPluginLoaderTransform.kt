@@ -1,6 +1,8 @@
 package com.tencent.cubershi
 
 import com.android.build.api.transform.TransformInvocation
+import com.tencent.cubershi.special.SpecialTransform
+import com.tencent.cubershi.special.android.arch.lifecycle.ReportFragmentTransform
 import javassist.ClassPool
 import javassist.CtClass
 import java.io.DataOutputStream
@@ -15,9 +17,9 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
         const val MockApplicationClassname = "com.tencent.cubershi.mock_interface.MockApplication"
         const val AndroidActivityClassname = "android.app.Activity"
         const val MockActivityClassname = "com.tencent.cubershi.mock_interface.MockActivity"
-
-
-//        const val MockActivityClassname = "com.example.android.basicglsurfaceview.BaseActivity"
+        val SpecialTransformMap = mapOf<String, SpecialTransform>(
+                "android.arch.lifecycle.ReportFragment" to ReportFragmentTransform()
+        )
     }
 
     override fun loadTransformFunction(): BiConsumer<InputStream, OutputStream> =
@@ -25,9 +27,12 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
                 val classPool: ClassPool = ClassPool.getDefault()
                 val ctClass: CtClass = classPool.makeClass(input, false)
 
-                ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
-                ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
-
+                if (SpecialTransformMap.containsKey(ctClass.name)) {
+                    SpecialTransformMap[ctClass.name]!!.transform(classPool, ctClass)
+                } else {
+                    ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
+                    ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
+                }
                 ctClass.toBytecode(DataOutputStream(output))
             }
 
