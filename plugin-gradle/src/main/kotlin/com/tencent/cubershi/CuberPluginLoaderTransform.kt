@@ -56,7 +56,19 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
                     if (ctClass.classFile.superclass == AndroidFragmentClassname) {
                         ctClass.classFile.superclass = MockFragmentClassname
                     }
-                    redirectFragmentCallGetActivity(ctClass)
+                    val allRefClassesCanBeFound = ctClass.refClasses.all {
+                        var found: Boolean;
+                        try {
+                            classPool[it as String]
+                            found = true
+                        } catch (e: NotFoundException) {
+                            found = false
+                        }
+                        found
+                    }
+                    if (allRefClassesCanBeFound) {
+                        redirectFragmentCallGetActivity(ctClass)
+                    }
                 }
                 ctClass.toBytecode(DataOutputStream(output))
             }
