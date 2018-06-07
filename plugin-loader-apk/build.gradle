@@ -39,19 +39,10 @@ android {
     }
 }
 
-tasks.whenTaskAdded {
-    if (it.name == "preDebugBuild") {
-        it.dependsOn(":mock-interface:jarDebugPackage")
-    }
-    if (it.name == "preReleaseBuild") {
-        it.dependsOn(":mock-interface:jarReleasePackage")
-    }
-}
-
 dependencies {
     implementation project(':plugin-loader')
-    compileOnly files("${project(":mock-interface").getBuildDir()}/outputs/jar/mock-interface-local-SNAPSHOT-debug.jar")
     compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:' + PLUGINMANAGER_VERSION
     compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
+    compileOnly files('../mock-interface/jar/mock-interface-local-SNAPSHOT-debug.jar')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
