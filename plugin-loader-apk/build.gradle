@@ -39,10 +39,18 @@ android {
     }
 }
 
+tasks.whenTaskAdded {
+    if (it.name == "preDebugBuild") {
+        it.dependsOn(":mock-interface:jarDebugPackage")
+    }
+    if (it.name == "preReleaseBuild") {
+        it.dependsOn(":mock-interface:jarReleasePackage")
+    }
+}
+
 dependencies {
     implementation project(':plugin-loader')
-    //todo cubershi 这里不应该将:mock-interface打包进这个apk,需要把:mock-interface编成jar包才能compileOnly依赖.打包进来暂时不影响运行逻辑.
-    implementation project(':mock-interface')
+    compileOnly files("${project(":mock-interface").getBuildDir()}/outputs/jar/mock-interface-local-SNAPSHOT-debug.jar")
     compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:' + PLUGINMANAGER_VERSION
     compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

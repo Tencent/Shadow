@@ -32,3 +32,47 @@ android {
 dependencies {
     compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
 }
+
+def jarPackage(buildType) {
+    return tasks.create("jar${buildType.capitalize()}Package", Jar) {
+        group = 'build'
+        description = '生成jar包'
+        archiveName = "${project.name}-${project.ARTIFACT_VERSION}-${buildType}.jar"
+        destinationDir = file("build/outputs/jar/")
+        from file("build/intermediates/classes/${buildType}")
+    }
+}
+
+afterEvaluate {
+    android {
+        buildTypes.findAll().each { buildType ->
+            def buildTypeName = buildType.getName()
+            jarPackage(buildTypeName)
+        }
+    }
+}
+
+def TjarDebugPackage = null
+def TjarReleasePackage = null
+def TcompileDebugSources = null
+def TcompileReleaseSources = null
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("jarDebugPackage")) {
+        TjarDebugPackage = theTask
+    }
+    if (theTask.name.equals("jarReleasePackage")) {
+        TjarReleasePackage = theTask
+    }
+    if (theTask.name.equals("compileDebugSources")) {
+        TcompileDebugSources = theTask
+    }
+    if (theTask.name.equals("compileReleaseSources")) {
+        TcompileReleaseSources = theTask
+    }
+    if (TjarDebugPackage != null && TcompileDebugSources != null) {
+        TjarDebugPackage.dependsOn TcompileDebugSources
+    }
+    if (TjarReleasePackage != null && TcompileReleaseSources != null) {
+        TjarReleasePackage.dependsOn TcompileReleaseSources
+    }
+}
