@@ -106,6 +106,7 @@ public abstract class PluginActivity extends ContextThemeWrapper {
     }
 
     public void finish() {
+        mHostActivityDelegator.superFinish();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

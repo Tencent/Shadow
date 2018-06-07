@@ -44,6 +44,8 @@ class HostActivityDelegateImpl(
         mHostActivityDelegator = hostActivityDelegator
     }
 
+    override fun getPluginActivity(): Any = mPluginActivity
+
     override fun onCreate(bundle: Bundle?) {
         mHostActivityDelegator.superOnCreate(bundle)
 
