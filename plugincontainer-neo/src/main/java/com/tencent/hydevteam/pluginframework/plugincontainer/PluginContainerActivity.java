@@ -102,6 +102,10 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         hostActivityDelegate = delegate;
     }
 
+    final public Object getPluginActivity() {
+        return hostActivityDelegate.getPluginActivity();
+    }
+
     @Override
     final protected void onCreate(Bundle savedInstanceState) {
         if (hostActivityDelegate != null) {
