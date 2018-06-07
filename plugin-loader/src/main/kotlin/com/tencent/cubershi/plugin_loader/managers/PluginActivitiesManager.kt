@@ -1,6 +1,6 @@
 package com.tencent.cubershi.plugin_loader.managers
 
-import android.app.Application
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -70,7 +70,7 @@ abstract class PluginActivitiesManager : PluginActivity.PluginActivityLauncher {
         bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[pluginIntent.component])
 
         containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
-        if (context is Application) {
+        if (context !is Activity) {
             containerActivityIntent.flags = FLAG_ACTIVITY_NEW_TASK
         }
         context.startActivity(containerActivityIntent)
