@@ -1,5 +1,6 @@
 package com.tencent.cubershi.plugin_loader.delegates
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
@@ -26,6 +27,7 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
             val cls = intent.getStringExtra("className")
             val aClass = mPluginClassLoader.loadClass(cls)
             mPluginService = MockService::class.java.cast(aClass.newInstance())
+            mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
             mIsSetService = true
         }
         return mPluginService.onStartCommand(intent, flags, startId)
@@ -47,7 +49,14 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
         mHostServiceDelegator = hostServiceDelegator
     }
 
-    override fun onBind(intent: Intent?): IBinder {
+    override fun onBind(intent: Intent): IBinder {
+        if (!mIsSetService){
+            val cls = intent.getStringExtra("className")
+            val aClass = mPluginClassLoader.loadClass(cls)
+            mPluginService = MockService::class.java.cast(aClass.newInstance())
+            mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
+            mIsSetService = true
+        }
         return mPluginService.onBind(intent)
     }
 

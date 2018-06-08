@@ -114,7 +114,7 @@ public abstract class MockActivity extends PluginActivity {
 
     @Override
     public ComponentName startService(Intent service) {
-        if(!mPluginSrviceOperator.startService(mHostActivityDelegator.getHostActivity().getImplementActivity(),service))
+        if(!mPluginServiceOperator.startService(mHostActivityDelegator.getHostActivity().getImplementActivity(),service))
             return super.startService(service);
         return null;
     }

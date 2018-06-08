@@ -35,7 +35,7 @@ public abstract class PluginActivity extends ContextThemeWrapper {
 
     PackageManager mPluginPackageManager;
 
-    PluginServiceOperator mPluginSrviceOperator;
+    PluginServiceOperator mPluginServiceOperator;
 
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;
@@ -49,7 +49,7 @@ public abstract class PluginActivity extends ContextThemeWrapper {
         mPluginClassLoader = classLoader;
     }
 
-    public final void setServiceOperator(PluginServiceOperator pluginServiceOperator){ mPluginSrviceOperator = pluginServiceOperator;}
+    public final void setServiceOperator(PluginServiceOperator pluginServiceOperator){ mPluginServiceOperator = pluginServiceOperator;}
 
     public void setContainerActivity(HostActivityDelegator delegator) {
         mHostActivityDelegator = delegator;

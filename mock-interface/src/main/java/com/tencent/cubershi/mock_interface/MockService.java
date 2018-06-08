@@ -7,17 +7,16 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.IBinder;
+import android.view.ContextThemeWrapper;
 
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator;
 
 /**
  * Created by tracyluo on 2018/6/5.
  */
-public abstract class MockService {
+public abstract class MockService extends ContextThemeWrapper {
     HostServiceDelegator mHostServiceDelegator;
     Resources mPluginResources;
-    Context mHostAppContext;
-
     ClassLoader mPluginClassLoader;
     MockApplication mPluginApplication;
 
@@ -26,7 +25,7 @@ public abstract class MockService {
     }
 
     public final void setHostContextAsBase(Context context) {
-        mHostAppContext = context;
+        attachBaseContext(context);
     }
 
     public final void setPluginClassLoader(ClassLoader classLoader) {
@@ -75,9 +74,9 @@ public abstract class MockService {
     public interface PluginServiceOperator {
 
         boolean startService(Activity activity, Intent intent);
-        boolean stopService(Intent name);
-        boolean bindService(Intent service, ServiceConnection conn, int flags);
-        boolean unbindService(ServiceConnection conn);
+        boolean stopService(Activity activity, Intent name);
+        boolean bindService(Activity activity, Intent service, ServiceConnection conn, int flags);
+        boolean unbindService(Activity activity, ServiceConnection conn);
 
     }
 }
