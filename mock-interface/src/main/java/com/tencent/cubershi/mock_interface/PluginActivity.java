@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.tencent.cubershi.mock_interface.MockService.PluginServiceOperator;
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
 public abstract class PluginActivity extends ContextThemeWrapper {
@@ -34,6 +35,8 @@ public abstract class PluginActivity extends ContextThemeWrapper {
 
     PackageManager mPluginPackageManager;
 
+    PluginServiceOperator mPluginSrviceOperator;
+
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;
     }
@@ -45,6 +48,8 @@ public abstract class PluginActivity extends ContextThemeWrapper {
     public final void setPluginClassLoader(ClassLoader classLoader) {
         mPluginClassLoader = classLoader;
     }
+
+    public final void setServiceOperator(PluginServiceOperator pluginServiceOperator){ mPluginSrviceOperator = pluginServiceOperator;}
 
     public void setContainerActivity(HostActivityDelegator delegator) {
         mHostActivityDelegator = delegator;

@@ -5,7 +5,9 @@ import android.content.res.Resources
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.blocs.*
 import com.tencent.cubershi.plugin_loader.delegates.HostActivityDelegateImpl
+import com.tencent.cubershi.plugin_loader.delegates.HostServiceDelegateImpl
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
+import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
 import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.common.progress.ProgressFutureImpl
@@ -32,6 +34,8 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
     private lateinit var mPluginResources: Resources
 
     abstract fun getBusinessPluginActivitiesManager(): PluginActivitiesManager
+
+    abstract fun getBusinessPluginServiceManager(): PluginServicesManager
 
     private lateinit var mPluginApplication: MockApplication
 
@@ -63,6 +67,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 
                 mLock.withLock {
                     getBusinessPluginActivitiesManager().addPluginApkInfo(pluginInfo)
+                    getBusinessPluginServiceManager().addPluginApkInfo(pluginInfo)
                     mPluginClassLoader = pluginClassLoader
                     mPluginResources = resources
                     mPluginApplication = mockApplication
@@ -91,13 +96,20 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                     mPluginApplication,
                     mPluginClassLoader,
                     mPluginResources,
-                    getBusinessPluginActivitiesManager()
+                    getBusinessPluginActivitiesManager(),
+                    getBusinessPluginServiceManager()
             )
         }
     }
 
     override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate? {
-        return null
+        mLock.withLock {
+            return HostServiceDelegateImpl(
+                    mPluginApplication,
+                    mPluginClassLoader,
+                    mPluginResources,
+                    getBusinessPluginServiceManager())
+        }
     }
 
     companion object {

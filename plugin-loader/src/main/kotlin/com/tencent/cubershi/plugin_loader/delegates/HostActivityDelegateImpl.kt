@@ -19,6 +19,7 @@ import com.tencent.cubershi.plugin_loader.PluginPackageManager
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
+import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import dalvik.system.DexClassLoader
@@ -34,7 +35,8 @@ class HostActivityDelegateImpl(
         private val mPluginApplication: MockApplication,
         private val mPluginClassLoader: DexClassLoader,
         private val mPluginResources: Resources,
-        private val mPluginActivitiesManager: PluginActivitiesManager
+        private val mPluginActivitiesManager: PluginActivitiesManager,
+        private val mPluginServicesManager: PluginServicesManager
 ) : HostActivityDelegate {
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
@@ -69,6 +71,7 @@ class HostActivityDelegateImpl(
             pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
             pluginActivity.setPluginApplication(mPluginApplication)
             pluginActivity.setPluginPackageManager(mPluginPackageManager)
+            pluginActivity.setServiceOperator(mPluginServicesManager)
             mPluginActivity = pluginActivity
             pluginActivity.onCreate(bundle)
             mPluginActivityCreated = true

@@ -1,5 +1,6 @@
 package com.tencent.cubershi.mock_interface;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -71,9 +72,9 @@ public abstract class MockService {
 
     }
 
-    public interface PluginServiceManager {
+    public interface PluginServiceOperator {
 
-        boolean startService(Intent intent);
+        boolean startService(Activity activity, Intent intent);
         boolean stopService(Intent name);
         boolean bindService(Intent service, ServiceConnection conn, int flags);
         boolean unbindService(ServiceConnection conn);

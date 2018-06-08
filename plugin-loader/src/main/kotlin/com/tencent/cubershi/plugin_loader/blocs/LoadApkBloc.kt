@@ -36,6 +36,7 @@ object LoadApkBloc {
                         "com.tencent.cubershi.mock_interface.MockActivity"
                         , "com.tencent.cubershi.mock_interface.PluginFragment"
                         , "com.tencent.cubershi.mock_interface.MockApplication"
+                        , "com.tencent.cubershi.mock_interface.MockService"
                 )
         )
     }

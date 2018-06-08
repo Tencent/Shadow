@@ -46,7 +46,6 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
             BiConsumer { input, output ->
                 val ctClass: CtClass = classPool.makeClass(input, false)
 
-                ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
                 if (SpecialTransformMap.containsKey(ctClass.name)) {
                     SpecialTransformMap[ctClass.name]!!.transform(classPool, ctClass)
                 } else {
@@ -69,6 +68,7 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
                     if (allRefClassesCanBeFound) {
                         redirectFragmentCallGetActivity(ctClass)
                     }
+                    ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
                 }
                 ctClass.toBytecode(DataOutputStream(output))
             }

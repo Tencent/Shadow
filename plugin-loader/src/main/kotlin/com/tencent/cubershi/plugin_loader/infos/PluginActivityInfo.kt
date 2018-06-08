@@ -6,8 +6,7 @@ import android.os.Parcelable
 data class PluginActivityInfo(val className: String, val themeResource: Int) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
-            parcel.readInt()) {
-    }
+            parcel.readInt())
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
         dest.writeString(className)

@@ -7,8 +7,14 @@ data class PluginInfo(val packageName: String, val applicationClassName: String)
     internal val mActivities: MutableSet<PluginActivityInfo> = HashSet()
     var metaData: Bundle? = null
 
+    internal val mServices: MutableSet<PluginServiceInfo> = HashSet()
+
     fun putActivityInfo(pluginActivityInfo: PluginActivityInfo) {
         mActivities.add(pluginActivityInfo)
+    }
+
+    fun putServiceInfo(pluginServiceInfo: PluginServiceInfo) {
+        mServices.add(pluginServiceInfo)
     }
 
 }

@@ -23,5 +23,5 @@ public interface DelegateProvider {
      * @param delegator HostService委托者
      * @return HostService被委托者
      */
-    HostServiceDelegate getHostServiceDelegate(Class<? extends HostServiceDelegator> delegator);
+    HostServiceDelegate  getHostServiceDelegate(Class<? extends HostServiceDelegator> delegator);
 }

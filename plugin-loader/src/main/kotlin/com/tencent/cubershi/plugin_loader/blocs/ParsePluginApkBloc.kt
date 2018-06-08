@@ -1,11 +1,11 @@
 package com.tencent.cubershi.plugin_loader.blocs
 
 import android.content.Context
-import android.content.pm.PackageManager.GET_ACTIVITIES
-import android.content.pm.PackageManager.GET_META_DATA
+import android.content.pm.PackageManager.*
 import com.tencent.cubershi.plugin_loader.exceptions.ParsePluginApkException
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
+import com.tencent.cubershi.plugin_loader.infos.PluginServiceInfo
 
 /**
  * 解析插件apk逻辑
@@ -25,7 +25,7 @@ object ParsePluginApkBloc {
         val packageManager = hostAppContext.packageManager
         val packageArchiveInfo = packageManager.getPackageArchiveInfo(
                 archiveFilePath,
-                GET_ACTIVITIES or GET_META_DATA
+                GET_ACTIVITIES or GET_META_DATA or GET_SERVICES
         )
         val pluginInfo = PluginInfo(
                 packageArchiveInfo.applicationInfo.packageName
@@ -34,6 +34,7 @@ object ParsePluginApkBloc {
         packageArchiveInfo.activities.forEach {
             pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource))
         }
+        packageArchiveInfo.services.forEach { pluginInfo.putServiceInfo(PluginServiceInfo (it.name)) }
         pluginInfo.metaData = packageArchiveInfo.applicationInfo.metaData
         return pluginInfo
     }
