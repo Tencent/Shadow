@@ -6,15 +6,17 @@ import com.android.utils.FileUtils
 import com.tencent.cubershi.special.SpecialTransform
 import javassist.ClassPool
 import javassist.CtClass
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.function.BiConsumer
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-class CuberPluginLoaderTransform() : MyCustomClassTransform() {
+class CuberPluginLoaderTransform(val classPool: ClassPool) : MyCustomClassTransform() {
 
     companion object {
-        val classPool: ClassPool = ClassPool.getDefault()
         const val AndroidApplicationClassname = "android.app.Application"
         const val MockApplicationClassname = "com.tencent.cubershi.mock_interface.MockApplication"
         const val AndroidActivityClassname = "android.app.Activity"
@@ -26,8 +28,9 @@ class CuberPluginLoaderTransform() : MyCustomClassTransform() {
         val SpecialTransformMap = mapOf<String, SpecialTransform>(
         )
         val FragmentCtClassCache = mutableSetOf<String>()
-        val ContainerFragmentCtClass = classPool["com.tencent.cubershi.mock_interface.ContainerFragment"]
     }
+
+    val ContainerFragmentCtClass = classPool["com.tencent.cubershi.mock_interface.ContainerFragment"]
 
     override fun loadTransformFunction(): BiConsumer<InputStream, OutputStream> =
             BiConsumer { input, output ->
@@ -36,7 +39,7 @@ class CuberPluginLoaderTransform() : MyCustomClassTransform() {
                 val ctClassOriginName = ctClass.name
                 if (SpecialTransformMap.containsKey(ctClassOriginName)) {
                     SpecialTransformMap[ctClassOriginName]!!.transform(classPool, ctClass)
-                    ctClass.toBytecode(DataOutputStream(output))
+                    ctClass.writeOut(output)
                 } else {
                     ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
                     ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
@@ -45,28 +48,35 @@ class CuberPluginLoaderTransform() : MyCustomClassTransform() {
                     renameFragment(ctClass)
                     if (ctClass.isFragment()) {
                         val newContainerFragmentCtClass = classPool.makeClass(ctClassOriginName, ContainerFragmentCtClass)
-                        newContainerFragmentCtClass.toBytecode(DataOutputStream(output))
+                        newContainerFragmentCtClass.writeOut(output)
                         when (output) {
                             is FileOutputStream -> {
                                 val newPath = currentFile.absolutePath.replace(currentFile.nameWithoutExtension, ctClass.simpleName)
                                 FileOutputStream(newPath).use {
-                                    ctClass.toBytecode(DataOutputStream(it))
+                                    ctClass.writeOut(it)
                                 }
                             }
                             is ZipOutputStream -> {
                                 val newEntryPath = ctClass.name.replace(".", "/") + ".class"
                                 output.putNextEntry(ZipEntry(newEntryPath))
-                                ctClass.toBytecode(DataOutputStream(output))
+                                ctClass.writeOut(output)
                             }
                         }
                         return@BiConsumer
                     }
-                    ctClass.toBytecode(DataOutputStream(output))
+                    ctClass.writeOut(output)
                 }
             }
 
+    private fun CtClass.writeOut(output: OutputStream) {
+        this.toBytecode(java.io.DataOutputStream(output))
+    }
+
     override fun transform(invocation: TransformInvocation) {
         System.out.println("CuberPluginLoaderTransform开始")
+
+        val ctClass = classPool.getOrNull("android.arch.lifecycle.ReportFragment_")
+        System.err.println("ctClass==null:" + (ctClass == null))
 
         loadAppCtClass(invocation)
 

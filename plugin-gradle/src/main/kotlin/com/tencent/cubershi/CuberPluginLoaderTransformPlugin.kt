@@ -11,12 +11,12 @@ class CuberPluginLoaderTransformPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         System.err.println("CuberPluginLoaderTransformPlugin project.name==" + project.name)
 
-        val classPool: ClassPool = ClassPool.getDefault()
+        val classPool = ClassPool(true)
         val plugin = project.plugins.getPlugin(AppPlugin::class.java)
 
         val androidJar = File(plugin.extension.sdkDirectory, "platforms/${plugin.extension.compileSdkVersion}/android.jar")
         classPool.appendClassPath(androidJar.absolutePath)
 
-        plugin.extension.registerTransform(CuberPluginLoaderTransform())
+        plugin.extension.registerTransform(CuberPluginLoaderTransform(classPool))
     }
 }
