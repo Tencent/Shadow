@@ -27,6 +27,8 @@ class CuberPluginLoaderTransform(val classPool: ClassPool) : MyCustomClassTransf
         const val MockFragmentClassname = "com.tencent.cubershi.mock_interface.MockFragment"
         const val AndroidFragmentManagerClassname = "android.app.FragmentManager"
         const val PluginFragmentManagerClassname = "com.tencent.cubershi.mock_interface.PluginFragmentManager"
+        const val AndroidFragmentTransactionClassname = "android.app.FragmentTransaction"
+        const val PluginFragmentTransactionClassname = "com.tencent.cubershi.mock_interface.PluginFragmentTransaction"
         val SpecialTransformMap = mapOf<String, SpecialTransform>(
         )
         val FragmentCtClassCache = mutableSetOf<String>()
@@ -48,6 +50,7 @@ class CuberPluginLoaderTransform(val classPool: ClassPool) : MyCustomClassTransf
                     ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
                     ctClass.replaceClassName(AndroidFragmentClassname, MockFragmentClassname)
                     ctClass.replaceClassName(AndroidFragmentManagerClassname, PluginFragmentManagerClassname)
+                    ctClass.replaceClassName(AndroidFragmentTransactionClassname, PluginFragmentTransactionClassname)
                     renameFragment(ctClass)
                     if (ctClass.isFragment()) {
                         val newContainerFragmentCtClass = classPool.makeClass(ctClassOriginName, ContainerFragmentCtClass)

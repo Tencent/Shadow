@@ -271,11 +271,6 @@ public class ContainerFragment extends Fragment {
     }
 
     @Override
-    public View getView() {
-        return mPluginFragment.getView();
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mPluginFragment.onActivityCreated(savedInstanceState);
