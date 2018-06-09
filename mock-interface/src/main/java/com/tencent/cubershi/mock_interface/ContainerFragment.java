@@ -34,6 +34,18 @@ public class ContainerFragment extends Fragment {
 
     private boolean init = false;
 
+    private OnInflateParams mOnInflateParams;
+
+    private static class OnInflateParams {
+        final AttributeSet attrs;
+        final Bundle savedInstanceState;
+
+        private OnInflateParams(AttributeSet attrs, Bundle savedInstanceState) {
+            this.attrs = attrs;
+            this.savedInstanceState = savedInstanceState;
+        }
+    }
+
     private MockFragment mPluginFragment;
 
     private void initPluginFragment(Context context) {
@@ -60,6 +72,11 @@ public class ContainerFragment extends Fragment {
             mPluginFragment = MockFragment.class.cast(constructor.newInstance());
         } catch (Exception e) {
             throw new InstantiationException("无法构造" + pluginFragmentClassName, e);
+        }
+
+        if (mOnInflateParams != null) {
+            mPluginFragment.onInflate(mOnInflateParams.attrs, mOnInflateParams.savedInstanceState);
+            mOnInflateParams = null;
         }
     }
 
@@ -179,19 +196,15 @@ public class ContainerFragment extends Fragment {
     }
 
     @Override
-    public LayoutInflater onGetLayoutInflater(Bundle savedInstanceState) {
-        return mPluginFragment.onGetLayoutInflater(savedInstanceState);
-    }
-
-    @Override
     @Deprecated
     public void onInflate(AttributeSet attrs, Bundle savedInstanceState) {
         super.onInflate(attrs, savedInstanceState);
-        mPluginFragment.onInflate(attrs, savedInstanceState);
+        mOnInflateParams = new OnInflateParams(attrs, savedInstanceState);
     }
 
     @Override
     public void onInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
+        initPluginFragment(context);
         super.onInflate(context, attrs, savedInstanceState);
         mPluginFragment.onInflate(context, attrs, savedInstanceState);
     }
