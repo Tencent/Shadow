@@ -24,14 +24,59 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActi
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class MockFragment {
-    public MockFragment() {
+    private static Map<String, Constructor<?>> constructorMap = new HashMap<>();
 
+    private static ContainerFragment instantiateContainerFragment(MockFragment mockFragment) {
+        String mockFragmentClassname = mockFragment.getClass().getName();
+        String containerFragmentClassName = mockFragmentClassname.substring(0, mockFragmentClassname.length() - 1);
+        Constructor<?> constructor = constructorMap.get(containerFragmentClassName);
+        if (constructor == null) {
+            ClassLoader pluginClassLoader = mockFragment.getClass().getClassLoader();
+            try {
+                Class<?> aClass = pluginClassLoader.loadClass(containerFragmentClassName);
+                constructor = aClass.getConstructor();
+                constructorMap.put(containerFragmentClassName, constructor);
+            } catch (Exception e) {
+                throw new Fragment.InstantiationException("无法构造" + containerFragmentClassName, e);
+            }
+        }
+        try {
+            return ContainerFragment.class.cast(constructor.newInstance());
+        } catch (Exception e) {
+            throw new Fragment.InstantiationException("无法构造" + containerFragmentClassName, e);
+        }
+    }
+
+    /**
+     * 标志当前Fragment是否由app自己的代码创建的
+     */
+    private boolean mIsAppCreateFragment;
+
+    public MockFragment() {
+        mContainerFragment = instantiateContainerFragment(this);
+        mContainerFragment.bindPluginFragment(this);
+        mIsAppCreateFragment = true;
     }
 
     private Context mAttachedContext;
+
+    private ContainerFragment mContainerFragment;
+
+    public void setContainerFragment(ContainerFragment containerFragment) {
+        mIsAppCreateFragment = false;
+        mContainerFragment.unbindPluginFragment();
+        mContainerFragment = containerFragment;
+    }
+
+    public ContainerFragment getContainerFragment() {
+        return mContainerFragment;
+    }
 
     final public MockActivity getActivity() {
         if (mAttachedContext == null) {
@@ -43,7 +88,9 @@ public class MockFragment {
     }
 
     public void setArguments(Bundle args) {
-
+        if (mIsAppCreateFragment) {
+            mContainerFragment.setArguments(args);
+        }
     }
 
 

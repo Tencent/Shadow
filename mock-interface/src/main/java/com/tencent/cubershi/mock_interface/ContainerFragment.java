@@ -47,15 +47,8 @@ public class ContainerFragment extends Fragment {
         }
     }
 
-    private MockFragment mPluginFragment;
-
-    private void initPluginFragment(Context context) {
-        if (init) {
-            return;
-        }
-        init = true;
-
-        String pluginFragmentClassName = this.getClass().getName() + "_";
+    private static MockFragment instantiatePluginFragment(ContainerFragment containerFragment, Context context) {
+        String pluginFragmentClassName = containerFragment.getClass().getName() + "_";
         Constructor<?> constructor = constructorMap.get(pluginFragmentClassName);
         if (constructor == null) {
             PluginContainerActivity containerActivity = (PluginContainerActivity) context;
@@ -70,15 +63,46 @@ public class ContainerFragment extends Fragment {
             }
         }
         try {
-            mPluginFragment = MockFragment.class.cast(constructor.newInstance());
+            return MockFragment.class.cast(constructor.newInstance());
         } catch (Exception e) {
             throw new InstantiationException("无法构造" + pluginFragmentClassName, e);
         }
+    }
+
+    private MockFragment mPluginFragment;
+
+    void bindPluginFragment(MockFragment pluginFragment) {
+        init = true;
+        mPluginFragment = pluginFragment;
+    }
+
+    void unbindPluginFragment() {
+        init = false;
+        mPluginFragment = null;
+    }
+
+    private void initPluginFragment(Context context) {
+        if (init) {
+            return;
+        }
+        init = true;
+
+        onBindPluginFragment(context);
 
         if (mOnInflateParams != null) {
             mPluginFragment.onInflate(mOnInflateParams.attrs, mOnInflateParams.savedInstanceState);
             mOnInflateParams = null;
         }
+    }
+
+    private void onBindPluginFragment(Context context) {
+        mPluginFragment = instantiatePluginFragment(this, context);
+        mPluginFragment.setContainerFragment(this);
+    }
+
+    private void onUnbindPluginFragment() {
+        mPluginFragment.setContainerFragment(null);
+        mPluginFragment = null;
     }
 
     @Override
@@ -201,6 +225,9 @@ public class ContainerFragment extends Fragment {
     public void onInflate(AttributeSet attrs, Bundle savedInstanceState) {
         super.onInflate(attrs, savedInstanceState);
         mOnInflateParams = new OnInflateParams(attrs, savedInstanceState);
+        if (mPluginFragment != null) {
+            mPluginFragment.onInflate(attrs, savedInstanceState);
+        }
     }
 
     @Override
@@ -347,7 +374,7 @@ public class ContainerFragment extends Fragment {
         super.onDetach();
         mPluginFragment.onDetach();
         if (mDestroyed) {
-            mPluginFragment = null;
+            onUnbindPluginFragment();
         }
     }
 

@@ -3,8 +3,8 @@ package com.tencent.cubershi.mock_interface;
 import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +16,10 @@ public abstract class MockActivity extends PluginActivity {
     private LayoutInflater mLayoutInflater;
 
     private MixPackageManager mMixPackageManager;
+
+    private int mFragmentManagerHash;
+
+    private PluginFragmentManager mPluginFragmentManager;
 
     public void setContentView(int layoutResID) {
         final View inflate = LayoutInflater.from(this).inflate(layoutResID, null);
@@ -68,7 +72,13 @@ public abstract class MockActivity extends PluginActivity {
     }
 
     public FragmentManager getFragmentManager() {
-        return mHostActivityDelegator.getFragmentManager();
+        FragmentManager fragmentManager = mHostActivityDelegator.getFragmentManager();
+        int hash = System.identityHashCode(fragmentManager);
+        if (hash != mFragmentManagerHash) {
+            mFragmentManagerHash = hash;
+            mPluginFragmentManager = new PluginFragmentManager(fragmentManager);
+        }
+        return mPluginFragmentManager;
     }
 
     public Object getLastNonConfigurationInstance() {
