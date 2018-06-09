@@ -21,7 +21,8 @@ class CuberPluginLoaderTransform() : MyCustomClassTransform() {
         const val MockActivityClassname = "com.tencent.cubershi.mock_interface.MockActivity"
         const val AndroidServiceClassname = "android.app.Service"
         const val MockServiceClassname = "com.tencent.cubershi.mock_interface.MockService"
-        const val AndroidFragment = "android.app.Fragment"
+        const val AndroidFragmentClassname = "android.app.Fragment"
+        const val MockFragmentClassname = "com.tencent.cubershi.mock_interface.MockFragment"
         val SpecialTransformMap = mapOf<String, SpecialTransform>(
         )
         val FragmentCtClassCache = mutableSetOf<String>()
@@ -40,6 +41,7 @@ class CuberPluginLoaderTransform() : MyCustomClassTransform() {
                     ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
                     ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
                     ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
+                    ctClass.replaceClassName(AndroidFragmentClassname, MockFragmentClassname)
                     renameFragment(ctClass)
                     if (ctClass.isFragment()) {
                         val newContainerFragmentCtClass = classPool.makeClass(ctClassOriginName, ContainerFragmentCtClass)
@@ -101,7 +103,7 @@ class CuberPluginLoaderTransform() : MyCustomClassTransform() {
     private fun renameFragment(ctClass: CtClass) {
         ctClass.refClasses.forEach {
             val refClassName: String = it as String
-            if (refClassName == AndroidFragment) {
+            if (refClassName == MockFragmentClassname) {
                 return@forEach
             }
             if (refClassName in FragmentCtClassCache) {
@@ -121,7 +123,7 @@ class CuberPluginLoaderTransform() : MyCustomClassTransform() {
     private fun CtClass.isFragment(): Boolean {
         var tmp: CtClass? = this
         do {
-            if (tmp?.name == AndroidFragment) {
+            if (tmp?.name == MockFragmentClassname) {
                 return true
             }
             tmp = tmp?.superclass
