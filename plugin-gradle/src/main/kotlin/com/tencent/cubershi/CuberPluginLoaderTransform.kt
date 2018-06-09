@@ -6,13 +6,12 @@ import com.android.utils.FileUtils
 import com.tencent.cubershi.special.SpecialTransform
 import javassist.ClassPool
 import javassist.CtClass
-import java.io.DataOutputStream
-import java.io.File
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
 import java.util.function.BiConsumer
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
-class CuberPluginLoaderTransform() : CustomClassTransform() {
+class CuberPluginLoaderTransform() : MyCustomClassTransform() {
 
     companion object {
         val classPool: ClassPool = ClassPool.getDefault()
@@ -26,21 +25,42 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
         val SpecialTransformMap = mapOf<String, SpecialTransform>(
         )
         val FragmentCtClassCache = mutableSetOf<String>()
+        val ContainerFragmentCtClass = classPool["com.tencent.cubershi.mock_interface.ContainerFragment"]
     }
 
     override fun loadTransformFunction(): BiConsumer<InputStream, OutputStream> =
             BiConsumer { input, output ->
                 val ctClass: CtClass = classPool.makeClass(input, false)
 
-                if (SpecialTransformMap.containsKey(ctClass.name)) {
-                    SpecialTransformMap[ctClass.name]!!.transform(classPool, ctClass)
+                val ctClassOriginName = ctClass.name
+                if (SpecialTransformMap.containsKey(ctClassOriginName)) {
+                    SpecialTransformMap[ctClassOriginName]!!.transform(classPool, ctClass)
+                    ctClass.toBytecode(DataOutputStream(output))
                 } else {
                     ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
                     ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
                     ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
                     renameFragment(ctClass)
+                    if (ctClass.isFragment()) {
+                        val newContainerFragmentCtClass = classPool.makeClass(ctClassOriginName, ContainerFragmentCtClass)
+                        newContainerFragmentCtClass.toBytecode(DataOutputStream(output))
+                        when (output) {
+                            is FileOutputStream -> {
+                                val newPath = currentFile.absolutePath.replace(currentFile.nameWithoutExtension, ctClass.simpleName)
+                                FileOutputStream(newPath).use {
+                                    ctClass.toBytecode(DataOutputStream(it))
+                                }
+                            }
+                            is ZipOutputStream -> {
+                                val newEntryPath = ctClass.name.replace(".", "/") + ".class"
+                                output.putNextEntry(ZipEntry(newEntryPath))
+                                ctClass.toBytecode(DataOutputStream(output))
+                            }
+                        }
+                        return@BiConsumer
+                    }
+                    ctClass.toBytecode(DataOutputStream(output))
                 }
-                ctClass.toBytecode(DataOutputStream(output))
             }
 
     override fun transform(invocation: TransformInvocation) {

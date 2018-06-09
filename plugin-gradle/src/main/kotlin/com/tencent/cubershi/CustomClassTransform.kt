@@ -139,7 +139,7 @@ abstract class CustomClassTransform : Transform() {
     }
 
     @Throws(IOException::class)
-    private fun transformFile(
+    open fun transformFile(
             function: BiConsumer<InputStream, OutputStream>, inputFile: File, outputFile: File) {
         Files.createParentDirs(outputFile)
         FileInputStream(inputFile).use { fis -> FileOutputStream(outputFile).use { fos -> apply(function, fis, fos) } }
