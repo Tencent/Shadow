@@ -71,7 +71,7 @@ public abstract class MockActivity extends PluginActivity {
         }
     }
 
-    public FragmentManager getFragmentManager() {
+    public PluginFragmentManager getFragmentManager() {
         FragmentManager fragmentManager = mHostActivityDelegator.getFragmentManager();
         int hash = System.identityHashCode(fragmentManager);
         if (hash != mFragmentManagerHash) {
