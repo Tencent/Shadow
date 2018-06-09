@@ -35,6 +35,7 @@ public class ContainerFragment extends Fragment {
     private boolean init = false;
 
     private OnInflateParams mOnInflateParams;
+    private boolean mDestroyed;
 
     private static class OnInflateParams {
         final AttributeSet attrs;
@@ -338,13 +339,16 @@ public class ContainerFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mPluginFragment.onDestroy();
-        mPluginFragment = null;
+        mDestroyed = true;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mPluginFragment.onDetach();
+        if (mDestroyed) {
+            mPluginFragment = null;
+        }
     }
 
     @Override

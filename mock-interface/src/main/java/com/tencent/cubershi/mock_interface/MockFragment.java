@@ -20,6 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
@@ -27,6 +29,17 @@ import java.io.PrintWriter;
 public class MockFragment {
     public MockFragment() {
 
+    }
+
+    private Context mAttachedContext;
+
+    final public MockActivity getActivity() {
+        if (mAttachedContext == null) {
+            return null;
+        } else {
+            final PluginContainerActivity activity = (PluginContainerActivity) mAttachedContext;
+            return (MockActivity) activity.getPluginActivity();
+        }
     }
 
     public void setArguments(Bundle args) {
@@ -150,12 +163,12 @@ public class MockFragment {
 
 
     public void onAttach(Context context) {
-
+        mAttachedContext = context;
     }
 
 
     public void onAttach(Activity activity) {
-
+        mAttachedContext = activity;
     }
 
 
