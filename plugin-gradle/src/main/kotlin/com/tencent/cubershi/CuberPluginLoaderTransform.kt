@@ -22,8 +22,10 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
         const val MockActivityClassname = "com.tencent.cubershi.mock_interface.MockActivity"
         const val AndroidServiceClassname = "android.app.Service"
         const val MockServiceClassname = "com.tencent.cubershi.mock_interface.MockService"
+        const val AndroidFragment = "android.app.Fragment"
         val SpecialTransformMap = mapOf<String, SpecialTransform>(
         )
+        val FragmentCtClassCache = mutableSetOf<String>()
     }
 
     override fun loadTransformFunction(): BiConsumer<InputStream, OutputStream> =
@@ -36,6 +38,7 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
                     ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
                     ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
                     ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
+                    renameFragment(ctClass)
                 }
                 ctClass.toBytecode(DataOutputStream(output))
             }
@@ -73,6 +76,37 @@ class CuberPluginLoaderTransform() : CustomClassTransform() {
 
     private fun loadClassFile(classFile: File) {
         classPool.makeClass(classFile.inputStream(), false)
+    }
+
+    private fun renameFragment(ctClass: CtClass) {
+        ctClass.refClasses.forEach {
+            val refClassName: String = it as String
+            if (refClassName == AndroidFragment) {
+                return@forEach
+            }
+            if (refClassName in FragmentCtClassCache) {
+                ctClass.replaceFragmentName(refClassName)
+            } else if (classPool.getOrNull(refClassName) != null
+                    && classPool.getOrNull(refClassName).isFragment()) {
+                FragmentCtClassCache.add(refClassName)
+                ctClass.replaceFragmentName(refClassName)
+            }
+        }
+    }
+
+    private fun CtClass.replaceFragmentName(fragmentClassName: String) {
+        this.replaceClassName(fragmentClassName, fragmentClassName + "_")
+    }
+
+    private fun CtClass.isFragment(): Boolean {
+        var tmp: CtClass? = this
+        do {
+            if (tmp?.name == AndroidFragment) {
+                return true
+            }
+            tmp = tmp?.superclass
+        } while (tmp != null)
+        return false
     }
 
     override fun getName(): String = "CuberPluginLoaderTransform"
