@@ -71,8 +71,18 @@ public class ContainerFragment extends Fragment {
 
     private MockFragment mPluginFragment;
 
+    /**
+     * 标志当前Fragment是否由app自己的代码创建的
+     */
+    private boolean mIsAppCreateFragment = false;
+
+    public MockFragment getPluginFragment() {
+        return mPluginFragment;
+    }
+
     void bindPluginFragment(MockFragment pluginFragment) {
         init = true;
+        mIsAppCreateFragment = true;
         mPluginFragment = pluginFragment;
     }
 
@@ -127,7 +137,11 @@ public class ContainerFragment extends Fragment {
 
     @Override
     public void setArguments(Bundle args) {
-        mPluginFragment.setArguments(args);
+        if (!mIsAppCreateFragment) {
+            mPluginFragment.setArguments(args);
+        } else {
+            super.setArguments(args);
+        }
     }
 
     @Override

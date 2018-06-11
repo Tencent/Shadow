@@ -93,6 +93,9 @@ public class MockFragment {
         }
     }
 
+    final public Bundle getArguments() {
+        return mContainerFragment.getArguments();
+    }
 
     public void setInitialSavedState(Fragment.SavedState state) {
 
