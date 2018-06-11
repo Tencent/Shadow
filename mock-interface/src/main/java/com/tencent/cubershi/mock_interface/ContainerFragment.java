@@ -119,7 +119,11 @@ public class ContainerFragment extends Fragment {
     public void onAttach(Context context) {
         initPluginFragment(context);
         super.onAttach(context);
-        mPluginFragment.onAttach(context);
+
+        if (context instanceof PluginContainerActivity) {
+            Context pluginActivity = (Context) (((PluginContainerActivity) context).getPluginActivity());
+            mPluginFragment.onAttach(pluginActivity);
+        }
     }
 
     @Override
@@ -127,7 +131,10 @@ public class ContainerFragment extends Fragment {
     public void onAttach(Activity activity) {
         initPluginFragment(activity);
         super.onAttach(activity);
-        mPluginFragment.onAttach(activity);
+        if (activity instanceof PluginContainerActivity) {
+            Context pluginActivity = (Context) (((PluginContainerActivity) activity).getPluginActivity());
+            mPluginFragment.onAttach(pluginActivity);
+        }
     }
 
     @Override
