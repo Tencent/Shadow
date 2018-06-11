@@ -81,8 +81,10 @@ public class MockFragment {
     final public MockActivity getActivity() {
         if (mAttachedContext == null) {
             return null;
+        } else if (mAttachedContext instanceof MockActivity) {
+            return (MockActivity) mAttachedContext;
         } else {
-            final PluginContainerActivity activity = (PluginContainerActivity) mAttachedContext;
+            final PluginContainerActivity activity = (PluginContainerActivity) mContainerFragment.getActivity();
             return (MockActivity) activity.getPluginActivity();
         }
     }
