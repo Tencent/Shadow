@@ -1,12 +1,11 @@
 package com.tencent.cubershi.mock_interface;
 
 import android.annotation.TargetApi;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Build;
 import android.view.View;
 
-public class PluginFragmentTransaction extends FragmentTransaction {
+public class PluginFragmentTransaction {
     final FragmentTransaction mBase;
 
     PluginFragmentTransaction(FragmentTransaction mBase) {
@@ -17,224 +16,153 @@ public class PluginFragmentTransaction extends FragmentTransaction {
         return mockFragment.getContainerFragment();
     }
 
-
     public PluginFragmentTransaction add(MockFragment fragment, String tag) {
-        add(getContainerFragment(fragment), tag);
+        mBase.add(getContainerFragment(fragment), tag);
         return this;
     }
-
 
     public PluginFragmentTransaction add(int containerViewId, MockFragment fragment) {
-        add(containerViewId, getContainerFragment(fragment));
+        mBase.add(containerViewId, getContainerFragment(fragment));
         return this;
     }
-
 
     public PluginFragmentTransaction add(int containerViewId, MockFragment fragment, String tag) {
-        add(containerViewId, getContainerFragment(fragment), tag);
+        mBase.add(containerViewId, getContainerFragment(fragment), tag);
         return this;
     }
-
 
     public PluginFragmentTransaction replace(int containerViewId, MockFragment fragment) {
-        replace(containerViewId, getContainerFragment(fragment));
+        mBase.replace(containerViewId, getContainerFragment(fragment));
         return this;
     }
-
 
     public PluginFragmentTransaction replace(int containerViewId, MockFragment fragment, String tag) {
-        replace(containerViewId, getContainerFragment(fragment), tag);
+        mBase.replace(containerViewId, getContainerFragment(fragment), tag);
         return this;
     }
-
 
     public PluginFragmentTransaction remove(MockFragment fragment) {
-        remove(getContainerFragment(fragment));
+        mBase.remove(getContainerFragment(fragment));
         return this;
     }
-
 
     public PluginFragmentTransaction hide(MockFragment fragment) {
-        hide(getContainerFragment(fragment));
+        mBase.hide(getContainerFragment(fragment));
         return this;
     }
-
 
     public PluginFragmentTransaction show(MockFragment fragment) {
-        show(getContainerFragment(fragment));
+        mBase.show(getContainerFragment(fragment));
         return this;
     }
-
 
     public PluginFragmentTransaction detach(MockFragment fragment) {
-        detach(getContainerFragment(fragment));
+        mBase.detach(getContainerFragment(fragment));
         return this;
     }
 
-
     public PluginFragmentTransaction attach(MockFragment fragment) {
-        attach(getContainerFragment(fragment));
+        mBase.attach(getContainerFragment(fragment));
         return this;
     }
 
     @TargetApi(Build.VERSION_CODES.O)
     public PluginFragmentTransaction setPrimaryNavigationFragment(MockFragment fragment) {
-        setPrimaryNavigationFragment(getContainerFragment(fragment));
+        mBase.setPrimaryNavigationFragment(getContainerFragment(fragment));
         return this;
     }
 
-    @Override
-    public FragmentTransaction add(Fragment fragment, String tag) {
-        return mBase.add(fragment, tag);
-    }
-
-    @Override
-    public FragmentTransaction add(int containerViewId, Fragment fragment) {
-        return mBase.add(containerViewId, fragment);
-    }
-
-    @Override
-    public FragmentTransaction add(int containerViewId, Fragment fragment, String tag) {
-        return mBase.add(containerViewId, fragment, tag);
-    }
-
-    @Override
-    public FragmentTransaction replace(int containerViewId, Fragment fragment) {
-        return mBase.replace(containerViewId, fragment);
-    }
-
-    @Override
-    public FragmentTransaction replace(int containerViewId, Fragment fragment, String tag) {
-        return mBase.replace(containerViewId, fragment, tag);
-    }
-
-    @Override
-    public FragmentTransaction remove(Fragment fragment) {
-        return mBase.remove(fragment);
-    }
-
-    @Override
-    public FragmentTransaction hide(Fragment fragment) {
-        return mBase.hide(fragment);
-    }
-
-    @Override
-    public FragmentTransaction show(Fragment fragment) {
-        return mBase.show(fragment);
-    }
-
-    @Override
-    public FragmentTransaction detach(Fragment fragment) {
-        return mBase.detach(fragment);
-    }
-
-    @Override
-    public FragmentTransaction attach(Fragment fragment) {
-        return mBase.attach(fragment);
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    @Override
-    public FragmentTransaction setPrimaryNavigationFragment(Fragment fragment) {
-        return mBase.setPrimaryNavigationFragment(fragment);
-    }
-
-    @Override
     public boolean isEmpty() {
         return mBase.isEmpty();
     }
 
-    @Override
-    public FragmentTransaction setCustomAnimations(int enter, int exit) {
-        return mBase.setCustomAnimations(enter, exit);
+    public PluginFragmentTransaction setCustomAnimations(int enter, int exit) {
+        mBase.setCustomAnimations(enter, exit);
+        return this;
     }
 
-    @Override
-    public FragmentTransaction setCustomAnimations(int enter, int exit, int popEnter, int popExit) {
-        return mBase.setCustomAnimations(enter, exit, popEnter, popExit);
+    public PluginFragmentTransaction setCustomAnimations(int enter, int exit, int popEnter, int popExit) {
+        mBase.setCustomAnimations(enter, exit, popEnter, popExit);
+        return this;
     }
 
-    @Override
-    public FragmentTransaction setTransition(int transit) {
-        return mBase.setTransition(transit);
+    public PluginFragmentTransaction setTransition(int transit) {
+        mBase.setTransition(transit);
+        return this;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public FragmentTransaction addSharedElement(View sharedElement, String name) {
-        return mBase.addSharedElement(sharedElement, name);
+    public PluginFragmentTransaction addSharedElement(View sharedElement, String name) {
+        mBase.addSharedElement(sharedElement, name);
+        return this;
     }
 
-    @Override
-    public FragmentTransaction setTransitionStyle(int styleRes) {
-        return mBase.setTransitionStyle(styleRes);
+    public PluginFragmentTransaction setTransitionStyle(int styleRes) {
+        mBase.setTransitionStyle(styleRes);
+        return this;
     }
 
-    @Override
-    public FragmentTransaction addToBackStack(String name) {
-        return mBase.addToBackStack(name);
+    public PluginFragmentTransaction addToBackStack(String name) {
+        mBase.addToBackStack(name);
+        return this;
     }
 
-    @Override
     public boolean isAddToBackStackAllowed() {
         return mBase.isAddToBackStackAllowed();
+
     }
 
-    @Override
-    public FragmentTransaction disallowAddToBackStack() {
-        return mBase.disallowAddToBackStack();
+    public PluginFragmentTransaction disallowAddToBackStack() {
+        mBase.disallowAddToBackStack();
+        return this;
     }
 
-    @Override
-    public FragmentTransaction setBreadCrumbTitle(int res) {
-        return mBase.setBreadCrumbTitle(res);
+    public PluginFragmentTransaction setBreadCrumbTitle(int res) {
+        mBase.setBreadCrumbTitle(res);
+        return this;
     }
 
-    @Override
-    public FragmentTransaction setBreadCrumbTitle(CharSequence text) {
-        return mBase.setBreadCrumbTitle(text);
+    public PluginFragmentTransaction setBreadCrumbTitle(CharSequence text) {
+        mBase.setBreadCrumbTitle(text);
+        return this;
     }
 
-    @Override
-    public FragmentTransaction setBreadCrumbShortTitle(int res) {
-        return mBase.setBreadCrumbShortTitle(res);
+    public PluginFragmentTransaction setBreadCrumbShortTitle(int res) {
+        mBase.setBreadCrumbShortTitle(res);
+        return this;
     }
 
-    @Override
-    public FragmentTransaction setBreadCrumbShortTitle(CharSequence text) {
-        return mBase.setBreadCrumbShortTitle(text);
-    }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    @Override
-    public FragmentTransaction setReorderingAllowed(boolean reorderingAllowed) {
-        return mBase.setReorderingAllowed(reorderingAllowed);
+    public PluginFragmentTransaction setBreadCrumbShortTitle(CharSequence text) {
+        mBase.setBreadCrumbShortTitle(text);
+        return this;
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    @Override
-    public FragmentTransaction runOnCommit(Runnable runnable) {
-        return mBase.runOnCommit(runnable);
+    public PluginFragmentTransaction setReorderingAllowed(boolean reorderingAllowed) {
+        mBase.setReorderingAllowed(reorderingAllowed);
+        return this;
     }
 
-    @Override
+    @TargetApi(Build.VERSION_CODES.O)
+    public PluginFragmentTransaction runOnCommit(Runnable runnable) {
+        mBase.runOnCommit(runnable);
+        return this;
+    }
+
     public int commit() {
         return mBase.commit();
     }
 
-    @Override
     public int commitAllowingStateLoss() {
         return mBase.commitAllowingStateLoss();
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    @Override
     public void commitNow() {
         mBase.commitNow();
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    @Override
     public void commitNowAllowingStateLoss() {
         mBase.commitNowAllowingStateLoss();
     }
