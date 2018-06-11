@@ -1,20 +1,14 @@
 package com.tencent.cubershi
 
-import com.android.SdkConstants
-import com.android.build.api.transform.TransformInvocation
-import com.android.utils.FileUtils
-import com.tencent.cubershi.special.SpecialTransform
+import com.tencent.cubershi.transformkit.DirInputClass
+import com.tencent.cubershi.transformkit.JarInputClass
+import com.tencent.cubershi.transformkit.JavassistTransform
 import javassist.ClassPool
 import javassist.CtClass
+import javassist.NotFoundException
 import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStream
-import java.util.function.BiConsumer
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
-class CuberPluginLoaderTransform(val classPool: ClassPool) : MyCustomClassTransform() {
+class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(classPool) {
 
     companion object {
         const val AndroidApplicationClassname = "android.app.Application"
@@ -29,91 +23,60 @@ class CuberPluginLoaderTransform(val classPool: ClassPool) : MyCustomClassTransf
         const val PluginFragmentManagerClassname = "com.tencent.cubershi.mock_interface.PluginFragmentManager"
         const val AndroidFragmentTransactionClassname = "android.app.FragmentTransaction"
         const val PluginFragmentTransactionClassname = "com.tencent.cubershi.mock_interface.PluginFragmentTransaction"
-        val SpecialTransformMap = mapOf<String, SpecialTransform>(
-        )
         val FragmentCtClassCache = mutableSetOf<String>()
     }
 
     val ContainerFragmentCtClass = classPool["com.tencent.cubershi.mock_interface.ContainerFragment"]
 
-    override fun loadTransformFunction(): BiConsumer<InputStream, OutputStream> =
-            BiConsumer { input, output ->
-                val ctClass: CtClass = classPool.makeClass(input, false)
+    override fun onTransform() {
+        step1()
+        step2()
+    }
 
-                val ctClassOriginName = ctClass.name
-                if (SpecialTransformMap.containsKey(ctClassOriginName)) {
-                    SpecialTransformMap[ctClassOriginName]!!.transform(classPool, ctClass)
-                    ctClass.writeOut(output)
-                } else {
-                    ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
-                    ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
-                    ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
-                    ctClass.replaceClassName(AndroidFragmentClassname, MockFragmentClassname)
-                    ctClass.replaceClassName(AndroidFragmentManagerClassname, PluginFragmentManagerClassname)
-                    ctClass.replaceClassName(AndroidFragmentTransactionClassname, PluginFragmentTransactionClassname)
-                    renameFragment(ctClass)
-                    if (ctClass.isFragment()) {
-                        val newContainerFragmentCtClass = classPool.makeClass(ctClassOriginName, ContainerFragmentCtClass)
-                        newContainerFragmentCtClass.writeOut(output)
-                        when (output) {
-                            is FileOutputStream -> {
-                                val newPath = currentFile.absolutePath.replace(currentFile.nameWithoutExtension, ctClass.simpleName)
-                                FileOutputStream(newPath).use {
-                                    ctClass.writeOut(it)
-                                }
-                            }
-                            is ZipOutputStream -> {
-                                val newEntryPath = ctClass.name.replace(".", "/") + ".class"
-                                output.putNextEntry(ZipEntry(newEntryPath))
-                                ctClass.writeOut(output)
-                            }
-                        }
-                        return@BiConsumer
-                    }
-                    ctClass.writeOut(output)
+    private fun step1() {
+        val appClasses = mCtClassInputMap.keys
+        appClasses.forEach { ctClass ->
+            ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
+            ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
+            ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
+            ctClass.replaceClassName(AndroidFragmentClassname, MockFragmentClassname)
+            ctClass.replaceClassName(AndroidFragmentManagerClassname, PluginFragmentManagerClassname)
+            ctClass.replaceClassName(AndroidFragmentTransactionClassname, PluginFragmentTransactionClassname)
+        }
+    }
+
+    private fun step2() {
+        val appClasses = mCtClassInputMap.keys
+        appClasses.forEach { ctClass ->
+            val inputClass = mCtClassInputMap[ctClass]!!
+            val ctClassOriginName = ctClass.name
+            var ctClassOriginOutputFile: File? = null
+            var ctClassOriginOutputEntryName: String? = null
+            when (inputClass) {
+                is DirInputClass -> {
+                    ctClassOriginOutputFile = inputClass.getOutput(ctClass.name)
+                }
+                is JarInputClass -> {
+                    ctClassOriginOutputEntryName = inputClass.getOutput(ctClass.name)
                 }
             }
 
-    private fun CtClass.writeOut(output: OutputStream) {
-        this.toBytecode(java.io.DataOutputStream(output))
-    }
-
-    override fun transform(invocation: TransformInvocation) {
-        System.out.println("CuberPluginLoaderTransform开始")
-
-        val ctClass = classPool.getOrNull("android.arch.lifecycle.ReportFragment_")
-        System.err.println("ctClass==null:" + (ctClass == null))
-
-        loadAppCtClass(invocation)
-
-        super.transform(invocation)
-
-        System.out.println("CuberPluginLoaderTransform结束")
-    }
-
-    private fun loadAppCtClass(invocation: TransformInvocation) {
-        for (ti in invocation.inputs) {
-            for (jarInput in ti.jarInputs) {
-                val inputJar = jarInput.file
-                loadJar(inputJar)
+            renameFragment(ctClass)
+            if (ctClass.name != ctClassOriginName) {
+                inputClass.renameOutput(ctClassOriginName, ctClass.name)
             }
-            for (di in ti.directoryInputs) {
-                val inputDir = di.file
-                for (`in` in FileUtils.getAllFiles(inputDir)) {
-                    if (`in`.name.endsWith(SdkConstants.DOT_CLASS)) {
-                        loadClassFile(`in`)
+            if (ctClass.isFragment()) {
+                val newContainerFragmentCtClass = classPool.makeClass(ctClassOriginName, ContainerFragmentCtClass)
+                when (inputClass) {
+                    is DirInputClass -> {
+                        inputClass.addOutput(newContainerFragmentCtClass.name, ctClassOriginOutputFile!!)
+                    }
+                    is JarInputClass -> {
+                        inputClass.addOutput(newContainerFragmentCtClass.name, ctClassOriginOutputEntryName!!)
                     }
                 }
             }
         }
-    }
-
-    private fun loadJar(jarFile: File) {
-        classPool.appendClassPath(jarFile.absolutePath)
-    }
-
-    private fun loadClassFile(classFile: File) {
-        classPool.makeClass(classFile.inputStream(), false)
     }
 
     private fun renameFragment(ctClass: CtClass) {
@@ -142,7 +105,11 @@ class CuberPluginLoaderTransform(val classPool: ClassPool) : MyCustomClassTransf
             if (tmp?.name == MockFragmentClassname) {
                 return true
             }
-            tmp = tmp?.superclass
+            try {
+                tmp = tmp?.superclass
+            } catch (e: NotFoundException) {
+                return false
+            }
         } while (tmp != null)
         return false
     }
