@@ -128,4 +128,12 @@ public abstract class MockActivity extends PluginActivity {
             return super.startService(service);
         return null;
     }
+
+    public final MockActivity getParent() {
+        return null;
+    }
+
+    public void overridePendingTransition(int enterAnim, int exitAnim) {
+        mHostActivityDelegator.overridePendingTransition(enterAnim, exitAnim);
+    }
 }
