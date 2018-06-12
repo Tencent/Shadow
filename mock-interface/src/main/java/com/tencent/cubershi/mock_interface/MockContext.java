@@ -11,6 +11,7 @@ public class MockContext extends ContextThemeWrapper {
     PluginActivityLauncher mPluginActivityLauncher;
     PluginServiceOperator mPluginServiceOperator;
     ClassLoader mPluginClassLoader;
+    MockApplication mMockApplication;
 
     public final void setPluginClassLoader(ClassLoader classLoader) {
         mPluginClassLoader = classLoader;
@@ -23,6 +24,15 @@ public class MockContext extends ContextThemeWrapper {
 
     public void setPluginActivityLauncher(PluginActivityLauncher pluginActivityLauncher) {
         mPluginActivityLauncher = pluginActivityLauncher;
+    }
+
+    public void setMockApplication(MockApplication mockApplication) {
+        mMockApplication = mockApplication;
+    }
+
+    @Override
+    public Context getApplicationContext() {
+        return mMockApplication;
     }
 
     public interface PluginActivityLauncher {

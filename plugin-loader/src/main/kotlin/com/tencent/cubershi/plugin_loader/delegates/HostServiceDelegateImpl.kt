@@ -38,6 +38,7 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
             mPluginService.setPluginClassLoader(mPluginClassLoader)
             mPluginService.setPluginApplication(mPluginApplication)
             mPluginService.setPluginClassLoader(mPluginClassLoader)
+            mPluginService.setMockApplication(mPluginApplication)
             mIsSetService = true
         }
         return mPluginService.onStartCommand(intent, flags, startId)

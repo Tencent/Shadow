@@ -23,6 +23,11 @@ public abstract class MockApplication extends MockContext {
 
     private Application mHostApplication;
 
+    @Override
+    public Context getApplicationContext() {
+        return this;
+    }
+
     private Map<MockActivityLifecycleCallbacks, Application.ActivityLifecycleCallbacks> mActivityLifecycleCallbacksMap = new HashMap<>();
 
     public void onCreate() {

@@ -70,6 +70,7 @@ class HostActivityDelegateImpl(
             pluginActivity.setPluginApplication(mPluginApplication)
             pluginActivity.setPluginPackageManager(mPluginPackageManager)
             pluginActivity.setServiceOperator(mPluginServicesManager)
+            pluginActivity.setMockApplication(mPluginApplication)
             mPluginActivity = pluginActivity
             mHostActivityDelegator.superOnCreate(bundle)
             pluginActivity.onCreate(bundle)
