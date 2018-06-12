@@ -1,23 +1,19 @@
 package com.tencent.cubershi.mock_interface;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.IBinder;
-import android.view.ContextThemeWrapper;
 
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator;
 
 /**
  * Created by tracyluo on 2018/6/5.
  */
-public abstract class MockService extends ContextThemeWrapper {
+public abstract class MockService extends MockContext {
     HostServiceDelegator mHostServiceDelegator;
     Resources mPluginResources;
-    ClassLoader mPluginClassLoader;
     MockApplication mPluginApplication;
 
     public final void setPluginResources(Resources resources) {
@@ -26,10 +22,6 @@ public abstract class MockService extends ContextThemeWrapper {
 
     public final void setHostContextAsBase(Context context) {
         attachBaseContext(context);
-    }
-
-    public final void setPluginClassLoader(ClassLoader classLoader) {
-        mPluginClassLoader = classLoader;
     }
 
     public void setContainerService(HostServiceDelegator delegator) {
@@ -71,12 +63,4 @@ public abstract class MockService extends ContextThemeWrapper {
 
     }
 
-    public interface PluginServiceOperator {
-
-        boolean startService(Activity activity, Intent intent);
-        boolean stopService(Activity activity, Intent name);
-        boolean bindService(Activity activity, Intent service, ServiceConnection conn, int flags);
-        boolean unbindService(Activity activity, ServiceConnection conn);
-
-    }
 }

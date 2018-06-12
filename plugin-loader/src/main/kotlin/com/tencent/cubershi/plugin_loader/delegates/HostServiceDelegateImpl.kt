@@ -7,6 +7,7 @@ import android.content.res.Resources
 import android.os.IBinder
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.mock_interface.MockService
+import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
@@ -18,6 +19,7 @@ import dalvik.system.DexClassLoader
 class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
                               private val mPluginClassLoader: DexClassLoader,
                               private val mPluginResources: Resources,
+                              private val mPluginActivitiesManager: PluginActivitiesManager,
                               private val mPluginServicesManager: PluginServicesManager) : HostServiceDelegate {
     private lateinit var mHostServiceDelegator: HostServiceDelegator
     private lateinit var mPluginService: MockService
@@ -31,6 +33,9 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
             mPluginService = MockService::class.java.cast(aClass.newInstance())
             mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
             mPluginService.setPluginResources(mPluginResources)
+            mPluginService.setPluginActivityLauncher(mPluginActivitiesManager)
+            mPluginService.setServiceOperator(mPluginServicesManager)
+            mPluginService.setPluginClassLoader(mPluginClassLoader)
             mPluginService.setPluginApplication(mPluginApplication)
             mPluginService.setPluginClassLoader(mPluginClassLoader)
             mIsSetService = true

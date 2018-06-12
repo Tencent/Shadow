@@ -8,6 +8,8 @@ import android.os.Looper
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.PluginPackageManager
 import com.tencent.cubershi.plugin_loader.exceptions.CreateApplicationException
+import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
+import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
 import java.util.concurrent.CountDownLatch
 
 /**
@@ -22,12 +24,17 @@ object CreateApplicationBloc {
             appClassName: String,
             pluginPackageManager: PluginPackageManager,
             resources: Resources,
-            hostAppContext: Context
+            hostAppContext: Context,
+            businessPluginActivitiesManager: PluginActivitiesManager,
+            businessPluginServiceManager: PluginServicesManager
     ): MockApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
             val mockApplication = MockApplication::class.java.cast(appClass.newInstance())
             mockApplication.setPluginResources(resources)
+            mockApplication.setPluginClassLoader(pluginClassLoader)
+            mockApplication.setPluginActivityLauncher(businessPluginActivitiesManager)
+            mockApplication.setServiceOperator(businessPluginServiceManager)
             mockApplication.setHostApplicationContextAsBase(hostAppContext)
             mockApplication.setPluginPackageManager(pluginPackageManager)
             val uiHandler = Handler(Looper.getMainLooper())

@@ -1,20 +1,19 @@
 package com.tencent.cubershi.plugin_loader.managers
 
 
-import android.app.Activity
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import com.tencent.cubershi.mock_interface.MockService.PluginServiceOperator
+import com.tencent.cubershi.mock_interface.MockContext
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
 import com.tencent.cubershi.plugin_loader.infos.PluginServiceInfo
 import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager.Operate.*
-import java.nio.charset.IllegalCharsetNameException
 
 /**
  * Created by tracyluo on 2018/6/6.
  */
-abstract class PluginServicesManager : PluginServiceOperator {
+abstract class PluginServicesManager : MockContext.PluginServiceOperator {
     companion object {
         val AVOID_CLASS_VERIFY_EXCEPTION = PluginServicesManager::class
         const val KEY_PKG_NAME = "packageName"
@@ -68,7 +67,7 @@ abstract class PluginServicesManager : PluginServiceOperator {
     private fun getContainerService(pluginActivity: ComponentName): ComponentName =
             servicesMap[pluginActivity]!!
 
-    private fun doServiceOpt(activity: Activity, intent: Intent, opt: Operate): Boolean {
+    private fun doServiceOpt(context: Context, intent: Intent, opt: Operate): Boolean {
         val className = intent.component.className
         val packageName = packageNameMap[className] ?: return false
         intent.component = ComponentName(packageName, className)
@@ -83,27 +82,27 @@ abstract class PluginServicesManager : PluginServiceOperator {
             BIND -> containerServiceIntent.putExtra(KEY_OPT_NAME, "bind")
             UNBIND -> containerServiceIntent.putExtra(KEY_OPT_NAME, "unbind")
         }
-        activity.startService(containerServiceIntent)
+        context.startService(containerServiceIntent)
         return true
     }
 
 
-    override fun startService(activity: Activity, intent: Intent): Boolean {
-        return doServiceOpt(activity, intent, START)
+    override fun startService(context: Context, intent: Intent): Boolean {
+        return doServiceOpt(context, intent, START)
     }
 
-    override fun stopService(activity: Activity, name: Intent): Boolean {
-        return doServiceOpt(activity, name, STOP)
+    override fun stopService(context: Context, name: Intent): Boolean {
+        return doServiceOpt(context, name, STOP)
     }
 
-    override fun bindService(activity: Activity, service: Intent, conn: ServiceConnection, flags: Int): Boolean {
+    override fun bindService(context: Context, service: Intent, conn: ServiceConnection, flags: Int): Boolean {
         connectionMap[service] = conn
-        return doServiceOpt(activity, service, BIND)
+        return doServiceOpt(context, service, BIND)
     }
 
-    override fun unbindService(activity: Activity, conn: ServiceConnection): Boolean {
+    override fun unbindService(context: Context, conn: ServiceConnection): Boolean {
         var intent = intentMap[conn]?:return false
-        return doServiceOpt(activity, intent, UNBIND)
+        return doServiceOpt(context, intent, UNBIND)
     }
 
     abstract fun onBindContainerService(mockService: ComponentName): ComponentName

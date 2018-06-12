@@ -3,7 +3,6 @@ package com.tencent.cubershi.mock_interface;
 import android.app.Application;
 import android.content.ComponentCallbacks;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -12,14 +11,10 @@ import android.util.Log;
 /**
  * 用于在plugin-loader中调用假的Application方法的接口
  */
-public abstract class MockApplication extends ContextWrapper {
+public abstract class MockApplication extends MockContext {
     Resources mPluginResources;
 
     private MixPackageManager mMixPackageManager;
-
-    public MockApplication() {
-        super(null);
-    }
 
     public void onCreate() {
         Log.i("MockApplication", "MockApplication test");

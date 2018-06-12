@@ -62,7 +62,9 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                                 pluginInfo.applicationClassName,
                                 pluginPackageManager,
                                 resources,
-                                hostAppContext
+                                hostAppContext,
+                                getBusinessPluginActivitiesManager(),
+                                getBusinessPluginServiceManager()
                         )
 
                 mLock.withLock {
@@ -108,6 +110,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                     mPluginApplication,
                     mPluginClassLoader,
                     mPluginResources,
+                    getBusinessPluginActivitiesManager(),
                     getBusinessPluginServiceManager())
         }
     }

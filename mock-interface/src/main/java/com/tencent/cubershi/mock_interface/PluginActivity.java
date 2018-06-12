@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,23 +18,16 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.tencent.cubershi.mock_interface.MockService.PluginServiceOperator;
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
-public abstract class PluginActivity extends ContextThemeWrapper {
+public abstract class PluginActivity extends MockContext {
     HostActivityDelegator mHostActivityDelegator;
 
     Resources mPluginResources;
 
-    ClassLoader mPluginClassLoader;
-
-    PluginActivityLauncher mPluginActivityLauncher;
-
     MockApplication mPluginApplication;
 
     PackageManager mPluginPackageManager;
-
-    PluginServiceOperator mPluginServiceOperator;
 
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;
@@ -45,18 +37,8 @@ public abstract class PluginActivity extends ContextThemeWrapper {
         attachBaseContext(context);
     }
 
-    public final void setPluginClassLoader(ClassLoader classLoader) {
-        mPluginClassLoader = classLoader;
-    }
-
-    public final void setServiceOperator(PluginServiceOperator pluginServiceOperator){ mPluginServiceOperator = pluginServiceOperator;}
-
     public void setContainerActivity(HostActivityDelegator delegator) {
         mHostActivityDelegator = delegator;
-    }
-
-    public void setPluginActivityLauncher(PluginActivityLauncher pluginActivityLauncher) {
-        mPluginActivityLauncher = pluginActivityLauncher;
     }
 
     public void setPluginApplication(MockApplication pluginApplication) {
@@ -65,19 +47,6 @@ public abstract class PluginActivity extends ContextThemeWrapper {
 
     public void setPluginPackageManager(PackageManager packageManager) {
         mPluginPackageManager = packageManager;
-    }
-
-    public interface PluginActivityLauncher {
-        /**
-         * 启动Actvity
-         *
-         * @param context 启动context
-         * @param intent  插件内传来的Intent.
-         * @return <code>true</code>表示该Intent是为了启动插件内Activity的,已经被正确消费了.
-         * <code>false</code>表示该Intent不是插件内的Activity.
-         */
-        boolean startActivity(Context context, Intent intent);
-
     }
 
     public void onCreate(Bundle savedInstanceState) {

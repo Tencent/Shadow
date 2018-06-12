@@ -1,9 +1,7 @@
 package com.tencent.cubershi.mock_interface;
 
 import android.app.FragmentManager;
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
@@ -61,16 +59,6 @@ public abstract class MockActivity extends PluginActivity {
         return mPluginApplication;
     }
 
-    @Override
-    public void startActivity(Intent intent) {
-        final Intent pluginIntent = new Intent(intent);
-        pluginIntent.setExtrasClassLoader(mPluginClassLoader);
-        final boolean success = mPluginActivityLauncher.startActivity(this, pluginIntent);
-        if (!success) {
-            super.startActivity(intent);
-        }
-    }
-
     public PluginFragmentManager getFragmentManager() {
         FragmentManager fragmentManager = mHostActivityDelegator.getFragmentManager();
         int hash = System.identityHashCode(fragmentManager);
@@ -106,34 +94,6 @@ public abstract class MockActivity extends PluginActivity {
     @Override
     public PackageManager getPackageManager() {
         return mMixPackageManager;
-    }
-
-    @Override
-    public void unbindService(ServiceConnection conn) {
-        if (!mPluginServiceOperator.unbindService(mHostActivityDelegator.getHostActivity().getImplementActivity(), conn))
-            super.unbindService(conn);
-        return;
-    }
-
-    @Override
-    public boolean bindService(Intent service, ServiceConnection conn, int flags) {
-        if (!mPluginServiceOperator.bindService(mHostActivityDelegator.getHostActivity().getImplementActivity(), service, conn, flags))
-            return super.bindService(service, conn, flags);
-        return false;
-    }
-
-    @Override
-    public boolean stopService(Intent name) {
-        if (!mPluginServiceOperator.stopService(mHostActivityDelegator.getHostActivity().getImplementActivity(), name))
-            return super.stopService(name);
-        return false;
-    }
-
-    @Override
-    public ComponentName startService(Intent service) {
-        if (!mPluginServiceOperator.startService(mHostActivityDelegator.getHostActivity().getImplementActivity(), service))
-            return super.startService(service);
-        return null;
     }
 
     public final MockActivity getParent() {
