@@ -49,8 +49,6 @@ class HostActivityDelegateImpl(
     override fun getPluginActivity(): Any = mPluginActivity
 
     override fun onCreate(bundle: Bundle?) {
-        mHostActivityDelegator.superOnCreate(bundle)
-
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
         val bundleForPluginLoader = mHostActivityDelegator.intent.getBundleExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
@@ -73,6 +71,7 @@ class HostActivityDelegateImpl(
             pluginActivity.setPluginPackageManager(mPluginPackageManager)
             pluginActivity.setServiceOperator(mPluginServicesManager)
             mPluginActivity = pluginActivity
+            mHostActivityDelegator.superOnCreate(bundle)
             pluginActivity.onCreate(bundle)
             mPluginActivityCreated = true
         } catch (e: Exception) {

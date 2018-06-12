@@ -10,6 +10,9 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 用于在plugin-loader中调用假的Application方法的接口
  */
@@ -19,6 +22,8 @@ public abstract class MockApplication extends MockContext {
     private MixPackageManager mMixPackageManager;
 
     private Application mHostApplication;
+
+    private Map<MockActivityLifecycleCallbacks, Application.ActivityLifecycleCallbacks> mActivityLifecycleCallbacksMap = new HashMap<>();
 
     public void onCreate() {
         mHostApplication.registerComponentCallbacks(new ComponentCallbacks2() {
@@ -70,13 +75,20 @@ public abstract class MockApplication extends MockContext {
     }
 
 
-    public void registerActivityLifecycleCallbacks(Application.ActivityLifecycleCallbacks callback) {
-        mHostApplication.registerActivityLifecycleCallbacks(callback);
+    public void registerActivityLifecycleCallbacks(MockActivityLifecycleCallbacks callback) {
+        final MockActivityLifecycleCallbacks.Wrapper wrapper
+                = new MockActivityLifecycleCallbacks.Wrapper(callback);
+        mActivityLifecycleCallbacksMap.put(callback, wrapper);
+        mHostApplication.registerActivityLifecycleCallbacks(wrapper);
     }
 
 
-    public void unregisterActivityLifecycleCallbacks(Application.ActivityLifecycleCallbacks callback) {
-        mHostApplication.unregisterActivityLifecycleCallbacks(callback);
+    public void unregisterActivityLifecycleCallbacks(MockActivityLifecycleCallbacks callback) {
+        final Application.ActivityLifecycleCallbacks activityLifecycleCallbacks
+                = mActivityLifecycleCallbacksMap.get(callback);
+        if (activityLifecycleCallbacks != null) {
+            mHostApplication.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks);
+        }
     }
 
 

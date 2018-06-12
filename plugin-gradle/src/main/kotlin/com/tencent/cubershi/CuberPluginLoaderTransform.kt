@@ -23,6 +23,9 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         const val PluginFragmentManagerClassname = "com.tencent.cubershi.mock_interface.PluginFragmentManager"
         const val AndroidFragmentTransactionClassname = "android.app.FragmentTransaction"
         const val PluginFragmentTransactionClassname = "com.tencent.cubershi.mock_interface.PluginFragmentTransaction"
+        const val AndroidActivityLifecycleCallbacksClassname = "android.app.Application\$ActivityLifecycleCallbacks"
+        const val MockActivityLifecycleCallbacksClassname = "com.tencent.cubershi.mock_interface.MockActivityLifecycleCallbacks"
+
         val FragmentCtClassCache = mutableSetOf<String>()
     }
 
@@ -42,6 +45,7 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
             ctClass.replaceClassName(AndroidFragmentClassname, MockFragmentClassname)
             ctClass.replaceClassName(AndroidFragmentManagerClassname, PluginFragmentManagerClassname)
             ctClass.replaceClassName(AndroidFragmentTransactionClassname, PluginFragmentTransactionClassname)
+            ctClass.replaceClassName(AndroidActivityLifecycleCallbacksClassname, MockActivityLifecycleCallbacksClassname)
         }
     }
 
