@@ -72,6 +72,7 @@ abstract class PluginServicesManager : PluginServiceOperator {
         containerServiceIntent.putExtra(KEY_PKG_NAME, packageName)
         containerServiceIntent.putExtra(KEY_CLASS_NAME, className)
         when (opt) {
+            START -> containerServiceIntent.putExtra(KEY_OPT_NAME, "start")
             STOP -> containerServiceIntent.putExtra(KEY_OPT_NAME, "stop")
             BIND -> containerServiceIntent.putExtra(KEY_OPT_NAME, "bind")
             UNBIND -> containerServiceIntent.putExtra(KEY_OPT_NAME, "unbind")
