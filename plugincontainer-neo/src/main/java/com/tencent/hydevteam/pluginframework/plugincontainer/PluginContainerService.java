@@ -9,7 +9,9 @@ import android.util.Log;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 插件的容器Service。PluginLoader将把插件的Service放在其中。
@@ -18,11 +20,26 @@ import java.util.Map;
  * @author cubershi
  */
 public class PluginContainerService extends Service implements HostService, HostServiceDelegator {
+    public interface OnDelegateChanged {
+        void onRemoveDelegate(HostServiceDelegate hostServiceDelegate);
+    }
+
     private static final String TAG = "PluginContainerService";
+    private static final String OPT_EXTRA_KEY = "ServiceOpt";
 
     private ServiceDelegateManager delegateManager = new ServiceDelegateManager();
 
     public PluginContainerService() {
+        delegateManager.setOnDelegateChanged(new OnDelegateChanged() {
+            @Override
+            public void onRemoveDelegate(HostServiceDelegate hostServiceDelegate) {
+                if (delegateManager.getAllDelegates().isEmpty()) {
+                    stopSelf();
+                } else {
+                    hostServiceDelegate.onDestroy();
+                }
+            }
+        });
     }
 
     @Override
@@ -30,12 +47,7 @@ public class PluginContainerService extends Service implements HostService, Host
         if (intent == null) {
             return null;
         }
-        HostServiceDelegate hostServiceDelegate = delegateManager.getDelegate(intent);
-        if (hostServiceDelegate != null) {
-            return hostServiceDelegate.onBind(intent);
-        } else {
-            return null;
-        }
+        return null;
     }
 
     /**
@@ -56,14 +68,20 @@ public class PluginContainerService extends Service implements HostService, Host
         if (intent == null) {
             return Service.START_NOT_STICKY;
         }
-        HostServiceDelegate hostServiceDelegate = delegateManager.getDelegate(intent);
-        if (hostServiceDelegate != null) {
-            hostServiceDelegate.onStartCommand(intent, flags, startId);
-        } else {
-            // 这里可以不调用这个 tracyluo 2018/6/6
-            super.onStartCommand(intent, flags, startId);
+        String opt = intent.getStringExtra(OPT_EXTRA_KEY);
+        switch (opt) {
+            case "stop":
+                delegateManager.stopDelegate(intent);
+                return Service.START_NOT_STICKY;
+            case "bind":
+                delegateManager.bindToDelegate(intent);
+                return Service.START_NOT_STICKY;
+            case "unbind":
+                delegateManager.unbindToDelegate(intent);
+                return Service.START_NOT_STICKY;
+            default:
         }
-        return Service.START_NOT_STICKY;
+        return delegateManager.startDelegate(intent, flags, startId);
     }
 
     @Override
@@ -109,12 +127,16 @@ public class PluginContainerService extends Service implements HostService, Host
 
     @Override
     public boolean onUnbind(Intent intent) {
-        HostServiceDelegate hostServiceDelegate = delegateManager.removeDelegate(intent);
-        if (hostServiceDelegate != null) {
-            return hostServiceDelegate.onUnbind(intent);
-        } else {
+        // 这里如果要用到返回值的特性需要特殊处理，先这样 tracyluo 2018/6/9
+        Boolean flag = false;
+        for (HostServiceDelegate hostServiceDelegate : delegateManager.getAllDelegates()) {
+            hostServiceDelegate.onUnbind(intent, true);
+            flag = true;
+        }
+        if (!flag) {
             return super.onUnbind(intent);
         }
+        return false;
     }
 
     @Override
@@ -129,9 +151,16 @@ public class PluginContainerService extends Service implements HostService, Host
 
     class ServiceDelegateManager {
         private Map<ComponentName, HostServiceDelegate> serviceDelegates = new HashMap<>();
+        private Map<HostServiceDelegate, Integer> servicesBindCount = new HashMap<>();
+        private Set<HostServiceDelegate> servicesStarter = new HashSet<>();
         // hardcode了sixgod中的intent参数
         private static final String KEY_PKG_NAME = "packageName";
         private static final String KEY_CLASS_NAME = "className";
+        private OnDelegateChanged mOnDelegateChanged;
+
+        public void setOnDelegateChanged(OnDelegateChanged mOnDelegateChanged) {
+            this.mOnDelegateChanged = mOnDelegateChanged;
+        }
 
         HostServiceDelegate getDelegate(Intent intent) {
             String pkg = intent.getStringExtra(KEY_PKG_NAME);
@@ -139,11 +168,15 @@ public class PluginContainerService extends Service implements HostService, Host
             return getDelegate(pkg, cls);
         }
 
-        HostServiceDelegate removeDelegate(Intent intent) {
+        private void removeDelegate(Intent intent) {
             String pkg = intent.getStringExtra(KEY_PKG_NAME);
             String cls = intent.getStringExtra(KEY_CLASS_NAME);
             ComponentName componentName = new ComponentName(pkg, cls);
-            return serviceDelegates.remove(componentName);
+            HostServiceDelegate delegate = serviceDelegates.remove(componentName);
+            if (delegate != null) {
+                mOnDelegateChanged.onRemoveDelegate(delegate);
+            }
+
         }
 
         Collection<HostServiceDelegate> getAllDelegates() {
@@ -169,6 +202,62 @@ public class PluginContainerService extends Service implements HostService, Host
 
         void onDestroy() {
             serviceDelegates.clear();
+            servicesBindCount.clear();
+        }
+
+        void bindToDelegate(Intent intent) {
+            HostServiceDelegate delegate = getDelegate(intent);
+            if (servicesBindCount.containsKey(delegate)) {
+                servicesBindCount.put(delegate, servicesBindCount.get(delegate) + 1);
+            } else {
+                servicesBindCount.put(delegate, 1);
+            }
+            delegate.onBind(intent);
+        }
+
+        void unbindToDelegate(Intent intent) {
+            HostServiceDelegate delegate = serviceDelegates.get(intent);
+            if (delegate != null) {
+                if (servicesBindCount.containsKey(delegate)) {
+                    if (servicesBindCount.get(delegate) > 1) {
+                        servicesBindCount.put(delegate, servicesBindCount.get(delegate) - 1);
+                        delegate.onUnbind(intent, false);
+                    } else {
+                        servicesBindCount.remove(delegate);
+                        delegate.onUnbind(intent, true);
+                        handleUnbindAndStopDelegate(intent);
+                    }
+                }
+            }
+
+        }
+
+        int startDelegate(Intent intent, int flags, int startId) {
+            HostServiceDelegate delegate = getDelegate(intent);
+            if (delegate != null) {
+                servicesStarter.add(delegate);
+                return delegate.onStartCommand(intent, flags, startId);
+            }
+            return Service.START_NOT_STICKY;
+        }
+
+        void stopDelegate(Intent intent) {
+            HostServiceDelegate delegate = serviceDelegates.get(intent);
+            if (delegate != null) {
+                if (servicesStarter.remove(delegate)) {
+                    handleUnbindAndStopDelegate(intent);
+                }
+            }
+
+        }
+
+        void handleUnbindAndStopDelegate(Intent intent) {
+            HostServiceDelegate delegate = serviceDelegates.get(intent);
+            if (delegate != null) {
+                if (!servicesBindCount.containsKey(delegate) && !servicesStarter.contains(delegate)) {
+                    removeDelegate(intent);
+                }
+            }
         }
     }
 

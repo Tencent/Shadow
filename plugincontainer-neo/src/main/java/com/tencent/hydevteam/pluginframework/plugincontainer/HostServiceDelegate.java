@@ -26,7 +26,7 @@ public interface HostServiceDelegate {
 
     void onTrimMemory(int level);
 
-    boolean onUnbind(Intent intent);
+    boolean onUnbind(Intent intent, Boolean allUnBind);
 
     void onTaskRemoved(Intent rootIntent);
 }

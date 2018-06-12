@@ -107,24 +107,31 @@ public abstract class MockActivity extends PluginActivity {
     public PackageManager getPackageManager() {
         return mMixPackageManager;
     }
+
     @Override
     public void unbindService(ServiceConnection conn) {
-        super.unbindService(conn);
+        if (!mPluginServiceOperator.unbindService(mHostActivityDelegator.getHostActivity().getImplementActivity(), conn))
+            super.unbindService(conn);
+        return;
     }
 
     @Override
     public boolean bindService(Intent service, ServiceConnection conn, int flags) {
-        return super.bindService(service, conn, flags);
+        if (!mPluginServiceOperator.bindService(mHostActivityDelegator.getHostActivity().getImplementActivity(), service, conn, flags))
+            return super.bindService(service, conn, flags);
+        return false;
     }
 
     @Override
     public boolean stopService(Intent name) {
-        return super.stopService(name);
+        if (!mPluginServiceOperator.stopService(mHostActivityDelegator.getHostActivity().getImplementActivity(), name))
+            return super.stopService(name);
+        return false;
     }
 
     @Override
     public ComponentName startService(Intent service) {
-        if(!mPluginServiceOperator.startService(mHostActivityDelegator.getHostActivity().getImplementActivity(),service))
+        if (!mPluginServiceOperator.startService(mHostActivityDelegator.getHostActivity().getImplementActivity(), service))
             return super.startService(service);
         return null;
     }
