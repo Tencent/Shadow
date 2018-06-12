@@ -70,20 +70,20 @@ public class MockContext extends ContextThemeWrapper {
     public boolean bindService(Intent service, ServiceConnection conn, int flags) {
         if (!mPluginServiceOperator.bindService(this, service, conn, flags))
             return super.bindService(service, conn, flags);
-        return false;
+        return true;
     }
 
     @Override
     public boolean stopService(Intent name) {
         if (!mPluginServiceOperator.stopService(this, name))
             return super.stopService(name);
-        return false;
+        return true;
     }
 
     @Override
     public ComponentName startService(Intent service) {
         if (!mPluginServiceOperator.startService(this, service))
             return super.startService(service);
-        return null;
+        return service.getComponent();
     }
 }
