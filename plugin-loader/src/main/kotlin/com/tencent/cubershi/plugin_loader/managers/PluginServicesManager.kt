@@ -2,7 +2,6 @@ package com.tencent.cubershi.plugin_loader.managers
 
 
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import com.tencent.cubershi.mock_interface.MockContext
@@ -19,6 +18,7 @@ abstract class PluginServicesManager : MockContext.PluginServiceOperator {
         const val KEY_PKG_NAME = "packageName"
         const val KEY_CLASS_NAME = "className"
         const val KEY_OPT_NAME = "ServiceOpt"
+        const val KEY_INTENT_KEY = "intentKey"
     }
 
     enum class Operate {
@@ -44,14 +44,14 @@ abstract class PluginServicesManager : MockContext.PluginServiceOperator {
     private val serviceInfoMap: MutableMap<ComponentName, PluginServiceInfo> = HashMap()
 
     /**
-     * key:intent
+     * key:long
      * value:connection
      */
-    private val connectionMap: MutableMap<Intent, ServiceConnection> = HashMap()
+    private val connectionMap: MutableMap<Long, ServiceConnection> = HashMap()
 
     /**
      * key:connection
-     * value:intent
+     * value:Intent
      */
     private val intentMap: MutableMap<ServiceConnection, Intent> = HashMap()
 
@@ -67,9 +67,15 @@ abstract class PluginServicesManager : MockContext.PluginServiceOperator {
     private fun getContainerService(pluginActivity: ComponentName): ComponentName =
             servicesMap[pluginActivity]!!
 
-    private fun doServiceOpt(context: Context, intent: Intent, opt: Operate): Boolean {
+    private fun doServiceOpt(context: MockContext, intent: Intent?): Boolean {
+        intent ?: return false
+        context.baseContext.startService(intent)
+        return true
+    }
+
+    private fun getContainerServiceIntent(intent: Intent, opt: Operate): Intent? {
         val className = intent.component.className
-        val packageName = packageNameMap[className] ?: return false
+        val packageName = packageNameMap[className] ?: return null
         intent.component = ComponentName(packageName, className)
         val containerService = getContainerService(intent.component)
         val containerServiceIntent = Intent(intent)
@@ -82,41 +88,44 @@ abstract class PluginServicesManager : MockContext.PluginServiceOperator {
             BIND -> containerServiceIntent.putExtra(KEY_OPT_NAME, "bind")
             UNBIND -> containerServiceIntent.putExtra(KEY_OPT_NAME, "unbind")
         }
-        context.startService(containerServiceIntent)
-        return true
+        return containerServiceIntent
     }
 
-
-    override fun startService(context: Context, intent: Intent): Boolean {
-        return doServiceOpt(context, intent, START)
+    override fun startService(context: MockContext, intent: Intent): Boolean {
+        return doServiceOpt(context, getContainerServiceIntent(intent, START))
     }
 
-    override fun stopService(context: Context, name: Intent): Boolean {
-        return doServiceOpt(context, name, STOP)
+    override fun stopService(context: MockContext, name: Intent): Boolean {
+        return doServiceOpt(context, getContainerServiceIntent(name, STOP))
     }
 
-    override fun bindService(context: Context, service: Intent, conn: ServiceConnection, flags: Int): Boolean {
-        connectionMap[service] = conn
-        return doServiceOpt(context, service, BIND)
+    override fun bindService(context: MockContext, service: Intent, conn: ServiceConnection, flags: Int): Boolean {
+        var intent = getContainerServiceIntent(service, BIND)?:return false
+        var time = System.nanoTime()
+        connectionMap[time] = conn
+        intentMap[conn] = intent
+        intent.putExtra(KEY_INTENT_KEY, time)
+        return doServiceOpt(context, intent)
     }
 
-    override fun unbindService(context: Context, conn: ServiceConnection): Boolean {
-        var intent = intentMap[conn]?:return false
-        return doServiceOpt(context, intent, UNBIND)
+    override fun unbindService(context: MockContext, conn: ServiceConnection): Boolean {
+        var intent = intentMap[conn] ?: return false
+        var unBindIntent = intent.putExtra(KEY_OPT_NAME, "unbind")
+        return doServiceOpt(context, unBindIntent)
     }
 
     abstract fun onBindContainerService(mockService: ComponentName): ComponentName
 
-    fun getConnection(intent: Intent): ServiceConnection?{
-        return connectionMap[intent]
+    fun getConnection(intent: Intent): ServiceConnection? {
+        return connectionMap[ intent.getLongExtra(KEY_INTENT_KEY, -1)]
     }
 
-    fun deleteConnection(conn: ServiceConnection?){
-        if (conn != null){
+    fun deleteConnection(conn: ServiceConnection?) {
+        if (conn != null) {
             val intent = intentMap[conn]
             if (intent != null) {
                 intentMap.remove(conn)
-                connectionMap.remove(intent)
+                connectionMap.remove( intent.getLongExtra(KEY_INTENT_KEY, -1))
             }
         }
     }

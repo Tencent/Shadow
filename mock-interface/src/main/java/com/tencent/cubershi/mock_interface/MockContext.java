@@ -39,13 +39,13 @@ public class MockContext extends ContextThemeWrapper {
 
     public interface PluginServiceOperator {
 
-        boolean startService(Context context, Intent intent);
+        boolean startService(MockContext context, Intent intent);
 
-        boolean stopService(Context context, Intent name);
+        boolean stopService(MockContext context, Intent name);
 
-        boolean bindService(Context context, Intent service, ServiceConnection conn, int flags);
+        boolean bindService(MockContext context, Intent service, ServiceConnection conn, int flags);
 
-        boolean unbindService(Context context, ServiceConnection conn);
+        boolean unbindService(MockContext context, ServiceConnection conn);
 
     }
 
