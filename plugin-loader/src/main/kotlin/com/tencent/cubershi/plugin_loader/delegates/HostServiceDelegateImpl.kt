@@ -39,7 +39,9 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
     }
 
     override fun onUnbind(intent: Intent, allUnBind: Boolean): Boolean {
-        mPluginServicesManager.getConnection(intent)?.onServiceDisconnected(intent.component)
+        val conn = mPluginServicesManager.getConnection(intent)
+        conn?.onServiceDisconnected(intent.component)
+        mPluginServicesManager.deleteConnection(conn)
         if (allUnBind) {
             return mPluginService.onUnbind(intent)
         }

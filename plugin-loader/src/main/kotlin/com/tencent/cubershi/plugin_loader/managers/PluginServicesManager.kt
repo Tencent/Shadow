@@ -50,6 +50,12 @@ abstract class PluginServicesManager : PluginServiceOperator {
      */
     private val connectionMap: MutableMap<Intent, ServiceConnection> = HashMap()
 
+    /**
+     * key:connection
+     * value:intent
+     */
+    private val intentMap: MutableMap<ServiceConnection, Intent> = HashMap()
+
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
         pluginInfo.mServices.forEach {
             val componentName = ComponentName(pluginInfo.packageName, it.className)
@@ -95,13 +101,24 @@ abstract class PluginServicesManager : PluginServiceOperator {
         return doServiceOpt(activity, service, BIND)
     }
 
-    override fun unbindService(activity: Activity, conn: ServiceConnection?): Boolean {
-        return false
+    override fun unbindService(activity: Activity, conn: ServiceConnection): Boolean {
+        var intent = intentMap[conn]?:return false
+        return doServiceOpt(activity, intent, UNBIND)
     }
 
     abstract fun onBindContainerService(mockService: ComponentName): ComponentName
 
     fun getConnection(intent: Intent): ServiceConnection?{
         return connectionMap[intent]
+    }
+
+    fun deleteConnection(conn: ServiceConnection?){
+        if (conn != null){
+            val intent = intentMap[conn]
+            if (intent != null) {
+                intentMap.remove(conn)
+                connectionMap.remove(intent)
+            }
+        }
     }
 }
