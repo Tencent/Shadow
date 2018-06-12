@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.util.Pair;
 import android.view.ContextThemeWrapper;
 
 public class MockContext extends ContextThemeWrapper {
@@ -39,13 +40,13 @@ public class MockContext extends ContextThemeWrapper {
 
     public interface PluginServiceOperator {
 
-        boolean startService(MockContext context, Intent intent);
+        Pair<Boolean, ComponentName> startService(MockContext context, Intent intent);
 
-        boolean stopService(MockContext context, Intent name);
+        Pair<Boolean, Boolean> stopService(MockContext context, Intent name);
 
-        boolean bindService(MockContext context, Intent service, ServiceConnection conn, int flags);
+        Pair<Boolean, Boolean> bindService(MockContext context, Intent service, ServiceConnection conn, int flags);
 
-        boolean unbindService(MockContext context, ServiceConnection conn);
+        Pair<Boolean, ?> unbindService(MockContext context, ServiceConnection conn);
 
     }
 
@@ -61,29 +62,32 @@ public class MockContext extends ContextThemeWrapper {
 
     @Override
     public void unbindService(ServiceConnection conn) {
-        if (!mPluginServiceOperator.unbindService(this, conn))
+        if (!mPluginServiceOperator.unbindService(this, conn).first)
             super.unbindService(conn);
         return;
     }
 
     @Override
     public boolean bindService(Intent service, ServiceConnection conn, int flags) {
-        if (!mPluginServiceOperator.bindService(this, service, conn, flags))
+        Pair<Boolean, Boolean> ret = mPluginServiceOperator.bindService(this, service, conn, flags);
+        if (!ret.first)
             return super.bindService(service, conn, flags);
-        return true;
+        return ret.second;
     }
 
     @Override
     public boolean stopService(Intent name) {
-        if (!mPluginServiceOperator.stopService(this, name))
+        Pair<Boolean, Boolean> ret = mPluginServiceOperator.stopService(this, name);
+        if (!ret.first)
             return super.stopService(name);
-        return true;
+        return ret.second;
     }
 
     @Override
     public ComponentName startService(Intent service) {
-        if (!mPluginServiceOperator.startService(this, service))
+        Pair<Boolean, ComponentName> ret = mPluginServiceOperator.startService(this, service);
+        if (!ret.first)
             return super.startService(service);
-        return service.getComponent();
+        return ret.second;
     }
 }

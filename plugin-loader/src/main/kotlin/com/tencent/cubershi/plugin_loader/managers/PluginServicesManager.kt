@@ -4,6 +4,7 @@ package com.tencent.cubershi.plugin_loader.managers
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.util.Pair
 import com.tencent.cubershi.mock_interface.MockContext
 import com.tencent.cubershi.plugin_loader.infos.PluginInfo
 import com.tencent.cubershi.plugin_loader.infos.PluginServiceInfo
@@ -91,27 +92,27 @@ abstract class PluginServicesManager : MockContext.PluginServiceOperator {
         return containerServiceIntent
     }
 
-    override fun startService(context: MockContext, intent: Intent): Boolean {
-        return doServiceOpt(context, getContainerServiceIntent(intent, START))
+    override fun startService(context: MockContext, intent: Intent): Pair<Boolean, ComponentName> {
+        return Pair(doServiceOpt(context, getContainerServiceIntent(intent, START)), intent.component)
     }
 
-    override fun stopService(context: MockContext, name: Intent): Boolean {
-        return doServiceOpt(context, getContainerServiceIntent(name, STOP))
+    override fun stopService(context: MockContext, name: Intent): Pair<Boolean, Boolean> {
+        return Pair(doServiceOpt(context, getContainerServiceIntent(name, STOP)), true)
     }
 
-    override fun bindService(context: MockContext, service: Intent, conn: ServiceConnection, flags: Int): Boolean {
-        var intent = getContainerServiceIntent(service, BIND)?:return false
+    override fun bindService(context: MockContext, service: Intent, conn: ServiceConnection, flags: Int): Pair<Boolean, Boolean> {
+        var intent = getContainerServiceIntent(service, BIND)?:return Pair(false, false)
         var time = System.nanoTime()
         connectionMap[time] = conn
         intentMap[conn] = intent
         intent.putExtra(KEY_INTENT_KEY, time)
-        return doServiceOpt(context, intent)
+        return Pair(doServiceOpt(context, intent), true)
     }
 
-    override fun unbindService(context: MockContext, conn: ServiceConnection): Boolean {
-        var intent = intentMap[conn] ?: return false
+    override fun unbindService(context: MockContext, conn: ServiceConnection): Pair<Boolean, Unit> {
+        var intent = intentMap[conn] ?: return Pair(false, Unit)
         var unBindIntent = intent.putExtra(KEY_OPT_NAME, "unbind")
-        return doServiceOpt(context, unBindIntent)
+        return Pair(doServiceOpt(context, unBindIntent), Unit)
     }
 
     abstract fun onBindContainerService(mockService: ComponentName): ComponentName
