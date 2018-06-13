@@ -2,6 +2,7 @@ package com.tencent.cubershi.mock_interface;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager;
@@ -51,6 +52,11 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
             this.attrs = attrs;
             this.savedInstanceState = savedInstanceState;
         }
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return new MockDialog(getActivity(), getTheme());
     }
 
     private static MockDialogFragment instantiatePluginFragment(ContainerDialogFragment containerFragment, Context context) {

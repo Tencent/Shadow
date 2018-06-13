@@ -3,9 +3,7 @@ package com.tencent.cubershi
 import com.tencent.cubershi.transformkit.DirInputClass
 import com.tencent.cubershi.transformkit.JarInputClass
 import com.tencent.cubershi.transformkit.JavassistTransform
-import javassist.ClassPool
-import javassist.CtClass
-import javassist.NotFoundException
+import javassist.*
 import java.io.File
 
 class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(classPool) {
@@ -13,6 +11,8 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
     companion object {
         const val MockFragmentClassname = "com.tencent.cubershi.mock_interface.MockFragment"
         const val MockDialogFragmentClassname = "com.tencent.cubershi.mock_interface.MockDialogFragment"
+        const val AndroidDialogClassname = "android.app.Dialog"
+        const val MockDialogClassname = "com.tencent.cubershi.mock_interface.MockDialog"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.cubershi.mock_interface.MockApplication"
@@ -37,6 +37,9 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
                 ,
                 "android.app.Application\$ActivityLifecycleCallbacks"
                         to "com.tencent.cubershi.mock_interface.MockActivityLifecycleCallbacks"
+                ,
+                AndroidDialogClassname
+                        to MockDialogClassname
         )
     }
 
@@ -50,11 +53,32 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         step1_renameMockClass()
         step2_findFragments()
         step3_renameFragments()
+        step4_redirectDialogMethod()
+    }
+
+    private inline fun forEachAppClass(action: (CtClass) -> Unit) {
+        val appClasses = mCtClassInputMap.keys
+        appClasses.forEach(action)
+    }
+
+    private inline fun forEachCanRecompileAppClass(action: (CtClass) -> Unit) {
+        val appClasses = mCtClassInputMap.keys
+        appClasses.filter {
+            it.refClasses.all {
+                var found: Boolean;
+                try {
+                    classPool[it as String]
+                    found = true
+                } catch (e: NotFoundException) {
+                    found = false
+                }
+                found
+            }
+        }.forEach(action)
     }
 
     private fun step1_renameMockClass() {
-        val appClasses = mCtClassInputMap.keys
-        appClasses.forEach { ctClass ->
+        forEachAppClass { ctClass ->
             RenameMap.forEach {
                 ctClass.replaceClassName(it.key, it.value)
             }
@@ -62,8 +86,7 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
     }
 
     private fun step2_findFragments() {
-        val appClasses = mCtClassInputMap.keys
-        appClasses.forEach { ctClass ->
+        forEachAppClass { ctClass ->
             if (ctClass.isDialogFragment()) {
                 mAppDialogFragments.add(ctClass)
             } else if (ctClass.isFragment()) {
@@ -73,9 +96,8 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
     }
 
     private fun step3_renameFragments() {
-        val appClasses = mCtClassInputMap.keys
         val fragmentsName = listOf(mAppFragments, mAppDialogFragments).flatten().flatMap { listOf(it.name) }
-        appClasses.forEach { ctClass ->
+        forEachAppClass { ctClass ->
             fragmentsName.forEach { fragmentName ->
                 ctClass.replaceClassName(fragmentName, fragmentName.appendFragmentAppendix())
             }
@@ -111,6 +133,30 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
                 }
             }
         }
+    }
+
+    private fun step4_redirectDialogMethod() {
+        val dialogMethods = classPool[AndroidDialogClassname].methods!!
+        val mockDialogMethods = classPool[MockDialogClassname].methods!!
+        val method_getOwnerActivity = dialogMethods.find { it.name == "getOwnerActivity" }!!
+        val method_setOwnerActivity = dialogMethods.find { it.name == "setOwnerActivity" }!!
+        val method_getOwnerPluginActivity = mockDialogMethods.find { it.name == "getOwnerPluginActivity" }!!
+        val method_setOwnerPluginActivity = mockDialogMethods.find { it.name == "setOwnerPluginActivity" }!!
+        //appClass中的Activity都已经被改名为MockActivity了．所以要把方法签名也先改一下．
+        method_getOwnerActivity.copyDescriptorFrom(method_getOwnerPluginActivity)
+        method_setOwnerActivity.copyDescriptorFrom(method_setOwnerPluginActivity)
+
+        val codeConverter = CodeConverter()
+        codeConverter.redirectMethodCall(method_getOwnerActivity, method_getOwnerPluginActivity)
+        codeConverter.redirectMethodCall(method_setOwnerActivity, method_setOwnerPluginActivity)
+
+        forEachCanRecompileAppClass { appCtClass ->
+            appCtClass.instrument(codeConverter)
+        }
+    }
+
+    private fun CtMethod.copyDescriptorFrom(other: CtMethod) {
+        methodInfo.descriptor = other.methodInfo.descriptor
     }
 
     private fun String.appendFragmentAppendix() = this + "_"

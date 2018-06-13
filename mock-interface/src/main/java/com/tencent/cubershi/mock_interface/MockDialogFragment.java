@@ -1,7 +1,5 @@
 package com.tencent.cubershi.mock_interface;
 
-import android.app.Dialog;
-
 public class MockDialogFragment extends MockFragment {
 
     private ContainerDialogFragment getContainerDialogFragment() {
@@ -20,7 +18,7 @@ public class MockDialogFragment extends MockFragment {
         }
     }
 
-    public Dialog getDialog() {
-        return getContainerDialogFragment().getDialog();
+    public MockDialog getDialog() {
+        return (MockDialog) getContainerDialogFragment().getDialog();
     }
 }
