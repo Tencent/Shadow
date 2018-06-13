@@ -80,8 +80,8 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
             mPluginService = MockService::class.java.cast(aClass.newInstance())
             mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
             mPluginService.setPluginResources(mPluginResources)
-            mPluginService.setPluginApplication(mPluginApplication)
             mPluginService.setPluginClassLoader(mPluginClassLoader)
+            mPluginService.setMockApplication(mPluginApplication)
             mIsSetService = true
         }
         return mPluginService.onCreate()

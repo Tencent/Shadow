@@ -12,7 +12,6 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegato
  */
 public abstract class MockService extends MockContext {
     HostServiceDelegator mHostServiceDelegator;
-    MockApplication mPluginApplication;
 
     public final void setHostContextAsBase(Context context) {
         attachBaseContext(context);
@@ -20,10 +19,6 @@ public abstract class MockService extends MockContext {
 
     public void setContainerService(HostServiceDelegator delegator) {
         mHostServiceDelegator = delegator;
-    }
-
-    public void setPluginApplication(MockApplication pluginApplication) {
-        mPluginApplication = pluginApplication;
     }
 
     public IBinder onBind(Intent intent) {
