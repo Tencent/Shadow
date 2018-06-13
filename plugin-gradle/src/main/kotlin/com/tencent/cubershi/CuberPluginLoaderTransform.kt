@@ -11,21 +11,33 @@ import java.io.File
 class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(classPool) {
 
     companion object {
-        const val AndroidApplicationClassname = "android.app.Application"
-        const val MockApplicationClassname = "com.tencent.cubershi.mock_interface.MockApplication"
-        const val AndroidActivityClassname = "android.app.Activity"
-        const val MockActivityClassname = "com.tencent.cubershi.mock_interface.MockActivity"
-        const val AndroidServiceClassname = "android.app.Service"
-        const val MockServiceClassname = "com.tencent.cubershi.mock_interface.MockService"
-        const val AndroidFragmentClassname = "android.app.Fragment"
         const val MockFragmentClassname = "com.tencent.cubershi.mock_interface.MockFragment"
-        const val AndroidFragmentManagerClassname = "android.app.FragmentManager"
-        const val PluginFragmentManagerClassname = "com.tencent.cubershi.mock_interface.PluginFragmentManager"
-        const val AndroidFragmentTransactionClassname = "android.app.FragmentTransaction"
-        const val PluginFragmentTransactionClassname = "com.tencent.cubershi.mock_interface.PluginFragmentTransaction"
-        const val AndroidActivityLifecycleCallbacksClassname = "android.app.Application\$ActivityLifecycleCallbacks"
-        const val MockActivityLifecycleCallbacksClassname = "com.tencent.cubershi.mock_interface.MockActivityLifecycleCallbacks"
-
+        const val MockDialogFragmentClassname = "com.tencent.cubershi.mock_interface.MockDialogFragment"
+        val RenameMap = mapOf(
+                "android.app.Application"
+                        to "com.tencent.cubershi.mock_interface.MockApplication"
+                ,
+                "android.app.Activity"
+                        to "com.tencent.cubershi.mock_interface.MockActivity"
+                ,
+                "android.app.Service"
+                        to "com.tencent.cubershi.mock_interface.MockService"
+                ,
+                "android.app.Fragment"
+                        to MockFragmentClassname
+                ,
+                "android.app.DialogFragment"
+                        to MockDialogFragmentClassname
+                ,
+                "android.app.FragmentManager"
+                        to "com.tencent.cubershi.mock_interface.PluginFragmentManager"
+                ,
+                "android.app.FragmentTransaction"
+                        to "com.tencent.cubershi.mock_interface.PluginFragmentTransaction"
+                ,
+                "android.app.Application\$ActivityLifecycleCallbacks"
+                        to "com.tencent.cubershi.mock_interface.MockActivityLifecycleCallbacks"
+        )
         val FragmentCtClassCache = mutableSetOf<String>()
     }
 
@@ -39,13 +51,9 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
     private fun step1() {
         val appClasses = mCtClassInputMap.keys
         appClasses.forEach { ctClass ->
-            ctClass.replaceClassName(AndroidActivityClassname, MockActivityClassname)
-            ctClass.replaceClassName(AndroidApplicationClassname, MockApplicationClassname)
-            ctClass.replaceClassName(AndroidServiceClassname, MockServiceClassname)
-            ctClass.replaceClassName(AndroidFragmentClassname, MockFragmentClassname)
-            ctClass.replaceClassName(AndroidFragmentManagerClassname, PluginFragmentManagerClassname)
-            ctClass.replaceClassName(AndroidFragmentTransactionClassname, PluginFragmentTransactionClassname)
-            ctClass.replaceClassName(AndroidActivityLifecycleCallbacksClassname, MockActivityLifecycleCallbacksClassname)
+            RenameMap.forEach {
+                ctClass.replaceClassName(it.key, it.value)
+            }
         }
     }
 
@@ -83,10 +91,13 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         }
     }
 
+    private fun String.isMockFragmentClassname() =
+            (this == MockFragmentClassname) or (this == MockDialogFragmentClassname)
+
     private fun renameFragment(ctClass: CtClass) {
         ctClass.refClasses.forEach {
             val refClassName: String = it as String
-            if (refClassName == MockFragmentClassname) {
+            if (refClassName.isMockFragmentClassname()) {
                 return@forEach
             }
             if (refClassName in FragmentCtClassCache) {
@@ -106,7 +117,7 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
     private fun CtClass.isFragment(): Boolean {
         var tmp: CtClass? = this
         do {
-            if (tmp?.name == MockFragmentClassname) {
+            if (tmp?.name?.isMockFragmentClassname() == true) {
                 return true
             }
             try {
