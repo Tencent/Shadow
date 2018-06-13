@@ -2,6 +2,7 @@ package com.tencent.cubershi.mock_interface;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.app.SharedElementCallback;
@@ -28,8 +29,8 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-@SuppressWarnings("NullableProblems")
-public class ContainerFragment extends Fragment implements IContainerFragment {
+public class ContainerDialogFragment extends DialogFragment implements IContainerFragment {
+
     private static Map<String, Constructor<?>> constructorMap = new HashMap<>();
 
     private boolean init = false;
@@ -52,7 +53,7 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
         }
     }
 
-    private static MockFragment instantiatePluginFragment(ContainerFragment containerFragment, Context context) {
+    private static MockDialogFragment instantiatePluginFragment(ContainerDialogFragment containerFragment, Context context) {
         String pluginFragmentClassName = containerFragment.getClass().getName() + "_";
         Constructor<?> constructor = constructorMap.get(pluginFragmentClassName);
         if (constructor == null) {
@@ -68,13 +69,13 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
             }
         }
         try {
-            return MockFragment.class.cast(constructor.newInstance());
+            return MockDialogFragment.class.cast(constructor.newInstance());
         } catch (Exception e) {
             throw new InstantiationException("无法构造" + pluginFragmentClassName, e);
         }
     }
 
-    private MockFragment mPluginFragment;
+    private MockDialogFragment mPluginFragment;
 
     /**
      * 标志当前Fragment是否由app自己的代码创建的
@@ -89,7 +90,7 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
     public void bindPluginFragment(MockFragment pluginFragment) {
         init = true;
         mIsAppCreateFragment = true;
-        mPluginFragment = pluginFragment;
+        mPluginFragment = (MockDialogFragment) pluginFragment;
     }
 
     @Override

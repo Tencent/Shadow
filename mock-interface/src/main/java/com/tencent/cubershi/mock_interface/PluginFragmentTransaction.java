@@ -1,6 +1,7 @@
 package com.tencent.cubershi.mock_interface;
 
 import android.annotation.TargetApi;
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Build;
 import android.view.View;
@@ -14,9 +15,9 @@ public class PluginFragmentTransaction {
         this.mBase = mBase;
     }
 
-    private ContainerFragment getContainerFragment(MockFragment mockFragment) {
+    private Fragment getContainerFragment(MockFragment mockFragment) {
         mockFragment.mPluginFragmentManager = mPluginFragmentManager;
-        return mockFragment.getContainerFragment();
+        return mockFragment.getContainerFragment().asFragment();
     }
 
     public PluginFragmentTransaction add(MockFragment fragment, String tag) {

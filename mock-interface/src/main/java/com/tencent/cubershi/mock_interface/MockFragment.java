@@ -33,7 +33,7 @@ import java.util.Map;
 public class MockFragment {
     private static Map<String, Constructor<?>> constructorMap = new HashMap<>();
 
-    private static ContainerFragment instantiateContainerFragment(MockFragment mockFragment) {
+    private static IContainerFragment instantiateContainerFragment(MockFragment mockFragment) {
         String mockFragmentClassname = mockFragment.getClass().getName();
         String containerFragmentClassName = mockFragmentClassname.substring(0, mockFragmentClassname.length() - 1);
         Constructor<?> constructor = constructorMap.get(containerFragmentClassName);
@@ -48,7 +48,7 @@ public class MockFragment {
             }
         }
         try {
-            return ContainerFragment.class.cast(constructor.newInstance());
+            return IContainerFragment.class.cast(constructor.newInstance());
         } catch (Exception e) {
             throw new Fragment.InstantiationException("无法构造" + containerFragmentClassName, e);
         }
@@ -69,15 +69,15 @@ public class MockFragment {
 
     private Context mAttachedContext;
 
-    private ContainerFragment mContainerFragment;
+    private IContainerFragment mContainerFragment;
 
-    public void setContainerFragment(ContainerFragment containerFragment) {
+    public void setContainerFragment(IContainerFragment containerFragment) {
         mIsAppCreateFragment = false;
         mContainerFragment.unbindPluginFragment();
         mContainerFragment = containerFragment;
     }
 
-    public ContainerFragment getContainerFragment() {
+    public IContainerFragment getContainerFragment() {
         return mContainerFragment;
     }
 
