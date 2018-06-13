@@ -3,15 +3,12 @@ package com.tencent.cubershi.mock_interface;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 public abstract class MockActivity extends PluginActivity {
-
-    private LayoutInflater mLayoutInflater;
 
     private MixPackageManager mMixPackageManager;
 
@@ -30,29 +27,6 @@ public abstract class MockActivity extends PluginActivity {
 
     public void setContentView(View view) {
         mHostActivityDelegator.setContentView(view);
-    }
-
-    @Override
-    public Resources getResources() {
-        return mPluginResources;
-    }
-
-    @Override
-    public Object getSystemService(String name) {
-        if (LAYOUT_INFLATER_SERVICE.equals(name)) {
-            if (mLayoutInflater == null) {
-                LayoutInflater inflater = (LayoutInflater) super.getSystemService(name);
-                assert inflater != null;
-                mLayoutInflater = inflater.cloneInContext(this);
-            }
-            return mLayoutInflater;
-        }
-        return super.getSystemService(name);
-    }
-
-    @Override
-    public ClassLoader getClassLoader() {
-        return mPluginClassLoader;
     }
 
     public final MockApplication getApplication() {

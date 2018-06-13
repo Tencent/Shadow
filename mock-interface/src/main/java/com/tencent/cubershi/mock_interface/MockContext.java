@@ -8,6 +8,7 @@ import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.util.Pair;
 import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
 
 public class MockContext extends ContextThemeWrapper {
     PluginActivityLauncher mPluginActivityLauncher;
@@ -15,6 +16,7 @@ public class MockContext extends ContextThemeWrapper {
     ClassLoader mPluginClassLoader;
     MockApplication mMockApplication;
     Resources mPluginResources;
+    LayoutInflater mLayoutInflater;
 
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;
@@ -50,6 +52,24 @@ public class MockContext extends ContextThemeWrapper {
     @Override
     public AssetManager getAssets() {
         return mPluginResources.getAssets();
+    }
+
+    @Override
+    public Object getSystemService(String name) {
+        if (LAYOUT_INFLATER_SERVICE.equals(name)) {
+            if (mLayoutInflater == null) {
+                LayoutInflater inflater = (LayoutInflater) super.getSystemService(name);
+                assert inflater != null;
+                mLayoutInflater = inflater.cloneInContext(this);
+            }
+            return mLayoutInflater;
+        }
+        return super.getSystemService(name);
+    }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return mPluginClassLoader;
     }
 
     public interface PluginActivityLauncher {

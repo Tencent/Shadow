@@ -158,15 +158,7 @@ public abstract class PluginActivity extends MockContext {
     public void startActivityFromChild(Activity child, Intent intent, int requestCode) {
     }
 
-    public ClassLoader getClassLoader() {
-        return null;
-    }
-
     public LayoutInflater getLayoutInflater() {
-        return null;
-    }
-
-    public Resources getResources() {
         return null;
     }
 
