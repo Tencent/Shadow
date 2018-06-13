@@ -210,6 +210,9 @@ public class PluginContainerService extends Service implements HostService, Host
             if (servicesBindCount.containsKey(delegate)) {
                 servicesBindCount.put(delegate, servicesBindCount.get(delegate) + 1);
             } else {
+                if(!servicesStarter.contains(delegate)){
+                    delegate.onCreate(intent);
+                }
                 servicesBindCount.put(delegate, 1);
             }
             delegate.onBind(intent);
@@ -236,7 +239,7 @@ public class PluginContainerService extends Service implements HostService, Host
             HostServiceDelegate delegate = getDelegate(intent);
             if (delegate != null) {
                 if (servicesStarter.add(delegate))
-                    delegate.onCreate();
+                    delegate.onCreate(intent);
                 return delegate.onStartCommand(intent, flags, startId);
             }
             return Service.START_NOT_STICKY;

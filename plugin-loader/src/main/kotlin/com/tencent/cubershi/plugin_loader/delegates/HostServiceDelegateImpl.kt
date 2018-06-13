@@ -27,20 +27,6 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
     private var mIsSetService: Boolean = false
     private var mIsBound: Boolean = false
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        if (!mIsSetService) {
-            val cls = intent.getStringExtra("className")
-            val aClass = mPluginClassLoader.loadClass(cls)
-            mPluginService = MockService::class.java.cast(aClass.newInstance())
-            mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
-            mPluginService.setPluginResources(mPluginResources)
-            mPluginService.setPluginActivityLauncher(mPluginActivitiesManager)
-            mPluginService.setServiceOperator(mPluginServicesManager)
-            mPluginService.setPluginClassLoader(mPluginClassLoader)
-            mPluginService.setPluginApplication(mPluginApplication)
-            mPluginService.setPluginClassLoader(mPluginClassLoader)
-            mPluginService.setMockApplication(mPluginApplication)
-            mIsSetService = true
-        }
         return mPluginService.onStartCommand(intent, flags, startId)
     }
 
@@ -67,16 +53,6 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
     }
 
     override fun onBind(intent: Intent): IBinder {
-        if (!mIsSetService) {
-            val cls = intent.getStringExtra("className")
-            val aClass = mPluginClassLoader.loadClass(cls)
-            mPluginService = MockService::class.java.cast(aClass.newInstance())
-            mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
-            mPluginService.setPluginResources(mPluginResources)
-            mPluginService.setPluginApplication(mPluginApplication)
-            mPluginService.setPluginClassLoader(mPluginClassLoader)
-            mIsSetService = true
-        }
         if (!mIsBound) {
             mBinder = mPluginService.onBind(intent)
             mIsBound = true
@@ -97,7 +73,17 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
         return mPluginService.onDestroy()
     }
 
-    override fun onCreate() {
+    override fun onCreate(intent: Intent) {
+        if (!mIsSetService) {
+            val cls = intent.getStringExtra("className")
+            val aClass = mPluginClassLoader.loadClass(cls)
+            mPluginService = MockService::class.java.cast(aClass.newInstance())
+            mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
+            mPluginService.setPluginResources(mPluginResources)
+            mPluginService.setPluginApplication(mPluginApplication)
+            mPluginService.setPluginClassLoader(mPluginClassLoader)
+            mIsSetService = true
+        }
         return mPluginService.onCreate()
     }
 
