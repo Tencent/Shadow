@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.transition.Transition;
 import android.util.AttributeSet;
@@ -58,6 +59,8 @@ public class MockFragment {
      */
     private boolean mIsAppCreateFragment;
 
+    PluginFragmentManager mPluginFragmentManager;
+
     public MockFragment() {
         mContainerFragment = instantiateContainerFragment(this);
         mContainerFragment.bindPluginFragment(this);
@@ -97,6 +100,17 @@ public class MockFragment {
 
     final public Bundle getArguments() {
         return mContainerFragment.getArguments();
+    }
+
+    public PluginFragmentManager getFragmentManager() {
+        return mPluginFragmentManager;
+    }
+
+    final public Resources getResources() {
+        if (mAttachedContext == null) {
+            throw new IllegalStateException("Fragment " + this + " not attached to Activity");
+        }
+        return mAttachedContext.getResources();
     }
 
     public void setInitialSavedState(Fragment.SavedState state) {

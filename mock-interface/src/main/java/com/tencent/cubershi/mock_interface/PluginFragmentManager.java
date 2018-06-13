@@ -11,7 +11,7 @@ public class PluginFragmentManager {
     }
 
     public PluginFragmentTransaction beginTransaction() {
-        return new PluginFragmentTransaction(mBase.beginTransaction());
+        return new PluginFragmentTransaction(this, mBase.beginTransaction());
     }
 
     public MockFragment findFragmentByTag(String tag) {

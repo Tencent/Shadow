@@ -7,12 +7,15 @@ import android.view.View;
 
 public class PluginFragmentTransaction {
     final FragmentTransaction mBase;
+    final PluginFragmentManager mPluginFragmentManager;
 
-    PluginFragmentTransaction(FragmentTransaction mBase) {
+    PluginFragmentTransaction(PluginFragmentManager pluginFragmentManager, FragmentTransaction mBase) {
+        this.mPluginFragmentManager = pluginFragmentManager;
         this.mBase = mBase;
     }
 
     private ContainerFragment getContainerFragment(MockFragment mockFragment) {
+        mockFragment.mPluginFragmentManager = mPluginFragmentManager;
         return mockFragment.getContainerFragment();
     }
 
