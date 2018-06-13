@@ -3,7 +3,6 @@ package com.tencent.cubershi.mock_interface;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.IBinder;
 
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator;
@@ -13,12 +12,7 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegato
  */
 public abstract class MockService extends MockContext {
     HostServiceDelegator mHostServiceDelegator;
-    Resources mPluginResources;
     MockApplication mPluginApplication;
-
-    public final void setPluginResources(Resources resources) {
-        mPluginResources = resources;
-    }
 
     public final void setHostContextAsBase(Context context) {
         attachBaseContext(context);

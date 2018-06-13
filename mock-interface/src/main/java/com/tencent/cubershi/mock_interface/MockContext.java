@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.util.Pair;
 import android.view.ContextThemeWrapper;
 
@@ -12,6 +14,11 @@ public class MockContext extends ContextThemeWrapper {
     PluginServiceOperator mPluginServiceOperator;
     ClassLoader mPluginClassLoader;
     MockApplication mMockApplication;
+    Resources mPluginResources;
+
+    public final void setPluginResources(Resources resources) {
+        mPluginResources = resources;
+    }
 
     public final void setPluginClassLoader(ClassLoader classLoader) {
         mPluginClassLoader = classLoader;
@@ -33,6 +40,16 @@ public class MockContext extends ContextThemeWrapper {
     @Override
     public Context getApplicationContext() {
         return mMockApplication;
+    }
+
+    @Override
+    public Resources getResources() {
+        return mPluginResources;
+    }
+
+    @Override
+    public AssetManager getAssets() {
+        return mPluginResources.getAssets();
     }
 
     public interface PluginActivityLauncher {

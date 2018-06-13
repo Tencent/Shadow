@@ -23,15 +23,9 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 public abstract class PluginActivity extends MockContext {
     HostActivityDelegator mHostActivityDelegator;
 
-    Resources mPluginResources;
-
     MockApplication mPluginApplication;
 
     PackageManager mPluginPackageManager;
-
-    public final void setPluginResources(Resources resources) {
-        mPluginResources = resources;
-    }
 
     public final void setHostContextAsBase(Context context) {
         attachBaseContext(context);

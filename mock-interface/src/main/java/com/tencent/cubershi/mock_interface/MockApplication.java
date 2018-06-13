@@ -7,7 +7,6 @@ import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.Build;
 
 import java.util.HashMap;
@@ -17,8 +16,6 @@ import java.util.Map;
  * 用于在plugin-loader中调用假的Application方法的接口
  */
 public abstract class MockApplication extends MockContext {
-    Resources mPluginResources;
-
     private MixPackageManager mMixPackageManager;
 
     private Application mHostApplication;
@@ -111,10 +108,6 @@ public abstract class MockApplication extends MockContext {
     public void setHostApplicationContextAsBase(Context hostAppContext) {
         attachBaseContext(hostAppContext);
         mHostApplication = (Application) hostAppContext;
-    }
-
-    public void setPluginResources(Resources resources) {
-        mPluginResources = resources;
     }
 
     public void setPluginPackageManager(PackageManager pluginPackageManager) {
