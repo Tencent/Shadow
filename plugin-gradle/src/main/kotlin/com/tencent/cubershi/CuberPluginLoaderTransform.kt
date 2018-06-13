@@ -38,17 +38,21 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
                 "android.app.Application\$ActivityLifecycleCallbacks"
                         to "com.tencent.cubershi.mock_interface.MockActivityLifecycleCallbacks"
         )
-        val FragmentCtClassCache = mutableSetOf<String>()
     }
 
     val ContainerFragmentCtClass = classPool["com.tencent.cubershi.mock_interface.ContainerFragment"]
+    val ContainerDialogFragmentCtClass = classPool["com.tencent.cubershi.mock_interface.ContainerDialogFragment"]
+
+    val mAppFragments: MutableSet<CtClass> = mutableSetOf()
+    val mAppDialogFragments: MutableSet<CtClass> = mutableSetOf()
 
     override fun onTransform() {
-        step1()
-        step2()
+        step1_renameMockClass()
+        step2_findFragments()
+        step3_renameFragments()
     }
 
-    private fun step1() {
+    private fun step1_renameMockClass() {
         val appClasses = mCtClassInputMap.keys
         appClasses.forEach { ctClass ->
             RenameMap.forEach {
@@ -57,28 +61,46 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         }
     }
 
-    private fun step2() {
+    private fun step2_findFragments() {
         val appClasses = mCtClassInputMap.keys
         appClasses.forEach { ctClass ->
-            val inputClass = mCtClassInputMap[ctClass]!!
-            val ctClassOriginName = ctClass.name
-            var ctClassOriginOutputFile: File? = null
-            var ctClassOriginOutputEntryName: String? = null
-            when (inputClass) {
-                is DirInputClass -> {
-                    ctClassOriginOutputFile = inputClass.getOutput(ctClass.name)
-                }
-                is JarInputClass -> {
-                    ctClassOriginOutputEntryName = inputClass.getOutput(ctClass.name)
-                }
+            if (ctClass.isDialogFragment()) {
+                mAppDialogFragments.add(ctClass)
+            } else if (ctClass.isFragment()) {
+                mAppFragments.add(ctClass)
             }
+        }
+    }
 
-            renameFragment(ctClass)
-            if (ctClass.name != ctClassOriginName) {
-                inputClass.renameOutput(ctClassOriginName, ctClass.name)
+    private fun step3_renameFragments() {
+        val appClasses = mCtClassInputMap.keys
+        val fragmentsName = listOf(mAppFragments, mAppDialogFragments).flatten().flatMap { listOf(it.name) }
+        appClasses.forEach { ctClass ->
+            fragmentsName.forEach { fragmentName ->
+                ctClass.replaceClassName(fragmentName, fragmentName.appendFragmentAppendix())
             }
-            if (ctClass.isFragment()) {
-                val newContainerFragmentCtClass = classPool.makeClass(ctClassOriginName, ContainerFragmentCtClass)
+        }
+        listOf(
+                mAppFragments to ContainerFragmentCtClass,
+                mAppDialogFragments to ContainerDialogFragmentCtClass
+        ).forEach { (fragmentSet, container) ->
+            fragmentSet.forEach {
+                val inputClass = mCtClassInputMap[it]!!
+                val originalFragmentName = it.name.removeFragmentAppendix()
+                var ctClassOriginOutputFile: File? = null
+                var ctClassOriginOutputEntryName: String? = null
+                when (inputClass) {
+                    is DirInputClass -> {
+                        ctClassOriginOutputFile = inputClass.getOutput(originalFragmentName)
+                    }
+                    is JarInputClass -> {
+                        ctClassOriginOutputEntryName = inputClass.getOutput(originalFragmentName)
+                    }
+                }
+
+                inputClass.renameOutput(originalFragmentName, it.name)
+
+                val newContainerFragmentCtClass = classPool.makeClass(originalFragmentName, container)
                 when (inputClass) {
                     is DirInputClass -> {
                         inputClass.addOutput(newContainerFragmentCtClass.name, ctClassOriginOutputFile!!)
@@ -91,33 +113,14 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         }
     }
 
-    private fun String.isMockFragmentClassname() =
-            (this == MockFragmentClassname) or (this == MockDialogFragmentClassname)
+    private fun String.appendFragmentAppendix() = this + "_"
 
-    private fun renameFragment(ctClass: CtClass) {
-        ctClass.refClasses.forEach {
-            val refClassName: String = it as String
-            if (refClassName.isMockFragmentClassname()) {
-                return@forEach
-            }
-            if (refClassName in FragmentCtClassCache) {
-                ctClass.replaceFragmentName(refClassName)
-            } else if (classPool.getOrNull(refClassName) != null
-                    && classPool.getOrNull(refClassName).isFragment()) {
-                FragmentCtClassCache.add(refClassName)
-                ctClass.replaceFragmentName(refClassName)
-            }
-        }
-    }
+    private fun String.removeFragmentAppendix() = this.substring(0, this.length - 1)
 
-    private fun CtClass.replaceFragmentName(fragmentClassName: String) {
-        this.replaceClassName(fragmentClassName, fragmentClassName + "_")
-    }
-
-    private fun CtClass.isFragment(): Boolean {
+    private fun CtClass.isClassOf(className: String): Boolean {
         var tmp: CtClass? = this
         do {
-            if (tmp?.name?.isMockFragmentClassname() == true) {
+            if (tmp?.name == className) {
                 return true
             }
             try {
@@ -128,6 +131,9 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         } while (tmp != null)
         return false
     }
+
+    private fun CtClass.isFragment(): Boolean = isClassOf(MockFragmentClassname)
+    private fun CtClass.isDialogFragment(): Boolean = isClassOf(MockDialogFragmentClassname)
 
     override fun getName(): String = "CuberPluginLoaderTransform"
 }
