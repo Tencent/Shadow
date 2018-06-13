@@ -103,4 +103,8 @@ public abstract class MockActivity extends PluginActivity {
     public void overridePendingTransition(int enterAnim, int exitAnim) {
         mHostActivityDelegator.overridePendingTransition(enterAnim, exitAnim);
     }
+
+    public void setTitle(CharSequence title) {
+        mHostActivityDelegator.setTitle(title);
+    }
 }
