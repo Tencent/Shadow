@@ -107,4 +107,8 @@ public abstract class MockActivity extends PluginActivity {
     public void setTitle(CharSequence title) {
         mHostActivityDelegator.setTitle(title);
     }
+
+    public boolean isFinishing() {
+        return mHostActivityDelegator.isFinishing();
+    }
 }
