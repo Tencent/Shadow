@@ -55,11 +55,11 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
     }
 
     override fun onLowMemory() {
-        return mPluginService.onLowMemory();
+        return mPluginService.onLowMemory()
     }
 
     override fun onConfigurationChanged(configuration: Configuration?) {
-        return mPluginService.onConfigurationChanged(configuration);
+        return mPluginService.onConfigurationChanged(configuration)
     }
 
     override fun setDelegator(hostServiceDelegator: HostServiceDelegator) {
@@ -96,4 +96,9 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
     override fun onDestroy() {
         return mPluginService.onDestroy()
     }
+
+    override fun onCreate() {
+        return mPluginService.onCreate()
+    }
+
 }

@@ -16,6 +16,8 @@ public interface HostServiceDelegate {
 
     IBinder onBind(Intent intent);
 
+    void onCreate();
+
     int onStartCommand(Intent intent, int flags, int startId);
 
     void onDestroy();

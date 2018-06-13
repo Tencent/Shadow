@@ -27,6 +27,7 @@ public abstract class MockService extends MockContext {
     public void setContainerService(HostServiceDelegator delegator) {
         mHostServiceDelegator = delegator;
     }
+
     public void setPluginApplication(MockApplication pluginApplication) {
         mPluginApplication = pluginApplication;
     }
@@ -55,11 +56,15 @@ public abstract class MockService extends MockContext {
 
     }
 
-    public boolean onUnbind(Intent intent){
+    public boolean onUnbind(Intent intent) {
         return false;
     }
 
-    public void onTaskRemoved(Intent rootIntent){
+    public void onTaskRemoved(Intent rootIntent) {
+
+    }
+
+    public void onCreate() {
 
     }
 

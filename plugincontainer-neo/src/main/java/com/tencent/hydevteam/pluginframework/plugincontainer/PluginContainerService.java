@@ -235,7 +235,8 @@ public class PluginContainerService extends Service implements HostService, Host
         int startDelegate(Intent intent, int flags, int startId) {
             HostServiceDelegate delegate = getDelegate(intent);
             if (delegate != null) {
-                servicesStarter.add(delegate);
+                if (servicesStarter.add(delegate))
+                    delegate.onCreate();
                 return delegate.onStartCommand(intent, flags, startId);
             }
             return Service.START_NOT_STICKY;
