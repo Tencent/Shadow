@@ -57,7 +57,7 @@ public class MockFragment {
     /**
      * 标志当前Fragment是否由app自己的代码创建的
      */
-    private boolean mIsAppCreateFragment;
+    protected boolean mIsAppCreateFragment;
 
     PluginFragmentManager mPluginFragmentManager;
 
@@ -69,7 +69,7 @@ public class MockFragment {
 
     private Context mAttachedContext;
 
-    private IContainerFragment mContainerFragment;
+    protected IContainerFragment mContainerFragment;
 
     public void setContainerFragment(IContainerFragment containerFragment) {
         mIsAppCreateFragment = false;
