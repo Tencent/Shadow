@@ -3,6 +3,7 @@ package com.tencent.cubershi.mock_interface;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.View;
 
 public interface IContainerFragment {
     Fragment asFragment();
@@ -34,4 +35,6 @@ public interface IContainerFragment {
     int getId();
 
     String getTag();
+
+    View getView();
 }

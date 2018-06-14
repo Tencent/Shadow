@@ -259,7 +259,7 @@ public class MockFragment {
 
 
     public View getView() {
-        return null;
+        return mContainerFragment.getView();
     }
 
 
