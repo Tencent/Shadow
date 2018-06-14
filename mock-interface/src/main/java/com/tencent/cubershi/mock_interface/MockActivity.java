@@ -89,4 +89,8 @@ public abstract class MockActivity extends PluginActivity {
     public boolean isDestroyed() {
         return mHostActivityDelegator.isDestroyed();
     }
+
+    public final boolean requestWindowFeature(int featureId) {
+        return mHostActivityDelegator.requestWindowFeature(featureId);
+    }
 }
