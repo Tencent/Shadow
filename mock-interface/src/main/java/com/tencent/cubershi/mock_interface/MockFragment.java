@@ -535,4 +535,16 @@ public class MockFragment {
     final public String getTag() {
         return mContainerFragment.getTag();
     }
+
+    public final CharSequence getText(int resId) {
+        return getResources().getText(resId);
+    }
+
+    public final String getString(int resId) {
+        return getResources().getString(resId);
+    }
+
+    public final String getString(int resId, Object... formatArgs) {
+        return getResources().getString(resId, formatArgs);
+    }
 }
