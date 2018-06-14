@@ -236,7 +236,7 @@ public class MockFragment {
     }
 
 
-    public void onAttach(Activity activity) {
+    public void onAttach(MockActivity activity) {
         mAttachedContext = activity;
     }
 

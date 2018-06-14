@@ -139,7 +139,7 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
         initPluginFragment(activity);
         super.onAttach(activity);
         if (activity instanceof PluginContainerActivity) {
-            Context pluginActivity = (Context) (((PluginContainerActivity) activity).getPluginActivity());
+            MockActivity pluginActivity = (MockActivity) (((PluginContainerActivity) activity).getPluginActivity());
             mPluginFragment.onAttach(pluginActivity);
         }
     }
