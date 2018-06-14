@@ -496,4 +496,40 @@ public class MockFragment {
     public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
 
     }
+
+    final public boolean isAdded() {
+        return mContainerFragment.isAdded();
+    }
+
+    final public boolean isDetached() {
+        return mContainerFragment.isDetached();
+    }
+
+    final public boolean isRemoving() {
+        return mContainerFragment.isRemoving();
+    }
+
+    final public boolean isInLayout() {
+        return mContainerFragment.isInLayout();
+    }
+
+    final public boolean isResumed() {
+        return mContainerFragment.isResumed();
+    }
+
+    final public boolean isVisible() {
+        return mContainerFragment.isVisible();
+    }
+
+    final public boolean isHidden() {
+        return mContainerFragment.isHidden();
+    }
+
+    final public int getId() {
+        return mContainerFragment.getId();
+    }
+
+    final public String getTag() {
+        return mContainerFragment.getTag();
+    }
 }

@@ -16,4 +16,22 @@ public interface IContainerFragment {
     void setArguments(Bundle args);
 
     Bundle getArguments();
+
+    boolean isAdded();
+
+    boolean isDetached();
+
+    boolean isRemoving();
+
+    boolean isInLayout();
+
+    boolean isResumed();
+
+    boolean isVisible();
+
+    boolean isHidden();
+
+    int getId();
+
+    String getTag();
 }
