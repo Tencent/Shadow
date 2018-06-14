@@ -167,12 +167,13 @@ public class PluginContainerService extends Service implements HostService, Host
             String cls = intent.getStringExtra(KEY_CLASS_NAME);
             return getDelegate(pkg, cls);
         }
-
-        private void removeDelegate(Intent intent) {
+        private ComponentName getComponetName(Intent intent) {
             String pkg = intent.getStringExtra(KEY_PKG_NAME);
             String cls = intent.getStringExtra(KEY_CLASS_NAME);
-            ComponentName componentName = new ComponentName(pkg, cls);
-            HostServiceDelegate delegate = serviceDelegates.remove(componentName);
+            return new ComponentName(pkg, cls);
+        }
+        private void removeDelegate(Intent intent) {
+            HostServiceDelegate delegate = serviceDelegates.remove(getComponetName(intent));
             if (delegate != null) {
                 mOnDelegateChanged.onRemoveDelegate(delegate);
             }
@@ -219,7 +220,7 @@ public class PluginContainerService extends Service implements HostService, Host
         }
 
         void unbindToDelegate(Intent intent) {
-            HostServiceDelegate delegate = serviceDelegates.get(intent);
+            HostServiceDelegate delegate = serviceDelegates.get(getComponetName(intent));
             if (delegate != null) {
                 if (servicesBindCount.containsKey(delegate)) {
                     if (servicesBindCount.get(delegate) > 1) {
@@ -246,7 +247,7 @@ public class PluginContainerService extends Service implements HostService, Host
         }
 
         void stopDelegate(Intent intent) {
-            HostServiceDelegate delegate = serviceDelegates.get(intent);
+            HostServiceDelegate delegate = serviceDelegates.get(getComponetName(intent));
             if (delegate != null) {
                 if (servicesStarter.remove(delegate)) {
                     handleUnbindAndStopDelegate(intent);
@@ -256,7 +257,7 @@ public class PluginContainerService extends Service implements HostService, Host
         }
 
         void handleUnbindAndStopDelegate(Intent intent) {
-            HostServiceDelegate delegate = serviceDelegates.get(intent);
+            HostServiceDelegate delegate = serviceDelegates.get(getComponetName(intent));
             if (delegate != null) {
                 if (!servicesBindCount.containsKey(delegate) && !servicesStarter.contains(delegate)) {
                     removeDelegate(intent);

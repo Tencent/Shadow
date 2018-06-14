@@ -1,5 +1,6 @@
 package com.tencent.cubershi.mock_interface;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -26,7 +27,7 @@ public abstract class MockService extends MockContext {
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return -1;
+        return Service.START_NOT_STICKY;
     }
 
     public void onDestroy() {
