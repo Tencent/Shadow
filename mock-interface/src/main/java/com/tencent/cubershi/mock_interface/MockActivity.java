@@ -85,4 +85,8 @@ public abstract class MockActivity extends PluginActivity {
     public boolean isFinishing() {
         return mHostActivityDelegator.isFinishing();
     }
+
+    public boolean isDestroyed() {
+        return mHostActivityDelegator.isDestroyed();
+    }
 }
