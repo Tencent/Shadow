@@ -100,6 +100,11 @@ class HostActivityDelegateImpl(
         mPluginActivity.onPause()
     }
 
+    override fun onStart() {
+        mHostActivityDelegator.superOnStart()
+        mPluginActivity.onStart()
+    }
+
     override fun onStop() {
         mHostActivityDelegator.superOnStop()
         mPluginActivity.onStop()

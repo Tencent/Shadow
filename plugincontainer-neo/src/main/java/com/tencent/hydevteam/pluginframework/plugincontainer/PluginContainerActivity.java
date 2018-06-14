@@ -155,6 +155,15 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     @Override
+    protected void onStart() {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onStart();
+        } else {
+            super.onStart();
+        }
+    }
+
+    @Override
     protected void onStop() {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.onStop();

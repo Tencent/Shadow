@@ -104,4 +104,6 @@ public interface HostActivityDelegate {
     Resources getResources();
 
     void onBackPressed();
+
+    void onStart();
 }

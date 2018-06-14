@@ -60,6 +60,9 @@ public abstract class PluginActivity extends MockContext {
     public void onPause() {
     }
 
+    public void onStart() {
+    }
+
     public void onStop() {
     }
 
