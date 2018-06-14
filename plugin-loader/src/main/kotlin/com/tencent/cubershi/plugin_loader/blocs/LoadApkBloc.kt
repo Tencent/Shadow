@@ -2,7 +2,6 @@ package com.tencent.cubershi.plugin_loader.blocs
 
 import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
 import com.tencent.cubershi.plugin_loader.exceptions.LoadApkException
-import dalvik.system.DexClassLoader
 import java.io.File
 
 /**
@@ -18,7 +17,7 @@ object LoadApkBloc {
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadPlugin(apk: File): DexClassLoader {
+    fun loadPlugin(apk: File): PluginClassLoader {
         val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
         val mockClassLoader = pluginLoaderClassLoader.parent
         val hostAppClassLoader = mockClassLoader.parent

@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.util.Pair;
@@ -17,6 +18,7 @@ public class MockContext extends ContextThemeWrapper {
     MockApplication mMockApplication;
     Resources mPluginResources;
     LayoutInflater mLayoutInflater;
+    String mLibrarySearchPath;
 
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;
@@ -37,6 +39,10 @@ public class MockContext extends ContextThemeWrapper {
 
     public void setMockApplication(MockApplication mockApplication) {
         mMockApplication = mockApplication;
+    }
+
+    public void setLibrarySearchPath(String mLibrarySearchPath) {
+        this.mLibrarySearchPath = mLibrarySearchPath;
     }
 
     @Override
@@ -136,5 +142,12 @@ public class MockContext extends ContextThemeWrapper {
         if (!ret.first)
             return super.startService(service);
         return ret.second;
+    }
+
+    @Override
+    public ApplicationInfo getApplicationInfo() {
+        final ApplicationInfo applicationInfo = super.getApplicationInfo();
+        applicationInfo.nativeLibraryDir = mLibrarySearchPath;
+        return applicationInfo;
     }
 }

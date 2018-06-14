@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.blocs.*
+import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
 import com.tencent.cubershi.plugin_loader.delegates.HostActivityDelegateImpl
 import com.tencent.cubershi.plugin_loader.delegates.HostServiceDelegateImpl
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
@@ -16,7 +17,6 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.*
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
-import dalvik.system.DexClassLoader
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -29,7 +29,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     private val mLock = ReentrantLock()
 
-    private lateinit var mPluginClassLoader: DexClassLoader
+    private lateinit var mPluginClassLoader: PluginClassLoader
 
     private lateinit var mPluginResources: Resources
 

@@ -7,17 +7,17 @@ import android.content.res.Resources
 import android.os.IBinder
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.mock_interface.MockService
+import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
-import dalvik.system.DexClassLoader
 
 /**
  * Created by tracyluo on 2018/6/5.
  */
 class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
-                              private val mPluginClassLoader: DexClassLoader,
+                              private val mPluginClassLoader: PluginClassLoader,
                               private val mPluginResources: Resources,
                               private val mPluginActivitiesManager: PluginActivitiesManager,
                               private val mPluginServicesManager: PluginServicesManager) : HostServiceDelegate {
@@ -84,6 +84,7 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
             mPluginService.setMockApplication(mPluginApplication)
             mPluginService.setPluginActivityLauncher(mPluginActivitiesManager)
             mPluginService.setServiceOperator(mPluginServicesManager)
+            mPluginService.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
             mIsSetService = true
         }
         return mPluginService.onCreate()

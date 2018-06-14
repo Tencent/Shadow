@@ -8,10 +8,12 @@ import dalvik.system.DexClassLoader
  * @author cubershi
  */
 class PluginClassLoader(
-        dexPath: String, optimizedDirectory: String, librarySearchPath: String, parent: ClassLoader,
+        dexPath: String, optimizedDirectory: String, private val librarySearchPath: String, parent: ClassLoader,
         private val mMockClassloader: ClassLoader,
         private val mMockClassNames: Array<String>
 ) : DexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
+
+    fun getLibrarySearchPath() = librarySearchPath
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
