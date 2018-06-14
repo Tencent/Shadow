@@ -1,5 +1,7 @@
 package com.tencent.cubershi.mock_interface;
 
+import android.os.Bundle;
+
 public class MockDialogFragment extends MockFragment {
 
     private ContainerDialogFragment getContainerDialogFragment() {
@@ -36,5 +38,9 @@ public class MockDialogFragment extends MockFragment {
 
     public void show(PluginFragmentManager manager, String tag) {
         getContainerDialogFragment().show(manager.mBase, tag);
+    }
+
+    public MockDialog onCreateDialog(Bundle savedInstanceState) {
+        return new MockDialog(getActivity(), getTheme());
     }
 }

@@ -56,7 +56,7 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        return new MockDialog(getActivity(), getTheme());
+        return mPluginFragment.onCreateDialog(savedInstanceState);
     }
 
     private static MockDialogFragment instantiatePluginFragment(ContainerDialogFragment containerFragment, Context context) {
