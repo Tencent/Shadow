@@ -25,4 +25,8 @@ public class MockDialogFragment extends MockFragment {
     public int getTheme() {
         return getContainerDialogFragment().getTheme();
     }
+
+    public void dismiss() {
+        getContainerDialogFragment().dismiss();
+    }
 }
