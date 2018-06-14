@@ -29,4 +29,8 @@ public class MockDialogFragment extends MockFragment {
     public void dismiss() {
         getContainerDialogFragment().dismiss();
     }
+
+    public void dismissAllowingStateLoss() {
+        getContainerDialogFragment().dismissAllowingStateLoss();
+    }
 }
