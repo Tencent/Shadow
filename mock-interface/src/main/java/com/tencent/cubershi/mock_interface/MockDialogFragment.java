@@ -33,4 +33,8 @@ public class MockDialogFragment extends MockFragment {
     public void dismissAllowingStateLoss() {
         getContainerDialogFragment().dismissAllowingStateLoss();
     }
+
+    public void show(PluginFragmentManager manager, String tag) {
+        getContainerDialogFragment().show(manager.mBase, tag);
+    }
 }
