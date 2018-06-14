@@ -403,9 +403,6 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
     public void onDetach() {
         super.onDetach();
         mPluginFragment.onDetach();
-        if (mDestroyed) {
-            onUnbindPluginFragment();
-        }
     }
 
     @Override

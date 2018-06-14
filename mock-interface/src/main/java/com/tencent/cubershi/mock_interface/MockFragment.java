@@ -78,6 +78,9 @@ public class MockFragment {
     }
 
     public IContainerFragment getContainerFragment() {
+        if (mContainerFragment == null) {
+            throw new NullPointerException(this.getClass().getName() + " mContainerFragment == null");
+        }
         return mContainerFragment;
     }
 
