@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 public abstract class MockActivity extends PluginActivity {
 
@@ -75,7 +76,11 @@ public abstract class MockActivity extends PluginActivity {
     }
 
     public void overridePendingTransition(int enterAnim, int exitAnim) {
-        mHostActivityDelegator.overridePendingTransition(enterAnim, exitAnim);
+        if (enterAnim != 0 || exitAnim != 0) {
+            Toast.makeText(this, "暂不支持插件资源overridePendingTransition", Toast.LENGTH_SHORT).show();
+        } else {
+            mHostActivityDelegator.overridePendingTransition(enterAnim, exitAnim);
+        }
     }
 
     public void setTitle(CharSequence title) {
