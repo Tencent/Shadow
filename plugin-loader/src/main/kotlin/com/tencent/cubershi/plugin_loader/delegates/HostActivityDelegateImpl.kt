@@ -12,9 +12,9 @@ import android.graphics.Canvas
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.*
+import com.tencent.cubershi.mock_interface.FixedContextLayoutInflater
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.mock_interface.PluginActivity
-import com.tencent.cubershi.plugin_loader.FixedContextLayoutInflater
 import com.tencent.cubershi.plugin_loader.PluginPackageManager
 import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo

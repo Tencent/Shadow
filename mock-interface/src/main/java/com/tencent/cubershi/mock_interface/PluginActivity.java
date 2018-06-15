@@ -162,7 +162,10 @@ public abstract class PluginActivity extends MockContext {
     }
 
     public LayoutInflater getLayoutInflater() {
-        return null;
+        LayoutInflater inflater = (LayoutInflater) mHostActivityDelegator.getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        assert inflater != null;
+        inflater.cloneInContext(this);
+        return new FixedContextLayoutInflater(inflater, this);
     }
 
     public void onBackPressed() {
