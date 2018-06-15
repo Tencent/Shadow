@@ -61,9 +61,13 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         appClasses.forEach(action)
     }
 
-    private inline fun forEachCanRecompileAppClass(action: (CtClass) -> Unit) {
+    private inline fun forEachCanRecompileAppClass(targetClassList: List<String>, action: (CtClass) -> Unit) {
         val appClasses = mCtClassInputMap.keys
-        appClasses.filter {
+        appClasses.filter { ctClass ->
+            targetClassList.any { targetClass ->
+                ctClass.refClasses.contains(targetClass)
+            }
+        }.filter {
             it.refClasses.all {
                 var found: Boolean;
                 try {
@@ -150,8 +154,13 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         codeConverter.redirectMethodCall(method_getOwnerActivity, method_getOwnerPluginActivity)
         codeConverter.redirectMethodCall(method_setOwnerActivity, method_setOwnerPluginActivity)
 
-        forEachCanRecompileAppClass { appCtClass ->
-            appCtClass.instrument(codeConverter)
+        forEachCanRecompileAppClass(listOf(MockDialogClassname)) { appCtClass ->
+            try {
+                appCtClass.instrument(codeConverter)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
         }
     }
 
