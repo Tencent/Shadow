@@ -8,6 +8,7 @@ import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
 import com.tencent.cubershi.plugin_loader.delegates.HostActivityDelegateImpl
 import com.tencent.cubershi.plugin_loader.delegates.HostServiceDelegateImpl
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
+import com.tencent.cubershi.plugin_loader.managers.PluginReceiverManager
 import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
 import com.tencent.cubershi.plugin_loader.test.FakeRunningPlugin
 import com.tencent.hydevteam.common.progress.ProgressFuture
@@ -37,11 +38,15 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     abstract fun getBusinessPluginServiceManager(): PluginServicesManager
 
+    //abstract fun getBusinessPluginReceiverManager(): PluginReceiverManager
+
     private lateinit var mPluginApplication: MockApplication
 
     private lateinit var mPluginPackageManager: PluginPackageManager
 
-    abstract val mAbi: String;
+    private lateinit var mPluginReceiverManager: PluginReceiverManager
+
+    abstract val mAbi: String
 
     @Throws(LoadPluginException::class)
     override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
@@ -66,7 +71,6 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                                 getBusinessPluginActivitiesManager(),
                                 getBusinessPluginServiceManager()
                         )
-
                 mLock.withLock {
                     getBusinessPluginActivitiesManager().addPluginApkInfo(pluginInfo)
                     getBusinessPluginServiceManager().addPluginApkInfo(pluginInfo)
@@ -74,6 +78,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                     mPluginResources = resources
                     mPluginApplication = mockApplication
                     mPluginPackageManager = pluginPackageManager
+                    mPluginReceiverManager = PluginReceiverManager(hostAppContext)
                 }
 
                 FakeRunningPlugin(mockApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())

@@ -2,6 +2,7 @@ package com.tencent.plugin_loader_apk
 
 import com.tencent.cubershi.plugin_loader.CuberPluginLoader
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
+import com.tencent.cubershi.plugin_loader.managers.PluginReceiverManager
 import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
 
 class DemoPluginLoader : CuberPluginLoader() {
