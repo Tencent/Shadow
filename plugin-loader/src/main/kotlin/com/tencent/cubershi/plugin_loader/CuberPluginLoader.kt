@@ -59,7 +59,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                 val pluginInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 val pluginPackageManager = PluginPackageManager(pluginInfo)
                 CopySoBloc.copySo(installedPlugin.pluginFile, mAbi)
-                val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin.pluginFile)
+                val pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile)
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 val mockApplication =
                         CreateApplicationBloc.callPluginApplicationOnCreate(

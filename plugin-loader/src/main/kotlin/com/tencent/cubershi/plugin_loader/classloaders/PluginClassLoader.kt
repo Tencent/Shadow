@@ -1,7 +1,6 @@
 package com.tencent.cubershi.plugin_loader.classloaders
 
-import android.content.Context
-import com.tencent.hydevteam.pluginframework.pluginloader.multidex.MultiDexClassLoader
+import dalvik.system.DexClassLoader
 
 /**
  * 用于加载插件的ClassLoader.
@@ -9,10 +8,10 @@ import com.tencent.hydevteam.pluginframework.pluginloader.multidex.MultiDexClass
  * @author cubershi
  */
 class PluginClassLoader(
-        context: Context, dexPath: String, optimizedDirectory: String, private val librarySearchPath: String, parent: ClassLoader,
+        dexPath: String, optimizedDirectory: String, private val librarySearchPath: String, parent: ClassLoader,
         private val mMockClassloader: ClassLoader,
         private val mMockClassNames: Array<String>
-) : MultiDexClassLoader(context, dexPath, optimizedDirectory, librarySearchPath, parent) {
+) : DexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
     fun getLibrarySearchPath() = librarySearchPath
 
