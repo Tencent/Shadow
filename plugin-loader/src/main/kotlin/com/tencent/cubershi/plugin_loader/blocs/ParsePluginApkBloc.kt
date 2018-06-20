@@ -32,7 +32,7 @@ object ParsePluginApkBloc {
                 , packageArchiveInfo.applicationInfo.className
         )
         packageArchiveInfo.activities.forEach {
-            pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource))
+            pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource, it))
         }
         packageArchiveInfo.services.forEach { pluginInfo.putServiceInfo(PluginServiceInfo (it.name)) }
         pluginInfo.metaData = packageArchiveInfo.applicationInfo.metaData

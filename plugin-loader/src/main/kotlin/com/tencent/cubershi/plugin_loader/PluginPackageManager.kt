@@ -314,8 +314,15 @@ class PluginPackageManager(val pluginInfo: PluginInfo) : PackageManager() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getActivityInfo(component: ComponentName?, flags: Int): ActivityInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo {
+        val find = pluginInfo.mActivities.find {
+            it.className == component.className
+        }
+        if (find == null) {
+            throw NameNotFoundException(component.className)
+        } else {
+            return find.activityInfo
+        }
     }
 
     override fun getNameForUid(uid: Int): String {

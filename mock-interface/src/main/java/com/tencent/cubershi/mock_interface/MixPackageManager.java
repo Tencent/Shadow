@@ -1,5 +1,7 @@
 package com.tencent.cubershi.mock_interface;
 
+import android.content.ComponentName;
+import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -23,5 +25,14 @@ public class MixPackageManager extends PackageManagerWrapper {
             applicationInfo.metaData.putAll(pluginAppInfo.metaData);
         }
         return applicationInfo;
+    }
+
+    @Override
+    public ActivityInfo getActivityInfo(ComponentName component, int flags) throws NameNotFoundException {
+        try {
+            return mPluginPackageManager.getActivityInfo(component, flags);
+        } catch (NameNotFoundException ignored) {
+            return super.getActivityInfo(component, flags);
+        }
     }
 }
