@@ -1,5 +1,6 @@
 package com.tencent.cubershi.plugin_loader.blocs
 
+import android.content.Context
 import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
 import com.tencent.cubershi.plugin_loader.exceptions.LoadApkException
 import java.io.File
@@ -13,11 +14,12 @@ object LoadApkBloc {
     /**
      * 加载插件到ClassLoader中.
      *
+     * @param context 插件hostContext
      * @param apk    插件apk
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadPlugin(apk: File): PluginClassLoader {
+    fun loadPlugin(context: Context, apk: File): PluginClassLoader {
         val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
         val mockClassLoader = pluginLoaderClassLoader.parent
         val hostAppClassLoader = mockClassLoader.parent
@@ -26,6 +28,7 @@ object LoadApkBloc {
         val libDir = File(apk.parent, apk.name + "_lib")
         prepareDirs(odexDir, libDir)
         return PluginClassLoader(
+                context,
                 apk.absolutePath,
                 odexDir.absolutePath,
                 libDir.absolutePath,
