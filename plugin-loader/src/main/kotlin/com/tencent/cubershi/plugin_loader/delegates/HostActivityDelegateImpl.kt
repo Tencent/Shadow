@@ -270,13 +270,4 @@ class HostActivityDelegateImpl(
         mHostActivityDelegator.superOnBackPressed()
         mPluginActivity.onBackPressed()
     }
-
-
-    override fun startActivityForResult(p0: Intent?, p1: Int) {
-        mPluginActivity.startActivityForResult(p0,p1)
-    }
-
-    override fun runOnUiThread(p0: Runnable?) {
-        mPluginActivity.runOnUiThread(p0)
-    }
 }
