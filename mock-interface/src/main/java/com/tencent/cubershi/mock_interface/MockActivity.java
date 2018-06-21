@@ -98,4 +98,17 @@ public abstract class MockActivity extends PluginActivity {
     public final boolean requestWindowFeature(int featureId) {
         return mHostActivityDelegator.requestWindowFeature(featureId);
     }
+
+    public void startActivityForResult(Intent intent, int requestCode) {
+        final Intent pluginIntent = new Intent(intent);
+        pluginIntent.setExtrasClassLoader(mPluginClassLoader);
+        final boolean success = mPluginActivityLauncher.startActivityForResult(mHostActivityDelegator, pluginIntent, requestCode);
+        if (!success) {
+            mHostActivityDelegator.startActivityForResult(intent, requestCode);
+        }
+    }
+
+    public final void setResult(int resultCode) {
+        mHostActivityDelegator.setResult(resultCode);
+    }
 }
