@@ -134,7 +134,7 @@ class HostActivityDelegateImpl(
         mHostActivityDelegator.superFinish()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         mPluginActivity.onActivityResult(requestCode, resultCode, data)
     }
 

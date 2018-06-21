@@ -11,6 +11,8 @@ import android.util.Pair;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 
+import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
+
 public class MockContext extends ContextThemeWrapper {
     PluginActivityLauncher mPluginActivityLauncher;
     PluginServiceOperator mPluginServiceOperator;
@@ -88,6 +90,16 @@ public class MockContext extends ContextThemeWrapper {
          * <code>false</code>表示该Intent不是插件内的Activity.
          */
         boolean startActivity(Context context, Intent intent);
+
+        /**
+         * 启动Actvity
+         *
+         * @param delegator 发起启动的activity的delegator
+         * @param intent    插件内传来的Intent.
+         * @return <code>true</code>表示该Intent是为了启动插件内Activity的,已经被正确消费了.
+         * <code>false</code>表示该Intent不是插件内的Activity.
+         */
+        boolean startActivityForResult(HostActivityDelegator delegator, Intent intent, int requestCode);
 
     }
 
