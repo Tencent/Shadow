@@ -47,6 +47,7 @@ dependencies {
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
 
     compileOnly project(':mock-interface')
+    implementation project(':multidex')
 }
 
 apply plugin: 'maven-publish'
