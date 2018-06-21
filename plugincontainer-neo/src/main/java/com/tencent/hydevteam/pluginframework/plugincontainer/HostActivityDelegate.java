@@ -106,4 +106,8 @@ public interface HostActivityDelegate {
     void onBackPressed();
 
     void onStart();
+
+    void startActivityForResult(Intent intent, int requestCode) ;
+
+    void runOnUiThread(Runnable action) ;
 }

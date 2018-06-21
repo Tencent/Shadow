@@ -171,4 +171,15 @@ public abstract class PluginActivity extends MockContext {
     public void onBackPressed() {
 
     }
+
+    public void startActivityForResult(Intent intent, int requestCode) {
+            startActivity(intent);
+    }
+
+    public void runOnUiThread(Runnable action) {
+
+    }
+
+    public void setRequestedOrientation(int orientation){}
+
 }
