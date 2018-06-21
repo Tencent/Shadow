@@ -2,6 +2,7 @@ package com.tencent.cubershi.plugin_loader
 
 import android.content.Context
 import android.content.res.Resources
+import android.util.Log
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.blocs.*
 import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
@@ -53,13 +54,14 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 //        if (mLogger.isInfoEnabled) {
 //            mLogger.info("loadPlugin installedPlugin=={}", installedPlugin)
 //        }
+        //Log.d("startPlugin", "begin"+System.nanoTime().toString())
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 //todo cubershi 下面这些步骤可能可以并发起来.
                 val pluginInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 val pluginPackageManager = PluginPackageManager(pluginInfo)
                 CopySoBloc.copySo(installedPlugin.pluginFile, mAbi)
-                val pluginClassLoader = LoadApkBloc.loadPlugin(installedPlugin.pluginFile)
+                val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin.pluginFile)
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 val mockApplication =
                         CreateApplicationBloc.callPluginApplicationOnCreate(
