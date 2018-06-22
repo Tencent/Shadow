@@ -2,6 +2,7 @@ package com.tencent.cubershi.mock_interface;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -110,5 +111,13 @@ public abstract class MockActivity extends PluginActivity {
 
     public final void setResult(int resultCode) {
         mHostActivityDelegator.setResult(resultCode);
+    }
+
+    public SharedPreferences getPreferences(int mode) {
+        return super.getSharedPreferences(getLocalClassName(),mode);
+    }
+
+    public String getLocalClassName() {
+        return this.getClass().getName();
     }
 }
