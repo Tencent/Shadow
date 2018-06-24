@@ -2,12 +2,15 @@ package com.tencent.cubershi.mock_interface;
 
 import android.annotation.TargetApi;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.util.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +23,8 @@ public abstract class MockApplication extends MockContext {
 
     private Application mHostApplication;
 
+    private Map<String, String> mReceivers;
+
     @Override
     public Context getApplicationContext() {
         return this;
@@ -28,6 +33,21 @@ public abstract class MockApplication extends MockContext {
     private Map<MockActivityLifecycleCallbacks, Application.ActivityLifecycleCallbacks> mActivityLifecycleCallbacksMap = new HashMap<>();
 
     public void onCreate() {
+        for (Map.Entry<String, String> entry: mReceivers.entrySet()){
+            try {
+                Class<?> clazz = mPluginClassLoader.loadClass(entry.getValue());
+                BroadcastReceiver receiver = ((BroadcastReceiver) clazz.newInstance());
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction(entry.getKey());
+                mHostApplication.registerReceiver(receiver, intentFilter);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            }
+        }
         mHostApplication.registerComponentCallbacks(new ComponentCallbacks2() {
             @Override
             public void onTrimMemory(int level) {
@@ -112,6 +132,10 @@ public abstract class MockApplication extends MockContext {
 
     public void setPluginPackageManager(PackageManager pluginPackageManager) {
         mMixPackageManager = new MixPackageManager(super.getPackageManager(), pluginPackageManager);
+    }
+
+    public void setReceivers(Map<String, String> receivers){
+        mReceivers = receivers;
     }
 
     @Override

@@ -27,7 +27,8 @@ object CreateApplicationBloc {
             resources: Resources,
             hostAppContext: Context,
             businessPluginActivitiesManager: PluginActivitiesManager,
-            businessPluginServiceManager: PluginServicesManager
+            businessPluginServiceManager: PluginServicesManager,
+            receivers: Map<String, String>
     ): MockApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
@@ -37,6 +38,7 @@ object CreateApplicationBloc {
             mockApplication.setPluginActivityLauncher(businessPluginActivitiesManager)
             mockApplication.setServiceOperator(businessPluginServiceManager)
             mockApplication.setHostApplicationContextAsBase(hostAppContext)
+            mockApplication.setReceivers(receivers)
             mockApplication.setPluginPackageManager(pluginPackageManager)
             mockApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
             val uiHandler = Handler(Looper.getMainLooper())

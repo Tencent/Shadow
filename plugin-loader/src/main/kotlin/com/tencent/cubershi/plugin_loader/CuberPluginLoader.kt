@@ -39,13 +39,11 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     abstract fun getBusinessPluginServiceManager(): PluginServicesManager
 
-    //abstract fun getBusinessPluginReceiverManager(): PluginReceiverManager
+    abstract fun getBusinessPluginReceiverManger(hostAppContext: Context): PluginReceiverManager
 
     private lateinit var mPluginApplication: MockApplication
 
     private lateinit var mPluginPackageManager: PluginPackageManager
-
-    private lateinit var mPluginReceiverManager: PluginReceiverManager
 
     abstract val mAbi: String
 
@@ -55,6 +53,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 //            mLogger.info("loadPlugin installedPlugin=={}", installedPlugin)
 //        }
         //Log.d("startPlugin", "begin"+System.nanoTime().toString())
+        Log.d("startPlugin", "begin"+System.nanoTime().toString())
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 //todo cubershi 下面这些步骤可能可以并发起来.
@@ -71,7 +70,8 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                                 resources,
                                 hostAppContext,
                                 getBusinessPluginActivitiesManager(),
-                                getBusinessPluginServiceManager()
+                                getBusinessPluginServiceManager(),
+                                getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName)
                         )
                 mLock.withLock {
                     getBusinessPluginActivitiesManager().addPluginApkInfo(pluginInfo)
@@ -80,7 +80,6 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                     mPluginResources = resources
                     mPluginApplication = mockApplication
                     mPluginPackageManager = pluginPackageManager
-                    mPluginReceiverManager = PluginReceiverManager(hostAppContext)
                 }
 
                 FakeRunningPlugin(mockApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())

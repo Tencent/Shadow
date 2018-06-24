@@ -9,6 +9,7 @@ data class PluginInfo(val packageName: String, val applicationClassName: String)
 
     internal val mServices: MutableSet<PluginServiceInfo> = HashSet()
 
+
     fun putActivityInfo(pluginActivityInfo: PluginActivityInfo) {
         mActivities.add(pluginActivityInfo)
     }
@@ -16,5 +17,4 @@ data class PluginInfo(val packageName: String, val applicationClassName: String)
     fun putServiceInfo(pluginServiceInfo: PluginServiceInfo) {
         mServices.add(pluginServiceInfo)
     }
-
 }
