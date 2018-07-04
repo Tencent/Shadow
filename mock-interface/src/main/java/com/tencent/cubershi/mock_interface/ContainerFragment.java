@@ -268,6 +268,7 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
     @Override
     @Deprecated
     public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+        initPluginFragment(activity);
         super.onInflate(activity, attrs, savedInstanceState);
         mPluginFragment.onInflate(activity, attrs, savedInstanceState);
     }
