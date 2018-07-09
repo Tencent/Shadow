@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -112,7 +113,7 @@ public class MockWebView extends WebView {
             return mWebViewClient.shouldOverrideUrlLoading(view, url);
         }
 
-        @TargetApi(24)
+        @TargetApi(Build.VERSION_CODES.N)
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             return mWebViewClient.shouldOverrideUrlLoading(view, request);
@@ -133,7 +134,7 @@ public class MockWebView extends WebView {
             mWebViewClient.onLoadResource(view, url);
         }
 
-        @TargetApi(23)
+        @TargetApi(Build.VERSION_CODES.M)
         @Override
         public void onPageCommitVisible(WebView view, String url) {
             mWebViewClient.onPageCommitVisible(view, url);
@@ -148,7 +149,7 @@ public class MockWebView extends WebView {
             return mWebViewClient.shouldInterceptRequest(view, url);
         }
 
-        @TargetApi(21)
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
@@ -169,13 +170,15 @@ public class MockWebView extends WebView {
             mWebViewClient.onReceivedError(view, errorCode, description, failingUrl);
         }
 
-        @TargetApi(23)
+
+        @TargetApi(Build.VERSION_CODES.M)
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             mWebViewClient.onReceivedError(view, request, error);
         }
 
-        @TargetApi(23)
+
+        @TargetApi(Build.VERSION_CODES.M)
         @Override
         public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
             mWebViewClient.onReceivedHttpError(view, request, errorResponse);
@@ -196,7 +199,8 @@ public class MockWebView extends WebView {
             mWebViewClient.onReceivedSslError(view, handler, error);
         }
 
-        @TargetApi(21)
+
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onReceivedClientCertRequest(WebView view, ClientCertRequest request) {
             mWebViewClient.onReceivedClientCertRequest(view, request);
@@ -227,13 +231,14 @@ public class MockWebView extends WebView {
             mWebViewClient.onReceivedLoginRequest(view, realm, account, args);
         }
 
-        @TargetApi(26)
+
+        @TargetApi(Build.VERSION_CODES.O)
         @Override
         public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
             return mWebViewClient.onRenderProcessGone(view, detail);
         }
 
-        @TargetApi(27)
+        @TargetApi(Build.VERSION_CODES.O_MR1)
         @Override
         public void onSafeBrowsingHit(WebView view, WebResourceRequest request, int threatType, SafeBrowsingResponse callback) {
             mWebViewClient.onSafeBrowsingHit(view, request, threatType, callback);

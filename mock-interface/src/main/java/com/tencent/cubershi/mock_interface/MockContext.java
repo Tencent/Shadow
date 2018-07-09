@@ -68,7 +68,7 @@ public class MockContext extends ContextThemeWrapper {
             if (mLayoutInflater == null) {
                 LayoutInflater inflater = (LayoutInflater) super.getSystemService(name);
                 assert inflater != null;
-                mLayoutInflater = inflater.cloneInContext(this);
+                mLayoutInflater = new MockLayoutInflater(inflater.cloneInContext(this),this);
             }
             return mLayoutInflater;
         }
