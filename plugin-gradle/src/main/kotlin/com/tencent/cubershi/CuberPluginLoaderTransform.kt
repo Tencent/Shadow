@@ -13,6 +13,8 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         const val MockDialogFragmentClassname = "com.tencent.cubershi.mock_interface.MockDialogFragment"
         const val AndroidDialogClassname = "android.app.Dialog"
         const val MockDialogClassname = "com.tencent.cubershi.mock_interface.MockDialog"
+        const val WebViewClassname = "android.webkit.WebView"
+        const val MockWebViewClassname = "com.tencent.cubershi.mock_interface.MockWebView"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.cubershi.mock_interface.MockApplication"
@@ -40,6 +42,9 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
                 ,
                 AndroidDialogClassname
                         to MockDialogClassname
+                ,
+                WebViewClassname
+                        to MockWebViewClassname
         )
     }
 
