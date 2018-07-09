@@ -42,9 +42,7 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
                 ,
                 AndroidDialogClassname
                         to MockDialogClassname
-                ,
-                WebViewClassname
-                        to MockWebViewClassname
+
         )
     }
 
@@ -59,6 +57,7 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         step2_findFragments()
         step3_renameFragments()
         step4_redirectDialogMethod()
+        step5_renameWebViewChildclass()
     }
 
     private inline fun forEachAppClass(action: (CtClass) -> Unit) {
@@ -166,6 +165,14 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
                 System.err.println("处理" + appCtClass.name + "时出错")
                 throw e
             }
+        }
+    }
+
+    private fun step5_renameWebViewChildclass(){
+        forEachAppClass { ctClass ->
+           if(!ctClass.superclass.name.startsWith("android.webkit")){
+               ctClass.replaceClassName(WebViewClassname, MockWebViewClassname)
+           }
         }
     }
 
