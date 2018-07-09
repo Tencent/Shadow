@@ -1,5 +1,6 @@
 package com.tencent.cubershi.mock_interface;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
@@ -27,35 +28,45 @@ public class MockWebView extends WebView {
 
     private Context mContext;
 
+    private final String MOCK_ASSET_PREFIX = "file:///android_asset/";
+
+    private final String REPLACE_ASSET_PREFIX = "http://android.asset/";
+
     public MockWebView(Context context) {
         super(context);
-        mContext = context;
+        init(context);
     }
 
     public MockWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
+        init(context);
     }
 
     public MockWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mContext = context;
+        init(context);
     }
 
+    @TargetApi(21)
     public MockWebView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        mContext = context;
+        init(context);
     }
 
     public MockWebView(Context context, AttributeSet attrs, int defStyleAttr, boolean privateBrowsing) {
         super(context, attrs, defStyleAttr, privateBrowsing);
+        init(context);
+    }
+
+    private void init(Context context){
         mContext = context;
+        setWebViewClient(new WebViewClient());
     }
 
     @Override
     public void loadUrl(String url) {
-        if(url.startsWith("file:///android_asset")){
-            url = url.replace("file:///android_asset","http://android.asset");
+        if(url.startsWith(MOCK_ASSET_PREFIX)){
+            url = url.replace(MOCK_ASSET_PREFIX,REPLACE_ASSET_PREFIX);
         }
         super.loadUrl(url);
     }
@@ -75,11 +86,33 @@ public class MockWebView extends WebView {
             mContext = context;
         }
 
+        private WebResourceResponse getInterceptResponse(String url){
+            if(url.startsWith(REPLACE_ASSET_PREFIX)){
+                String filePath = url.substring(REPLACE_ASSET_PREFIX.length());
+                String mime = "text/html";
+                if (filePath.contains(".css")){
+                    mime = "text/css";
+                }else if(filePath.contains(".js")){
+                    mime = "application/x-javascript";
+                }else if(filePath.contains(".jpg") || filePath.contains(".gif") ||
+                        filePath.contains(".png") || filePath.contains(".jpeg")){
+                    mime = "image/*";
+                }
+                try {
+                    return new WebResourceResponse(mime,"utf-8",mContext.getAssets().open(filePath));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             return mWebViewClient.shouldOverrideUrlLoading(view, url);
         }
 
+        @TargetApi(24)
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
             return mWebViewClient.shouldOverrideUrlLoading(view, request);
@@ -100,6 +133,7 @@ public class MockWebView extends WebView {
             mWebViewClient.onLoadResource(view, url);
         }
 
+        @TargetApi(23)
         @Override
         public void onPageCommitVisible(WebView view, String url) {
             mWebViewClient.onPageCommitVisible(view, url);
@@ -107,28 +141,21 @@ public class MockWebView extends WebView {
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-            if(url.startsWith("http://android.asset/")){
-                String filePath = url.substring("http://android.asset/".length());
-                String mime = "text/html";
-                if (filePath.contains(".css")){
-                    mime = "text/css";
-                }else if(filePath.contains(".js")){
-                    mime = "application/x-javascript";
-                }else if(filePath.contains(".jpg") || filePath.contains(".gif") ||
-                        filePath.contains(".png") || filePath.contains(".jpeg")){
-                    mime = "image/*";
-                }
-                try {
-                    return new WebResourceResponse(mime,"utf-8",mContext.getAssets().open(filePath));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+            WebResourceResponse resourceResponse = getInterceptResponse(url);
+            if(resourceResponse != null){
+                return resourceResponse;
             }
             return mWebViewClient.shouldInterceptRequest(view, url);
         }
 
+        @TargetApi(21)
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            String url = request.getUrl().toString();
+            WebResourceResponse resourceResponse = getInterceptResponse(url);
+            if(resourceResponse != null){
+                return resourceResponse;
+            }
             return mWebViewClient.shouldInterceptRequest(view, request);
         }
 
@@ -142,11 +169,13 @@ public class MockWebView extends WebView {
             mWebViewClient.onReceivedError(view, errorCode, description, failingUrl);
         }
 
+        @TargetApi(23)
         @Override
         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
             mWebViewClient.onReceivedError(view, request, error);
         }
 
+        @TargetApi(23)
         @Override
         public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
             mWebViewClient.onReceivedHttpError(view, request, errorResponse);
@@ -167,6 +196,7 @@ public class MockWebView extends WebView {
             mWebViewClient.onReceivedSslError(view, handler, error);
         }
 
+        @TargetApi(21)
         @Override
         public void onReceivedClientCertRequest(WebView view, ClientCertRequest request) {
             mWebViewClient.onReceivedClientCertRequest(view, request);
@@ -197,11 +227,13 @@ public class MockWebView extends WebView {
             mWebViewClient.onReceivedLoginRequest(view, realm, account, args);
         }
 
+        @TargetApi(26)
         @Override
         public boolean onRenderProcessGone(WebView view, RenderProcessGoneDetail detail) {
             return mWebViewClient.onRenderProcessGone(view, detail);
         }
 
+        @TargetApi(27)
         @Override
         public void onSafeBrowsingHit(WebView view, WebResourceRequest request, int threatType, SafeBrowsingResponse callback) {
             mWebViewClient.onSafeBrowsingHit(view, request, threatType, callback);
