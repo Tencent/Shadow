@@ -13,8 +13,10 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
         const val MockDialogFragmentClassname = "com.tencent.cubershi.mock_interface.MockDialogFragment"
         const val AndroidDialogClassname = "android.app.Dialog"
         const val MockDialogClassname = "com.tencent.cubershi.mock_interface.MockDialog"
-        const val WebViewClassname = "android.webkit.WebView"
+        const val AndroidWebViewClassname = "android.webkit.WebView"
         const val MockWebViewClassname = "com.tencent.cubershi.mock_interface.MockWebView"
+        const val AndroidWebViewClientClassname = "android.webkit.WebViewClient"
+        const val AndroidWebChromeClientClassname = "android.webkit.WebChromeClient"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.cubershi.mock_interface.MockApplication"
@@ -170,8 +172,8 @@ class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(clas
 
     private fun step5_renameWebViewChildclass(){
         forEachAppClass { ctClass ->
-           if(!ctClass.superclass.name.startsWith("android.webkit")){
-               ctClass.replaceClassName(WebViewClassname, MockWebViewClassname)
+           if(ctClass.superclass.name != AndroidWebViewClientClassname && ctClass.superclass.name != AndroidWebChromeClientClassname){
+               ctClass.replaceClassName(AndroidWebViewClassname, MockWebViewClassname)
            }
         }
     }
