@@ -9,6 +9,7 @@ import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.plugin_loader.PluginPackageManager
 import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
 import com.tencent.cubershi.plugin_loader.exceptions.CreateApplicationException
+import com.tencent.cubershi.plugin_loader.managers.PendingIntentManager
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
 import java.util.concurrent.CountDownLatch
@@ -28,7 +29,8 @@ object CreateApplicationBloc {
             hostAppContext: Context,
             businessPluginActivitiesManager: PluginActivitiesManager,
             businessPluginServiceManager: PluginServicesManager,
-            receivers: Map<String, String>
+            receivers: Map<String, String>,
+            mPendingIntentManager: PendingIntentManager
     ): MockApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
@@ -41,6 +43,7 @@ object CreateApplicationBloc {
             mockApplication.setReceivers(receivers)
             mockApplication.setPluginPackageManager(pluginPackageManager)
             mockApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
+            mockApplication.pendingIntentConverter = mPendingIntentManager;
             val uiHandler = Handler(Looper.getMainLooper())
             val lock = CountDownLatch(1)
             uiHandler.post {

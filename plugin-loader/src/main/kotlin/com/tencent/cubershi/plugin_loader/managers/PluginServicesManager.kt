@@ -74,7 +74,7 @@ abstract class PluginServicesManager : MockContext.PluginServiceOperator {
         return true
     }
 
-    private fun getContainerServiceIntent(intent: Intent, opt: Operate): Intent? {
+    public fun getContainerServiceIntent(intent: Intent, opt: Operate): Intent? {
         val className = intent.component.className
         val packageName = packageNameMap[className] ?: return null
         intent.component = ComponentName(packageName, className)

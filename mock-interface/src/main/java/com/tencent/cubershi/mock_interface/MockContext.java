@@ -16,6 +16,7 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 public class MockContext extends ContextThemeWrapper {
     PluginActivityLauncher mPluginActivityLauncher;
     PluginServiceOperator mPluginServiceOperator;
+    PendingIntentConverter mPendingIntentConverter;
     ClassLoader mPluginClassLoader;
     MockApplication mMockApplication;
     Resources mPluginResources;
@@ -45,6 +46,10 @@ public class MockContext extends ContextThemeWrapper {
 
     public void setLibrarySearchPath(String mLibrarySearchPath) {
         this.mLibrarySearchPath = mLibrarySearchPath;
+    }
+
+    public final void setPendingIntentConverter(PendingIntentConverter pendingIntentConverter) {
+        this.mPendingIntentConverter = pendingIntentConverter;
     }
 
     @Override
@@ -115,6 +120,12 @@ public class MockContext extends ContextThemeWrapper {
 
     }
 
+    public interface PendingIntentConverter{
+        Pair<Context,Intent> convertPluginActivityIntent(Intent pluginIntent);
+
+        Pair<Context,Intent> convertPluginServiceIntent(Intent pluginIntent);
+    }
+
     @Override
     public void startActivity(Intent intent) {
         final Intent pluginIntent = new Intent(intent);
@@ -161,5 +172,9 @@ public class MockContext extends ContextThemeWrapper {
         final ApplicationInfo applicationInfo = super.getApplicationInfo();
         applicationInfo.nativeLibraryDir = mLibrarySearchPath;
         return applicationInfo;
+    }
+
+    public PendingIntentConverter getPendingIntentConverter() {
+        return mPendingIntentConverter;
     }
 }

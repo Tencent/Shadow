@@ -8,6 +8,7 @@ import android.os.IBinder
 import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.cubershi.mock_interface.MockService
 import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
+import com.tencent.cubershi.plugin_loader.managers.PendingIntentManager
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
@@ -20,7 +21,8 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
                               private val mPluginClassLoader: PluginClassLoader,
                               private val mPluginResources: Resources,
                               private val mPluginActivitiesManager: PluginActivitiesManager,
-                              private val mPluginServicesManager: PluginServicesManager) : HostServiceDelegate {
+                              private val mPluginServicesManager: PluginServicesManager,
+                              private val mPendingIntentManager: PendingIntentManager) : HostServiceDelegate {
     private lateinit var mHostServiceDelegator: HostServiceDelegator
     private lateinit var mPluginService: MockService
     private lateinit var mBinder: IBinder
@@ -84,6 +86,7 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
             mPluginService.setMockApplication(mPluginApplication)
             mPluginService.setPluginActivityLauncher(mPluginActivitiesManager)
             mPluginService.setServiceOperator(mPluginServicesManager)
+            mPluginService.pendingIntentConverter = mPendingIntentManager;
             mPluginService.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
             mIsSetService = true
         }

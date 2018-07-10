@@ -8,6 +8,7 @@ import com.tencent.cubershi.plugin_loader.blocs.*
 import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
 import com.tencent.cubershi.plugin_loader.delegates.HostActivityDelegateImpl
 import com.tencent.cubershi.plugin_loader.delegates.HostServiceDelegateImpl
+import com.tencent.cubershi.plugin_loader.managers.PendingIntentManager
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.managers.PluginReceiverManager
 import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
@@ -45,6 +46,8 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 
     private lateinit var mPluginPackageManager: PluginPackageManager
 
+    private lateinit var mPendingIntentManager: PendingIntentManager
+
     abstract val mAbi: String
 
     @Throws(LoadPluginException::class)
@@ -54,6 +57,7 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
 //        }
         //Log.d("startPlugin", "begin"+System.nanoTime().toString())
         Log.d("startPlugin", "begin"+System.nanoTime().toString())
+        mPendingIntentManager = PendingIntentManager(hostAppContext,getBusinessPluginActivitiesManager(),getBusinessPluginServiceManager())
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 //todo cubershi 下面这些步骤可能可以并发起来.
@@ -71,7 +75,8 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                                 hostAppContext,
                                 getBusinessPluginActivitiesManager(),
                                 getBusinessPluginServiceManager(),
-                                getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName)
+                                getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName),
+                                mPendingIntentManager
                         )
                 mLock.withLock {
                     getBusinessPluginActivitiesManager().addPluginApkInfo(pluginInfo)
@@ -105,7 +110,8 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                     mPluginClassLoader,
                     mPluginResources,
                     getBusinessPluginActivitiesManager(),
-                    getBusinessPluginServiceManager()
+                    getBusinessPluginServiceManager(),
+                    mPendingIntentManager
             )
         }
     }
@@ -117,7 +123,9 @@ abstract class CuberPluginLoader : PluginLoader, DelegateProvider {
                     mPluginClassLoader,
                     mPluginResources,
                     getBusinessPluginActivitiesManager(),
-                    getBusinessPluginServiceManager())
+                    getBusinessPluginServiceManager(),
+                    mPendingIntentManager
+            )
         }
     }
 

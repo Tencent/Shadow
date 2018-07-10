@@ -18,6 +18,7 @@ import com.tencent.cubershi.mock_interface.PluginActivity
 import com.tencent.cubershi.plugin_loader.PluginPackageManager
 import com.tencent.cubershi.plugin_loader.classloaders.PluginClassLoader
 import com.tencent.cubershi.plugin_loader.infos.PluginActivityInfo
+import com.tencent.cubershi.plugin_loader.managers.PendingIntentManager
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
 import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
 import com.tencent.cubershi.plugin_loader.managers.PluginServicesManager
@@ -36,7 +37,8 @@ class HostActivityDelegateImpl(
         private val mPluginClassLoader: PluginClassLoader,
         private val mPluginResources: Resources,
         private val mPluginActivitiesManager: PluginActivitiesManager,
-        private val mPluginServicesManager: PluginServicesManager
+        private val mPluginServicesManager: PluginServicesManager,
+        private val mPendingIntentManager: PendingIntentManager
 ) : HostActivityDelegate {
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
@@ -67,6 +69,7 @@ class HostActivityDelegateImpl(
             pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
             pluginActivity.setPluginClassLoader(mPluginClassLoader)
             pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
+            pluginActivity.pendingIntentConverter = mPendingIntentManager
             pluginActivity.setPluginApplication(mPluginApplication)
             pluginActivity.setPluginPackageManager(mPluginPackageManager)
             pluginActivity.setServiceOperator(mPluginServicesManager)
