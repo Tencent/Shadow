@@ -17,6 +17,11 @@ class CuberPluginLoaderTransformPlugin : Plugin<Project> {
         val androidJar = File(plugin.extension.sdkDirectory, "platforms/${plugin.extension.compileSdkVersion}/android.jar")
         classPool.appendClassPath(androidJar.absolutePath)
 
-        plugin.extension.registerTransform(CuberPluginLoaderTransform(classPool))
+        val keepHostObjectsExtension = project.extensions.create("keepHostObjects", KeepHostObjectsExtension::class.java)
+        plugin.extension.registerTransform(CuberPluginLoaderTransform(classPool, keepHostObjectsExtension))
+    }
+
+    open class KeepHostObjectsExtension {
+        var useHostContext: Array<String> = emptyArray()
     }
 }

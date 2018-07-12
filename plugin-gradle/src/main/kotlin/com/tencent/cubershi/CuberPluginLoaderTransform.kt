@@ -6,7 +6,7 @@ import com.tencent.cubershi.transformkit.JavassistTransform
 import javassist.*
 import java.io.File
 
-class CuberPluginLoaderTransform(classPool: ClassPool) : JavassistTransform(classPool) {
+class CuberPluginLoaderTransform(classPool: ClassPool, val keepHostObjectsExtension: CuberPluginLoaderTransformPlugin.KeepHostObjectsExtension) : JavassistTransform(classPool) {
 
     companion object {
         const val MockFragmentClassname = "com.tencent.cubershi.mock_interface.MockFragment"
