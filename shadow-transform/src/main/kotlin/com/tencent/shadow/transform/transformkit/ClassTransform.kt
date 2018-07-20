@@ -1,4 +1,4 @@
-package com.tencent.cubershi.transformkit
+package com.tencent.shadow.transform.transformkit
 
 import com.android.SdkConstants
 import com.android.build.api.transform.*

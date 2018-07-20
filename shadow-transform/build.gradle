@@ -2,14 +2,14 @@ apply plugin: 'java-gradle-plugin'
 
 apply plugin: 'kotlin'
 
-group 'org.gradle.sample'
+group 'com.tencent.shadow.transform'
 version '1.0.0'
 
 gradlePlugin {
     plugins {
-        hello {
-            id = "com.tencent.cubershi.cuber-pluginloader"
-            implementationClass = "com.tencent.cubershi.CuberPluginLoaderTransformPlugin"
+        shadowTransform {
+            id = "com.tencent.shadow.transform"
+            implementationClass = "com.tencent.shadow.transform.ShadowTransformPlugin"
         }
     }
 }

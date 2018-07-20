@@ -1,5 +1,5 @@
 include ':example', ':plugin-loader', ':demo-plugin', ':slf4j-logcat', ':mock-android', ':plugin-loader-apk', ':mock-interface', ':multidex'
 include ':plugincontainer-neo'
-include ':plugin-gradle'
+include ':shadow-transform'
 include ':test-groupvideo:wtlogin-demo'
 include ':gv-plugin-loader'

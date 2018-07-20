@@ -1,12 +1,12 @@
-package com.tencent.cubershi
+package com.tencent.shadow.transform
 
-import com.tencent.cubershi.transformkit.DirInputClass
-import com.tencent.cubershi.transformkit.JarInputClass
-import com.tencent.cubershi.transformkit.JavassistTransform
+import com.tencent.shadow.transform.transformkit.DirInputClass
+import com.tencent.shadow.transform.transformkit.JarInputClass
+import com.tencent.shadow.transform.transformkit.JavassistTransform
 import javassist.*
 import java.io.File
 
-class CuberPluginLoaderTransform(classPool: ClassPool, val keepHostObjectsExtension: CuberPluginLoaderTransformPlugin.KeepHostObjectsExtension) : JavassistTransform(classPool) {
+class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: ShadowTransformPlugin.KeepHostObjectsExtension) : JavassistTransform(classPool) {
 
     companion object {
         const val MockFragmentClassname = "com.tencent.cubershi.mock_interface.MockFragment"
