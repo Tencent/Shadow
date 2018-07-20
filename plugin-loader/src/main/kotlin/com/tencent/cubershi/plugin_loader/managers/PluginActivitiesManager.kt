@@ -96,5 +96,22 @@ abstract class PluginActivitiesManager : MockContext.PluginActivityLauncher {
         return true
     }
 
+     public fun convertActivityIntent(pluginIntent: Intent): Intent {
+        val className = pluginIntent.component.className
+        val packageName = packageNameMap[className] ?: return pluginIntent
+        pluginIntent.component = ComponentName(packageName, className)
+        val containerActivity = getContainerActivity(pluginIntent.component)
+        val containerActivityIntent = Intent(pluginIntent)
+        containerActivityIntent.component = containerActivity
+
+        val bundleForPluginLoader = Bundle()
+
+        bundleForPluginLoader.putString(PLUGIN_ACTIVITY_CLASS_NAME_KEY, className)
+        bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[pluginIntent.component])
+
+        containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
+        return containerActivityIntent;
+    }
+
     abstract val launcherActivity: ComponentName
 }

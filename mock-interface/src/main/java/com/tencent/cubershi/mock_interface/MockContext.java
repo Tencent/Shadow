@@ -16,6 +16,7 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 public class MockContext extends ContextThemeWrapper {
     PluginActivityLauncher mPluginActivityLauncher;
     PluginServiceOperator mPluginServiceOperator;
+    PendingIntentConverter mPendingIntentConverter;
     ClassLoader mPluginClassLoader;
     MockApplication mMockApplication;
     Resources mPluginResources;
@@ -47,6 +48,10 @@ public class MockContext extends ContextThemeWrapper {
         this.mLibrarySearchPath = mLibrarySearchPath;
     }
 
+    public final void setPendingIntentConverter(PendingIntentConverter pendingIntentConverter) {
+        this.mPendingIntentConverter = pendingIntentConverter;
+    }
+
     @Override
     public Context getApplicationContext() {
         return mMockApplication;
@@ -68,7 +73,7 @@ public class MockContext extends ContextThemeWrapper {
             if (mLayoutInflater == null) {
                 LayoutInflater inflater = (LayoutInflater) super.getSystemService(name);
                 assert inflater != null;
-                mLayoutInflater = inflater.cloneInContext(this);
+                mLayoutInflater = new MockLayoutInflater(inflater.cloneInContext(this),this);
             }
             return mLayoutInflater;
         }
@@ -113,6 +118,12 @@ public class MockContext extends ContextThemeWrapper {
 
         Pair<Boolean, ?> unbindService(MockContext context, ServiceConnection conn);
 
+    }
+
+    public interface PendingIntentConverter{
+        Pair<Context,Intent> convertPluginActivityIntent(Intent pluginIntent);
+
+        Pair<Context,Intent> convertPluginServiceIntent(Intent pluginIntent);
     }
 
     @Override
@@ -161,5 +172,9 @@ public class MockContext extends ContextThemeWrapper {
         final ApplicationInfo applicationInfo = super.getApplicationInfo();
         applicationInfo.nativeLibraryDir = mLibrarySearchPath;
         return applicationInfo;
+    }
+
+    public PendingIntentConverter getPendingIntentConverter() {
+        return mPendingIntentConverter;
     }
 }
