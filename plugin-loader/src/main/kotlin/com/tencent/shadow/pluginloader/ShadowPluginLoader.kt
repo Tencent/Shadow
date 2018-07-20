@@ -18,7 +18,6 @@ import com.tencent.shadow.pluginloader.delegates.HostServiceDelegateImpl
 import com.tencent.shadow.pluginloader.managers.PluginActivitiesManager
 import com.tencent.shadow.pluginloader.managers.PluginReceiverManager
 import com.tencent.shadow.pluginloader.managers.PluginServicesManager
-import com.tencent.shadow.pluginloader.test.FakeRunningPlugin
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -82,7 +81,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                     mPluginPackageManager = pluginPackageManager
                 }
 
-                FakeRunningPlugin(mockApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
+                ShadowRunningPlugin(mockApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
             })
             return ProgressFutureImpl(submit, null)
         } else if (installedPlugin.pluginFile != null)

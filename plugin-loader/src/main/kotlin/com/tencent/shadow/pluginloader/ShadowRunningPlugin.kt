@@ -1,4 +1,4 @@
-package com.tencent.shadow.pluginloader.test
+package com.tencent.shadow.pluginloader
 
 import android.content.Intent
 import com.tencent.cubershi.mock_interface.MockApplication
@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
-class FakeRunningPlugin(
+internal class ShadowRunningPlugin(
         private val mockApplication: MockApplication
         , private val installedPlugin: InstalledPlugin
         , private val pluginInfo: PluginInfo
@@ -67,6 +67,6 @@ class FakeRunningPlugin(
     }
 
     companion object {
-        private val mLogger = LoggerFactory.getLogger(FakeRunningPlugin::class.java)
+        private val mLogger = LoggerFactory.getLogger(ShadowRunningPlugin::class.java)
     }
 }
