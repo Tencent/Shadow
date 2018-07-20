@@ -1,7 +1,7 @@
 package com.tencent.plugin_loader_apk
 
 import android.content.ComponentName
-import com.tencent.cubershi.plugin_loader.managers.PluginActivitiesManager
+import com.tencent.shadow.pluginloader.managers.PluginActivitiesManager
 
 class DemoPluginActivitiesManager : PluginActivitiesManager() {
 
