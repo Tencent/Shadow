@@ -1,10 +1,10 @@
 package com.tencent.plugin_loader_apk
 
 import android.content.Context
-import com.tencent.shadow.pluginloader.ShadowPluginLoader
-import com.tencent.shadow.pluginloader.managers.PluginActivitiesManager
-import com.tencent.shadow.pluginloader.managers.PluginReceiverManager
-import com.tencent.shadow.pluginloader.managers.PluginServicesManager
+import com.tencent.shadow.loader.ShadowPluginLoader
+import com.tencent.shadow.loader.managers.PluginActivitiesManager
+import com.tencent.shadow.loader.managers.PluginReceiverManager
+import com.tencent.shadow.loader.managers.PluginServicesManager
 
 class DemoPluginLoader : ShadowPluginLoader() {
     override val mAbi = "armeabi"

@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    implementation project(':plugin-loader')
+    implementation project(':shadow-loader')
     compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:' + PLUGINMANAGER_VERSION
     compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
     compileOnly files('../mock-interface/jar/mock-interface-local-SNAPSHOT-debug.jar')
