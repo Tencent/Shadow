@@ -7,6 +7,7 @@ import android.os.Looper
 import com.tencent.shadow.loader.PluginPackageManager
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.exceptions.CreateApplicationException
+import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginServicesManager
 import com.tencent.shadow.runtime.MockApplication
@@ -27,7 +28,8 @@ object CreateApplicationBloc {
             hostAppContext: Context,
             businessPluginActivitiesManager: PluginActivitiesManager,
             businessPluginServiceManager: PluginServicesManager,
-            receivers: Map<String, String>
+            receivers: Map<String, String>,
+            mPendingIntentManager: PendingIntentManager
     ): MockApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
@@ -40,6 +42,7 @@ object CreateApplicationBloc {
             mockApplication.setReceivers(receivers)
             mockApplication.setPluginPackageManager(pluginPackageManager)
             mockApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
+            mockApplication.pendingIntentConverter = mPendingIntentManager;
             val uiHandler = Handler(Looper.getMainLooper())
             val lock = CountDownLatch(1)
             uiHandler.post {

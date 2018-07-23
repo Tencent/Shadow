@@ -14,6 +14,7 @@ import com.tencent.shadow.loader.blocs.*
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.delegates.HostActivityDelegateImpl
 import com.tencent.shadow.loader.delegates.HostServiceDelegateImpl
+import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginReceiverManager
 import com.tencent.shadow.loader.managers.PluginServicesManager
@@ -44,6 +45,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
 
     private lateinit var mPluginPackageManager: PluginPackageManager
 
+    private lateinit var mPendingIntentManager: PendingIntentManager
+
     abstract val mAbi: String
 
     @Throws(LoadPluginException::class)
@@ -53,6 +56,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
 //        }
         //Log.d("startPlugin", "begin"+System.nanoTime().toString())
         Log.d("startPlugin", "begin"+System.nanoTime().toString())
+        mPendingIntentManager = PendingIntentManager(hostAppContext,getBusinessPluginActivitiesManager(),getBusinessPluginServiceManager())
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 //todo cubershi 下面这些步骤可能可以并发起来.
@@ -70,7 +74,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                                 hostAppContext,
                                 getBusinessPluginActivitiesManager(),
                                 getBusinessPluginServiceManager(),
-                                getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName)
+                                getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName),
+                                mPendingIntentManager
                         )
                 mLock.withLock {
                     getBusinessPluginActivitiesManager().addPluginApkInfo(pluginInfo)
@@ -104,7 +109,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                     mPluginClassLoader,
                     mPluginResources,
                     getBusinessPluginActivitiesManager(),
-                    getBusinessPluginServiceManager()
+                    getBusinessPluginServiceManager(),
+                    mPendingIntentManager
             )
         }
     }
@@ -116,7 +122,9 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                     mPluginClassLoader,
                     mPluginResources,
                     getBusinessPluginActivitiesManager(),
-                    getBusinessPluginServiceManager())
+                    getBusinessPluginServiceManager(),
+                    mPendingIntentManager
+            )
         }
     }
 

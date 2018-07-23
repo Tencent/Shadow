@@ -46,6 +46,8 @@ object LoadApkBloc {
                         , "com.tencent.shadow.runtime.PluginFragmentTransaction"
                         , "com.tencent.shadow.runtime.MockActivityLifecycleCallbacks"
                         , "com.tencent.shadow.runtime.MockContext"
+                        , "com.tencent.shadow.runtime.MockWebView"
+                        , "com.tencent.shadow.runtime.MockPendingIntent"
                 )
         )
     }

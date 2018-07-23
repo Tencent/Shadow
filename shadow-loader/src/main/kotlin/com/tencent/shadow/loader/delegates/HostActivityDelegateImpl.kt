@@ -17,6 +17,7 @@ import com.tencent.shadow.container.HostActivityDelegator
 import com.tencent.shadow.loader.PluginPackageManager
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.infos.PluginActivityInfo
+import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
 import com.tencent.shadow.loader.managers.PluginServicesManager
@@ -36,7 +37,8 @@ class HostActivityDelegateImpl(
         private val mPluginClassLoader: PluginClassLoader,
         private val mPluginResources: Resources,
         private val mPluginActivitiesManager: PluginActivitiesManager,
-        private val mPluginServicesManager: PluginServicesManager
+        private val mPluginServicesManager: PluginServicesManager,
+        private val mPendingIntentManager: PendingIntentManager
 ) : HostActivityDelegate {
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
@@ -67,6 +69,7 @@ class HostActivityDelegateImpl(
             pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
             pluginActivity.setPluginClassLoader(mPluginClassLoader)
             pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
+            pluginActivity.pendingIntentConverter = mPendingIntentManager
             pluginActivity.setPluginApplication(mPluginApplication)
             pluginActivity.setPluginPackageManager(mPluginPackageManager)
             pluginActivity.setServiceOperator(mPluginServicesManager)

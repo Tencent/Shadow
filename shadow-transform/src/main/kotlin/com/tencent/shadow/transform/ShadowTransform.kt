@@ -13,6 +13,12 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
         const val MockDialogFragmentClassname = "com.tencent.cubershi.mock_interface.MockDialogFragment"
         const val AndroidDialogClassname = "android.app.Dialog"
         const val MockDialogClassname = "com.tencent.cubershi.mock_interface.MockDialog"
+        const val AndroidWebViewClassname = "android.webkit.WebView"
+        const val MockWebViewClassname = "com.tencent.cubershi.mock_interface.MockWebView"
+        const val AndroidWebViewClientClassname = "android.webkit.WebViewClient"
+        const val AndroidWebChromeClientClassname = "android.webkit.WebChromeClient"
+        const val AndroidPendingIntentClassname = "android.app.PendingIntent"
+        const val MockPendingIntentClassname = "com.tencent.cubershi.mock_interface.MockPendingIntent"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.cubershi.mock_interface.MockApplication"
@@ -40,6 +46,7 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
                 ,
                 AndroidDialogClassname
                         to MockDialogClassname
+
         )
     }
 
@@ -54,7 +61,9 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
         step2_findFragments()
         step3_renameFragments()
         step4_redirectDialogMethod()
-        step5_keepHostContext()
+        step5_renameWebViewChildclass()
+        step6_redirectPendingIntentMethod()
+        step7_keepHostContext()
     }
 
     private inline fun forEachAppClass(action: (CtClass) -> Unit) {
@@ -69,6 +78,22 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
                 ctClass.refClasses.contains(targetClass)
             }
         }.filter {
+            it.refClasses.all {
+                var found: Boolean;
+                try {
+                    classPool[it as String]
+                    found = true
+                } catch (e: NotFoundException) {
+                    found = false
+                }
+                found
+            }
+        }.forEach(action)
+    }
+
+    private inline fun forEachCanRecompileAppClass( action: (CtClass) -> Unit) {
+        val appClasses = mCtClassInputMap.keys
+        appClasses.filter {
             it.refClasses.all {
                 var found: Boolean;
                 try {
@@ -165,7 +190,42 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
         }
     }
 
-    private fun step5_keepHostContext() {
+    private fun step5_renameWebViewChildclass(){
+        forEachAppClass { ctClass ->
+           if(ctClass.superclass.name != AndroidWebViewClientClassname && ctClass.superclass.name != AndroidWebChromeClientClassname){
+               ctClass.replaceClassName(AndroidWebViewClassname, MockWebViewClassname)
+           }
+        }
+    }
+
+    private fun step6_redirectPendingIntentMethod(){
+        val pendingIntentMethod = classPool[AndroidPendingIntentClassname].methods!!
+        val mockPendingIntentMethod = classPool[MockPendingIntentClassname].methods!!
+
+        val method_getPengdingIntent = pendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity" }
+        val mock_method_getPengdingIntent = mockPendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity"}!!
+        val codeConverter = CodeConverter()
+
+        for( ctAndroidMethod in method_getPengdingIntent) {
+            for (ctMockMedthod in mock_method_getPengdingIntent) {
+                if(ctMockMedthod.methodInfo.name == ctAndroidMethod.methodInfo.name && ctAndroidMethod.methodInfo.descriptor == ctMockMedthod.methodInfo.descriptor){
+                    codeConverter.redirectMethodCall(ctAndroidMethod, ctMockMedthod)
+                }
+            }
+        }
+
+        forEachCanRecompileAppClass{ appCtClass ->
+            try {
+                appCtClass.instrument(codeConverter)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
+        }
+
+    }
+
+    private fun step7_keepHostContext() {
         val MockContextClassName = "com.tencent.cubershi.mock_interface.MockContext"
 
         data class Rule(
