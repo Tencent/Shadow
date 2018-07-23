@@ -62,6 +62,12 @@ tasks.whenTaskAdded { theTask ->
     if (TjarReleasePackage != null && TcompileReleaseSources != null) {
         TjarReleasePackage.dependsOn TcompileReleaseSources
     }
+    if (theTask.name.equals("generatePomFileForDebugPublication")) {
+        theTask.dependsOn(':shadow-sdk:shadow-container:jarDebugPackage')
+    }
+    if (theTask.name.equals("generatePomFileForReleasePublication")) {
+        theTask.dependsOn(':shadow-sdk:shadow-container:jarReleasePackage')
+    }
 }
 
 apply plugin: 'maven-publish'
@@ -80,3 +86,61 @@ def getDependencyNode(scope, groupId, artifactId, version) {
     return node
 }
 
+
+publishing {
+    publications {
+        if (isPublishRelease()) {
+            release(MavenPublication) {
+                groupId 'com.tencent.shadow'
+                artifactId "${project.name}"
+                version project.ARTIFACT_VERSION
+                artifact("build/outputs/jar/${project.name}-${project.ARTIFACT_VERSION}-release.jar")
+                pom.withXml {
+                    def root = asNode()
+                    def scm = root.appendNode('scm')
+                    //todo 修复这里的scm信息
+                    scm.appendNode('connection', "${System.env.SVN_URL}?p=${System.env.SVN_REVISION}")
+                }
+            }
+        } else {
+            debug(MavenPublication) {
+                groupId 'com.tencent.shadow'
+                artifactId "${project.name}"
+                version project.ARTIFACT_VERSION + '-debug'
+                artifact("build/outputs/jar/${project.name}-${project.ARTIFACT_VERSION}-debug.jar")
+            }
+            release(MavenPublication) {
+                groupId 'com.tencent.shadow'
+                artifactId "${project.name}"
+                version project.ARTIFACT_VERSION + '-release'
+                artifact("build/outputs/jar/${project.name}-${project.ARTIFACT_VERSION}-release.jar")
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username "rdm"
+                password "rdm"
+            }
+            if (isPublishRelease()) {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
+            } else {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots"
+            }
+        }
+    }
+}
+
+model {
+    tasks.generatePomFileForDebugPublication {
+        destination = file("$buildDir/debug-pom.xml")
+    }
+    tasks.generatePomFileForReleasePublication {
+        destination = file("$buildDir/release-pom.xml")
+    }
+}
+
+static def isPublishRelease() {
+    return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
+}
