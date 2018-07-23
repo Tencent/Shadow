@@ -1,4 +1,4 @@
-package com.tencent.cubershi.mock_interface;
+package com.tencent.shadow.runtime;
 
 import android.annotation.TargetApi;
 import android.app.Application;
@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.util.Pair;
 
 import java.util.HashMap;
 import java.util.Map;

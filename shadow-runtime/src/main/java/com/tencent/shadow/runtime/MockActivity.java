@@ -1,4 +1,4 @@
-package com.tencent.cubershi.mock_interface;
+package com.tencent.shadow.runtime;
 
 import android.app.FragmentManager;
 import android.content.Intent;

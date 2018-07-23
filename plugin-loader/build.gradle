@@ -46,7 +46,7 @@ dependencies {
     compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
 
-    compileOnly project(':mock-interface')
+    compileOnly project(':shadow-runtime')
     implementation project(':multidex')
 }
 

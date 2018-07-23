@@ -3,7 +3,6 @@ package com.tencent.shadow.pluginloader
 import android.content.Context
 import android.content.res.Resources
 import android.util.Log
-import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.common.progress.ProgressFutureImpl
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
@@ -18,6 +17,7 @@ import com.tencent.shadow.pluginloader.delegates.HostServiceDelegateImpl
 import com.tencent.shadow.pluginloader.managers.PluginActivitiesManager
 import com.tencent.shadow.pluginloader.managers.PluginReceiverManager
 import com.tencent.shadow.pluginloader.managers.PluginServicesManager
+import com.tencent.shadow.runtime.MockApplication
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors

@@ -1,12 +1,12 @@
 package com.tencent.shadow.pluginloader
 
 import android.content.Intent
-import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.pluginloader.infos.PluginInfo
 import com.tencent.shadow.pluginloader.managers.PluginActivitiesManager
+import com.tencent.shadow.runtime.MockApplication
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit

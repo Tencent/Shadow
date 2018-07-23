@@ -1,4 +1,4 @@
-package com.tencent.cubershi.mock_interface;
+package com.tencent.shadow.runtime;
 
 import android.content.ComponentName;
 import android.content.pm.ActivityInfo;

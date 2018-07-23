@@ -6,11 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
-import com.tencent.cubershi.mock_interface.MockContext
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity
 import com.tencent.shadow.pluginloader.infos.PluginActivityInfo
 import com.tencent.shadow.pluginloader.infos.PluginInfo
+import com.tencent.shadow.runtime.MockContext
 
 abstract class PluginActivitiesManager : MockContext.PluginActivityLauncher {
     companion object {

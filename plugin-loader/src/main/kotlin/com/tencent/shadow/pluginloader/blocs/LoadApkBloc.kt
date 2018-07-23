@@ -34,19 +34,18 @@ object LoadApkBloc {
                 bootClassLoader,
                 mockClassLoader,
                 arrayOf(
-                        "com.tencent.cubershi.mock_interface.MockActivity"
-                        , "com.tencent.cubershi.mock_interface.PluginFragment"
-                        , "com.tencent.cubershi.mock_interface.MockApplication"
-                        , "com.tencent.cubershi.mock_interface.MockService"
-                        , "com.tencent.cubershi.mock_interface.ContainerFragment"
-                        , "com.tencent.cubershi.mock_interface.ContainerDialogFragment"
-                        , "com.tencent.cubershi.mock_interface.MockFragment"
-                        , "com.tencent.cubershi.mock_interface.MockDialogFragment"
-                        , "com.tencent.cubershi.mock_interface.MockDialog"
-                        , "com.tencent.cubershi.mock_interface.PluginFragmentManager"
-                        , "com.tencent.cubershi.mock_interface.PluginFragmentTransaction"
-                        , "com.tencent.cubershi.mock_interface.MockActivityLifecycleCallbacks"
-                        , "com.tencent.cubershi.mock_interface.MockContext"
+                        "com.tencent.shadow.runtime.MockActivity"
+                        , "com.tencent.shadow.runtime.MockApplication"
+                        , "com.tencent.shadow.runtime.MockService"
+                        , "com.tencent.shadow.runtime.ContainerFragment"
+                        , "com.tencent.shadow.runtime.ContainerDialogFragment"
+                        , "com.tencent.shadow.runtime.MockFragment"
+                        , "com.tencent.shadow.runtime.MockDialogFragment"
+                        , "com.tencent.shadow.runtime.MockDialog"
+                        , "com.tencent.shadow.runtime.PluginFragmentManager"
+                        , "com.tencent.shadow.runtime.PluginFragmentTransaction"
+                        , "com.tencent.shadow.runtime.MockActivityLifecycleCallbacks"
+                        , "com.tencent.shadow.runtime.MockContext"
                 )
         )
     }

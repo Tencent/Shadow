@@ -5,13 +5,13 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.IBinder
-import com.tencent.cubershi.mock_interface.MockApplication
-import com.tencent.cubershi.mock_interface.MockService
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
 import com.tencent.shadow.pluginloader.classloaders.PluginClassLoader
 import com.tencent.shadow.pluginloader.managers.PluginActivitiesManager
 import com.tencent.shadow.pluginloader.managers.PluginServicesManager
+import com.tencent.shadow.runtime.MockApplication
+import com.tencent.shadow.runtime.MockService
 
 /**
  * Created by tracyluo on 2018/6/5.

@@ -12,9 +12,6 @@ import android.graphics.Canvas
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.*
-import com.tencent.cubershi.mock_interface.FixedContextLayoutInflater
-import com.tencent.cubershi.mock_interface.MockApplication
-import com.tencent.cubershi.mock_interface.PluginActivity
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.pluginloader.PluginPackageManager
@@ -23,6 +20,9 @@ import com.tencent.shadow.pluginloader.infos.PluginActivityInfo
 import com.tencent.shadow.pluginloader.managers.PluginActivitiesManager
 import com.tencent.shadow.pluginloader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
 import com.tencent.shadow.pluginloader.managers.PluginServicesManager
+import com.tencent.shadow.runtime.FixedContextLayoutInflater
+import com.tencent.shadow.runtime.MockApplication
+import com.tencent.shadow.runtime.PluginActivity
 
 /**
  * 壳子Activity与插件Activity转调关系的实现类

@@ -4,13 +4,12 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Handler
 import android.os.Looper
-
-import com.tencent.cubershi.mock_interface.MockApplication
 import com.tencent.shadow.pluginloader.PluginPackageManager
 import com.tencent.shadow.pluginloader.classloaders.PluginClassLoader
 import com.tencent.shadow.pluginloader.exceptions.CreateApplicationException
 import com.tencent.shadow.pluginloader.managers.PluginActivitiesManager
 import com.tencent.shadow.pluginloader.managers.PluginServicesManager
+import com.tencent.shadow.runtime.MockApplication
 import java.util.concurrent.CountDownLatch
 
 /**

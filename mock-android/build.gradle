@@ -27,6 +27,6 @@ android {
 }
 
 dependencies {
-    implementation project(':mock-interface')
+    implementation project(':shadow-runtime')
     compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
 }

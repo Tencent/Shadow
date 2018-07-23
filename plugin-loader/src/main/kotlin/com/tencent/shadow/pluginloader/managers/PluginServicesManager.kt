@@ -5,10 +5,10 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.util.Pair
-import com.tencent.cubershi.mock_interface.MockContext
 import com.tencent.shadow.pluginloader.infos.PluginInfo
 import com.tencent.shadow.pluginloader.infos.PluginServiceInfo
 import com.tencent.shadow.pluginloader.managers.PluginServicesManager.Operate.*
+import com.tencent.shadow.runtime.MockContext
 
 /**
  * Created by tracyluo on 2018/6/6.
