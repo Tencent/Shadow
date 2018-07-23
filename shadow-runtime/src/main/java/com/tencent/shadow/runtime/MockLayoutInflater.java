@@ -15,7 +15,7 @@ public class MockLayoutInflater extends LayoutInflater {
 
     private static final String AndroidWebView = "android.webkit.WebView";
 
-    private static final String MockPrefix = "com.tencent.cubershi.mock_interface.";
+    private static final String MockPrefix = "com.tencent.shadow.runtime.";
 
     private static final String MockWebView = "MockWebView";
 

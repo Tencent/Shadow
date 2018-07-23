@@ -9,25 +9,25 @@ import java.io.File
 class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: ShadowTransformPlugin.KeepHostObjectsExtension) : JavassistTransform(classPool) {
 
     companion object {
-        const val MockFragmentClassname = "com.tencent.cubershi.mock_interface.MockFragment"
-        const val MockDialogFragmentClassname = "com.tencent.cubershi.mock_interface.MockDialogFragment"
+        const val MockFragmentClassname = "com.tencent.shadow.runtime.MockFragment"
+        const val MockDialogFragmentClassname = "com.tencent.shadow.runtime.MockDialogFragment"
         const val AndroidDialogClassname = "android.app.Dialog"
-        const val MockDialogClassname = "com.tencent.cubershi.mock_interface.MockDialog"
+        const val MockDialogClassname = "com.tencent.shadow.runtime.MockDialog"
         const val AndroidWebViewClassname = "android.webkit.WebView"
-        const val MockWebViewClassname = "com.tencent.cubershi.mock_interface.MockWebView"
+        const val MockWebViewClassname = "com.tencent.shadow.runtime.MockWebView"
         const val AndroidWebViewClientClassname = "android.webkit.WebViewClient"
         const val AndroidWebChromeClientClassname = "android.webkit.WebChromeClient"
         const val AndroidPendingIntentClassname = "android.app.PendingIntent"
-        const val MockPendingIntentClassname = "com.tencent.cubershi.mock_interface.MockPendingIntent"
+        const val MockPendingIntentClassname = "com.tencent.shadow.runtime.MockPendingIntent"
         val RenameMap = mapOf(
                 "android.app.Application"
-                        to "com.tencent.cubershi.mock_interface.MockApplication"
+                        to "com.tencent.shadow.runtime.MockApplication"
                 ,
                 "android.app.Activity"
-                        to "com.tencent.cubershi.mock_interface.MockActivity"
+                        to "com.tencent.shadow.runtime.MockActivity"
                 ,
                 "android.app.Service"
-                        to "com.tencent.cubershi.mock_interface.MockService"
+                        to "com.tencent.shadow.runtime.MockService"
                 ,
                 "android.app.Fragment"
                         to MockFragmentClassname
@@ -36,13 +36,13 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
                         to MockDialogFragmentClassname
                 ,
                 "android.app.FragmentManager"
-                        to "com.tencent.cubershi.mock_interface.PluginFragmentManager"
+                        to "com.tencent.shadow.runtime.PluginFragmentManager"
                 ,
                 "android.app.FragmentTransaction"
-                        to "com.tencent.cubershi.mock_interface.PluginFragmentTransaction"
+                        to "com.tencent.shadow.runtime.PluginFragmentTransaction"
                 ,
                 "android.app.Application\$ActivityLifecycleCallbacks"
-                        to "com.tencent.cubershi.mock_interface.MockActivityLifecycleCallbacks"
+                        to "com.tencent.shadow.runtime.MockActivityLifecycleCallbacks"
                 ,
                 AndroidDialogClassname
                         to MockDialogClassname
@@ -50,8 +50,8 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
         )
     }
 
-    val ContainerFragmentCtClass = classPool["com.tencent.cubershi.mock_interface.ContainerFragment"]
-    val ContainerDialogFragmentCtClass = classPool["com.tencent.cubershi.mock_interface.ContainerDialogFragment"]
+    val ContainerFragmentCtClass = classPool["com.tencent.shadow.runtime.ContainerFragment"]
+    val ContainerDialogFragmentCtClass = classPool["com.tencent.shadow.runtime.ContainerDialogFragment"]
 
     val mAppFragments: MutableSet<CtClass> = mutableSetOf()
     val mAppDialogFragments: MutableSet<CtClass> = mutableSetOf()
@@ -226,7 +226,7 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
     }
 
     private fun step7_keepHostContext() {
-        val MockContextClassName = "com.tencent.cubershi.mock_interface.MockContext"
+        val MockContextClassName = "com.tencent.shadow.runtime.MockContext"
 
         data class Rule(
                 val ctClass: CtClass

@@ -12,6 +12,5 @@
 }
 #kotlin一般性配置 END
 
--keep class com.tencent.cubershi.mock_interface.**{*;}
 -keep class org.slf4j.**{*;}
 -dontwarn org.slf4j.impl.**
