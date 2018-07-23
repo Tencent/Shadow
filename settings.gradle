@@ -1,4 +1,4 @@
-include ':example', ':plugin-loader', ':demo-plugin', ':slf4j-logcat', ':mock-android', ':plugin-loader-apk', ':shadow-runtime', ':multidex'
+include ':example', ':plugin-loader', ':demo-plugin', ':slf4j-logcat', ':shadow-runtime-apk', ':plugin-loader-apk', ':shadow-runtime', ':multidex'
 include ':plugincontainer-neo'
 include ':shadow-transform'
 include ':test-groupvideo:wtlogin-demo'
