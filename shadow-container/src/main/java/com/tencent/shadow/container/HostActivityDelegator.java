@@ -1,4 +1,4 @@
-package com.tencent.hydevteam.pluginframework.plugincontainer;
+package com.tencent.shadow.container;
 
 import android.app.ActionBar;
 import android.app.Activity;

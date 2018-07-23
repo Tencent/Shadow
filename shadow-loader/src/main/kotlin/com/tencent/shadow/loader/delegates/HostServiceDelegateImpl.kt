@@ -5,8 +5,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.IBinder
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
+import com.tencent.shadow.container.HostServiceDelegate
+import com.tencent.shadow.container.HostServiceDelegator
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginServicesManager

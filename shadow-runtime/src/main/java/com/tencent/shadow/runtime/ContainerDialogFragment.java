@@ -22,7 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity;
+import com.tencent.shadow.container.PluginContainerActivity;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;

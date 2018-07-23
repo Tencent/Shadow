@@ -12,8 +12,8 @@ import android.graphics.Canvas
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.*
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
+import com.tencent.shadow.container.HostActivityDelegate
+import com.tencent.shadow.container.HostActivityDelegator
 import com.tencent.shadow.loader.PluginPackageManager
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.infos.PluginActivityInfo

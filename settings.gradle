@@ -1,5 +1,5 @@
 include ':example', ':shadow-loader', ':demo-plugin', ':slf4j-logcat', ':shadow-runtime-apk', ':plugin-loader-apk', ':shadow-runtime', ':multidex'
-include ':plugincontainer-neo'
+include ':shadow-container'
 include ':shadow-transform'
 include ':test-groupvideo:wtlogin-demo'
 include ':gv-plugin-loader'

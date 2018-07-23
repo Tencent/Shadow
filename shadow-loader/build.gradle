@@ -43,7 +43,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:'+PLUGINMANAGER_VERSION
-    compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
+    implementation project(':shadow-container')
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
 
     compileOnly project(':shadow-runtime')
@@ -106,6 +106,6 @@ model {
 
 tasks.whenTaskAdded { task ->
     if (task.name == 'preBuild') {
-        task.dependsOn tasks.findByName(":plugincontainer-neo:jarDebugPackage")
+        task.dependsOn tasks.findByName(":shadow-container:jarDebugPackage")
     }
 }

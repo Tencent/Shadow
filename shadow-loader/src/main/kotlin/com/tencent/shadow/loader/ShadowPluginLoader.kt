@@ -6,10 +6,10 @@ import android.util.Log
 import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.common.progress.ProgressFutureImpl
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
-import com.tencent.hydevteam.pluginframework.plugincontainer.*
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
+import com.tencent.shadow.container.*
 import com.tencent.shadow.loader.blocs.*
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.delegates.HostActivityDelegateImpl

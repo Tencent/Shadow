@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 
-import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity;
+import com.tencent.shadow.container.PluginContainerActivity;
 
 public class MockDialog extends Dialog {
     public MockDialog(Context context) {

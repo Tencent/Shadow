@@ -30,7 +30,7 @@ android {
 }
 
 dependencies {
-    compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
+    implementation project(':shadow-container')
 }
 
 def jarPackage(buildType) {

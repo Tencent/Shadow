@@ -18,7 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
+import com.tencent.shadow.container.HostActivityDelegator;
 
 public abstract class PluginActivity extends MockContext {
     HostActivityDelegator mHostActivityDelegator;

@@ -28,5 +28,5 @@ android {
 
 dependencies {
     implementation project(':shadow-runtime')
-    compileOnly files('../plugincontainer-neo/jar/plugincontainer.jar')
+    compileOnly files('../shadow-container/jar/plugincontainer.jar')
 }

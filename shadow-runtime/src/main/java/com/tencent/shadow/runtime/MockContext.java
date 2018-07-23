@@ -11,7 +11,7 @@ import android.util.Pair;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
+import com.tencent.shadow.container.HostActivityDelegator;
 
 public class MockContext extends ContextThemeWrapper {
     PluginActivityLauncher mPluginActivityLauncher;
