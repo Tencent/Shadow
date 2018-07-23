@@ -102,9 +102,3 @@ model {
         destination = file("$buildDir/generated-pom.xml")
     }
 }
-
-tasks.whenTaskAdded { task ->
-    if (task.name == 'preBuild') {
-        task.dependsOn tasks.findByName(":shadow-container:jarDebugPackage")
-    }
-}
