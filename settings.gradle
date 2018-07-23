@@ -3,7 +3,6 @@ def includeShadowSdk() {
     include ':shadow-sdk:shadow-loader'
     include ':shadow-sdk:shadow-runtime'
     include ':shadow-sdk:shadow-transform'
-    include ':shadow-sdk:multidex'
 }
 
 def includeExample() {

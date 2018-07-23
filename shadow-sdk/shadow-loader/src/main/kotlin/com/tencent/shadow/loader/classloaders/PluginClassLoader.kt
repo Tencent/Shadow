@@ -1,7 +1,10 @@
 package com.tencent.shadow.loader.classloaders
 
 import android.content.Context
-import com.tencent.hydevteam.pluginframework.pluginloader.multidex.MultiDexClassLoader
+import android.os.Build
+import com.tencent.shadow.loader.classloaders.multidex.MultiDex
+import dalvik.system.DexClassLoader
+import java.io.File
 
 
 /**
@@ -13,7 +16,14 @@ class PluginClassLoader(
         context: Context, dexPath: String, optimizedDirectory: String, private val librarySearchPath: String, parent: ClassLoader,
         private val mMockClassloader: ClassLoader,
         private val mMockClassNames: Array<String>
-) : MultiDexClassLoader(context, dexPath, optimizedDirectory, librarySearchPath, parent) {
+) : DexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
+
+    init {
+        if (Build.VERSION.SDK_INT <= MultiDex.MAX_SUPPORTED_SDK_VERSION) {
+            val pluginLoaderMultiDex = context.getSharedPreferences("com.tencent.shadow.multidex", Context.MODE_PRIVATE)
+            MultiDex.install(this, dexPath, File(optimizedDirectory), pluginLoaderMultiDex)
+        }
+    }
 
     fun getLibrarySearchPath() = librarySearchPath
 

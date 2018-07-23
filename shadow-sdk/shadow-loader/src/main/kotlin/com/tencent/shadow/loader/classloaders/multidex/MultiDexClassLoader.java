@@ -1,9 +1,7 @@
-package com.tencent.hydevteam.pluginframework.pluginloader.multidex;
+package com.tencent.shadow.loader.classloaders.multidex;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
-import com.tencent.hydevteam.pluginframework.pluginloader.multidex.MultiDex;
 
 import java.io.File;
 

@@ -18,7 +18,7 @@
  * ZipConstants from android libcore.
  */
 
-package com.tencent.hydevteam.pluginframework.pluginloader.multidex;
+package com.tencent.shadow.loader.classloaders.multidex;
 
 import java.io.File;
 import java.io.IOException;

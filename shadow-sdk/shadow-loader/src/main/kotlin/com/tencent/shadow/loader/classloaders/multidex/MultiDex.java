@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tencent.hydevteam.pluginframework.pluginloader.multidex;
+package com.tencent.shadow.loader.classloaders.multidex;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -50,7 +50,7 @@ public final class MultiDex {
 
     private static final String CODE_CACHE_SECONDARY_FOLDER_NAME = "secondary-dexes";
 
-    private static final int MAX_SUPPORTED_SDK_VERSION = 20;
+    public static final int MAX_SUPPORTED_SDK_VERSION = 20;
 
     private static final int MIN_SDK_VERSION = 4;
 

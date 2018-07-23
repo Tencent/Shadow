@@ -47,7 +47,6 @@ dependencies {
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
 
     compileOnly project(':shadow-sdk:shadow-runtime')
-    implementation project(':shadow-sdk:multidex')
 }
 
 apply plugin: 'maven-publish'
