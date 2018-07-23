@@ -30,7 +30,7 @@ android {
 }
 
 dependencies {
-    implementation project(':shadow-container')
+    implementation project(':shadow-sdk:shadow-container')
 }
 
 def jarPackage(buildType) {

@@ -1,5 +1,20 @@
-include ':example', ':shadow-loader', ':demo-plugin', ':slf4j-logcat', ':shadow-runtime-apk', ':plugin-loader-apk', ':shadow-runtime', ':multidex'
-include ':shadow-container'
-include ':shadow-transform'
-include ':test-groupvideo:wtlogin-demo'
-include ':gv-plugin-loader'
+def includeShadowSdk() {
+    include ':shadow-sdk:shadow-container'
+    include ':shadow-sdk:shadow-loader'
+    include ':shadow-sdk:shadow-runtime'
+    include ':shadow-sdk:shadow-transform'
+    include ':shadow-sdk:multidex'
+}
+
+def includeExample() {
+    include ':example:host-app:host-apk'
+    include ':example:host-app:slf4j-logcat'
+
+    include ':example:plugin-app:demo-plugin'
+    include ':example:plugin-app:plugin-loader-apk'
+    include ':example:plugin-app:shadow-runtime-apk'
+}
+
+rootProject.name = 'shadow'
+includeShadowSdk()
+//includeExample()
