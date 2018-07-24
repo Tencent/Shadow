@@ -46,3 +46,51 @@ afterEvaluate {
         }
     }
 }
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId 'com.tencent.shadow'
+            artifactId "${project.name}"
+            version project.ARTIFACT_VERSION
+            artifact("build/outputs/jar/${project.name}-release.jar")
+            pom.withXml {
+                def root = asNode()
+                def scm = root.appendNode('scm')
+                //todo 修复这里的scm信息
+                scm.appendNode('connection', "${System.env.SVN_URL}?p=${System.env.SVN_REVISION}")
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username "rdm"
+                password "rdm"
+            }
+            if (isPublishRelease()) {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
+            } else {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots"
+            }
+        }
+    }
+}
+
+model {
+    tasks.generatePomFileForReleasePublication {
+        destination = file("$buildDir/release-pom.xml")
+    }
+}
+
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("generatePomFileForReleasePublication")) {
+        theTask.dependsOn(project.getTasksByName("jarReleasePackage", false).first())
+    }
+}
+
+static def isPublishRelease() {
+    return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
+}
