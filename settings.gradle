@@ -5,14 +5,14 @@ def includeShadowSdk() {
 }
 
 def includeExample() {
-    include ':example:host-app:host-apk'
-    include ':example:host-app:slf4j-logcat'
+//    include ':example:host-app:host-apk'
+//    include ':example:host-app:slf4j-logcat'
 
-    include ':example:plugin-app:demo-plugin'
-    include ':example:plugin-app:plugin-loader-apk'
+//    include ':example:plugin-app:demo-plugin'
+//    include ':example:plugin-app:plugin-loader-apk'
     include ':example:plugin-app:shadow-runtime-apk'
 }
 
 rootProject.name = 'shadow'
 includeShadowSdk()
-//includeExample()
+includeExample()
