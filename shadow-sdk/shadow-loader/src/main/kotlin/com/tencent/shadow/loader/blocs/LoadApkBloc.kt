@@ -20,9 +20,7 @@ object LoadApkBloc {
     @Throws(LoadApkException::class)
     fun loadPlugin(hostAppContext:Context, apk: File): PluginClassLoader {
         val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
-        val shadowRuntimeClassLoader = pluginLoaderClassLoader.parent
-        val hostAppClassLoader = shadowRuntimeClassLoader.parent
-        val bootClassLoader = hostAppClassLoader.parent
+        val hostAppClassLoader = pluginLoaderClassLoader.parent
         val odexDir = File(apk.parent, apk.name + "_odex")
         val libDir = File(apk.parent, apk.name + "_lib")
         prepareDirs(odexDir, libDir)
@@ -31,24 +29,7 @@ object LoadApkBloc {
                 apk.absolutePath,
                 odexDir.absolutePath,
                 libDir.absolutePath,
-                bootClassLoader,
-                shadowRuntimeClassLoader,
-                arrayOf(
-                        "com.tencent.shadow.runtime.ShadowActivity"
-                        , "com.tencent.shadow.runtime.ShadowApplication"
-                        , "com.tencent.shadow.runtime.ShadowService"
-                        , "com.tencent.shadow.runtime.ContainerFragment"
-                        , "com.tencent.shadow.runtime.ContainerDialogFragment"
-                        , "com.tencent.shadow.runtime.ShadowFragment"
-                        , "com.tencent.shadow.runtime.ShadowDialogFragment"
-                        , "com.tencent.shadow.runtime.ShadowDialog"
-                        , "com.tencent.shadow.runtime.PluginFragmentManager"
-                        , "com.tencent.shadow.runtime.PluginFragmentTransaction"
-                        , "com.tencent.shadow.runtime.ShadowActivityLifecycleCallbacks"
-                        , "com.tencent.shadow.runtime.ShadowContext"
-                        , "com.tencent.shadow.runtime.ShadowWebView"
-                        , "com.tencent.shadow.runtime.ShadowPendingIntent"
-                )
+                hostAppClassLoader
         )
     }
 

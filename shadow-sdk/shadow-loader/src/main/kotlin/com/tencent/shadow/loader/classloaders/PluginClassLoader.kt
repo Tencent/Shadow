@@ -13,14 +13,12 @@ import java.io.File
  * @author cubershi
  */
 class PluginClassLoader(
-        context: Context, dexPath: String, optimizedDirectory: String, private val librarySearchPath: String, parent: ClassLoader,
-        private val mShadowRuntimeClassloader: ClassLoader,
-        private val mShadowClassNames: Array<String>
+        hostAppContext: Context, dexPath: String, optimizedDirectory: String, private val librarySearchPath: String, parent: ClassLoader
 ) : DexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
     init {
         if (Build.VERSION.SDK_INT <= MultiDex.MAX_SUPPORTED_SDK_VERSION) {
-            val pluginLoaderMultiDex = context.getSharedPreferences("com.tencent.shadow.multidex", Context.MODE_PRIVATE)
+            val pluginLoaderMultiDex = hostAppContext.getSharedPreferences("com.tencent.shadow.multidex", Context.MODE_PRIVATE)
             MultiDex.install(this, dexPath, File(optimizedDirectory), pluginLoaderMultiDex)
         }
     }
@@ -29,26 +27,14 @@ class PluginClassLoader(
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
-        var isShadowClass = false
-        for (shadowClassName in mShadowClassNames) {
-            if (className == shadowClassName) {
-                isShadowClass = true
-                break
-            }
-        }
-
-        return if (isShadowClass) {
-            mShadowRuntimeClassloader.loadClass(className)
-        } else {
-            try {
-                return super.loadClass(className, resolve)
-            } catch (e: ClassNotFoundException) {
-                //org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
-                if (className.startsWith("org.apache.commons.logging")) {
-                    return mShadowRuntimeClassloader.parent.loadClass(className)
-                } else {
-                    throw e
-                }
+        try {
+            return super.loadClass(className, resolve)
+        } catch (e: ClassNotFoundException) {
+            //org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
+            if (className.startsWith("org.apache.commons.logging")) {
+                return super.loadClass(className)
+            } else {
+                throw e
             }
         }
     }
