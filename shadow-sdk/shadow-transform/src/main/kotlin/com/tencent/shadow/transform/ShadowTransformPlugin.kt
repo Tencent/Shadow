@@ -9,7 +9,7 @@ import java.io.File
 class ShadowTransformPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        System.err.println("CuberPluginLoaderTransformPlugin project.name==" + project.name)
+        System.err.println("ShadowTransformPlugin project.name==" + project.name)
 
         val classPool = ClassPool(true)
         val plugin = project.plugins.getPlugin(AppPlugin::class.java)
