@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
-import com.tencent.shadow.container.PluginContainerActivity;
+import com.tencent.shadow.runtime.container.PluginContainerActivity;
 
 public interface ShadowActivityLifecycleCallbacks {
 

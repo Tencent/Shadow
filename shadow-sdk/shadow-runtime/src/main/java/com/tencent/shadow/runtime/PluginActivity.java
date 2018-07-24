@@ -18,7 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.tencent.shadow.container.HostActivityDelegator;
+import com.tencent.shadow.runtime.container.HostActivityDelegator;
 
 public abstract class PluginActivity extends ShadowContext {
     HostActivityDelegator mHostActivityDelegator;

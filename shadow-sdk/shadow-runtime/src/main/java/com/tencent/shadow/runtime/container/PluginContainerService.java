@@ -1,4 +1,4 @@
-package com.tencent.shadow.container;
+package com.tencent.shadow.runtime.container;
 
 import android.app.Service;
 import android.content.ComponentName;

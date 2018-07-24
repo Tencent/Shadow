@@ -6,11 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
-import com.tencent.shadow.container.HostActivityDelegator
-import com.tencent.shadow.container.PluginContainerActivity
 import com.tencent.shadow.loader.infos.PluginActivityInfo
 import com.tencent.shadow.loader.infos.PluginInfo
 import com.tencent.shadow.runtime.ShadowContext
+import com.tencent.shadow.runtime.container.HostActivityDelegator
+import com.tencent.shadow.runtime.container.PluginContainerActivity
 
 abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
     companion object {

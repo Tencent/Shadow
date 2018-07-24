@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 
-import com.tencent.shadow.container.PluginContainerActivity;
+import com.tencent.shadow.runtime.container.PluginContainerActivity;
 
 public class ShadowDialog extends Dialog {
     public ShadowDialog(Context context) {

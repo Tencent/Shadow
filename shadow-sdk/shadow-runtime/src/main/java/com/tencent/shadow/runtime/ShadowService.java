@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.IBinder;
 
-import com.tencent.shadow.container.HostServiceDelegator;
+import com.tencent.shadow.runtime.container.HostServiceDelegator;
 
 /**
  * Created by tracyluo on 2018/6/5.

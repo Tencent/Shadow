@@ -5,14 +5,14 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.IBinder
-import com.tencent.shadow.container.HostServiceDelegate
-import com.tencent.shadow.container.HostServiceDelegator
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginServicesManager
 import com.tencent.shadow.runtime.ShadowApplication
 import com.tencent.shadow.runtime.ShadowService
+import com.tencent.shadow.runtime.container.HostServiceDelegate
+import com.tencent.shadow.runtime.container.HostServiceDelegator
 
 /**
  * Created by tracyluo on 2018/6/5.

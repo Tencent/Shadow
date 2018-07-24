@@ -1,5 +1,4 @@
 def includeShadowSdk() {
-    include ':shadow-sdk:shadow-container'
     include ':shadow-sdk:shadow-loader'
     include ':shadow-sdk:shadow-runtime'
     include ':shadow-sdk:shadow-transform'

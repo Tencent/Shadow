@@ -9,7 +9,6 @@ import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
-import com.tencent.shadow.container.*
 import com.tencent.shadow.loader.blocs.*
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.delegates.HostActivityDelegateImpl
@@ -19,6 +18,7 @@ import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginReceiverManager
 import com.tencent.shadow.loader.managers.PluginServicesManager
 import com.tencent.shadow.runtime.ShadowApplication
+import com.tencent.shadow.runtime.container.*
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
