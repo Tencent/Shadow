@@ -18,14 +18,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.tools.build:gradle:3.1.2'
     implementation 'org.javassist:javassist:3.22.0-GA'
-    implementation files("${project(":shadow-sdk:shadow-runtime").getBuildDir()}/outputs/jar/shadow-runtime-debug.jar")
+    implementation files("${project(":shadow-sdk:shadow-runtime").getBuildDir()}/outputs/jar/shadow-runtime-release.jar")
 }
 
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.6"
     }
-}.dependsOn(":shadow-sdk:shadow-runtime:jarDebugPackage")
+}.dependsOn(":shadow-sdk:shadow-runtime:jarReleasePackage")
 
 compileTestKotlin {
     kotlinOptions {

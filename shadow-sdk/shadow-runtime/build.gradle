@@ -1,9 +1,17 @@
+/**
+ * shadow-runtime是运行时Shadow App所依赖的类。
+ *
+ * 这里面的类混淆意义不大，对体积缩减需求也不强。
+ * shadow-loader的Debug版依赖这个模块的Debug版
+ * shadow-loader的Release版依赖这个模块的Release版
+ * shadow-transform依赖这个模块的Release版
+ * 因此暂定这个模块不混淆，保持Debug版和Release版无差别。
+ */
+
 apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
-
-
 
     defaultConfig {
         minSdkVersion project.MIN_SDK_VERSION
@@ -14,19 +22,6 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
-
-    buildTypes {
-        release {
-            postprocessing {
-                removeUnusedCode false
-                removeUnusedResources false
-                obfuscate false
-                optimizeCode false
-                proguardFile 'proguard-rules.pro'
-            }
-        }
-    }
-
 }
 
 def jarPackage(buildType) {
