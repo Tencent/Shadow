@@ -293,7 +293,7 @@ final class MultiDexExtractor {
         return context.getSharedPreferences(PREFS_FILE,
                 Build.VERSION.SDK_INT < 11 /* Build.VERSION_CODES.HONEYCOMB */
                         ? Context.MODE_PRIVATE
-                        : Context.MODE_PRIVATE | 0x0004 /* Context.MODE_MULTI_PROCESS */);
+                        : Context.MODE_MULTI_PROCESS);
     }
 
     /**
