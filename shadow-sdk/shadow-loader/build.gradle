@@ -45,7 +45,7 @@ dependencies {
     compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:'+PLUGINMANAGER_VERSION
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
 
-    implementation project(':shadow-sdk:shadow-runtime')
+    compileOnly project(':shadow-sdk:shadow-runtime')
 }
 
 apply plugin: 'maven-publish'

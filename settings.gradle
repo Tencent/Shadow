@@ -9,7 +9,7 @@ def includeExample() {
 //    include ':example:host-app:slf4j-logcat'
 
 //    include ':example:plugin-app:demo-plugin'
-//    include ':example:plugin-app:plugin-loader-apk'
+    include ':example:plugin-app:plugin-loader-apk'
     include ':example:plugin-app:shadow-runtime-apk'
 }
 
