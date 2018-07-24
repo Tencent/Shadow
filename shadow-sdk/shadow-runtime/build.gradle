@@ -34,13 +34,17 @@ dependencies {
 }
 
 def jarPackage(buildType) {
-    return tasks.create("jar${buildType.capitalize()}Package", Jar) {
+    return tasks.create("jar${buildType.capitalize()}Package", Copy) {
+        def aarFile = file(project.buildDir.path + "/outputs/aar/${project.name}-${buildType}.aar")
+        def outputDir = file(project.buildDir.path + "/outputs/jar")
+
+        from zipTree(aarFile)
+        into outputDir
+        include 'classes.jar'
+        rename 'classes.jar', "${project.name}-${buildType}.jar"
         group = 'build'
         description = '生成jar包'
-        archiveName = "${project.name}-${project.ARTIFACT_VERSION}-${buildType}.jar"
-        destinationDir = file("build/outputs/jar/")
-        from file("build/intermediates/classes/${buildType}")
-    }
+    }.dependsOn(project.getTasksByName("assemble${buildType.capitalize()}", false).first())
 }
 
 afterEvaluate {
@@ -49,30 +53,5 @@ afterEvaluate {
             def buildTypeName = buildType.getName()
             jarPackage(buildTypeName)
         }
-    }
-}
-
-def TjarDebugPackage = null
-def TjarReleasePackage = null
-def TcompileDebugSources = null
-def TcompileReleaseSources = null
-tasks.whenTaskAdded { theTask ->
-    if (theTask.name.equals("jarDebugPackage")) {
-        TjarDebugPackage = theTask
-    }
-    if (theTask.name.equals("jarReleasePackage")) {
-        TjarReleasePackage = theTask
-    }
-    if (theTask.name.equals("compileDebugSources")) {
-        TcompileDebugSources = theTask
-    }
-    if (theTask.name.equals("compileReleaseSources")) {
-        TcompileReleaseSources = theTask
-    }
-    if (TjarDebugPackage != null && TcompileDebugSources != null) {
-        TjarDebugPackage.dependsOn TcompileDebugSources
-    }
-    if (TjarReleasePackage != null && TcompileReleaseSources != null) {
-        TjarReleasePackage.dependsOn TcompileReleaseSources
     }
 }
