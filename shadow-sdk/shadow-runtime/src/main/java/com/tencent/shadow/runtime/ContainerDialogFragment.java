@@ -59,7 +59,7 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
         return mPluginFragment.onCreateDialog(savedInstanceState);
     }
 
-    private static MockDialogFragment instantiatePluginFragment(ContainerDialogFragment containerFragment, Context context) {
+    private static ShadowDialogFragment instantiatePluginFragment(ContainerDialogFragment containerFragment, Context context) {
         String pluginFragmentClassName = containerFragment.getClass().getName() + "_";
         Constructor<?> constructor = constructorMap.get(pluginFragmentClassName);
         if (constructor == null) {
@@ -75,28 +75,28 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
             }
         }
         try {
-            return MockDialogFragment.class.cast(constructor.newInstance());
+            return ShadowDialogFragment.class.cast(constructor.newInstance());
         } catch (Exception e) {
             throw new InstantiationException("无法构造" + pluginFragmentClassName, e);
         }
     }
 
-    private MockDialogFragment mPluginFragment;
+    private ShadowDialogFragment mPluginFragment;
 
     /**
      * 标志当前Fragment是否由app自己的代码创建的
      */
     private boolean mIsAppCreateFragment = false;
 
-    public MockFragment getPluginFragment() {
+    public ShadowFragment getPluginFragment() {
         return mPluginFragment;
     }
 
     @Override
-    public void bindPluginFragment(MockFragment pluginFragment) {
+    public void bindPluginFragment(ShadowFragment pluginFragment) {
         init = true;
         mIsAppCreateFragment = true;
-        mPluginFragment = (MockDialogFragment) pluginFragment;
+        mPluginFragment = (ShadowDialogFragment) pluginFragment;
     }
 
     @Override

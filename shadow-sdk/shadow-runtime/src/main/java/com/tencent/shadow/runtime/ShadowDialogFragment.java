@@ -2,7 +2,7 @@ package com.tencent.shadow.runtime;
 
 import android.os.Bundle;
 
-public class MockDialogFragment extends MockFragment {
+public class ShadowDialogFragment extends ShadowFragment {
 
     private ContainerDialogFragment getContainerDialogFragment() {
         return (ContainerDialogFragment) mContainerFragment;
@@ -20,8 +20,8 @@ public class MockDialogFragment extends MockFragment {
         }
     }
 
-    public MockDialog getDialog() {
-        return (MockDialog) getContainerDialogFragment().getDialog();
+    public ShadowDialog getDialog() {
+        return (ShadowDialog) getContainerDialogFragment().getDialog();
     }
 
     public int getTheme() {
@@ -40,7 +40,7 @@ public class MockDialogFragment extends MockFragment {
         getContainerDialogFragment().show(manager.mBase, tag);
     }
 
-    public MockDialog onCreateDialog(Bundle savedInstanceState) {
-        return new MockDialog(getActivity(), getTheme());
+    public ShadowDialog onCreateDialog(Bundle savedInstanceState) {
+        return new ShadowDialog(getActivity(), getTheme());
     }
 }

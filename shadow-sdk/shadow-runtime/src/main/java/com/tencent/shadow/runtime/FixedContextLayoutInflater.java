@@ -6,7 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 /**
- * 在HostActivityDelegate.getLayoutInflater返回的LayoutInflater虽然已经被替换为MockActivity作为Context了.
+ * 在HostActivityDelegate.getLayoutInflater返回的LayoutInflater虽然已经被替换为ShadowActivity作为Context了.
  * 但是Fragment在创建时还是会通过这个LayoutInflater的cloneInContext方法,传入宿主Activity作为新的Context.
  * 这里通过覆盖cloneInContext方法,避免Context被替换.
  * 见onGetLayoutInflater() of Activity$HostCallbacks in Activity.java

@@ -10,7 +10,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-public abstract class MockActivity extends PluginActivity {
+public abstract class ShadowActivity extends PluginActivity {
 
     private MixPackageManager mMixPackageManager;
 
@@ -31,7 +31,7 @@ public abstract class MockActivity extends PluginActivity {
         mHostActivityDelegator.setContentView(view);
     }
 
-    public final MockApplication getApplication() {
+    public final ShadowApplication getApplication() {
         return mPluginApplication;
     }
 
@@ -72,7 +72,7 @@ public abstract class MockActivity extends PluginActivity {
         return mMixPackageManager;
     }
 
-    public final MockActivity getParent() {
+    public final ShadowActivity getParent() {
         return null;
     }
 

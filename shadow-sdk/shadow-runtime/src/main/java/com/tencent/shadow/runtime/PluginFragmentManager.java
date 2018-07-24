@@ -14,7 +14,7 @@ public class PluginFragmentManager {
         return new PluginFragmentTransaction(this, mBase.beginTransaction());
     }
 
-    public MockFragment findFragmentByTag(String tag) {
+    public ShadowFragment findFragmentByTag(String tag) {
         Fragment fragmentByTag = mBase.findFragmentByTag(tag);
         if (fragmentByTag instanceof ContainerFragment) {
             return ((ContainerFragment) fragmentByTag).getPluginFragment();

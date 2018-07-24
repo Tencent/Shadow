@@ -20,10 +20,10 @@ import android.view.WindowManager;
 
 import com.tencent.shadow.container.HostActivityDelegator;
 
-public abstract class PluginActivity extends MockContext {
+public abstract class PluginActivity extends ShadowContext {
     HostActivityDelegator mHostActivityDelegator;
 
-    MockApplication mPluginApplication;
+    ShadowApplication mPluginApplication;
 
     PackageManager mPluginPackageManager;
 
@@ -35,7 +35,7 @@ public abstract class PluginActivity extends MockContext {
         mHostActivityDelegator = delegator;
     }
 
-    public void setPluginApplication(MockApplication pluginApplication) {
+    public void setPluginApplication(ShadowApplication pluginApplication) {
         mPluginApplication = pluginApplication;
     }
 

@@ -25,36 +25,36 @@ import java.io.IOException;
  * Created by owenguo on 2018/7/8.
  */
 
-public class MockWebView extends WebView {
+public class ShadowWebView extends WebView {
 
     private Context mContext;
 
-    private final String MOCK_ASSET_PREFIX = "file:///android_asset/";
+    private final String ANDROID_ASSET_PREFIX = "file:///android_asset/";
 
     private final String REPLACE_ASSET_PREFIX = "http://android.asset/";
 
-    public MockWebView(Context context) {
+    public ShadowWebView(Context context) {
         super(context);
         init(context);
     }
 
-    public MockWebView(Context context, AttributeSet attrs) {
+    public ShadowWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public MockWebView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ShadowWebView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
     }
 
     @TargetApi(21)
-    public MockWebView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ShadowWebView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
     }
 
-    public MockWebView(Context context, AttributeSet attrs, int defStyleAttr, boolean privateBrowsing) {
+    public ShadowWebView(Context context, AttributeSet attrs, int defStyleAttr, boolean privateBrowsing) {
         super(context, attrs, defStyleAttr, privateBrowsing);
         init(context);
     }
@@ -66,8 +66,8 @@ public class MockWebView extends WebView {
 
     @Override
     public void loadUrl(String url) {
-        if(url.startsWith(MOCK_ASSET_PREFIX)){
-            url = url.replace(MOCK_ASSET_PREFIX,REPLACE_ASSET_PREFIX);
+        if(url.startsWith(ANDROID_ASSET_PREFIX)){
+            url = url.replace(ANDROID_ASSET_PREFIX,REPLACE_ASSET_PREFIX);
         }
         super.loadUrl(url);
     }

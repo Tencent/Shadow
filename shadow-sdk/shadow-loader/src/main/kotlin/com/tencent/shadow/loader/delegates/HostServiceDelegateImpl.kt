@@ -11,20 +11,20 @@ import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginServicesManager
-import com.tencent.shadow.runtime.MockApplication
-import com.tencent.shadow.runtime.MockService
+import com.tencent.shadow.runtime.ShadowApplication
+import com.tencent.shadow.runtime.ShadowService
 
 /**
  * Created by tracyluo on 2018/6/5.
  */
-class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
+class HostServiceDelegateImpl(private val mPluginApplication: ShadowApplication,
                               private val mPluginClassLoader: PluginClassLoader,
                               private val mPluginResources: Resources,
                               private val mPluginActivitiesManager: PluginActivitiesManager,
                               private val mPluginServicesManager: PluginServicesManager,
                               private val mPendingIntentManager: PendingIntentManager) : HostServiceDelegate {
     private lateinit var mHostServiceDelegator: HostServiceDelegator
-    private lateinit var mPluginService: MockService
+    private lateinit var mPluginService: ShadowService
     private lateinit var mBinder: IBinder
     private var mIsSetService: Boolean = false
     private var mIsBound: Boolean = false
@@ -79,11 +79,11 @@ class HostServiceDelegateImpl(private val mPluginApplication: MockApplication,
         if (!mIsSetService) {
             val cls = intent.getStringExtra("className")
             val aClass = mPluginClassLoader.loadClass(cls)
-            mPluginService = MockService::class.java.cast(aClass.newInstance())
+            mPluginService = ShadowService::class.java.cast(aClass.newInstance())
             mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
             mPluginService.setPluginResources(mPluginResources)
             mPluginService.setPluginClassLoader(mPluginClassLoader)
-            mPluginService.setMockApplication(mPluginApplication)
+            mPluginService.setShadowApplication(mPluginApplication)
             mPluginService.setPluginActivityLauncher(mPluginActivitiesManager)
             mPluginService.setServiceOperator(mPluginServicesManager)
             mPluginService.pendingIntentConverter = mPendingIntentManager;

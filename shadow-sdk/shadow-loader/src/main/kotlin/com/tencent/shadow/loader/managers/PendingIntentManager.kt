@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.util.Pair
 
-import com.tencent.shadow.runtime.MockContext
+import com.tencent.shadow.runtime.ShadowContext
 
-class PendingIntentManager(private val mHostContext: Context, private val mPluginActivitiesManager: PluginActivitiesManager, private val mPluginServicesManager: PluginServicesManager) : MockContext.PendingIntentConverter {
+class PendingIntentManager(private val mHostContext: Context, private val mPluginActivitiesManager: PluginActivitiesManager, private val mPluginServicesManager: PluginServicesManager) : ShadowContext.PendingIntentConverter {
 
     override fun convertPluginActivityIntent(pluginIntent: Intent): Pair<Context, Intent> {
         return Pair(mHostContext, mPluginActivitiesManager.convertActivityIntent(pluginIntent))

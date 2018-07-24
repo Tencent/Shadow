@@ -30,15 +30,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class MockFragment {
+public class ShadowFragment {
     private static Map<String, Constructor<?>> constructorMap = new HashMap<>();
 
-    private static IContainerFragment instantiateContainerFragment(MockFragment mockFragment) {
-        String mockFragmentClassname = mockFragment.getClass().getName();
-        String containerFragmentClassName = mockFragmentClassname.substring(0, mockFragmentClassname.length() - 1);
+    private static IContainerFragment instantiateContainerFragment(ShadowFragment shadowFragment) {
+        String shadowFragmentClassname = shadowFragment.getClass().getName();
+        String containerFragmentClassName = shadowFragmentClassname.substring(0, shadowFragmentClassname.length() - 1);
         Constructor<?> constructor = constructorMap.get(containerFragmentClassName);
         if (constructor == null) {
-            ClassLoader pluginClassLoader = mockFragment.getClass().getClassLoader();
+            ClassLoader pluginClassLoader = shadowFragment.getClass().getClassLoader();
             try {
                 Class<?> aClass = pluginClassLoader.loadClass(containerFragmentClassName);
                 constructor = aClass.getConstructor();
@@ -61,7 +61,7 @@ public class MockFragment {
 
     PluginFragmentManager mPluginFragmentManager;
 
-    public MockFragment() {
+    public ShadowFragment() {
         mContainerFragment = instantiateContainerFragment(this);
         mContainerFragment.bindPluginFragment(this);
         mIsAppCreateFragment = true;
@@ -84,14 +84,14 @@ public class MockFragment {
         return mContainerFragment;
     }
 
-    final public MockActivity getActivity() {
+    final public ShadowActivity getActivity() {
         if (mAttachedContext == null) {
             return null;
-        } else if (mAttachedContext instanceof MockActivity) {
-            return (MockActivity) mAttachedContext;
+        } else if (mAttachedContext instanceof ShadowActivity) {
+            return (ShadowActivity) mAttachedContext;
         } else {
             final PluginContainerActivity activity = (PluginContainerActivity) mContainerFragment.getActivity();
-            return (MockActivity) activity.getPluginActivity();
+            return (ShadowActivity) activity.getPluginActivity();
         }
     }
 
@@ -236,7 +236,7 @@ public class MockFragment {
     }
 
 
-    public void onAttach(MockActivity activity) {
+    public void onAttach(ShadowActivity activity) {
         mAttachedContext = activity;
     }
 

@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 
-public class MockLayoutInflater extends LayoutInflater {
+public class ShadowLayoutInflater extends LayoutInflater {
 
     private static final String[] sClassPrefixList = {
             "android.widget.",
@@ -15,15 +15,15 @@ public class MockLayoutInflater extends LayoutInflater {
 
     private static final String AndroidWebView = "android.webkit.WebView";
 
-    private static final String MockPrefix = "com.tencent.shadow.runtime.";
+    private static final String ShadowPackagePrefix = "com.tencent.shadow.runtime.";
 
-    private static final String MockWebView = "MockWebView";
+    private static final String ShadowWebView = "ShadowWebView";
 
-    public MockLayoutInflater(Context context) {
+    public ShadowLayoutInflater(Context context) {
         super(context);
     }
 
-    public MockLayoutInflater(LayoutInflater original, Context newContext) {
+    public ShadowLayoutInflater(LayoutInflater original, Context newContext) {
         super(original, newContext);
     }
 
@@ -32,8 +32,8 @@ public class MockLayoutInflater extends LayoutInflater {
         for (String prefix : sClassPrefixList) {
             try {
                 if (AndroidWebView.equals(prefix + name)) {
-                    prefix = MockPrefix;
-                    name = MockWebView;
+                    prefix = ShadowPackagePrefix;
+                    name = ShadowWebView;
                 }
                 View view = createView(name, prefix, attrs);
                 if (view != null) {

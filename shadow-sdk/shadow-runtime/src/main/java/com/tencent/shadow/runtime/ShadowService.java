@@ -11,7 +11,7 @@ import com.tencent.shadow.container.HostServiceDelegator;
 /**
  * Created by tracyluo on 2018/6/5.
  */
-public abstract class MockService extends MockContext {
+public abstract class ShadowService extends ShadowContext {
     HostServiceDelegator mHostServiceDelegator;
 
     public final void setHostContextAsBase(Context context) {

@@ -8,15 +8,15 @@ import android.os.Build;
 import android.os.Bundle;
 
 
-public class MockPendingIntent {
+public class ShadowPendingIntent {
 
     public static PendingIntent getService(Context context, int requestCode,
                                             Intent intent,  int flags) {
-        if(context instanceof MockContext && intent.getComponent() != null){
-            MockContext mockContext = (MockContext)context;
-            if(mockContext.getPendingIntentConverter() != null){
-                context = mockContext.getPendingIntentConverter().convertPluginServiceIntent(intent).first;
-                intent = mockContext.getPendingIntentConverter().convertPluginServiceIntent(intent).second;
+        if (context instanceof ShadowContext && intent.getComponent() != null) {
+            ShadowContext shadowContext = (ShadowContext) context;
+            if (shadowContext.getPendingIntentConverter() != null) {
+                context = shadowContext.getPendingIntentConverter().convertPluginServiceIntent(intent).first;
+                intent = shadowContext.getPendingIntentConverter().convertPluginServiceIntent(intent).second;
             }
         }
         return PendingIntent.getService(context, requestCode, intent, flags);
@@ -30,11 +30,11 @@ public class MockPendingIntent {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static PendingIntent getActivity(Context context, int requestCode,
                                             Intent intent, int flags, Bundle options) {
-        if(context instanceof MockContext && intent.getComponent() != null){
-            MockContext mockContext = (MockContext)context;
-            if(mockContext.getPendingIntentConverter() != null){
-                context = mockContext.getPendingIntentConverter().convertPluginActivityIntent(intent).first;
-                intent = mockContext.getPendingIntentConverter().convertPluginActivityIntent(intent).second;
+        if (context instanceof ShadowContext && intent.getComponent() != null) {
+            ShadowContext shadowContext = (ShadowContext) context;
+            if(shadowContext.getPendingIntentConverter() != null){
+                context = shadowContext.getPendingIntentConverter().convertPluginActivityIntent(intent).first;
+                intent = shadowContext.getPendingIntentConverter().convertPluginActivityIntent(intent).second;
             }
         }
         return PendingIntent.getActivity(context, requestCode, intent, flags, options);

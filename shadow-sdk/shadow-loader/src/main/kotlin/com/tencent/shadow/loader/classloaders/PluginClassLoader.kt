@@ -14,8 +14,8 @@ import java.io.File
  */
 class PluginClassLoader(
         context: Context, dexPath: String, optimizedDirectory: String, private val librarySearchPath: String, parent: ClassLoader,
-        private val mMockClassloader: ClassLoader,
-        private val mMockClassNames: Array<String>
+        private val mShadowRuntimeClassloader: ClassLoader,
+        private val mShadowClassNames: Array<String>
 ) : DexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
     init {
@@ -29,23 +29,23 @@ class PluginClassLoader(
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
-        var isMockClass = false
-        for (mockClassName in mMockClassNames) {
-            if (className == mockClassName) {
-                isMockClass = true
+        var isShadowClass = false
+        for (shadowClassName in mShadowClassNames) {
+            if (className == shadowClassName) {
+                isShadowClass = true
                 break
             }
         }
 
-        return if (isMockClass) {
-            mMockClassloader.loadClass(className)
+        return if (isShadowClass) {
+            mShadowRuntimeClassloader.loadClass(className)
         } else {
             try {
                 return super.loadClass(className, resolve)
             } catch (e: ClassNotFoundException) {
                 //org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
                 if (className.startsWith("org.apache.commons.logging")) {
-                    return mMockClassloader.parent.loadClass(className)
+                    return mShadowRuntimeClassloader.parent.loadClass(className)
                 } else {
                     throw e
                 }

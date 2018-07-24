@@ -6,14 +6,14 @@ import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.loader.infos.PluginInfo
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
-import com.tencent.shadow.runtime.MockApplication
+import com.tencent.shadow.runtime.ShadowApplication
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 internal class ShadowRunningPlugin(
-        private val mockApplication: MockApplication
+        private val shadowApplication: ShadowApplication
         , private val installedPlugin: InstalledPlugin
         , private val pluginInfo: PluginInfo
         , private val mPluginActivitiesManager: PluginActivitiesManager
@@ -23,7 +23,7 @@ internal class ShadowRunningPlugin(
         val launcherActivity = mPluginActivitiesManager.launcherActivity
         val pluginIntent = Intent(intent)
         pluginIntent.component = launcherActivity
-        val hostApplicationContext = mockApplication
+        val hostApplicationContext = shadowApplication
         hostApplicationContext.startActivity(pluginIntent)
 
         return object : ProgressFuture<Any> {

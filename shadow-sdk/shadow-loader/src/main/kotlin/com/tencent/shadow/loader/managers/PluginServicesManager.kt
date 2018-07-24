@@ -8,12 +8,12 @@ import android.util.Pair
 import com.tencent.shadow.loader.infos.PluginInfo
 import com.tencent.shadow.loader.infos.PluginServiceInfo
 import com.tencent.shadow.loader.managers.PluginServicesManager.Operate.*
-import com.tencent.shadow.runtime.MockContext
+import com.tencent.shadow.runtime.ShadowContext
 
 /**
  * Created by tracyluo on 2018/6/6.
  */
-abstract class PluginServicesManager : MockContext.PluginServiceOperator {
+abstract class PluginServicesManager : ShadowContext.PluginServiceOperator {
     companion object {
         val AVOID_CLASS_VERIFY_EXCEPTION = PluginServicesManager::class
         const val KEY_PKG_NAME = "packageName"
@@ -68,7 +68,7 @@ abstract class PluginServicesManager : MockContext.PluginServiceOperator {
     private fun getContainerService(pluginActivity: ComponentName): ComponentName =
             servicesMap[pluginActivity]!!
 
-    private fun doServiceOpt(context: MockContext, intent: Intent?): Boolean {
+    private fun doServiceOpt(context: ShadowContext, intent: Intent?): Boolean {
         intent ?: return false
         context.baseContext.startService(intent)
         return true
@@ -92,15 +92,15 @@ abstract class PluginServicesManager : MockContext.PluginServiceOperator {
         return containerServiceIntent
     }
 
-    override fun startService(context: MockContext, intent: Intent): Pair<Boolean, ComponentName> {
+    override fun startService(context: ShadowContext, intent: Intent): Pair<Boolean, ComponentName> {
         return Pair(doServiceOpt(context, getContainerServiceIntent(intent, START)), intent.component)
     }
 
-    override fun stopService(context: MockContext, name: Intent): Pair<Boolean, Boolean> {
+    override fun stopService(context: ShadowContext, name: Intent): Pair<Boolean, Boolean> {
         return Pair(doServiceOpt(context, getContainerServiceIntent(name, STOP)), true)
     }
 
-    override fun bindService(context: MockContext, service: Intent, conn: ServiceConnection, flags: Int): Pair<Boolean, Boolean> {
+    override fun bindService(context: ShadowContext, service: Intent, conn: ServiceConnection, flags: Int): Pair<Boolean, Boolean> {
         var intent = getContainerServiceIntent(service, BIND)?:return Pair(false, false)
         var time = System.nanoTime()
         connectionMap[time] = conn
@@ -109,13 +109,13 @@ abstract class PluginServicesManager : MockContext.PluginServiceOperator {
         return Pair(doServiceOpt(context, intent), true)
     }
 
-    override fun unbindService(context: MockContext, conn: ServiceConnection): Pair<Boolean, Unit> {
+    override fun unbindService(context: ShadowContext, conn: ServiceConnection): Pair<Boolean, Unit> {
         var intent = intentMap[conn] ?: return Pair(false, Unit)
         var unBindIntent = intent.putExtra(KEY_OPT_NAME, "unbind")
         return Pair(doServiceOpt(context, unBindIntent), Unit)
     }
 
-    abstract fun onBindContainerService(mockService: ComponentName): ComponentName
+    abstract fun onBindContainerService(shadowService: ComponentName): ComponentName
 
     fun getConnection(intent: Intent): ServiceConnection? {
         return connectionMap[ intent.getLongExtra(KEY_INTENT_KEY, -1)]

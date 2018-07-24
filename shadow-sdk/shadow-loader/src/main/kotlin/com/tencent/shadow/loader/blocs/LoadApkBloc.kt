@@ -20,8 +20,8 @@ object LoadApkBloc {
     @Throws(LoadApkException::class)
     fun loadPlugin(hostAppContext:Context, apk: File): PluginClassLoader {
         val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
-        val mockClassLoader = pluginLoaderClassLoader.parent
-        val hostAppClassLoader = mockClassLoader.parent
+        val shadowRuntimeClassLoader = pluginLoaderClassLoader.parent
+        val hostAppClassLoader = shadowRuntimeClassLoader.parent
         val bootClassLoader = hostAppClassLoader.parent
         val odexDir = File(apk.parent, apk.name + "_odex")
         val libDir = File(apk.parent, apk.name + "_lib")
@@ -32,22 +32,22 @@ object LoadApkBloc {
                 odexDir.absolutePath,
                 libDir.absolutePath,
                 bootClassLoader,
-                mockClassLoader,
+                shadowRuntimeClassLoader,
                 arrayOf(
-                        "com.tencent.shadow.runtime.MockActivity"
-                        , "com.tencent.shadow.runtime.MockApplication"
-                        , "com.tencent.shadow.runtime.MockService"
+                        "com.tencent.shadow.runtime.ShadowActivity"
+                        , "com.tencent.shadow.runtime.ShadowApplication"
+                        , "com.tencent.shadow.runtime.ShadowService"
                         , "com.tencent.shadow.runtime.ContainerFragment"
                         , "com.tencent.shadow.runtime.ContainerDialogFragment"
-                        , "com.tencent.shadow.runtime.MockFragment"
-                        , "com.tencent.shadow.runtime.MockDialogFragment"
-                        , "com.tencent.shadow.runtime.MockDialog"
+                        , "com.tencent.shadow.runtime.ShadowFragment"
+                        , "com.tencent.shadow.runtime.ShadowDialogFragment"
+                        , "com.tencent.shadow.runtime.ShadowDialog"
                         , "com.tencent.shadow.runtime.PluginFragmentManager"
                         , "com.tencent.shadow.runtime.PluginFragmentTransaction"
-                        , "com.tencent.shadow.runtime.MockActivityLifecycleCallbacks"
-                        , "com.tencent.shadow.runtime.MockContext"
-                        , "com.tencent.shadow.runtime.MockWebView"
-                        , "com.tencent.shadow.runtime.MockPendingIntent"
+                        , "com.tencent.shadow.runtime.ShadowActivityLifecycleCallbacks"
+                        , "com.tencent.shadow.runtime.ShadowContext"
+                        , "com.tencent.shadow.runtime.ShadowWebView"
+                        , "com.tencent.shadow.runtime.ShadowPendingIntent"
                 )
         )
     }

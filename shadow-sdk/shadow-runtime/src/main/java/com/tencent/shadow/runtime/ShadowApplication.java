@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * 用于在plugin-loader中调用假的Application方法的接口
  */
-public abstract class MockApplication extends MockContext {
+public abstract class ShadowApplication extends ShadowContext {
     private MixPackageManager mMixPackageManager;
 
     private Application mHostApplication;
@@ -29,7 +29,7 @@ public abstract class MockApplication extends MockContext {
         return this;
     }
 
-    private Map<MockActivityLifecycleCallbacks, Application.ActivityLifecycleCallbacks> mActivityLifecycleCallbacksMap = new HashMap<>();
+    private Map<ShadowActivityLifecycleCallbacks, Application.ActivityLifecycleCallbacks> mActivityLifecycleCallbacksMap = new HashMap<>();
 
     public void onCreate() {
         for (Map.Entry<String, String> entry: mReceivers.entrySet()){
@@ -50,17 +50,17 @@ public abstract class MockApplication extends MockContext {
         mHostApplication.registerComponentCallbacks(new ComponentCallbacks2() {
             @Override
             public void onTrimMemory(int level) {
-                MockApplication.this.onTrimMemory(level);
+                ShadowApplication.this.onTrimMemory(level);
             }
 
             @Override
             public void onConfigurationChanged(Configuration newConfig) {
-                MockApplication.this.onConfigurationChanged(newConfig);
+                ShadowApplication.this.onConfigurationChanged(newConfig);
             }
 
             @Override
             public void onLowMemory() {
-                MockApplication.this.onLowMemory();
+                ShadowApplication.this.onLowMemory();
             }
         });
     }
@@ -96,15 +96,15 @@ public abstract class MockApplication extends MockContext {
     }
 
 
-    public void registerActivityLifecycleCallbacks(MockActivityLifecycleCallbacks callback) {
-        final MockActivityLifecycleCallbacks.Wrapper wrapper
-                = new MockActivityLifecycleCallbacks.Wrapper(callback);
+    public void registerActivityLifecycleCallbacks(ShadowActivityLifecycleCallbacks callback) {
+        final ShadowActivityLifecycleCallbacks.Wrapper wrapper
+                = new ShadowActivityLifecycleCallbacks.Wrapper(callback);
         mActivityLifecycleCallbacksMap.put(callback, wrapper);
         mHostApplication.registerActivityLifecycleCallbacks(wrapper);
     }
 
 
-    public void unregisterActivityLifecycleCallbacks(MockActivityLifecycleCallbacks callback) {
+    public void unregisterActivityLifecycleCallbacks(ShadowActivityLifecycleCallbacks callback) {
         final Application.ActivityLifecycleCallbacks activityLifecycleCallbacks
                 = mActivityLifecycleCallbacksMap.get(callback);
         if (activityLifecycleCallbacks != null) {

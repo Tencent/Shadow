@@ -15,63 +15,63 @@ public class PluginFragmentTransaction {
         this.mBase = mBase;
     }
 
-    private Fragment getContainerFragment(MockFragment mockFragment) {
-        mockFragment.mPluginFragmentManager = mPluginFragmentManager;
-        return mockFragment.getContainerFragment().asFragment();
+    private Fragment getContainerFragment(ShadowFragment shadowFragment) {
+        shadowFragment.mPluginFragmentManager = mPluginFragmentManager;
+        return shadowFragment.getContainerFragment().asFragment();
     }
 
-    public PluginFragmentTransaction add(MockFragment fragment, String tag) {
+    public PluginFragmentTransaction add(ShadowFragment fragment, String tag) {
         mBase.add(getContainerFragment(fragment), tag);
         return this;
     }
 
-    public PluginFragmentTransaction add(int containerViewId, MockFragment fragment) {
+    public PluginFragmentTransaction add(int containerViewId, ShadowFragment fragment) {
         mBase.add(containerViewId, getContainerFragment(fragment));
         return this;
     }
 
-    public PluginFragmentTransaction add(int containerViewId, MockFragment fragment, String tag) {
+    public PluginFragmentTransaction add(int containerViewId, ShadowFragment fragment, String tag) {
         mBase.add(containerViewId, getContainerFragment(fragment), tag);
         return this;
     }
 
-    public PluginFragmentTransaction replace(int containerViewId, MockFragment fragment) {
+    public PluginFragmentTransaction replace(int containerViewId, ShadowFragment fragment) {
         mBase.replace(containerViewId, getContainerFragment(fragment));
         return this;
     }
 
-    public PluginFragmentTransaction replace(int containerViewId, MockFragment fragment, String tag) {
+    public PluginFragmentTransaction replace(int containerViewId, ShadowFragment fragment, String tag) {
         mBase.replace(containerViewId, getContainerFragment(fragment), tag);
         return this;
     }
 
-    public PluginFragmentTransaction remove(MockFragment fragment) {
+    public PluginFragmentTransaction remove(ShadowFragment fragment) {
         mBase.remove(getContainerFragment(fragment));
         return this;
     }
 
-    public PluginFragmentTransaction hide(MockFragment fragment) {
+    public PluginFragmentTransaction hide(ShadowFragment fragment) {
         mBase.hide(getContainerFragment(fragment));
         return this;
     }
 
-    public PluginFragmentTransaction show(MockFragment fragment) {
+    public PluginFragmentTransaction show(ShadowFragment fragment) {
         mBase.show(getContainerFragment(fragment));
         return this;
     }
 
-    public PluginFragmentTransaction detach(MockFragment fragment) {
+    public PluginFragmentTransaction detach(ShadowFragment fragment) {
         mBase.detach(getContainerFragment(fragment));
         return this;
     }
 
-    public PluginFragmentTransaction attach(MockFragment fragment) {
+    public PluginFragmentTransaction attach(ShadowFragment fragment) {
         mBase.attach(getContainerFragment(fragment));
         return this;
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public PluginFragmentTransaction setPrimaryNavigationFragment(MockFragment fragment) {
+    public PluginFragmentTransaction setPrimaryNavigationFragment(ShadowFragment fragment) {
         mBase.setPrimaryNavigationFragment(getContainerFragment(fragment));
         return this;
     }

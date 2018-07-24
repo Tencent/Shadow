@@ -10,7 +10,7 @@ import com.tencent.shadow.loader.exceptions.CreateApplicationException
 import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginServicesManager
-import com.tencent.shadow.runtime.MockApplication
+import com.tencent.shadow.runtime.ShadowApplication
 import java.util.concurrent.CountDownLatch
 
 /**
@@ -30,27 +30,27 @@ object CreateApplicationBloc {
             businessPluginServiceManager: PluginServicesManager,
             receivers: Map<String, String>,
             mPendingIntentManager: PendingIntentManager
-    ): MockApplication {
+    ): ShadowApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
-            val mockApplication = MockApplication::class.java.cast(appClass.newInstance())
-            mockApplication.setPluginResources(resources)
-            mockApplication.setPluginClassLoader(pluginClassLoader)
-            mockApplication.setPluginActivityLauncher(businessPluginActivitiesManager)
-            mockApplication.setServiceOperator(businessPluginServiceManager)
-            mockApplication.setHostApplicationContextAsBase(hostAppContext)
-            mockApplication.setReceivers(receivers)
-            mockApplication.setPluginPackageManager(pluginPackageManager)
-            mockApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
-            mockApplication.pendingIntentConverter = mPendingIntentManager;
+            val shadowApplication = ShadowApplication::class.java.cast(appClass.newInstance())
+            shadowApplication.setPluginResources(resources)
+            shadowApplication.setPluginClassLoader(pluginClassLoader)
+            shadowApplication.setPluginActivityLauncher(businessPluginActivitiesManager)
+            shadowApplication.setServiceOperator(businessPluginServiceManager)
+            shadowApplication.setHostApplicationContextAsBase(hostAppContext)
+            shadowApplication.setReceivers(receivers)
+            shadowApplication.setPluginPackageManager(pluginPackageManager)
+            shadowApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
+            shadowApplication.pendingIntentConverter = mPendingIntentManager;
             val uiHandler = Handler(Looper.getMainLooper())
             val lock = CountDownLatch(1)
             uiHandler.post {
-                mockApplication.onCreate()
+                shadowApplication.onCreate()
                 lock.countDown()
             }
             lock.await()
-            return mockApplication
+            return shadowApplication
         } catch (e: Exception) {
             throw CreateApplicationException(e)
         }

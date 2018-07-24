@@ -10,9 +10,9 @@ import com.tencent.shadow.container.HostActivityDelegator
 import com.tencent.shadow.container.PluginContainerActivity
 import com.tencent.shadow.loader.infos.PluginActivityInfo
 import com.tencent.shadow.loader.infos.PluginInfo
-import com.tencent.shadow.runtime.MockContext
+import com.tencent.shadow.runtime.ShadowContext
 
-abstract class PluginActivitiesManager : MockContext.PluginActivityLauncher {
+abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
     companion object {
         val AVOID_CLASS_VERIFY_EXCEPTION = PluginContainerActivity::class
         const val PLUGIN_LOADER_BUNDLE_KEY = "PLUGIN_LOADER_BUNDLE_KEY"

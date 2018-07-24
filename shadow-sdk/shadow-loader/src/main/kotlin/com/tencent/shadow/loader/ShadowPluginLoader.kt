@@ -18,7 +18,7 @@ import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginReceiverManager
 import com.tencent.shadow.loader.managers.PluginServicesManager
-import com.tencent.shadow.runtime.MockApplication
+import com.tencent.shadow.runtime.ShadowApplication
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -41,7 +41,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
 
     abstract fun getBusinessPluginReceiverManger(hostAppContext: Context): PluginReceiverManager
 
-    private lateinit var mPluginApplication: MockApplication
+    private lateinit var mPluginApplication: ShadowApplication
 
     private lateinit var mPluginPackageManager: PluginPackageManager
 
@@ -65,7 +65,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                 CopySoBloc.copySo(installedPlugin.pluginFile, mAbi)
                 val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin.pluginFile)
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
-                val mockApplication =
+                val shadowApplication =
                         CreateApplicationBloc.callPluginApplicationOnCreate(
                                 pluginClassLoader,
                                 pluginInfo.applicationClassName,
@@ -82,11 +82,11 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                     getBusinessPluginServiceManager().addPluginApkInfo(pluginInfo)
                     mPluginClassLoader = pluginClassLoader
                     mPluginResources = resources
-                    mPluginApplication = mockApplication
+                    mPluginApplication = shadowApplication
                     mPluginPackageManager = pluginPackageManager
                 }
 
-                ShadowRunningPlugin(mockApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
+                ShadowRunningPlugin(shadowApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
             })
             return ProgressFutureImpl(submit, null)
         } else if (installedPlugin.pluginFile != null)

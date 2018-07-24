@@ -13,12 +13,12 @@ import android.view.LayoutInflater;
 
 import com.tencent.shadow.container.HostActivityDelegator;
 
-public class MockContext extends ContextThemeWrapper {
+public class ShadowContext extends ContextThemeWrapper {
     PluginActivityLauncher mPluginActivityLauncher;
     PluginServiceOperator mPluginServiceOperator;
     PendingIntentConverter mPendingIntentConverter;
     ClassLoader mPluginClassLoader;
-    MockApplication mMockApplication;
+    ShadowApplication mShadowApplication;
     Resources mPluginResources;
     LayoutInflater mLayoutInflater;
     String mLibrarySearchPath;
@@ -40,8 +40,8 @@ public class MockContext extends ContextThemeWrapper {
         mPluginActivityLauncher = pluginActivityLauncher;
     }
 
-    public void setMockApplication(MockApplication mockApplication) {
-        mMockApplication = mockApplication;
+    public void setShadowApplication(ShadowApplication shadowApplication) {
+        mShadowApplication = shadowApplication;
     }
 
     public void setLibrarySearchPath(String mLibrarySearchPath) {
@@ -54,7 +54,7 @@ public class MockContext extends ContextThemeWrapper {
 
     @Override
     public Context getApplicationContext() {
-        return mMockApplication;
+        return mShadowApplication;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class MockContext extends ContextThemeWrapper {
             if (mLayoutInflater == null) {
                 LayoutInflater inflater = (LayoutInflater) super.getSystemService(name);
                 assert inflater != null;
-                mLayoutInflater = new MockLayoutInflater(inflater.cloneInContext(this),this);
+                mLayoutInflater = new ShadowLayoutInflater(inflater.cloneInContext(this),this);
             }
             return mLayoutInflater;
         }
@@ -110,13 +110,13 @@ public class MockContext extends ContextThemeWrapper {
 
     public interface PluginServiceOperator {
 
-        Pair<Boolean, ComponentName> startService(MockContext context, Intent intent);
+        Pair<Boolean, ComponentName> startService(ShadowContext context, Intent intent);
 
-        Pair<Boolean, Boolean> stopService(MockContext context, Intent name);
+        Pair<Boolean, Boolean> stopService(ShadowContext context, Intent name);
 
-        Pair<Boolean, Boolean> bindService(MockContext context, Intent service, ServiceConnection conn, int flags);
+        Pair<Boolean, Boolean> bindService(ShadowContext context, Intent service, ServiceConnection conn, int flags);
 
-        Pair<Boolean, ?> unbindService(MockContext context, ServiceConnection conn);
+        Pair<Boolean, ?> unbindService(ShadowContext context, ServiceConnection conn);
 
     }
 

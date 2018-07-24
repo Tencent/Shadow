@@ -22,8 +22,8 @@ import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
 import com.tencent.shadow.loader.managers.PluginServicesManager
 import com.tencent.shadow.runtime.FixedContextLayoutInflater
-import com.tencent.shadow.runtime.MockApplication
 import com.tencent.shadow.runtime.PluginActivity
+import com.tencent.shadow.runtime.ShadowApplication
 
 /**
  * 壳子Activity与插件Activity转调关系的实现类
@@ -33,7 +33,7 @@ import com.tencent.shadow.runtime.PluginActivity
  */
 class HostActivityDelegateImpl(
         private val mPluginPackageManager: PluginPackageManager,
-        private val mPluginApplication: MockApplication,
+        private val mPluginApplication: ShadowApplication,
         private val mPluginClassLoader: PluginClassLoader,
         private val mPluginResources: Resources,
         private val mPluginActivitiesManager: PluginActivitiesManager,
@@ -73,7 +73,7 @@ class HostActivityDelegateImpl(
             pluginActivity.setPluginApplication(mPluginApplication)
             pluginActivity.setPluginPackageManager(mPluginPackageManager)
             pluginActivity.setServiceOperator(mPluginServicesManager)
-            pluginActivity.setMockApplication(mPluginApplication)
+            pluginActivity.setShadowApplication(mPluginApplication)
             pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
             mPluginActivity = pluginActivity
             mHostActivityDelegator.superOnCreate(bundle)

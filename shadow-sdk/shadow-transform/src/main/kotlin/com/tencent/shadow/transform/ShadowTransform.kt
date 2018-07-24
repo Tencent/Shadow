@@ -9,31 +9,31 @@ import java.io.File
 class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: ShadowTransformPlugin.KeepHostObjectsExtension) : JavassistTransform(classPool) {
 
     companion object {
-        const val MockFragmentClassname = "com.tencent.shadow.runtime.MockFragment"
-        const val MockDialogFragmentClassname = "com.tencent.shadow.runtime.MockDialogFragment"
+        const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"
+        const val ShadowDialogFragmentClassname = "com.tencent.shadow.runtime.ShadowDialogFragment"
         const val AndroidDialogClassname = "android.app.Dialog"
-        const val MockDialogClassname = "com.tencent.shadow.runtime.MockDialog"
+        const val ShadowDialogClassname = "com.tencent.shadow.runtime.ShadowDialog"
         const val AndroidWebViewClassname = "android.webkit.WebView"
-        const val MockWebViewClassname = "com.tencent.shadow.runtime.MockWebView"
+        const val ShadowWebViewClassname = "com.tencent.shadow.runtime.ShadowWebView"
         const val AndroidWebViewClientClassname = "android.webkit.WebViewClient"
         const val AndroidWebChromeClientClassname = "android.webkit.WebChromeClient"
         const val AndroidPendingIntentClassname = "android.app.PendingIntent"
-        const val MockPendingIntentClassname = "com.tencent.shadow.runtime.MockPendingIntent"
+        const val ShadowPendingIntentClassname = "com.tencent.shadow.runtime.ShadowPendingIntent"
         val RenameMap = mapOf(
                 "android.app.Application"
-                        to "com.tencent.shadow.runtime.MockApplication"
+                        to "com.tencent.shadow.runtime.ShadowApplication"
                 ,
                 "android.app.Activity"
-                        to "com.tencent.shadow.runtime.MockActivity"
+                        to "com.tencent.shadow.runtime.ShadowActivity"
                 ,
                 "android.app.Service"
-                        to "com.tencent.shadow.runtime.MockService"
+                        to "com.tencent.shadow.runtime.ShadowService"
                 ,
                 "android.app.Fragment"
-                        to MockFragmentClassname
+                        to ShadowFragmentClassname
                 ,
                 "android.app.DialogFragment"
-                        to MockDialogFragmentClassname
+                        to ShadowDialogFragmentClassname
                 ,
                 "android.app.FragmentManager"
                         to "com.tencent.shadow.runtime.PluginFragmentManager"
@@ -42,10 +42,10 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
                         to "com.tencent.shadow.runtime.PluginFragmentTransaction"
                 ,
                 "android.app.Application\$ActivityLifecycleCallbacks"
-                        to "com.tencent.shadow.runtime.MockActivityLifecycleCallbacks"
+                        to "com.tencent.shadow.runtime.ShadowActivityLifecycleCallbacks"
                 ,
                 AndroidDialogClassname
-                        to MockDialogClassname
+                        to ShadowDialogClassname
 
         )
     }
@@ -57,7 +57,7 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
     val mAppDialogFragments: MutableSet<CtClass> = mutableSetOf()
 
     override fun onTransform() {
-        step1_renameMockClass()
+        step1_renameShadowClass()
         step2_findFragments()
         step3_renameFragments()
         step4_redirectDialogMethod()
@@ -107,7 +107,7 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
         }.forEach(action)
     }
 
-    private fun step1_renameMockClass() {
+    private fun step1_renameShadowClass() {
         forEachAppClass { ctClass ->
             RenameMap.forEach {
                 ctClass.replaceClassName(it.key, it.value)
@@ -167,12 +167,12 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
 
     private fun step4_redirectDialogMethod() {
         val dialogMethods = classPool[AndroidDialogClassname].methods!!
-        val mockDialogMethods = classPool[MockDialogClassname].methods!!
+        val shadowDialogMethods = classPool[ShadowDialogClassname].methods!!
         val method_getOwnerActivity = dialogMethods.find { it.name == "getOwnerActivity" }!!
         val method_setOwnerActivity = dialogMethods.find { it.name == "setOwnerActivity" }!!
-        val method_getOwnerPluginActivity = mockDialogMethods.find { it.name == "getOwnerPluginActivity" }!!
-        val method_setOwnerPluginActivity = mockDialogMethods.find { it.name == "setOwnerPluginActivity" }!!
-        //appClass中的Activity都已经被改名为MockActivity了．所以要把方法签名也先改一下．
+        val method_getOwnerPluginActivity = shadowDialogMethods.find { it.name == "getOwnerPluginActivity" }!!
+        val method_setOwnerPluginActivity = shadowDialogMethods.find { it.name == "setOwnerPluginActivity" }!!
+        //appClass中的Activity都已经被改名为ShadowActivity了．所以要把方法签名也先改一下．
         method_getOwnerActivity.copyDescriptorFrom(method_getOwnerPluginActivity)
         method_setOwnerActivity.copyDescriptorFrom(method_setOwnerPluginActivity)
 
@@ -180,7 +180,7 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
         codeConverter.redirectMethodCall(method_getOwnerActivity, method_getOwnerPluginActivity)
         codeConverter.redirectMethodCall(method_setOwnerActivity, method_setOwnerPluginActivity)
 
-        forEachCanRecompileAppClass(listOf(MockDialogClassname)) { appCtClass ->
+        forEachCanRecompileAppClass(listOf(ShadowDialogClassname)) { appCtClass ->
             try {
                 appCtClass.instrument(codeConverter)
             } catch (e: Exception) {
@@ -193,23 +193,23 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
     private fun step5_renameWebViewChildclass(){
         forEachAppClass { ctClass ->
            if(ctClass.superclass.name != AndroidWebViewClientClassname && ctClass.superclass.name != AndroidWebChromeClientClassname){
-               ctClass.replaceClassName(AndroidWebViewClassname, MockWebViewClassname)
+               ctClass.replaceClassName(AndroidWebViewClassname, ShadowWebViewClassname)
            }
         }
     }
 
     private fun step6_redirectPendingIntentMethod(){
         val pendingIntentMethod = classPool[AndroidPendingIntentClassname].methods!!
-        val mockPendingIntentMethod = classPool[MockPendingIntentClassname].methods!!
+        val shadowPendingIntentMethod = classPool[ShadowPendingIntentClassname].methods!!
 
         val method_getPengdingIntent = pendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity" }
-        val mock_method_getPengdingIntent = mockPendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity"}!!
+        val shadow_method_getPengdingIntent = shadowPendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity"}!!
         val codeConverter = CodeConverter()
 
         for( ctAndroidMethod in method_getPengdingIntent) {
-            for (ctMockMedthod in mock_method_getPengdingIntent) {
-                if(ctMockMedthod.methodInfo.name == ctAndroidMethod.methodInfo.name && ctAndroidMethod.methodInfo.descriptor == ctMockMedthod.methodInfo.descriptor){
-                    codeConverter.redirectMethodCall(ctAndroidMethod, ctMockMedthod)
+            for (ctShadowMedthod in shadow_method_getPengdingIntent) {
+                if(ctShadowMedthod.methodInfo.name == ctAndroidMethod.methodInfo.name && ctAndroidMethod.methodInfo.descriptor == ctShadowMedthod.methodInfo.descriptor){
+                    codeConverter.redirectMethodCall(ctAndroidMethod, ctShadowMedthod)
                 }
             }
         }
@@ -226,7 +226,7 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
     }
 
     private fun step7_keepHostContext() {
-        val MockContextClassName = "com.tencent.shadow.runtime.MockContext"
+        val ShadowContextClassName = "com.tencent.shadow.runtime.ShadowContext"
 
         data class Rule(
                 val ctClass: CtClass
@@ -276,7 +276,7 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
 
         val rules = parseKeepHostContextRules()
 
-        fun wrapArg(num: Int): String = "(($MockContextClassName)\$${num}).getBaseContext()"
+        fun wrapArg(num: Int): String = "(($ShadowContextClassName)\$${num}).getBaseContext()"
 
         for (rule in rules) {
             val ctClass = rule.ctClass
@@ -332,8 +332,8 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
         return false
     }
 
-    private fun CtClass.isFragment(): Boolean = isClassOf(MockFragmentClassname)
-    private fun CtClass.isDialogFragment(): Boolean = isClassOf(MockDialogFragmentClassname)
+    private fun CtClass.isFragment(): Boolean = isClassOf(ShadowFragmentClassname)
+    private fun CtClass.isDialogFragment(): Boolean = isClassOf(ShadowDialogFragmentClassname)
 
     override fun getName(): String = "CuberPluginLoaderTransform"
 }

@@ -6,28 +6,28 @@ import android.content.Context;
 
 import com.tencent.shadow.container.PluginContainerActivity;
 
-public class MockDialog extends Dialog {
-    public MockDialog(Context context) {
+public class ShadowDialog extends Dialog {
+    public ShadowDialog(Context context) {
         super(context);
     }
 
-    public MockDialog(Context context, int themeResId) {
+    public ShadowDialog(Context context, int themeResId) {
         super(context, themeResId);
     }
 
-    protected MockDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
+    protected ShadowDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
     }
 
-    public final void setOwnerPluginActivity(MockActivity activity) {
+    public final void setOwnerPluginActivity(ShadowActivity activity) {
         Activity hostActivity = (Activity) activity.mHostActivityDelegator.getHostActivity();
         setOwnerActivity(hostActivity);
     }
 
-    public final MockActivity getOwnerPluginActivity() {
+    public final ShadowActivity getOwnerPluginActivity() {
         PluginContainerActivity ownerActivity = (PluginContainerActivity) getOwnerActivity();
         if (ownerActivity != null) {
-            return (MockActivity) ownerActivity.getPluginActivity();
+            return (ShadowActivity) ownerActivity.getPluginActivity();
         } else {
             return null;
         }

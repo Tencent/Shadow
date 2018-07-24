@@ -52,7 +52,7 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
         }
     }
 
-    private static MockFragment instantiatePluginFragment(ContainerFragment containerFragment, Context context) {
+    private static ShadowFragment instantiatePluginFragment(ContainerFragment containerFragment, Context context) {
         String pluginFragmentClassName = containerFragment.getClass().getName() + "_";
         Constructor<?> constructor = constructorMap.get(pluginFragmentClassName);
         if (constructor == null) {
@@ -68,25 +68,25 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
             }
         }
         try {
-            return MockFragment.class.cast(constructor.newInstance());
+            return ShadowFragment.class.cast(constructor.newInstance());
         } catch (Exception e) {
             throw new InstantiationException("无法构造" + pluginFragmentClassName, e);
         }
     }
 
-    private MockFragment mPluginFragment;
+    private ShadowFragment mPluginFragment;
 
     /**
      * 标志当前Fragment是否由app自己的代码创建的
      */
     private boolean mIsAppCreateFragment = false;
 
-    public MockFragment getPluginFragment() {
+    public ShadowFragment getPluginFragment() {
         return mPluginFragment;
     }
 
     @Override
-    public void bindPluginFragment(MockFragment pluginFragment) {
+    public void bindPluginFragment(ShadowFragment pluginFragment) {
         init = true;
         mIsAppCreateFragment = true;
         mPluginFragment = pluginFragment;
@@ -139,7 +139,7 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
         initPluginFragment(activity);
         super.onAttach(activity);
         if (activity instanceof PluginContainerActivity) {
-            MockActivity pluginActivity = (MockActivity) (((PluginContainerActivity) activity).getPluginActivity());
+            ShadowActivity pluginActivity = (ShadowActivity) (((PluginContainerActivity) activity).getPluginActivity());
             mPluginFragment.onAttach(pluginActivity);
         }
     }
