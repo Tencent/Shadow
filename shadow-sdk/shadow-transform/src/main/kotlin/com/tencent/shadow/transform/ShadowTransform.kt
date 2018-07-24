@@ -335,5 +335,5 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
     private fun CtClass.isFragment(): Boolean = isClassOf(ShadowFragmentClassname)
     private fun CtClass.isDialogFragment(): Boolean = isClassOf(ShadowDialogFragmentClassname)
 
-    override fun getName(): String = "CuberPluginLoaderTransform"
+    override fun getName(): String = "ShadowTransform"
 }
