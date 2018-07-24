@@ -8,7 +8,8 @@ def includeExample() {
 //    include ':example:host-app:host-apk'
 //    include ':example:host-app:slf4j-logcat'
 
-//    include ':example:plugin-app:demo-plugin'
+    include ':example:plugin-app:demo-main'//demo用来构造测试用例
+    include ':example:plugin-app:demo-install'//将demo-main构建成apk安装运行
     include ':example:plugin-app:plugin-loader-apk'
     include ':example:plugin-app:shadow-runtime-apk'
 }
