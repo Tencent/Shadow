@@ -196,7 +196,7 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
         }
 
         val codeConverter = CodeConverter()
-        codeConverter.replaceNew(classPool[AndroidWebViewClassname], classPool[MockWebViewClassname])
+        codeConverter.replaceNew(classPool[AndroidWebViewClassname], classPool[ShadowWebViewClassname])
         forEachCanRecompileAppClass{ appCtClass ->
             try {
                 appCtClass.instrument(codeConverter)
