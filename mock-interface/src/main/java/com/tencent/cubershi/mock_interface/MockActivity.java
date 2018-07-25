@@ -120,4 +120,30 @@ public abstract class MockActivity extends PluginActivity {
     public String getLocalClassName() {
         return this.getClass().getName();
     }
+
+    public void recreate() {
+        mHostActivityDelegator.recreate();
+    }
+
+    public void runOnUiThread(Runnable action) {
+        mHostActivityDelegator.runOnUiThread(action);
+    }
+
+    public void setTitleColor(int textColor) {
+        mHostActivityDelegator.setTitleColor(textColor);
+    }
+
+    public final int getTitleColor() {
+        return mHostActivityDelegator.getTitleColor();
+    }
+
+    public void setTitle(int var1){
+        mHostActivityDelegator.setTitle(var1);
+    }
+
+    public CharSequence getTitle(){
+       return mHostActivityDelegator.getTitle();
+    }
+
+
 }
