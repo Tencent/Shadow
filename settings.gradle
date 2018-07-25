@@ -1,5 +1,22 @@
-include ':example', ':plugin-loader', ':demo-plugin', ':slf4j-logcat', ':mock-android', ':plugin-loader-apk', ':mock-interface', ':multidex'
-include ':plugincontainer-neo'
-include ':plugin-gradle'
-include ':test-groupvideo:wtlogin-demo'
-include ':gv-plugin-loader'
+def includeShadowSdk() {
+    include ':shadow-sdk:shadow-loader'
+    include ':shadow-sdk:shadow-runtime'
+    include ':shadow-sdk:shadow-transform'
+}
+
+def includeSdkDebug() {//shadow调试开发用的宿主和插件。
+    include ':sdk-debug:host-app:host-apk'
+    include ':sdk-debug:host-app:slf4j-logcat'
+
+    include ':sdk-debug:plugin-app:demo-main'//demo用来构造测试用例
+    include ':sdk-debug:plugin-app:demo-install'//将demo-main构建成apk安装运行
+    include ':sdk-debug:plugin-app:demo-plugin'//将demo-main构建成plugin.即构建成apk并应用shadow-transform
+    include ':sdk-debug:plugin-app:plugin-loader-apk'
+    include ':sdk-debug:plugin-app:shadow-runtime-apk'
+}
+
+rootProject.name = 'shadow'
+includeShadowSdk()
+includeSdkDebug()
+
+//include ':use-shadow-example'//使用shadow的示例，通过Maven依赖shadow

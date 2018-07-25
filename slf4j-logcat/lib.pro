@@ -1,2 +1,0 @@
--keep class org.slf4j.impl.**
--dontwarn org.slf4j.impl.**

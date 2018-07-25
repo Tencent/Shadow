@@ -1,0 +1,222 @@
+package com.tencent.shadow.transform.transformkit
+
+import com.android.SdkConstants
+import com.android.build.api.transform.*
+import com.android.build.api.transform.QualifiedContent.ContentType
+import com.android.build.api.transform.QualifiedContent.Scope
+import com.android.build.gradle.internal.pipeline.TransformManager
+import com.android.utils.FileUtils
+import com.google.common.io.Files
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.OutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipOutputStream
+
+/**
+ * 类转换基类
+ *
+ * @author cubershi
+ */
+abstract class ClassTransform : Transform() {
+    val inputSet: MutableSet<TransformInput> = mutableSetOf()
+
+    /**
+     * 获取输入文件对应的输出文件路径.即将文件this路径中的inputDir部分替换为outputDir.
+     */
+    fun File.toOutputFile(inputDir: File, outputDir: File): File {
+        return File(outputDir, FileUtils.relativePossiblyNonExistingPath(this, inputDir))
+    }
+
+    fun input(inputs: Collection<com.android.build.api.transform.TransformInput>,
+              outputProvider: TransformOutputProvider) {
+        inputs.forEach {
+            it.directoryInputs.forEach {
+                val inputDir = it.file
+                val transformInput = TransformInput(it)
+                inputSet.add(transformInput)
+                val allFiles = FileUtils.getAllFiles(it.file)
+                allFiles.filter {
+                    it?.name?.endsWith(SdkConstants.DOT_CLASS) ?: false
+                }.forEach {
+                    val inputClass = DirInputClass()
+                    inputClass.onInputClass(
+                            it,
+                            it.toOutputFile(inputDir, transformInput.toOutput(outputProvider))
+                    )
+                    transformInput.addInputClass(inputClass)
+                }
+            }
+
+            it.jarInputs.forEach {
+                val transformInput = TransformInput(it)
+                inputSet.add(transformInput)
+                ZipInputStream(FileInputStream(it.file)).use {
+                    var entry: ZipEntry? = it.nextEntry
+                    while (entry != null) {
+                        if (!entry.isDirectory && entry.name.endsWith(SdkConstants.DOT_CLASS)) {
+                            val inputClass = JarInputClass()
+                            inputClass.onInputClass(it, entry.name)
+                            transformInput.addInputClass(inputClass)
+                        }
+                        entry = it.nextEntry
+                    }
+                }
+            }
+        }
+    }
+
+    fun output(outputProvider: TransformOutputProvider) {
+        inputSet.forEach { input ->
+            when (input.format) {
+                Format.DIRECTORY -> {
+                    input.getInputClass().forEach {
+                        val dirInputClass = it as DirInputClass
+                        dirInputClass.getOutput().forEach {
+                            val className = it.first
+                            val file = it.second
+                            Files.createParentDirs(file)
+                            FileOutputStream(file).use {
+                                onOutputClass(className, it)
+                            }
+                        }
+                    }
+                }
+                Format.JAR -> {
+                    val outputJar = input.toOutput(outputProvider)
+                    Files.createParentDirs(outputJar)
+                    ZipOutputStream(FileOutputStream(outputJar)).use { zos ->
+                        input.getInputClass().forEach {
+                            val jarInputClass = it as JarInputClass
+                            jarInputClass.getOutput().forEach {
+                                val className = it.first
+                                val entryName = it.second
+                                zos.putNextEntry(ZipEntry(entryName))
+                                onOutputClass(className, zos)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    abstract fun onOutputClass(className: String, outputStream: OutputStream)
+
+    abstract fun DirInputClass.onInputClass(classFile: File, outputFile: File)
+
+    abstract fun JarInputClass.onInputClass(zipInputStream: ZipInputStream, entryName: String)
+
+    abstract fun onTransform()
+
+    override fun getName(): String = this::class.simpleName!!
+
+    override fun getInputTypes(): MutableSet<ContentType> = TransformManager.CONTENT_CLASS
+
+    override fun isIncremental(): Boolean = false
+
+    override fun getScopes(): MutableSet<in Scope> = TransformManager.SCOPE_FULL_PROJECT
+
+    final override fun transform(invocation: TransformInvocation) {
+        invocation.outputProvider.deleteAll()
+        input(invocation.inputs, invocation.outputProvider)
+        onTransform()
+        output(invocation.outputProvider)
+    }
+}
+typealias ClassName_OutputFile = Pair<String, File>
+typealias ClassName_EntryName = Pair<String, String>
+
+abstract class InputClass() {
+    abstract fun renameOutput(oldName: String, newName: String)
+}
+
+class DirInputClass() : InputClass() {
+    private val outputs = mutableMapOf<String, File>()
+    fun getOutput(): Set<ClassName_OutputFile> {
+        val mutableSet = mutableSetOf<ClassName_OutputFile>()
+        return outputs.mapTo(mutableSet) {
+            ClassName_OutputFile(it.key, it.value)
+        }
+    }
+
+    fun addOutput(className: String, file: File) {
+        outputs[className] = file
+    }
+
+    fun getOutput(className: String): File {
+        return outputs[className]!!
+    }
+
+    override fun renameOutput(oldName: String, newName: String) {
+        val file = outputs.remove(oldName)!!
+        val newFileName = file.name.replace(getSimpleName(oldName), getSimpleName(newName))
+        outputs[newName] = File(file.parent, newFileName)
+    }
+
+    private fun getSimpleName(name: String): String {
+        val i = name.lastIndexOf('.')
+        if (i == -1) {
+            return name
+        } else {
+            return name.substring(i + 1)
+        }
+    }
+}
+
+class JarInputClass() : InputClass() {
+    private val outputs = mutableMapOf<String, String>()
+    fun getOutput(): Set<ClassName_EntryName> {
+        val mutableSet = mutableSetOf<ClassName_EntryName>()
+        return outputs.mapTo(mutableSet) {
+            ClassName_EntryName(it.key, it.value)
+        }
+    }
+
+    fun addOutput(className: String, entryName: String) {
+        outputs[className] = entryName
+    }
+
+    fun getOutput(className: String): String {
+        return outputs[className]!!
+    }
+
+    override fun renameOutput(oldName: String, newName: String) {
+        outputs[newName] = newName.replace('.', '/') + ".class"
+    }
+
+}
+
+
+class TransformInput(
+        val name: String,
+        val contentTypes: Set<ContentType>,
+        val scopes: MutableSet<in Scope>,
+        val format: Format
+) {
+    constructor(di: DirectoryInput) : this(
+            di.name, di.contentTypes, di.scopes, Format.DIRECTORY
+    )
+
+    constructor(ji: JarInput) : this(
+            ji.name, ji.contentTypes, ji.scopes, Format.JAR
+    )
+
+    private val inputClassSet = mutableSetOf<InputClass>()
+
+    fun addInputClass(inputClass: InputClass) {
+        inputClassSet.add(inputClass)
+    }
+
+    fun getInputClass() = inputClassSet.toSet()
+
+    fun toOutput(outputProvider: TransformOutputProvider) =
+            outputProvider.getContentLocation(
+                    name,
+                    contentTypes,
+                    scopes,
+                    format
+            )
+}
