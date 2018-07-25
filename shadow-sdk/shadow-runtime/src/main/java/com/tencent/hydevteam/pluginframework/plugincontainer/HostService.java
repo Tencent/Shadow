@@ -1,4 +1,4 @@
-package com.tencent.shadow.runtime.container;
+package com.tencent.hydevteam.pluginframework.plugincontainer;
 
 /**
  * 表示一个Service是宿主程序中的Service

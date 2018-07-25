@@ -11,7 +11,7 @@ import android.util.Pair;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 
-import com.tencent.shadow.runtime.container.HostActivityDelegator;
+import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
 public class ShadowContext extends ContextThemeWrapper {
     PluginActivityLauncher mPluginActivityLauncher;
