@@ -18,5 +18,3 @@ def includeSdkDebug() {//shadow调试开发用的宿主和插件。
 rootProject.name = 'shadow'
 includeShadowSdk()
 includeSdkDebug()
-
-//include ':use-shadow-example'//使用shadow的示例，通过Maven依赖shadow
