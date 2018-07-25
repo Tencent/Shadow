@@ -15,8 +15,6 @@ class CuberPluginLoaderTransform(classPool: ClassPool, val keepHostObjectsExtens
         const val MockDialogClassname = "com.tencent.cubershi.mock_interface.MockDialog"
         const val AndroidWebViewClassname = "android.webkit.WebView"
         const val MockWebViewClassname = "com.tencent.cubershi.mock_interface.MockWebView"
-        const val AndroidWebViewClientClassname = "android.webkit.WebViewClient"
-        const val AndroidWebChromeClientClassname = "android.webkit.WebChromeClient"
         const val AndroidPendingIntentClassname = "android.app.PendingIntent"
         const val MockPendingIntentClassname = "com.tencent.cubershi.mock_interface.MockPendingIntent"
         val RenameMap = mapOf(
@@ -61,7 +59,7 @@ class CuberPluginLoaderTransform(classPool: ClassPool, val keepHostObjectsExtens
         step2_findFragments()
         step3_renameFragments()
         step4_redirectDialogMethod()
-        step5_renameWebViewChildclass()
+        step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()
         step7_keepHostContext()
     }
@@ -190,11 +188,22 @@ class CuberPluginLoaderTransform(classPool: ClassPool, val keepHostObjectsExtens
         }
     }
 
-    private fun step5_renameWebViewChildclass(){
-        forEachAppClass { ctClass ->
-           if(ctClass.superclass.name != AndroidWebViewClientClassname && ctClass.superclass.name != AndroidWebChromeClientClassname){
-               ctClass.replaceClassName(AndroidWebViewClassname, MockWebViewClassname)
-           }
+    private fun step5_renameWebViewChildClass(){
+        forEachCanRecompileAppClass { ctClass ->
+            if (ctClass.superclass.name == AndroidWebViewClassname) {
+                ctClass.classFile.superclass = MockWebViewClassname
+            }
+        }
+
+        val codeConverter = CodeConverter()
+        codeConverter.replaceNew(classPool[AndroidWebViewClassname], classPool[MockWebViewClassname])
+        forEachCanRecompileAppClass{ appCtClass ->
+            try {
+                appCtClass.instrument(codeConverter)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
         }
     }
 
