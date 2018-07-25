@@ -4,7 +4,7 @@ def includeShadowSdk() {
     include ':shadow-sdk:shadow-transform'
 }
 
-def includeSdkDebug() {
+def includeSdkDebug() {//shadow调试开发用的宿主和插件。
     include ':sdk-debug:host-app:host-apk'
     include ':sdk-debug:host-app:slf4j-logcat'
 
@@ -18,3 +18,5 @@ def includeSdkDebug() {
 rootProject.name = 'shadow'
 includeShadowSdk()
 includeSdkDebug()
+
+//include ':use-shadow-example'//使用shadow的示例，通过Maven依赖shadow
