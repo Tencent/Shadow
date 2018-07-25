@@ -25,7 +25,7 @@ android {
 
         release {
             consumerProguardFiles 'plugin-loader-release.pro'
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -50,7 +50,7 @@ dependencies {
 
 apply plugin: 'maven-publish'
 
-def getDependencyNode(scope, groupId, artifactId, version) {
+static def getDependencyNode(scope, groupId, artifactId, version) {
     Node node = new Node(null, 'dependency')
     node.appendNode('groupId', groupId)
     node.appendNode('artifactId', artifactId)
@@ -61,21 +61,21 @@ def getDependencyNode(scope, groupId, artifactId, version) {
 
 publishing {
     publications {
-        maven(MavenPublication) {
-            groupId 'com.tencent.libexample'
-            artifactId "example-lib"
+        release(MavenPublication) {
+            groupId 'com.tencent.shadow'
+            artifactId "${project.name}"
             version project.ARTIFACT_VERSION
-            if ("${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")) {
-                artifact("build/outputs/aar/lib-release.aar")
-            } else {
-                artifact("build/outputs/aar/lib-debug.aar")
-            }
+            artifact("build/outputs/aar/${project.name}-release.aar")
 
             pom.withXml {
                 def root = asNode()
-                def slf4j = getDependencyNode('compile', 'org.slf4j', 'slf4j-api', '1.7.25')
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(slf4j)
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', "$kotlin_version"))
+                dependencies.append(getDependencyNode('compile', 'org.slf4j', 'slf4j-api', '1.7.25'))
+                dependencies.append(getDependencyNode('provided', 'com.tencent.hydevteam.pluginframework', 'pluginloader', "$PLUGINMANAGER_VERSION"))
+                dependencies.append(getDependencyNode('provided', 'com.tencent.hydevteam.pluginframework', 'installed-plugin', "$PLUGINMANAGER_VERSION"))
+                dependencies.append(getDependencyNode('provided', 'com.tencent.shadow', 'shadow-runtime', "${project.ARTIFACT_VERSION}"))
+
                 def scm = root.appendNode('scm')
                 scm.appendNode('connection', 'http://git.code.oa.com/cubershi/android-lib-example.git')
             }
@@ -87,7 +87,7 @@ publishing {
                 username "rdm"
                 password "rdm"
             }
-            if ("${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")) {
+            if (isPublishRelease()) {
                 url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
             } else {
                 url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots"
@@ -97,7 +97,17 @@ publishing {
 }
 
 model {
-    tasks.generatePomFileForMavenPublication {
+    tasks.generatePomFileForReleasePublication {
         destination = file("$buildDir/generated-pom.xml")
     }
+}
+
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("generatePomFileForReleasePublication")) {
+        theTask.dependsOn(project.getTasksByName("assembleRelease", false).first())
+    }
+}
+
+static def isPublishRelease() {
+    return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
 }
