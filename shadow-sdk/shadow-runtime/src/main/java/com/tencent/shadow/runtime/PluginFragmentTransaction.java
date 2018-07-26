@@ -16,7 +16,6 @@ public class PluginFragmentTransaction {
     }
 
     private Fragment getContainerFragment(ShadowFragment shadowFragment) {
-        shadowFragment.mPluginFragmentManager = mPluginFragmentManager;
         return shadowFragment.getContainerFragment().asFragment();
     }
 

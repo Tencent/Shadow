@@ -106,6 +106,9 @@ public class ShadowFragment {
     }
 
     public PluginFragmentManager getFragmentManager() {
+        if (mPluginFragmentManager == null && getActivity() != null) {
+            mPluginFragmentManager = getActivity().getFragmentManager();
+        }
         return mPluginFragmentManager;
     }
 
