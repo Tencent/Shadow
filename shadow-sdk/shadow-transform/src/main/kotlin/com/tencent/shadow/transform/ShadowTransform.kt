@@ -272,7 +272,8 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
                 } ?: throw ClassNotFoundException("没有找到${rule}中指定的类$className")
 
                 val parametersCtClass = methodParametersClassName.map {
-                    classPool[it] ?: throw ClassNotFoundException("没有找到${rule}中指定的类$it")
+                    classPool[it]
+                            ?: throw ClassNotFoundException("没有找到${rule}中指定的类$it")//todo classPool[it]会直接抛出异常，不会返回null
                 }.toTypedArray()
                 val ctMethod = ctClass.getDeclaredMethod(methodName, parametersCtClass)
 
