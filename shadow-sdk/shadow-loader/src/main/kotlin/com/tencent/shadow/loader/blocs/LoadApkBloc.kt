@@ -1,6 +1,7 @@
 package com.tencent.shadow.loader.blocs
 
 import android.content.Context
+import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.exceptions.LoadApkException
 import java.io.File
@@ -14,21 +15,21 @@ object LoadApkBloc {
     /**
      * 加载插件到ClassLoader中.
      *
-     * @param apk    插件apk
+     * @param installedPlugin    已安装（PluginManager已经下载解包）的插件
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadPlugin(hostAppContext:Context, apk: File): PluginClassLoader {
+    fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin, soDir: File): PluginClassLoader {
         val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
         val hostAppClassLoader = pluginLoaderClassLoader.parent
-        val odexDir = File(apk.parent, apk.name + "_odex")
-        val libDir = File(apk.parent, apk.name + "_lib")
-        prepareDirs(odexDir, libDir)
+        val apk = installedPlugin.pluginFile
+        val odexDir = File(apk.parent, apk.name + "_odex_${installedPlugin.pluginVersionForPluginLoaderManage}")
+        prepareDirs(odexDir, soDir)
         return PluginClassLoader(
                 hostAppContext,
                 apk.absolutePath,
                 odexDir.absolutePath,
-                libDir.absolutePath,
+                soDir.absolutePath,
                 hostAppClassLoader
         )
     }

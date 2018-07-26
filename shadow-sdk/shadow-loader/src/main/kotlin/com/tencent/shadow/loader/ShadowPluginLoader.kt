@@ -66,8 +66,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                 //todo cubershi 下面这些步骤可能可以并发起来.
                 val pluginInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 val pluginPackageManager = PluginPackageManager(pluginInfo)
-                CopySoBloc.copySo(installedPlugin.pluginFile, mAbi)
-                val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin.pluginFile)
+                val soDir = CopySoBloc.copySo(installedPlugin, mAbi)
+                val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir)
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
                 val shadowApplication =
                         CreateApplicationBloc.callPluginApplicationOnCreate(
