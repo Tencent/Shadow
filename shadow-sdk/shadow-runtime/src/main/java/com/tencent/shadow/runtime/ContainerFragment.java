@@ -149,14 +149,6 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
         return mPluginFragment.toString();
     }
 
-    @Override
-    public void setArguments(Bundle args) {
-        if (!mIsAppCreateFragment) {
-            mPluginFragment.setArguments(args);
-        } else {
-            super.setArguments(args);
-        }
-    }
 
     @Override
     public void setInitialSavedState(SavedState state) {
