@@ -58,6 +58,9 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
             activitiesMap[pluginActivity]!!
 
     override fun startActivity(context: Context, pluginIntent: Intent): Boolean {
+        if (pluginIntent.component == null) {
+            return false
+        }
         val className = pluginIntent.component.className
         val packageName = packageNameMap[className] ?: return false
         pluginIntent.component = ComponentName(packageName, className)
@@ -79,6 +82,9 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
     }
 
     override fun startActivityForResult(delegator: HostActivityDelegator, pluginIntent: Intent, requestCode: Int): Boolean {
+        if (pluginIntent.component == null) {
+            return false
+        }
         val className = pluginIntent.component.className
         val packageName = packageNameMap[className] ?: return false
         pluginIntent.component = ComponentName(packageName, className)

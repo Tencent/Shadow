@@ -113,6 +113,10 @@ public abstract class ShadowActivity extends PluginActivity {
         mHostActivityDelegator.setResult(resultCode);
     }
 
+    public final void setResult(int resultCode, Intent data) {
+        mHostActivityDelegator.setResult(resultCode,data);
+    }
+
     public SharedPreferences getPreferences(int mode) {
         return super.getSharedPreferences(getLocalClassName(),mode);
     }
@@ -122,6 +126,10 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
     public void recreate() {
+        Intent intent = getIntent();
+        if(intent != null && mPluginLoaderBundle != null){
+            intent.putExtra(mPluginLoaderBundle.first,mPluginLoaderBundle.second);
+        }
         mHostActivityDelegator.recreate();
     }
 
