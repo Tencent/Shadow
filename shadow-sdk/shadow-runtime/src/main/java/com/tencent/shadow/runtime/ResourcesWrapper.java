@@ -31,10 +31,6 @@ public class ResourcesWrapper extends Resources {
         mBase = base;
     }
 
-    public ResourcesWrapper(AssetManager assets, DisplayMetrics metrics, Configuration config) {
-        super(assets, metrics, config);
-    }
-
     @Override
     public CharSequence getText(int id) throws NotFoundException {
         return mBase.getText(id);
@@ -223,11 +219,6 @@ public class ResourcesWrapper extends Resources {
     @Override
     public TypedArray obtainAttributes(AttributeSet set, int[] attrs) {
         return mBase.obtainAttributes(set, attrs);
-    }
-
-    @Override
-    public void updateConfiguration(Configuration config, DisplayMetrics metrics) {
-        mBase.updateConfiguration(config, metrics);
     }
 
     @Override
