@@ -532,4 +532,23 @@ public class PackageManagerWrapper extends PackageManager {
         return mBase.canRequestPackageInstalls();
     }
 
+    /**
+     * 覆盖hide方法，部分机型会调用到
+     */
+    public Drawable getUserBadgeForDensity(UserHandle user, int density){
+        return null;
+    }
+
+    /**
+     * 覆盖hide方法，部分机型会调用到
+     */
+    public Drawable getUserBadgeForDensityNoBackground(UserHandle user, int density){
+        return null;
+    }
+
+    //@Override oppo R15
+    public boolean isClosedSuperFirewall(){
+        return false;
+    }
+
 }
