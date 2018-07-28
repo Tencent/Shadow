@@ -170,7 +170,7 @@ public class ShadowFragment {
 
 
     public void startActivity(Intent intent) {
-
+        mAttachedContext.startActivity(intent);
     }
 
 
