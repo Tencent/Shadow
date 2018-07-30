@@ -78,7 +78,6 @@ class HostActivityDelegateImpl(
             pluginActivity.setShadowApplication(mPluginApplication)
             pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
             mPluginActivity = pluginActivity
-            mHostActivityDelegator.superOnCreate(bundle)
             pluginActivity.onCreate(bundle)
             mPluginActivityCreated = true
         } catch (e: Exception) {

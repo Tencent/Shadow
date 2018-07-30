@@ -51,7 +51,7 @@ public abstract class PluginActivity extends ShadowContext {
     }
 
     public void onCreate(Bundle savedInstanceState) {
-        //do nothing.
+        mHostActivityDelegator.superOnCreate(savedInstanceState);
     }
 
     public void onResume() {
