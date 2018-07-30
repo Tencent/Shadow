@@ -271,7 +271,6 @@ class HostActivityDelegateImpl(
     }
 
     override fun onBackPressed() {
-        mHostActivityDelegator.superOnBackPressed()
         mPluginActivity.onBackPressed()
     }
 }
