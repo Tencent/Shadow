@@ -176,6 +176,6 @@ public abstract class PluginActivity extends ShadowContext {
     }
 
     public void onBackPressed() {
-
+        mHostActivityDelegator.superOnBackPressed();
     }
 }
