@@ -153,5 +153,13 @@ public abstract class ShadowActivity extends PluginActivity {
        return mHostActivityDelegator.getTitle();
     }
 
+    public void setRequestedOrientation(int requestedOrientation) {
+        mHostActivityDelegator.setRequestedOrientation(requestedOrientation);
+    }
+
+    public int getRequestedOrientation() {
+        return mHostActivityDelegator.getRequestedOrientation();
+    }
+
 
 }
