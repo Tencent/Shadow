@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -159,6 +160,10 @@ public abstract class ShadowActivity extends PluginActivity {
 
     public int getRequestedOrientation() {
         return mHostActivityDelegator.getRequestedOrientation();
+    }
+
+    public MenuInflater getMenuInflater() {
+        return mHostActivityDelegator.getMenuInflater();
     }
 
 
