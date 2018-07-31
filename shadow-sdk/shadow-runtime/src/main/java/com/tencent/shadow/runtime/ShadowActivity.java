@@ -9,7 +9,6 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 public abstract class ShadowActivity extends PluginActivity {
 
@@ -78,11 +77,14 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
     public void overridePendingTransition(int enterAnim, int exitAnim) {
-        if (enterAnim != 0 || exitAnim != 0) {
-            Toast.makeText(this, "暂不支持插件资源overridePendingTransition", Toast.LENGTH_SHORT).show();
-        } else {
-            mHostActivityDelegator.overridePendingTransition(enterAnim, exitAnim);
+        //如果使用的资源不是系统资源，我们无法支持这个特性。
+        if ((enterAnim & 0xFF000000) != 0x01000000) {
+            enterAnim = 0;
         }
+        if ((exitAnim & 0xFF000000) != 0x01000000) {
+            exitAnim = 0;
+        }
+        mHostActivityDelegator.overridePendingTransition(enterAnim, exitAnim);
     }
 
     public void setTitle(CharSequence title) {
