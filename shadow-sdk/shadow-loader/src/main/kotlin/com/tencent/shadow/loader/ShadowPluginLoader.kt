@@ -69,6 +69,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                 val soDir = CopySoBloc.copySo(installedPlugin, mAbi)
                 val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir)
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
+                getBusinessPluginActivitiesManager().setHostContext(hostAppContext)
                 val shadowApplication =
                         CreateApplicationBloc.callPluginApplicationOnCreate(
                                 pluginClassLoader,
