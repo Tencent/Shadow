@@ -136,7 +136,7 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
 
         if (context instanceof PluginContainerActivity) {
             Context pluginActivity = (Context) (((PluginContainerActivity) context).getPluginActivity());
-            mPluginFragment.onAttach((ShadowActivity) pluginActivity);
+            mPluginFragment.onAttach(pluginActivity);
         }
     }
 
@@ -147,7 +147,7 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
         super.onAttach(activity);
         if (activity instanceof PluginContainerActivity) {
             Context pluginActivity = (Context) (((PluginContainerActivity) activity).getPluginActivity());
-            mPluginFragment.onAttach(pluginActivity);
+            mPluginFragment.onAttach((ShadowActivity)pluginActivity);
         }
     }
 
