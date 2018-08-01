@@ -1,10 +1,8 @@
 package com.tencent.shadow.loader.managers
 
-import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Bundle
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity
@@ -80,9 +78,6 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
         bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[pluginIntent.component])
 
         containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
-        if (context !is Activity) {
-            containerActivityIntent.flags = FLAG_ACTIVITY_NEW_TASK
-        }
         context.startActivity(containerActivityIntent)
         return true
     }
