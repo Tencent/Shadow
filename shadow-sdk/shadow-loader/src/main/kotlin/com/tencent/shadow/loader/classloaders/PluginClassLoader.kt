@@ -32,7 +32,7 @@ class PluginClassLoader(
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
         if (className.startsWith("com.tencent.shadow.runtime")
                 || className.startsWith("org.apache.commons.logging")//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
-        ) {
+          || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的
             return super.loadClass(className, resolve)
         } else {
             var clazz: Class<*>? = findLoadedClass(className)
