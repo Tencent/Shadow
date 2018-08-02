@@ -8,6 +8,7 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.app.SharedElementCallback;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.res.Configuration;
@@ -553,6 +554,16 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
     @Override
     public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
         mPluginFragment.dump(prefix, fd, writer, args);
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        mPluginFragment.onDismiss(dialog);
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        mPluginFragment.onCancel(dialog);
     }
 
 }

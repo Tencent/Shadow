@@ -1,5 +1,6 @@
 package com.tencent.shadow.runtime;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 public class ShadowDialogFragment extends ShadowFragment {
@@ -42,5 +43,11 @@ public class ShadowDialogFragment extends ShadowFragment {
 
     public ShadowDialog onCreateDialog(Bundle savedInstanceState) {
         return new ShadowDialog(getActivity(), getTheme());
+    }
+
+    public void onDismiss(DialogInterface dialog) {
+    }
+
+    public void onCancel(DialogInterface dialog) {
     }
 }
