@@ -2,6 +2,7 @@ package com.tencent.shadow.loader.delegates
 
 import android.app.Activity
 import android.app.Dialog
+import android.app.Fragment
 import android.content.Context
 import android.content.Context.LAYOUT_INFLATER_SERVICE
 import android.content.Intent
@@ -272,5 +273,17 @@ class HostActivityDelegateImpl(
 
     override fun onBackPressed() {
         mPluginActivity.onBackPressed()
+    }
+
+    override fun onAttachedToWindow() {
+        mPluginActivity.onAttachedToWindow()
+    }
+
+    override fun onDetachedFromWindow() {
+        mPluginActivity.onDetachedFromWindow()
+    }
+
+    override fun onAttachFragment(fragment: Fragment?) {
+        mPluginActivity.onAttachFragment(fragment)
     }
 }

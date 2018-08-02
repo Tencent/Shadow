@@ -2,6 +2,7 @@ package com.tencent.hydevteam.pluginframework.plugincontainer;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -106,4 +107,10 @@ public interface HostActivityDelegate {
     void onBackPressed();
 
     void onStart();
+
+    void onAttachedToWindow();
+
+    void onDetachedFromWindow();
+
+    void onAttachFragment(Fragment fragment);
 }

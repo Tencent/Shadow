@@ -1999,4 +1999,25 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     public void superOnPointerCaptureChanged(boolean hasCapture) {
         super.onPointerCaptureChanged(hasCapture);
     }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onAttachFragment(fragment);
+        }
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onAttachedToWindow();
+        }
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onDetachedFromWindow();
+        }
+    }
 }

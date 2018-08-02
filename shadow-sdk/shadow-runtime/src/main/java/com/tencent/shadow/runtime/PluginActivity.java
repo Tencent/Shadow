@@ -2,6 +2,7 @@ package com.tencent.shadow.runtime;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -178,4 +179,11 @@ public abstract class PluginActivity extends ShadowContext {
     public void onBackPressed() {
         mHostActivityDelegator.superOnBackPressed();
     }
+
+    public void onAttachedToWindow() {}
+
+
+    public void onDetachedFromWindow(){}
+
+    public void onAttachFragment(Fragment fragment){}
 }
