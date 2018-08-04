@@ -36,6 +36,8 @@ object ParsePluginApkBloc {
         }
         packageArchiveInfo.services.forEach { pluginInfo.putServiceInfo(PluginServiceInfo(it.name)) }
         pluginInfo.metaData = packageArchiveInfo.applicationInfo.metaData
+        pluginInfo.versionCode = packageArchiveInfo.versionCode;
+        pluginInfo.versionName = packageArchiveInfo.versionName;
         return pluginInfo
     }
 }

@@ -194,8 +194,14 @@ class PluginPackageManager(val pluginInfo: PluginInfo) : PackageManager() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getPackageInfo(packageName: String?, flags: Int): PackageInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun getPackageInfo(packageName: String?, flags: Int): PackageInfo? {
+        if(pluginInfo.packageName == packageName){
+            val info = PackageInfo()
+            info.versionCode = pluginInfo.versionCode
+            info.versionName = pluginInfo.versionName
+            return info;
+        }
+        return null;
     }
 
     override fun getPackageInfo(versionedPackage: VersionedPackage?, flags: Int): PackageInfo {
