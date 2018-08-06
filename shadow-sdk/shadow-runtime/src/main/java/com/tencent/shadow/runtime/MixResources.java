@@ -122,4 +122,13 @@ public class MixResources extends ResourcesWrapper {
     public String getResourceName(int resid) throws NotFoundException {
         return super.getResourceName(resid);
     }
+
+    @Override
+    public int getInteger(int id) throws NotFoundException {
+        try {
+            return super.getInteger(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getInteger(id);
+        }
+    }
 }
