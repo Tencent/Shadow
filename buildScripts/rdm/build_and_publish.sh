@@ -18,15 +18,15 @@ rm bin/*.*
 if   [   $clean   ];
 then
 sh gradlew clean
-checkError()
+checkError
 fi
 
 sh gradlew --daemon :shadow-sdk:shadow-loader:publishReleasePublicationToMavenRepository
-checkError()
+checkError
 sh gradlew --daemon :shadow-sdk:shadow-runtime:publishReleasePublicationToMavenRepository
-checkError()
+checkError
 sh gradlew --daemon :shadow-sdk:shadow-transform:publishReleasePublicationToMavenRepository
-checkError()
+checkError
 
 cd $WORKSPACE/bin
 
