@@ -21,33 +21,18 @@ sh gradlew clean
 checkError()
 fi
 
-if   [   $PUBLISH_RELEASE   ];
-then
-sh gradlew --daemon assembleRelease
-else
-sh gradlew --daemon assembleDebug
-fi
+sh gradlew --daemon :shadow-sdk:shadow-loader:publishReleasePublicationToMavenRepository
 checkError()
-
-sh gradlew --daemon :lib:publish
-
+sh gradlew --daemon :shadow-sdk:shadow-runtime:publishReleasePublicationToMavenRepository
+checkError()
+sh gradlew --daemon :shadow-sdk:shadow-transform:publishReleasePublicationToMavenRepository
 checkError()
 
 cd $WORKSPACE/bin
 
 if   [   $PUBLISH_RELEASE   ];
 then
-cp $WORKSPACE/example/build/outputs/apk/release/example-release-unsigned.apk ./example-release-unsigned-$MajorVersion.$MinorVersion.$FixVersion.$BuildNo-$SHORT_REV.apk
-checkError()
-cp $WORKSPACE/lib/build/outputs/aar/release/lib-release.aar ./lib-release-$MajorVersion.$MinorVersion.$FixVersion.$BuildNo-$SHORT_REV.apk
-checkError()
-cp $WORKSPACE/lib/build/outputs/mapping/release/mapping.txt ./lib-release-mapping-$MajorVersion.$MinorVersion.$FixVersion.$BuildNo-$SHORT_REV.txt
-checkError()
-else
-cp $WORKSPACE/example/build/outputs/apk/debug/example-debug.apk ./example-debug-$MajorVersion.$MinorVersion.$FixVersion.$BuildNo-$SHORT_REV.apk
-checkError()
-cp $WORKSPACE/lib/build/outputs/aar/debug/lib-debug.aar ./lib-debug-$MajorVersion.$MinorVersion.$FixVersion.$BuildNo-$SHORT_REV.apk
-checkError()
+touch PUBLISH_SUCCESS
 fi
 
 
