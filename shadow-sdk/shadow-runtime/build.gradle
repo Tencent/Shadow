@@ -62,8 +62,7 @@ publishing {
                 def root = asNode()
                 def scm = root.appendNode('scm')
                 scm.appendNode('connection', 'http://git.code.oa.com/plugin-framework/shadow.git')
-                scm.appendNode('url', 'http://git.code.oa.com/plugin-framework/shadow')
-                scm.appendNode('git_rev', project.GIT_SHORT_REV)
+                scm.appendNode('url', "http://git.code.oa.com/plugin-framework/shadow/commit/$project.GIT_SHORT_REV")
             }
         }
     }
