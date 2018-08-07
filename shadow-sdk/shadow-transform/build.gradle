@@ -61,7 +61,9 @@ publishing {
                 dependencies.append(getDependencyNode('runtime', 'com.tencent.shadow', 'shadow-runtime', "${project.ARTIFACT_VERSION}"))
 
                 def scm = root.appendNode('scm')
-                scm.appendNode('connection', 'http://git.code.oa.com/cubershi/android-lib-example.git')
+                scm.appendNode('connection', 'http://git.code.oa.com/plugin-framework/shadow.git')
+                scm.appendNode('url', 'http://git.code.oa.com/plugin-framework/shadow')
+                scm.appendNode('git_rev', project.GIT_SHORT_REV)
             }
         }
     }

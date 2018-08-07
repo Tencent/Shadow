@@ -59,8 +59,9 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 def scm = root.appendNode('scm')
-                //todo 修复这里的scm信息
-                scm.appendNode('connection', "${System.env.SVN_URL}?p=${System.env.SVN_REVISION}")
+                scm.appendNode('connection', 'http://git.code.oa.com/plugin-framework/shadow.git')
+                scm.appendNode('url', 'http://git.code.oa.com/plugin-framework/shadow')
+                scm.appendNode('git_rev', project.GIT_SHORT_REV)
             }
         }
     }
