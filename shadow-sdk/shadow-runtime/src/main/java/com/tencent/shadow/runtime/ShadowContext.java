@@ -140,11 +140,13 @@ public class ShadowContext extends ContextThemeWrapper {
     public void unbindService(ServiceConnection conn) {
         if (!mPluginServiceOperator.unbindService(this, conn).first)
             super.unbindService(conn);
-        return;
     }
 
     @Override
     public boolean bindService(Intent service, ServiceConnection conn, int flags) {
+        if (service.getComponent() == null) {
+            return super.bindService(service, conn, flags);
+        }
         Pair<Boolean, Boolean> ret = mPluginServiceOperator.bindService(this, service, conn, flags);
         if (!ret.first)
             return super.bindService(service, conn, flags);
@@ -153,6 +155,9 @@ public class ShadowContext extends ContextThemeWrapper {
 
     @Override
     public boolean stopService(Intent name) {
+        if (name.getComponent() == null) {
+            return super.stopService(name);
+        }
         Pair<Boolean, Boolean> ret = mPluginServiceOperator.stopService(this, name);
         if (!ret.first)
             return super.stopService(name);
@@ -161,6 +166,9 @@ public class ShadowContext extends ContextThemeWrapper {
 
     @Override
     public ComponentName startService(Intent service) {
+        if (service.getComponent() == null) {
+            return super.startService(service);
+        }
         Pair<Boolean, ComponentName> ret = mPluginServiceOperator.startService(this, service);
         if (!ret.first)
             return super.startService(service);
