@@ -551,4 +551,9 @@ public class PackageManagerWrapper extends PackageManager {
         return false;
     }
 
+    public ApplicationInfo getApplicationInfoAsUser(String packageName,
+                                                    int flags, int userId) throws NameNotFoundException {
+        return getApplicationInfo(packageName, flags);
+    }
+
 }
