@@ -2,6 +2,8 @@ apply plugin: 'java-gradle-plugin'
 
 apply plugin: 'kotlin'
 
+apply from: "$rootDir/buildScripts/gradle/GitHelper.gradle"
+
 group 'com.tencent.shadow.transform'
 version 'local'
 

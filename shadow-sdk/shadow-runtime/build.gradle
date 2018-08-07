@@ -10,6 +10,8 @@
 
 apply plugin: 'com.android.library'
 
+apply from: "$rootDir/buildScripts/gradle/GitHelper.gradle"
+
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
 
