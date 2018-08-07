@@ -18,32 +18,56 @@ public class MixResources extends ResourcesWrapper {
 
     @Override
     public CharSequence getText(int id) throws NotFoundException {
-        return super.getText(id);
+        try {
+            return super.getText(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getText(id);
+        }
     }
 
     @Override
     public String getString(int id) throws NotFoundException {
-        return super.getString(id);
+        try {
+            return super.getString(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getString(id);
+        }
     }
 
     @Override
     public String getString(int id, Object... formatArgs) throws NotFoundException {
-        return super.getString(id, formatArgs);
+        try {
+            return super.getString(id,formatArgs);
+        } catch (NotFoundException e) {
+            return mHostResources.getString(id,formatArgs);
+        }
     }
 
     @Override
     public float getDimension(int id) throws NotFoundException {
-        return super.getDimension(id);
+        try {
+            return super.getDimension(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getDimension(id);
+        }
     }
 
     @Override
     public int getDimensionPixelOffset(int id) throws NotFoundException {
-        return super.getDimensionPixelOffset(id);
+        try {
+            return super.getDimensionPixelOffset(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getDimensionPixelOffset(id);
+        }
     }
 
     @Override
     public int getDimensionPixelSize(int id) throws NotFoundException {
-        return super.getDimensionPixelSize(id);
+        try {
+            return super.getDimensionPixelSize(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getDimensionPixelSize(id);
+        }
     }
 
     @Override
@@ -86,27 +110,47 @@ public class MixResources extends ResourcesWrapper {
 
     @Override
     public int getColor(int id) throws NotFoundException {
-        return super.getColor(id);
+        try {
+            return super.getColor(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getColor(id);
+        }
     }
-
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public int getColor(int id, Theme theme) throws NotFoundException {
-        return super.getColor(id, theme);
+        try {
+            return super.getColor(id,theme);
+        } catch (NotFoundException e) {
+            return mHostResources.getColor(id,theme);
+        }
     }
 
     @Override
     public ColorStateList getColorStateList(int id) throws NotFoundException {
-        return super.getColorStateList(id);
+        try {
+            return super.getColorStateList(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getColorStateList(id);
+        }
     }
-
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public ColorStateList getColorStateList(int id, Theme theme) throws NotFoundException {
-        return super.getColorStateList(id, theme);
+        try {
+            return super.getColorStateList(id,theme);
+        } catch (NotFoundException e) {
+            return mHostResources.getColorStateList(id,theme);
+        }
     }
 
     @Override
     public boolean getBoolean(int id) throws NotFoundException {
-        return super.getBoolean(id);
+        try {
+            return super.getBoolean(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getBoolean(id);
+        }
     }
 
     @Override
@@ -120,7 +164,11 @@ public class MixResources extends ResourcesWrapper {
 
     @Override
     public String getResourceName(int resid) throws NotFoundException {
-        return super.getResourceName(resid);
+        try {
+            return super.getResourceName(resid);
+        } catch (NotFoundException e) {
+            return mHostResources.getResourceName(resid);
+        }
     }
 
     @Override
@@ -129,6 +177,15 @@ public class MixResources extends ResourcesWrapper {
             return super.getInteger(id);
         } catch (NotFoundException e) {
             return mHostResources.getInteger(id);
+        }
+    }
+
+    @Override
+    public CharSequence getText(int id, CharSequence def) {
+        try {
+            return super.getText(id,def);
+        } catch (NotFoundException e) {
+            return mHostResources.getText(id,def);
         }
     }
 }
