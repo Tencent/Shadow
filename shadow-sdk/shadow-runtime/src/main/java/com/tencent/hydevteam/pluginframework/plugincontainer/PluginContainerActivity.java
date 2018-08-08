@@ -69,8 +69,6 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toolbar;
 
-import com.tencent.shadow.runtime.MixResources;
-
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -461,15 +459,10 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         }
     }
 
-    private Resources mResources;
-
     @Override
     public Resources getResources() {
         if (hostActivityDelegate != null) {
-            if(mResources == null){
-                mResources = new MixResources(super.getResources(),hostActivityDelegate.getResources());
-            }
-            return mResources;
+            return hostActivityDelegate.getResources();
         } else {
             return super.getResources();
         }

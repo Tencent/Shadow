@@ -20,6 +20,7 @@ public class ShadowContext extends ContextThemeWrapper {
     ClassLoader mPluginClassLoader;
     ShadowApplication mShadowApplication;
     Resources mPluginResources;
+    Resources mMixResources;
     LayoutInflater mLayoutInflater;
     String mLibrarySearchPath;
 
@@ -59,7 +60,17 @@ public class ShadowContext extends ContextThemeWrapper {
 
     @Override
     public Resources getResources() {
-        return mPluginResources;
+        if (mMixResources == null) {
+            Context baseContext = getBaseContext();
+            Resources hostResources;
+            if (baseContext instanceof HostActivityDelegator) {
+                hostResources = ((HostActivityDelegator) baseContext).superGetResources();
+            } else {
+                hostResources = baseContext.getResources();
+            }
+            mMixResources = new MixResources(hostResources, mPluginResources);
+        }
+        return mMixResources;
     }
 
     @Override
