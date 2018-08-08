@@ -49,10 +49,14 @@ class PluginClassLoader(
                     try {
                         clazz = mGrandParent.loadClass(className)!!
                     } catch (e: ClassNotFoundException) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            e.addSuppressed(suppressed)
+                        if (className.startsWith("com.tencent")) {
+                            throw suppressed!!
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                e.addSuppressed(suppressed)
+                            }
+                            throw e
                         }
-                        throw e
                     }
 
                 }
