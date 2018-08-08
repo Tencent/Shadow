@@ -117,6 +117,7 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             super.onCreate(null);
             Log.e(TAG, "onCreate: hostActivityDelegate==null finish activity");
             finish();
+            System.exit(0);
         }
     }
 
