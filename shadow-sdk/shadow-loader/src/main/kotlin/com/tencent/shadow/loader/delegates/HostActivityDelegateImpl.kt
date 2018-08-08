@@ -45,7 +45,6 @@ class HostActivityDelegateImpl(
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
     private var mPluginActivityCreated = false
-    private lateinit var mBundleForPluginLoader: Bundle
 
     override fun setDelegator(hostActivityDelegator: HostActivityDelegator) {
         mHostActivityDelegator = hostActivityDelegator
@@ -53,15 +52,10 @@ class HostActivityDelegateImpl(
 
     override fun getPluginActivity(): Any = mPluginActivity
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(bundle: Bundle?) {
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
-        val bundleForPluginLoader: Bundle = if (savedInstanceState != null) {
-            savedInstanceState.getBundle(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
-        } else {
-            mHostActivityDelegator.intent.getBundleExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
-        }
-        mBundleForPluginLoader = bundleForPluginLoader
+        val bundleForPluginLoader = mHostActivityDelegator.intent.getBundleExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
         mHostActivityDelegator.intent.removeExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
         bundleForPluginLoader.classLoader = this.javaClass.classLoader
 
@@ -85,7 +79,7 @@ class HostActivityDelegateImpl(
             pluginActivity.setShadowApplication(mPluginApplication)
             pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
             mPluginActivity = pluginActivity
-            pluginActivity.onCreate(savedInstanceState)
+            pluginActivity.onCreate(bundle)
             mPluginActivityCreated = true
         } catch (e: Exception) {
             throw RuntimeException(e)
@@ -102,10 +96,9 @@ class HostActivityDelegateImpl(
         mPluginActivity.onNewIntent(intent)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        mHostActivityDelegator.superOnSaveInstanceState(outState)
-        outState.putBundle(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY, mBundleForPluginLoader)
-        mPluginActivity.onSaveInstanceState(outState)
+    override fun onSaveInstanceState(bundle: Bundle) {
+        mHostActivityDelegator.superOnSaveInstanceState(bundle)
+        mPluginActivity.onSaveInstanceState(bundle)
     }
 
     override fun onPause() {
