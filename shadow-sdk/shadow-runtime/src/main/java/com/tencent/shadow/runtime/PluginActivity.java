@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,8 +28,6 @@ public abstract class PluginActivity extends ShadowContext {
 
     PackageManager mPluginPackageManager;
 
-    protected Pair<String,Bundle> mPluginLoaderBundle;
-
     public final void setHostContextAsBase(Context context) {
         attachBaseContext(context);
     }
@@ -45,10 +42,6 @@ public abstract class PluginActivity extends ShadowContext {
 
     public void setPluginPackageManager(PackageManager packageManager) {
         mPluginPackageManager = packageManager;
-    }
-
-    public void setPluginLoaderBundle(Pair<String,Bundle> pluginLoaderBundle) {
-        this.mPluginLoaderBundle = pluginLoaderBundle;
     }
 
     public void onCreate(Bundle savedInstanceState) {

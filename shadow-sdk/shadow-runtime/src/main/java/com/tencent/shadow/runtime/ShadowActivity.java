@@ -129,10 +129,6 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
     public void recreate() {
-        Intent intent = getIntent();
-        if(intent != null && mPluginLoaderBundle != null){
-            intent.putExtra(mPluginLoaderBundle.first,mPluginLoaderBundle.second);
-        }
         mHostActivityDelegator.recreate();
     }
 

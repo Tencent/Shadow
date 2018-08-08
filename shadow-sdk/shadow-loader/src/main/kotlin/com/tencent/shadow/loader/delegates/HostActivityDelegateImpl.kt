@@ -12,7 +12,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
 import android.util.AttributeSet
-import android.util.Pair
 import android.view.*
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
@@ -67,7 +66,6 @@ class HostActivityDelegateImpl(
             val pluginActivity = PluginActivity::class.java.cast(aClass.newInstance())
             pluginActivity.setContainerActivity(mHostActivityDelegator)
             pluginActivity.setPluginResources(mPluginResources)
-            pluginActivity.setPluginLoaderBundle(Pair(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY,bundleForPluginLoader))
             pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
             pluginActivity.setPluginClassLoader(mPluginClassLoader)
             pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
