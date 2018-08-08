@@ -56,7 +56,6 @@ class HostActivityDelegateImpl(
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
         val bundleForPluginLoader = mHostActivityDelegator.intent.getBundleExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
-        mHostActivityDelegator.intent.removeExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
         bundleForPluginLoader.classLoader = this.javaClass.classLoader
 
         val pluginActivityClassName = bundleForPluginLoader.getString(PLUGIN_ACTIVITY_CLASS_NAME_KEY)
