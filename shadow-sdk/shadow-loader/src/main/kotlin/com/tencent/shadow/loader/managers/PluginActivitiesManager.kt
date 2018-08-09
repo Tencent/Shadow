@@ -61,7 +61,7 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
     private fun getContainerActivity(pluginActivity: ComponentName): ComponentName =
             activitiesMap[pluginActivity]!!
 
-    override fun startActivity(context: Context, pluginIntent: Intent): Boolean {
+    override fun startActivity(shadowContext: ShadowContext, pluginIntent: Intent): Boolean {
         if (pluginIntent.component == null) {
             return false
         }
@@ -78,7 +78,7 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
         bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[pluginIntent.component])
 
         containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
-        context.startActivity(containerActivityIntent)
+        shadowContext.superStartActivity(containerActivityIntent)
         return true
     }
 

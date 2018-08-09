@@ -100,12 +100,12 @@ public class ShadowContext extends ContextThemeWrapper {
         /**
          * 启动Actvity
          *
-         * @param context 启动context
+         * @param shadowContext 启动context
          * @param intent  插件内传来的Intent.
          * @return <code>true</code>表示该Intent是为了启动插件内Activity的,已经被正确消费了.
          * <code>false</code>表示该Intent不是插件内的Activity.
          */
-        boolean startActivity(Context context, Intent intent);
+        boolean startActivity(ShadowContext shadowContext, Intent intent);
 
         /**
          * 启动Actvity
@@ -145,6 +145,10 @@ public class ShadowContext extends ContextThemeWrapper {
         if (!success) {
             super.startActivity(intent);
         }
+    }
+
+    public void superStartActivity(Intent intent) {
+        super.startActivity(intent);
     }
 
     @Override
