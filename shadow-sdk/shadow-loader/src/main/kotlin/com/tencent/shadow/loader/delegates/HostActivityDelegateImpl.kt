@@ -25,6 +25,7 @@ import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUG
 import com.tencent.shadow.loader.managers.PluginServicesManager
 import com.tencent.shadow.runtime.FixedContextLayoutInflater
 import com.tencent.shadow.runtime.PluginActivity
+import com.tencent.shadow.runtime.ShadowActivity
 import com.tencent.shadow.runtime.ShadowApplication
 
 /**
@@ -58,6 +59,11 @@ class HostActivityDelegateImpl(
 
         if (mHostActivityDelegator.intent.hasExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY).not()) {
             mHostActivityDelegator.superFinish()
+            val emptyPluginActivity: PluginActivity = object : ShadowActivity() {}
+            initPluginActivity(emptyPluginActivity)
+            mPluginActivity = emptyPluginActivity
+            emptyPluginActivity.onCreate(bundle)
+            mPluginActivityCreated = true
             return
         }
 
@@ -71,24 +77,27 @@ class HostActivityDelegateImpl(
         try {
             val aClass = mPluginClassLoader.loadClass(pluginActivityClassName)
             val pluginActivity = PluginActivity::class.java.cast(aClass.newInstance())
-            pluginActivity.setContainerActivity(mHostActivityDelegator)
-            pluginActivity.setPluginResources(mPluginResources)
-            pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
-            pluginActivity.setPluginClassLoader(mPluginClassLoader)
-            pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
-            pluginActivity.pendingIntentConverter = mPendingIntentManager
-            pluginActivity.setPluginApplication(mPluginApplication)
-            pluginActivity.setPluginPackageManager(mPluginPackageManager)
-            pluginActivity.setServiceOperator(mPluginServicesManager)
-            pluginActivity.setShadowApplication(mPluginApplication)
-            pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
+            initPluginActivity(pluginActivity)
             mPluginActivity = pluginActivity
             pluginActivity.onCreate(bundle)
             mPluginActivityCreated = true
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
+    }
 
+    private fun initPluginActivity(pluginActivity: PluginActivity) {
+        pluginActivity.setContainerActivity(mHostActivityDelegator)
+        pluginActivity.setPluginResources(mPluginResources)
+        pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
+        pluginActivity.setPluginClassLoader(mPluginClassLoader)
+        pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
+        pluginActivity.pendingIntentConverter = mPendingIntentManager
+        pluginActivity.setPluginApplication(mPluginApplication)
+        pluginActivity.setPluginPackageManager(mPluginPackageManager)
+        pluginActivity.setServiceOperator(mPluginServicesManager)
+        pluginActivity.setShadowApplication(mPluginApplication)
+        pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
     }
 
     override fun onResume() {
@@ -253,6 +262,9 @@ class HostActivityDelegateImpl(
     }
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
+        if (mHostActivityDelegator.isFinishing) {
+            return null
+        }
         return mPluginActivity.onCreateView(name, context, attrs)
     }
 
