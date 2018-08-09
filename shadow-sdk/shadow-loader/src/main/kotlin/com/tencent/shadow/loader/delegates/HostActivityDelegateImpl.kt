@@ -18,7 +18,6 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 import com.tencent.shadow.loader.PluginPackageManager
 import com.tencent.shadow.loader.Reporter
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
-import com.tencent.shadow.loader.exceptions.PluginLoaderBundleMissingException
 import com.tencent.shadow.loader.infos.PluginActivityInfo
 import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
@@ -58,15 +57,8 @@ class HostActivityDelegateImpl(
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
         if (mHostActivityDelegator.intent.hasExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY).not()) {
-            val extras = mHostActivityDelegator.intent.extras
-            val pluginLoaderBundleMissingException: PluginLoaderBundleMissingException
-            val action = mHostActivityDelegator.intent.action
-            if (extras == null) {
-                pluginLoaderBundleMissingException = PluginLoaderBundleMissingException("extras == null" + " action==$action")
-            } else {
-                pluginLoaderBundleMissingException = PluginLoaderBundleMissingException(extras.keySet().toList().toString() + " action==$action")
-            }
-            mExceptionReporter.reportException(pluginLoaderBundleMissingException)
+            mHostActivityDelegator.superFinish()
+            return
         }
 
         val bundleForPluginLoader = mHostActivityDelegator.intent.getBundleExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
