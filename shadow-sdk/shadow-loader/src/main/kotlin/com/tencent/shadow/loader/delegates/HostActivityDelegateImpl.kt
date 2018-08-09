@@ -16,7 +16,9 @@ import android.view.*
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.loader.PluginPackageManager
+import com.tencent.shadow.loader.Reporter
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
+import com.tencent.shadow.loader.exceptions.PluginLoaderBundleMissingException
 import com.tencent.shadow.loader.infos.PluginActivityInfo
 import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
@@ -39,7 +41,8 @@ class HostActivityDelegateImpl(
         private val mPluginResources: Resources,
         private val mPluginActivitiesManager: PluginActivitiesManager,
         private val mPluginServicesManager: PluginServicesManager,
-        private val mPendingIntentManager: PendingIntentManager
+        private val mPendingIntentManager: PendingIntentManager,
+        private val mExceptionReporter: Reporter
 ) : HostActivityDelegate {
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
@@ -53,6 +56,18 @@ class HostActivityDelegateImpl(
 
     override fun onCreate(bundle: Bundle?) {
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
+
+        if (mHostActivityDelegator.intent.hasExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY).not()) {
+            val extras = mHostActivityDelegator.intent.extras
+            val pluginLoaderBundleMissingException: PluginLoaderBundleMissingException
+            val action = mHostActivityDelegator.intent.action
+            if (extras == null) {
+                pluginLoaderBundleMissingException = PluginLoaderBundleMissingException("extras == null" + " action==$action")
+            } else {
+                pluginLoaderBundleMissingException = PluginLoaderBundleMissingException(extras.keySet().toList().toString() + " action==$action")
+            }
+            mExceptionReporter.reportException(pluginLoaderBundleMissingException)
+        }
 
         val bundleForPluginLoader = mHostActivityDelegator.intent.getBundleExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
         bundleForPluginLoader.classLoader = this.javaClass.classLoader

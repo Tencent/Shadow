@@ -47,6 +47,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
 
     private lateinit var mPendingIntentManager: PendingIntentManager
 
+    abstract val mExceptionReporter: Reporter
+
     /**
      * 插件将要使用的so的ABI，Loader会将其从apk中解压出来。
      * 如果插件不需要so，则返回""空字符串。
@@ -115,7 +117,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                     mPluginResources,
                     getBusinessPluginActivitiesManager(),
                     getBusinessPluginServiceManager(),
-                    mPendingIntentManager
+                    mPendingIntentManager,
+                    mExceptionReporter
             )
         }
     }
