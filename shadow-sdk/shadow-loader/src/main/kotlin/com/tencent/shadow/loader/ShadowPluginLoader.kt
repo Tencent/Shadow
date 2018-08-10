@@ -2,7 +2,6 @@ package com.tencent.shadow.loader
 
 import android.content.Context
 import android.content.res.Resources
-import android.util.Log
 import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.common.progress.ProgressFutureImpl
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
@@ -57,11 +56,6 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
 
     @Throws(LoadPluginException::class)
     override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
-//        if (mLogger.isInfoEnabled) {
-//            mLogger.info("loadPlugin installedPlugin=={}", installedPlugin)
-//        }
-        //Log.d("startPlugin", "begin"+System.nanoTime().toString())
-        Log.d("startPlugin", "begin"+System.nanoTime().toString())
         mPendingIntentManager = PendingIntentManager(hostAppContext,getBusinessPluginActivitiesManager(),getBusinessPluginServiceManager())
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
