@@ -179,4 +179,8 @@ public abstract class PluginActivity extends ShadowContext {
     public void onDetachedFromWindow(){}
 
     public void onAttachFragment(Fragment fragment){}
+
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        mHostActivityDelegator.superOnRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 }

@@ -113,4 +113,6 @@ public interface HostActivityDelegate {
     void onDetachedFromWindow();
 
     void onAttachFragment(Fragment fragment);
+
+    void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
 }
