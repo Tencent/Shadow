@@ -15,9 +15,9 @@ public class ShadowPendingIntent {
         if (context instanceof ShadowContext && intent.getComponent() != null) {
             ShadowContext shadowContext = (ShadowContext) context;
             if (shadowContext.getPendingIntentConverter() != null) {
-                context = shadowContext.getPendingIntentConverter().convertPluginServiceIntent(intent).first;
-                intent = shadowContext.getPendingIntentConverter().convertPluginServiceIntent(intent).second;
+                intent = shadowContext.getPendingIntentConverter().convertPluginServiceIntent(intent);
             }
+            context = shadowContext.getBaseContext();
         }
         return PendingIntent.getService(context, requestCode, intent, flags);
     }
@@ -33,9 +33,9 @@ public class ShadowPendingIntent {
         if (context instanceof ShadowContext && intent.getComponent() != null) {
             ShadowContext shadowContext = (ShadowContext) context;
             if(shadowContext.getPendingIntentConverter() != null){
-                context = shadowContext.getPendingIntentConverter().convertPluginActivityIntent(intent).first;
-                intent = shadowContext.getPendingIntentConverter().convertPluginActivityIntent(intent).second;
+                intent = shadowContext.getPendingIntentConverter().convertPluginActivityIntent(intent);
             }
+            context = shadowContext.getBaseContext();
         }
         return PendingIntent.getActivity(context, requestCode, intent, flags, options);
     }

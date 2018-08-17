@@ -132,9 +132,9 @@ public class ShadowContext extends ContextThemeWrapper {
     }
 
     public interface PendingIntentConverter{
-        Pair<Context,Intent> convertPluginActivityIntent(Intent pluginIntent);
+        Intent convertPluginActivityIntent(Intent pluginIntent);
 
-        Pair<Context,Intent> convertPluginServiceIntent(Intent pluginIntent);
+        Intent convertPluginServiceIntent(Intent pluginIntent);
     }
 
     @Override

@@ -44,7 +44,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
 
     private lateinit var mPluginPackageManager: PluginPackageManager
 
-    private lateinit var mPendingIntentManager: PendingIntentManager
+    private val mPendingIntentManager: PendingIntentManager = PendingIntentManager(this)
 
     abstract val mExceptionReporter: Reporter
 
@@ -56,7 +56,6 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
 
     @Throws(LoadPluginException::class)
     override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
-        mPendingIntentManager = PendingIntentManager(hostAppContext,getBusinessPluginActivitiesManager(),getBusinessPluginServiceManager())
         if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 //todo cubershi 下面这些步骤可能可以并发起来.
