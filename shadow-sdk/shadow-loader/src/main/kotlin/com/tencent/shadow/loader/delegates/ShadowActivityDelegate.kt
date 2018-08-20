@@ -34,7 +34,7 @@ import com.tencent.shadow.runtime.ShadowApplication
  *
  * @author cubershi
  */
-class HostActivityDelegateImpl(
+class ShadowActivityDelegate(
         private val mPluginPackageManager: PluginPackageManager,
         private val mPluginApplication: ShadowApplication,
         private val mPluginClassLoader: PluginClassLoader,

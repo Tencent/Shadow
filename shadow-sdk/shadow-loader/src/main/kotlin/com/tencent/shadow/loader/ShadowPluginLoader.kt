@@ -11,8 +11,8 @@ import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.loader.blocs.*
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
-import com.tencent.shadow.loader.delegates.HostActivityDelegateImpl
 import com.tencent.shadow.loader.delegates.HostServiceDelegateImpl
+import com.tencent.shadow.loader.delegates.ShadowActivityDelegate
 import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginReceiverManager
@@ -103,7 +103,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {
         //todo cubershi 这里返回的DefaultHostActivityDelegate直接绑定了mPluginClassLoader限制了多插件的实现
         mLock.withLock {
-            return HostActivityDelegateImpl(
+            return ShadowActivityDelegate(
                     mPluginPackageManager,
                     mPluginApplication,
                     mPluginClassLoader,
