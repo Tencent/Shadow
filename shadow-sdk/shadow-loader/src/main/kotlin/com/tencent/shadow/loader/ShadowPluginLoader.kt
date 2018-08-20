@@ -11,7 +11,9 @@ import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.loader.blocs.*
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
+import com.tencent.shadow.loader.delegates.DI
 import com.tencent.shadow.loader.delegates.ShadowActivityDelegate
+import com.tencent.shadow.loader.delegates.ShadowDelegate
 import com.tencent.shadow.loader.delegates.ShadowServiceDelegate
 import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
@@ -24,7 +26,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
+abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     private val mExecutorService = Executors.newSingleThreadExecutor()
 
@@ -33,6 +35,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
     private lateinit var mPluginClassLoader: PluginClassLoader
 
     private lateinit var mPluginResources: Resources
+
+    private lateinit var mHostAppContext: Context
 
     abstract fun getBusinessPluginActivitiesManager(): PluginActivitiesManager
 
@@ -84,6 +88,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
                     mPluginResources = resources
                     mPluginApplication = shadowApplication
                     mPluginPackageManager = pluginPackageManager
+                    mHostAppContext = hostAppContext
                 }
 
                 ShadowRunningPlugin(shadowApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
@@ -103,30 +108,25 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {
         //todo cubershi 这里返回的DefaultHostActivityDelegate直接绑定了mPluginClassLoader限制了多插件的实现
         mLock.withLock {
-            return ShadowActivityDelegate(
-                    mPluginPackageManager,
-                    mPluginApplication,
-                    mPluginClassLoader,
-                    mPluginResources,
-                    getBusinessPluginActivitiesManager(),
-                    getBusinessPluginServiceManager(),
-                    mPendingIntentManager,
-                    mExceptionReporter
-            )
+            return ShadowActivityDelegate(this, mHostAppContext.resources)
         }
     }
 
     override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate? {
         mLock.withLock {
-            return ShadowServiceDelegate(
-                    mPluginApplication,
-                    mPluginClassLoader,
-                    mPluginResources,
-                    getBusinessPluginActivitiesManager(),
-                    getBusinessPluginServiceManager(),
-                    mPendingIntentManager
-            )
+            return ShadowServiceDelegate(this, mHostAppContext.resources)
         }
+    }
+
+    override fun inject(delegate: ShadowDelegate, partKey: String) {
+        delegate.injectPluginPackageManager(mPluginPackageManager)
+        delegate.injectPluginApplication(mPluginApplication)
+        delegate.injectPluginClassLoader(mPluginClassLoader)
+        delegate.injectPluginResources(mPluginResources)
+        delegate.injectPluginActivitiesManager(getBusinessPluginActivitiesManager())
+        delegate.injectPluginServicesManager(getBusinessPluginServiceManager())
+        delegate.injectPendingIntentManager(mPendingIntentManager)
+        delegate.injectExceptionReporter(mExceptionReporter)
     }
 
     companion object {

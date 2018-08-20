@@ -7,22 +7,12 @@ import android.content.res.Resources
 import android.os.IBinder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
-import com.tencent.shadow.loader.classloaders.PluginClassLoader
-import com.tencent.shadow.loader.managers.PendingIntentManager
-import com.tencent.shadow.loader.managers.PluginActivitiesManager
-import com.tencent.shadow.loader.managers.PluginServicesManager
-import com.tencent.shadow.runtime.ShadowApplication
 import com.tencent.shadow.runtime.ShadowService
 
 /**
  * Created by tracyluo on 2018/6/5.
  */
-class ShadowServiceDelegate(private val mPluginApplication: ShadowApplication,
-                            private val mPluginClassLoader: PluginClassLoader,
-                            private val mPluginResources: Resources,
-                            private val mPluginActivitiesManager: PluginActivitiesManager,
-                            private val mPluginServicesManager: PluginServicesManager,
-                            private val mPendingIntentManager: PendingIntentManager) : HostServiceDelegate {
+class ShadowServiceDelegate(private val mDI: DI, hostResources: Resources) : HostServiceDelegate, ShadowDelegate(hostResources) {
     private lateinit var mHostServiceDelegator: HostServiceDelegator
     private lateinit var mPluginService: ShadowService
     private lateinit var mBinder: IBinder
@@ -77,6 +67,7 @@ class ShadowServiceDelegate(private val mPluginApplication: ShadowApplication,
 
     override fun onCreate(intent: Intent) {
         if (!mIsSetService) {
+            mDI.inject(this, "todo_support_multi_apk")
             val cls = intent.getStringExtra("className")
             val aClass = mPluginClassLoader.loadClass(cls)
             mPluginService = ShadowService::class.java.cast(aClass.newInstance())

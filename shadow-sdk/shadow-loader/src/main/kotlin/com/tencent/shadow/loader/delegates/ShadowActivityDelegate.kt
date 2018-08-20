@@ -15,18 +15,12 @@ import android.util.AttributeSet
 import android.view.*
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
-import com.tencent.shadow.loader.PluginPackageManager
-import com.tencent.shadow.loader.Reporter
-import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.infos.PluginActivityInfo
-import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
-import com.tencent.shadow.loader.managers.PluginServicesManager
 import com.tencent.shadow.runtime.FixedContextLayoutInflater
 import com.tencent.shadow.runtime.PluginActivity
 import com.tencent.shadow.runtime.ShadowActivity
-import com.tencent.shadow.runtime.ShadowApplication
 
 /**
  * 壳子Activity与插件Activity转调关系的实现类
@@ -34,16 +28,7 @@ import com.tencent.shadow.runtime.ShadowApplication
  *
  * @author cubershi
  */
-class ShadowActivityDelegate(
-        private val mPluginPackageManager: PluginPackageManager,
-        private val mPluginApplication: ShadowApplication,
-        private val mPluginClassLoader: PluginClassLoader,
-        private val mPluginResources: Resources,
-        private val mPluginActivitiesManager: PluginActivitiesManager,
-        private val mPluginServicesManager: PluginServicesManager,
-        private val mPendingIntentManager: PendingIntentManager,
-        private val mExceptionReporter: Reporter
-) : HostActivityDelegate {
+class ShadowActivityDelegate(private val mDI: DI, hostResources: Resources) : HostActivityDelegate, ShadowDelegate(hostResources) {
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
     private var mPluginActivityCreated = false
@@ -55,6 +40,7 @@ class ShadowActivityDelegate(
     override fun getPluginActivity(): Any = mPluginActivity
 
     override fun onCreate(bundle: Bundle?) {
+        mDI.inject(this, "todo_support_multi_apk")
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
         if (mHostActivityDelegator.intent.hasExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY).not()) {
