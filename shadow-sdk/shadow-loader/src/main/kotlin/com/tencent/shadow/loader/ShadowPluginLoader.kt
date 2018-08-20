@@ -11,8 +11,8 @@ import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.loader.blocs.*
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
-import com.tencent.shadow.loader.delegates.HostServiceDelegateImpl
 import com.tencent.shadow.loader.delegates.ShadowActivityDelegate
+import com.tencent.shadow.loader.delegates.ShadowServiceDelegate
 import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginReceiverManager
@@ -118,7 +118,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider {
 
     override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate? {
         mLock.withLock {
-            return HostServiceDelegateImpl(
+            return ShadowServiceDelegate(
                     mPluginApplication,
                     mPluginClassLoader,
                     mPluginResources,

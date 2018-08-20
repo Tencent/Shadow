@@ -17,12 +17,12 @@ import com.tencent.shadow.runtime.ShadowService
 /**
  * Created by tracyluo on 2018/6/5.
  */
-class HostServiceDelegateImpl(private val mPluginApplication: ShadowApplication,
-                              private val mPluginClassLoader: PluginClassLoader,
-                              private val mPluginResources: Resources,
-                              private val mPluginActivitiesManager: PluginActivitiesManager,
-                              private val mPluginServicesManager: PluginServicesManager,
-                              private val mPendingIntentManager: PendingIntentManager) : HostServiceDelegate {
+class ShadowServiceDelegate(private val mPluginApplication: ShadowApplication,
+                            private val mPluginClassLoader: PluginClassLoader,
+                            private val mPluginResources: Resources,
+                            private val mPluginActivitiesManager: PluginActivitiesManager,
+                            private val mPluginServicesManager: PluginServicesManager,
+                            private val mPendingIntentManager: PendingIntentManager) : HostServiceDelegate {
     private lateinit var mHostServiceDelegator: HostServiceDelegator
     private lateinit var mPluginService: ShadowService
     private lateinit var mBinder: IBinder
