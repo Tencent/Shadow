@@ -90,6 +90,8 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
 
     final HostActivityDelegate hostActivityDelegate;
 
+    private boolean isBeforeOnCreate = true;
+
     public PluginContainerActivity() {
         HostActivityDelegate delegate;
         if (DelegateProviderHolder.delegateProvider != null) {
@@ -108,6 +110,9 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
 
     @Override
     final protected void onCreate(Bundle savedInstanceState) {
+        isBeforeOnCreate = false;
+        mHostTheme = null;//释放资源
+
         if (hostActivityDelegate != null) {
             hostActivityDelegate.onCreate(savedInstanceState);
         } else {
@@ -2012,6 +2017,33 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     public void onDetachedFromWindow() {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.onDetachedFromWindow();
+        }
+    }
+
+    /**
+     * Theme一旦设置了就不能更换Theme所在的Resouces了，见{@link Resources.Theme#setTo(Resources.Theme)}
+     * 而Activity在OnCreate之前需要设置Theme和使用Theme。我们需要在Activity OnCreate之后才能注入插件资源。
+     * 这就需要在Activity OnCreate之前不要调用Activity的setTheme方法，同时在getTheme时返回宿主的Theme资源。
+     * 注：{@link Activity#setTheme(int)}会触发初始化Theme，因此不能调用。
+     */
+    private Resources.Theme mHostTheme;
+
+    @Override
+    public Resources.Theme getTheme() {
+        if (isBeforeOnCreate) {
+            if (mHostTheme == null) {
+                mHostTheme = super.getResources().newTheme();
+            }
+            return mHostTheme;
+        } else {
+            return super.getTheme();
+        }
+    }
+
+    @Override
+    public void setTheme(int resid) {
+        if (!isBeforeOnCreate) {
+            super.setTheme(resid);
         }
     }
 }

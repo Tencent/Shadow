@@ -3,7 +3,6 @@ package com.tencent.shadow.loader.delegates
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.IBinder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
@@ -12,7 +11,7 @@ import com.tencent.shadow.runtime.ShadowService
 /**
  * Created by tracyluo on 2018/6/5.
  */
-class ShadowServiceDelegate(private val mDI: DI, hostResources: Resources) : HostServiceDelegate, ShadowDelegate(hostResources) {
+class ShadowServiceDelegate(private val mDI: DI) : HostServiceDelegate, ShadowDelegate() {
     private lateinit var mHostServiceDelegator: HostServiceDelegator
     private lateinit var mPluginService: ShadowService
     private lateinit var mBinder: IBinder

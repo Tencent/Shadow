@@ -108,13 +108,13 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {
         //todo cubershi 这里返回的DefaultHostActivityDelegate直接绑定了mPluginClassLoader限制了多插件的实现
         mLock.withLock {
-            return ShadowActivityDelegate(this, mHostAppContext.resources)
+            return ShadowActivityDelegate(this)
         }
     }
 
     override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate? {
         mLock.withLock {
-            return ShadowServiceDelegate(this, mHostAppContext.resources)
+            return ShadowServiceDelegate(this)
         }
     }
 

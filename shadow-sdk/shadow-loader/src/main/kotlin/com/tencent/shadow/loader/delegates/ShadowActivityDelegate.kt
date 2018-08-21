@@ -28,10 +28,11 @@ import com.tencent.shadow.runtime.ShadowActivity
  *
  * @author cubershi
  */
-class ShadowActivityDelegate(private val mDI: DI, hostResources: Resources) : HostActivityDelegate, ShadowDelegate(hostResources) {
+class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, ShadowDelegate() {
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
     private var mPluginActivityCreated = false
+    private var mDependenciesInjected = false
 
     override fun setDelegator(hostActivityDelegator: HostActivityDelegator) {
         mHostActivityDelegator = hostActivityDelegator
@@ -41,6 +42,7 @@ class ShadowActivityDelegate(private val mDI: DI, hostResources: Resources) : Ho
 
     override fun onCreate(bundle: Bundle?) {
         mDI.inject(this, "todo_support_multi_apk")
+        mDependenciesInjected = true
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
         if (mHostActivityDelegator.intent.hasExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY).not()) {
@@ -270,10 +272,12 @@ class ShadowActivityDelegate(private val mDI: DI, hostResources: Resources) : Ho
     }
 
     override fun getResources(): Resources {
-        if (mPluginActivityCreated) {
-            return mPluginActivity.resources
-        } else {
+        if (mDependenciesInjected) {
             return mPluginResources
+        } else {
+            //预期只有android.view.Window.getDefaultFeatures会调用到这个分支，此时我们还无法确定插件资源
+            //而getDefaultFeatures只需要访问系统资源
+            return Resources.getSystem()
         }
     }
 

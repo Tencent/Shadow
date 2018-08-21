@@ -9,7 +9,7 @@ import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginServicesManager
 import com.tencent.shadow.runtime.ShadowApplication
 
-abstract class ShadowDelegate(hostResources: Resources) {
+abstract class ShadowDelegate() {
     fun injectPluginPackageManager(pluginPackageManager: PluginPackageManager) {
         _pluginPackageManager = pluginPackageManager
     }
@@ -45,7 +45,7 @@ abstract class ShadowDelegate(hostResources: Resources) {
     private lateinit var _pluginPackageManager: PluginPackageManager
     private lateinit var _pluginApplication: ShadowApplication
     private lateinit var _pluginClassLoader: PluginClassLoader
-    private var _pluginResources: Resources = hostResources//hostResources用于android.view.Window.getDefaultFeatures
+    private lateinit var _pluginResources: Resources
     private lateinit var _pluginActivitiesManager: PluginActivitiesManager
     private lateinit var _pluginServicesManager: PluginServicesManager
     private lateinit var _pendingIntentManager: PendingIntentManager
