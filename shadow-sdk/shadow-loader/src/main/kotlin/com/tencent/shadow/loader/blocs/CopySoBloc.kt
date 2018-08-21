@@ -1,7 +1,9 @@
 package com.tencent.shadow.loader.blocs
 
+import android.os.Build.VERSION_CODES.JELLY_BEAN_MR2
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
+import java.io.Closeable
 import java.io.File
 import java.util.zip.ZipFile
 
@@ -55,7 +57,15 @@ object CopySoBloc {
     private fun unzipSo(abi: String, apk: File, soDir: File): Int {
         var count = 0
         val pattern = "lib/$abi/"
-        ZipFile(apk).use { zip ->
+
+        val zipFile = if (android.os.Build.VERSION.SDK_INT <= JELLY_BEAN_MR2) {
+            object : ZipFile(apk), Closeable {
+            }
+        } else {
+            ZipFile(apk)
+        }
+
+        zipFile.use { zip ->
             zip.entries().asSequence().filter {
                 it.name.startsWith(pattern)
             }.forEach { soFileEntry ->
