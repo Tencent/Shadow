@@ -24,8 +24,8 @@ internal class ShadowRunningPlugin(
         val pluginIntent = Intent(intent)
         pluginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         pluginIntent.component = launcherActivity
-        val hostApplicationContext = shadowApplication
-        hostApplicationContext.startActivity(pluginIntent)
+        val pluginApplicationContext = shadowApplication
+        pluginApplicationContext.startActivity(pluginIntent)
 
         return object : ProgressFuture<Any> {
             override fun getProgress(): Double {
