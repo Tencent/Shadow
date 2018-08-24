@@ -10,35 +10,35 @@ import com.tencent.shadow.loader.managers.PluginServicesManager
 import com.tencent.shadow.runtime.ShadowApplication
 
 abstract class ShadowDelegate() {
-    fun injectPluginPackageManager(pluginPackageManager: PluginPackageManager) {
+    fun inject(pluginPackageManager: PluginPackageManager) {
         _pluginPackageManager = pluginPackageManager
     }
 
-    fun injectPluginApplication(shadowApplication: ShadowApplication) {
+    fun inject(shadowApplication: ShadowApplication) {
         _pluginApplication = shadowApplication
     }
 
-    fun injectPluginClassLoader(pluginClassLoader: PluginClassLoader) {
+    fun inject(pluginClassLoader: PluginClassLoader) {
         _pluginClassLoader = pluginClassLoader
     }
 
-    fun injectPluginResources(resources: Resources) {
+    fun inject(resources: Resources) {
         _pluginResources = resources
     }
 
-    fun injectPluginActivitiesManager(pluginActivitiesManager: PluginActivitiesManager) {
+    fun inject(pluginActivitiesManager: PluginActivitiesManager) {
         _pluginActivitiesManager = pluginActivitiesManager
     }
 
-    fun injectPluginServicesManager(pluginServicesManager: PluginServicesManager) {
+    fun inject(pluginServicesManager: PluginServicesManager) {
         _pluginServicesManager = pluginServicesManager
     }
 
-    fun injectPendingIntentManager(pendingIntentManager: PendingIntentManager) {
+    fun inject(pendingIntentManager: PendingIntentManager) {
         _pendingIntentManager = pendingIntentManager
     }
 
-    fun injectExceptionReporter(reporter: Reporter) {
+    fun inject(reporter: Reporter) {
         _exceptionReporter = reporter
     }
 

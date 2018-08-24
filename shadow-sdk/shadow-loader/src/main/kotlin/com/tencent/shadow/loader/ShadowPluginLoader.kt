@@ -119,14 +119,14 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     }
 
     override fun inject(delegate: ShadowDelegate, partKey: String) {
-        delegate.injectPluginPackageManager(mPluginPackageManager)
-        delegate.injectPluginApplication(mPluginApplication)
-        delegate.injectPluginClassLoader(mPluginClassLoader)
-        delegate.injectPluginResources(mPluginResources)
-        delegate.injectPluginActivitiesManager(getBusinessPluginActivitiesManager())
-        delegate.injectPluginServicesManager(getBusinessPluginServiceManager())
-        delegate.injectPendingIntentManager(mPendingIntentManager)
-        delegate.injectExceptionReporter(mExceptionReporter)
+        delegate.inject(mPluginPackageManager)
+        delegate.inject(mPluginApplication)
+        delegate.inject(mPluginClassLoader)
+        delegate.inject(mPluginResources)
+        delegate.inject(getBusinessPluginActivitiesManager())
+        delegate.inject(getBusinessPluginServiceManager())
+        delegate.inject(mPendingIntentManager)
+        delegate.inject(mExceptionReporter)
     }
 
     companion object {
