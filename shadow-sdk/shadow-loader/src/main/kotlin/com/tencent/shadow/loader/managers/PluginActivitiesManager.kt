@@ -36,12 +36,6 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
      */
     private val activityInfoMap: MutableMap<ComponentName, PluginActivityInfo> = HashMap()
 
-    protected lateinit var mHostContext: Context ;
-
-    public fun setHostContext(context: Context){
-        mHostContext = context;
-    }
-
 
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
         pluginInfo.mActivities.forEach {
