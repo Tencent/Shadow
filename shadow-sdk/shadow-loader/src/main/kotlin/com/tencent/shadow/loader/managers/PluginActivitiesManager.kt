@@ -1,7 +1,6 @@
 package com.tencent.shadow.loader.managers
 
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
@@ -56,62 +55,57 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
             activitiesMap[pluginActivity]!!
 
     override fun startActivity(shadowContext: ShadowContext, pluginIntent: Intent): Boolean {
-        if (pluginIntent.component == null) {
-            return false
+        return if (pluginIntent.isPluginComponent()) {
+            shadowContext.superStartActivity(pluginIntent.toContainerIntent())
+            true
+        } else {
+            false
         }
-        val className = pluginIntent.component.className
-        val packageName = packageNameMap[className] ?: return false
-        pluginIntent.component = ComponentName(packageName, className)
-        val containerActivity = getContainerActivity(pluginIntent.component)
-        val containerActivityIntent = Intent(pluginIntent)
-        containerActivityIntent.component = containerActivity
-
-        val bundleForPluginLoader = Bundle()
-
-        bundleForPluginLoader.putString(PLUGIN_ACTIVITY_CLASS_NAME_KEY, className)
-        bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[pluginIntent.component])
-
-        containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
-        shadowContext.superStartActivity(containerActivityIntent)
-        return true
     }
 
     override fun startActivityForResult(delegator: HostActivityDelegator, pluginIntent: Intent, requestCode: Int): Boolean {
-        if (pluginIntent.component == null) {
-            return false
+        return if (pluginIntent.isPluginComponent()) {
+            delegator.startActivityForResult(pluginIntent.toContainerIntent(), requestCode)
+            true
+        } else {
+            false
         }
-        val className = pluginIntent.component.className
-        val packageName = packageNameMap[className] ?: return false
-        pluginIntent.component = ComponentName(packageName, className)
-        val containerActivity = getContainerActivity(pluginIntent.component)
-        val containerActivityIntent = Intent(pluginIntent)
-        containerActivityIntent.component = containerActivity
-
-        val bundleForPluginLoader = Bundle()
-
-        bundleForPluginLoader.putString(PLUGIN_ACTIVITY_CLASS_NAME_KEY, className)
-        bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[pluginIntent.component])
-
-        containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
-        delegator.startActivityForResult(containerActivityIntent, requestCode)
-        return true
     }
 
-     public fun convertActivityIntent(pluginIntent: Intent): Intent {
-        val className = pluginIntent.component.className
-        val packageName = packageNameMap[className] ?: return pluginIntent
-        pluginIntent.component = ComponentName(packageName, className)
-        val containerActivity = getContainerActivity(pluginIntent.component)
-        val containerActivityIntent = Intent(pluginIntent)
+    fun convertActivityIntent(pluginIntent: Intent): Intent {
+        return if (pluginIntent.isPluginComponent()) {
+            pluginIntent.toContainerIntent()
+        } else {
+            pluginIntent
+        }
+    }
+
+    private fun Intent.isPluginComponent(): Boolean {
+        if (component == null) {
+            return false
+        }
+        val className = component.className ?: return false
+        return packageNameMap.containsKey(className)
+    }
+
+    /**
+     * 构造pluginIntent对应的ContainerIntent
+     * 调用前必须先调用isPluginComponent判断pluginIntent确实一个插件内的组件
+     */
+    private fun Intent.toContainerIntent(): Intent {
+        val className = component.className
+        component = ComponentName(packageNameMap[className], className)
+        val containerActivity = getContainerActivity(component)
+        val containerActivityIntent = Intent(this)
         containerActivityIntent.component = containerActivity
 
         val bundleForPluginLoader = Bundle()
 
         bundleForPluginLoader.putString(PLUGIN_ACTIVITY_CLASS_NAME_KEY, className)
-        bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[pluginIntent.component])
+        bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[component])
 
         containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
-        return containerActivityIntent;
+        return containerActivityIntent
     }
 
     abstract val launcherActivity: ComponentName
