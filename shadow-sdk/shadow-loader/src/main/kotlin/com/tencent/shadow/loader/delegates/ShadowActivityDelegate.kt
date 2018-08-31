@@ -40,7 +40,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
     override fun getPluginActivity(): Any = mPluginActivity
 
-    override fun onCreate(bundle: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         mDI.inject(this, "todo_support_multi_apk")
         mDependenciesInjected = true
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
@@ -50,7 +50,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
             val emptyPluginActivity: PluginActivity = object : ShadowActivity() {}
             initPluginActivity(emptyPluginActivity)
             mPluginActivity = emptyPluginActivity
-            emptyPluginActivity.onCreate(bundle)
+            emptyPluginActivity.onCreate(savedInstanceState)
             mPluginActivityCreated = true
             return
         }
@@ -67,7 +67,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
             val pluginActivity = PluginActivity::class.java.cast(aClass.newInstance())
             initPluginActivity(pluginActivity)
             mPluginActivity = pluginActivity
-            pluginActivity.onCreate(bundle)
+            pluginActivity.onCreate(savedInstanceState)
             mPluginActivityCreated = true
         } catch (e: Exception) {
             throw RuntimeException(e)
