@@ -43,6 +43,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     private lateinit var mBundleForPluginLoader: Bundle
     private var mPluginActivityCreated = false
     private var mDependenciesInjected = false
+    private var mBeforeOnCreateOnWindowAttributesChangedCalledParams: WindowManager.LayoutParams? = null
 
     override fun setDelegator(hostActivityDelegator: HostActivityDelegator) {
         mHostActivityDelegator = hostActivityDelegator
@@ -78,6 +79,10 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
             val pluginActivity = PluginActivity::class.java.cast(aClass.newInstance())
             initPluginActivity(pluginActivity)
             mPluginActivity = pluginActivity
+
+            //Activity.onCreate调用之前应该先收到onWindowAttributesChanged。
+            pluginActivity.onWindowAttributesChanged(mBeforeOnCreateOnWindowAttributesChangedCalledParams)
+            mBeforeOnCreateOnWindowAttributesChangedCalledParams = null
 
             val pluginSavedInstanceState: Bundle? = savedInstanceState?.getBundle(PLUGIN_OUT_STATE_KEY)
             pluginSavedInstanceState?.classLoader = mPluginClassLoader
@@ -121,7 +126,6 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     }
 
     override fun onResume() {
-        mHostActivityDelegator.superOnResume()
         mPluginActivity.onResume()
     }
 
@@ -138,49 +142,39 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     }
 
     override fun onPause() {
-        mHostActivityDelegator.superOnPause()
         mPluginActivity.onPause()
     }
 
     override fun onStart() {
-        mHostActivityDelegator.superOnStart()
         mPluginActivity.onStart()
     }
 
     override fun onStop() {
-        mHostActivityDelegator.superOnStop()
         mPluginActivity.onStop()
     }
 
     override fun onDestroy() {
-        mHostActivityDelegator.superOnDestroy()
         mPluginActivity.onDestroy()
     }
 
-    override fun onConfigurationChanged(configuration: Configuration) {
-        mHostActivityDelegator.superOnConfigurationChanged(configuration)
-        mPluginActivity.onConfigurationChanged(configuration)
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        mPluginActivity.onConfigurationChanged(newConfig)
     }
 
-    override fun dispatchKeyEvent(keyEvent: KeyEvent): Boolean {
-        val dispatchKeyEvent = mPluginActivity.dispatchKeyEvent(keyEvent)
-        return when {
-            dispatchKeyEvent -> true
-            else -> mHostActivityDelegator.superDispatchKeyEvent(keyEvent)
-        }
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        return mPluginActivity.dispatchKeyEvent(event)
     }
 
     override fun finish() {
         mPluginActivity.finish()
-        mHostActivityDelegator.superFinish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         mPluginActivity.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun onChildTitleChanged(activity: Activity, charSequence: CharSequence) {
-        mPluginActivity.onChildTitleChanged(activity, charSequence)
+    override fun onChildTitleChanged(childActivity: Activity, title: CharSequence) {
+        mPluginActivity.onChildTitleChanged(childActivity, title)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
@@ -194,17 +188,15 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     }
 
     override fun onRestart() {
-        mHostActivityDelegator.superOnRestart()
         mPluginActivity.onRestart()
     }
 
     override fun onUserLeaveHint() {
-        mHostActivityDelegator.superOnUserLeaveHint()
         mPluginActivity.onUserLeaveHint()
     }
 
-    override fun onCreateThumbnail(bitmap: Bitmap, canvas: Canvas): Boolean {
-        return mPluginActivity.onCreateThumbnail(bitmap, canvas)
+    override fun onCreateThumbnail(outBitmap: Bitmap, canvas: Canvas): Boolean {
+        return mPluginActivity.onCreateThumbnail(outBitmap, canvas)
     }
 
     override fun onCreateDescription(): CharSequence? {
@@ -216,22 +208,22 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     }
 
     override fun onLowMemory() {
-        mHostActivityDelegator.superOnLowMemory()
         mPluginActivity.onLowMemory()
     }
 
-    override fun onTrackballEvent(motionEvent: MotionEvent): Boolean {
-        return mPluginActivity.onTrackballEvent(motionEvent)
+    override fun onTrackballEvent(event: MotionEvent): Boolean {
+        return mPluginActivity.onTrackballEvent(event)
     }
 
     override fun onUserInteraction() {
         mPluginActivity.onUserInteraction()
     }
 
-    override fun onWindowAttributesChanged(layoutParams: WindowManager.LayoutParams) {
-        mHostActivityDelegator.superOnWindowAttributesChanged(layoutParams)
+    override fun onWindowAttributesChanged(params: WindowManager.LayoutParams) {
         if (mPluginActivityCreated) {
-            mPluginActivity.onWindowAttributesChanged(layoutParams)
+            mPluginActivity.onWindowAttributesChanged(params)
+        } else {
+            mBeforeOnCreateOnWindowAttributesChangedCalledParams = params
         }
     }
 
@@ -239,61 +231,51 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         mPluginActivity.onContentChanged()
     }
 
-    override fun onWindowFocusChanged(b: Boolean) {
-        mPluginActivity.onWindowFocusChanged(b)
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        mPluginActivity.onWindowFocusChanged(hasFocus)
     }
 
     override fun onCreatePanelView(featureId: Int): View? {
         return mPluginActivity.onCreatePanelView(featureId)
     }
 
-    override fun onCreatePanelMenu(i: Int, menu: Menu): Boolean {
-        val onCreatePanelMenu = mPluginActivity.onCreatePanelMenu(i, menu)
-        return when {
-            onCreatePanelMenu -> true
-            else -> mHostActivityDelegator.superOnCreatePanelMenu(i, menu)
-        }
+    override fun onCreatePanelMenu(featureId: Int, menu: Menu): Boolean {
+        return mPluginActivity.onCreatePanelMenu(featureId, menu)
     }
 
-    override fun onPreparePanel(i: Int, view: View?, menu: Menu): Boolean {
-        val onPreparePanel = mPluginActivity.onPreparePanel(i, view, menu)
-        return when {
-            onPreparePanel -> true
-            else -> mHostActivityDelegator.superOnPreparePanel(i, view, menu)
-        }
+    override fun onPreparePanel(featureId: Int, view: View?, menu: Menu): Boolean {
+        return mPluginActivity.onPreparePanel(featureId, view, menu)
     }
 
-    override fun onPanelClosed(i: Int, menu: Menu) {
-        mHostActivityDelegator.superOnPanelClosed(i, menu)
-        mPluginActivity.onPanelClosed(i, menu)
+    override fun onPanelClosed(featureId: Int, menu: Menu) {
+        mPluginActivity.onPanelClosed(featureId, menu)
     }
 
-    override fun onCreateDialog(i: Int): Dialog {
-        return mPluginActivity.onCreateDialog(i)
+    override fun onCreateDialog(id: Int): Dialog {
+        return mPluginActivity.onCreateDialog(id)
     }
 
-    override fun onPrepareDialog(i: Int, dialog: Dialog) {
-        mHostActivityDelegator.superOnPrepareDialog(i, dialog)
-        mPluginActivity.onPrepareDialog(i, dialog)
+    override fun onPrepareDialog(id: Int, dialog: Dialog) {
+        mPluginActivity.onPrepareDialog(id, dialog)
     }
 
-    override fun onApplyThemeResource(theme: Resources.Theme, i: Int, b: Boolean) {
-        mHostActivityDelegator.superOnApplyThemeResource(theme, i, b)
+    override fun onApplyThemeResource(theme: Resources.Theme, resid: Int, first: Boolean) {
+        mHostActivityDelegator.superOnApplyThemeResource(theme, resid, first)
         if (mPluginActivityCreated) {
-            mPluginActivity.onApplyThemeResource(theme, i, b)
+            mPluginActivity.onApplyThemeResource(theme, resid, first)
         }
     }
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
+        //todo cubershi: 这里判断isFinishing在Container层面处理了非法Intent后应该就不需要了
         if (mHostActivityDelegator.isFinishing) {
             return null
         }
         return mPluginActivity.onCreateView(name, context, attrs)
     }
 
-    override fun startActivityFromChild(activity: Activity, intent: Intent, i: Int) {
-        mHostActivityDelegator.superStartActivityFromChild(activity, intent, i)
-        mPluginActivity.startActivityFromChild(activity, intent, i)
+    override fun startActivityFromChild(child: Activity, intent: Intent, requestCode: Int) {
+        mPluginActivity.startActivityFromChild(child, intent, requestCode)
     }
 
     override fun getClassLoader(): ClassLoader {

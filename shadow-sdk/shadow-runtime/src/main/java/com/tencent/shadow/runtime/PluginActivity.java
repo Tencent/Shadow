@@ -49,10 +49,11 @@ public abstract class PluginActivity extends ShadowContext {
     }
 
     public void onResume() {
-
+        mHostActivityDelegator.superOnResume();
     }
 
     public void onNewIntent(Intent intent) {
+        mHostActivityDelegator.superOnNewIntent(intent);
     }
 
     public void onSaveInstanceState(Bundle outState) {
@@ -60,22 +61,27 @@ public abstract class PluginActivity extends ShadowContext {
     }
 
     public void onPause() {
+        mHostActivityDelegator.superOnPause();
     }
 
     public void onStart() {
+        mHostActivityDelegator.superOnStart();
     }
 
     public void onStop() {
+        mHostActivityDelegator.superOnStop();
     }
 
     public void onDestroy() {
+        mHostActivityDelegator.superOnDestroy();
     }
 
     public void onConfigurationChanged(Configuration newConfig) {
+        mHostActivityDelegator.superOnConfigurationChanged(newConfig);
     }
 
     public boolean dispatchKeyEvent(KeyEvent event) {
-        return false;
+        return mHostActivityDelegator.superDispatchKeyEvent(event);
     }
 
     public void finish() {
@@ -83,9 +89,11 @@ public abstract class PluginActivity extends ShadowContext {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mHostActivityDelegator.superOnActivityResult(requestCode, resultCode, data);
     }
 
     public void onChildTitleChanged(Activity childActivity, CharSequence title) {
+        mHostActivityDelegator.superOnChildTitleChanged(childActivity, title);
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
@@ -97,48 +105,55 @@ public abstract class PluginActivity extends ShadowContext {
     }
 
     public void onRestart() {
+        mHostActivityDelegator.superOnRestart();
     }
 
     public void onUserLeaveHint() {
+        mHostActivityDelegator.superOnUserLeaveHint();
     }
 
     public boolean onCreateThumbnail(Bitmap outBitmap, Canvas canvas) {
-        return false;
+        return mHostActivityDelegator.superOnCreateThumbnail(outBitmap, canvas);
     }
 
     public CharSequence onCreateDescription() {
-        return null;
+        return mHostActivityDelegator.superOnCreateDescription();
     }
 
     public Object onRetainNonConfigurationInstance() {
-        return null;
+        return mHostActivityDelegator.superOnRetainNonConfigurationInstance();
     }
 
     public void onLowMemory() {
+        mHostActivityDelegator.superOnLowMemory();
     }
 
     public boolean onTrackballEvent(MotionEvent event) {
-        return false;
+        return mHostActivityDelegator.superOnTrackballEvent(event);
     }
 
     public void onUserInteraction() {
+        mHostActivityDelegator.superOnUserInteraction();
     }
 
     public void onWindowAttributesChanged(WindowManager.LayoutParams params) {
+        mHostActivityDelegator.superOnWindowAttributesChanged(params);
     }
 
     public void onContentChanged() {
+        mHostActivityDelegator.superOnContentChanged();
     }
 
     public void onWindowFocusChanged(boolean hasFocus) {
+        mHostActivityDelegator.superOnWindowFocusChanged(hasFocus);
     }
 
     public View onCreatePanelView(int featureId) {
-        return null;
+        return mHostActivityDelegator.superOnCreatePanelView(featureId);
     }
 
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
-        return false;
+        return mHostActivityDelegator.superOnCreatePanelMenu(featureId, menu);
     }
 
     public boolean onPreparePanel(int featureId, View view, Menu menu) {
@@ -146,23 +161,26 @@ public abstract class PluginActivity extends ShadowContext {
     }
 
     public void onPanelClosed(int featureId, Menu menu) {
+        mHostActivityDelegator.superOnPanelClosed(featureId, menu);
     }
 
     public Dialog onCreateDialog(int id) {
-        return null;
+        return mHostActivityDelegator.superOnCreateDialog(id);
     }
 
     public void onPrepareDialog(int id, Dialog dialog) {
+        mHostActivityDelegator.superOnPrepareDialog(id, dialog);
     }
 
     public void onApplyThemeResource(Resources.Theme theme, int resid, boolean first) {
     }
 
     public View onCreateView(String name, Context context, AttributeSet attrs) {
-        return null;
+        return mHostActivityDelegator.superOnCreateView(name, context, attrs);
     }
 
     public void startActivityFromChild(Activity child, Intent intent, int requestCode) {
+        mHostActivityDelegator.superStartActivityFromChild(child, intent, requestCode);
     }
 
     public LayoutInflater getLayoutInflater() {
@@ -176,10 +194,16 @@ public abstract class PluginActivity extends ShadowContext {
         mHostActivityDelegator.superOnBackPressed();
     }
 
-    public void onAttachedToWindow() {}
+    public void onAttachedToWindow() {
+        mHostActivityDelegator.superOnAttachedToWindow();
+    }
 
 
-    public void onDetachedFromWindow(){}
+    public void onDetachedFromWindow() {
+        mHostActivityDelegator.superOnDetachedFromWindow();
+    }
 
-    public void onAttachFragment(Fragment fragment){}
+    public void onAttachFragment(Fragment fragment) {
+        mHostActivityDelegator.superOnAttachFragment(fragment);
+    }
 }
