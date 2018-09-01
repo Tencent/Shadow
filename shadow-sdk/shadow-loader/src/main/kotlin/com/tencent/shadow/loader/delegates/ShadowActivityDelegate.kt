@@ -16,8 +16,12 @@ import android.view.*
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.loader.infos.PluginActivityInfo
+import com.tencent.shadow.loader.infos.PluginInfo.Companion.PART_KEY
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
+import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_INFO_KEY
+import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_EXTRAS_BUNDLE_KEY
+import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_LOADER_BUNDLE_KEY
 import com.tencent.shadow.runtime.FixedContextLayoutInflater
 import com.tencent.shadow.runtime.PluginActivity
 import com.tencent.shadow.runtime.ShadowActivity
@@ -29,8 +33,14 @@ import com.tencent.shadow.runtime.ShadowActivity
  * @author cubershi
  */
 class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, ShadowDelegate() {
+    companion object {
+        const val PLUGIN_OUT_STATE_KEY = "PLUGIN_OUT_STATE_KEY"
+    }
+
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
+    private lateinit var mPartKey: String
+    private lateinit var mBundleForPluginLoader: Bundle
     private var mPluginActivityCreated = false
     private var mDependenciesInjected = false
 
@@ -41,25 +51,26 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun getPluginActivity(): Any = mPluginActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        mDI.inject(this, "todo_support_multi_apk")
+        if (checkIllegalIntent()) return
+
+        val pluginInitBundle = if (savedInstanceState == null) mHostActivityDelegator.intent.extras else savedInstanceState
+
+        val partKey = pluginInitBundle.getString(PART_KEY)!!
+        mPartKey = partKey
+        mDI.inject(this, partKey)
         mDependenciesInjected = true
-        mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
-        if (mHostActivityDelegator.intent.hasExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY).not()) {
-            mHostActivityDelegator.superFinish()
-            val emptyPluginActivity: PluginActivity = object : ShadowActivity() {}
-            initPluginActivity(emptyPluginActivity)
-            mPluginActivity = emptyPluginActivity
-            emptyPluginActivity.onCreate(savedInstanceState)
-            mPluginActivityCreated = true
-            return
-        }
-
-        val bundleForPluginLoader = mHostActivityDelegator.intent.getBundleExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY)
+        val bundleForPluginLoader = pluginInitBundle.getBundle(PLUGIN_LOADER_BUNDLE_KEY)!!
+        mBundleForPluginLoader = bundleForPluginLoader
         bundleForPluginLoader.classLoader = this.javaClass.classLoader
-
         val pluginActivityClassName = bundleForPluginLoader.getString(PLUGIN_ACTIVITY_CLASS_NAME_KEY)
-        val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(PluginActivitiesManager.PLUGIN_ACTIVITY_INFO_KEY)
+        val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(PLUGIN_ACTIVITY_INFO_KEY)
+
+        if (savedInstanceState == null) {
+            val pluginExtras: Bundle? = pluginInitBundle.getBundle(PLUGIN_EXTRAS_BUNDLE_KEY)
+            mHostActivityDelegator.intent.replaceExtras(pluginExtras)
+        }
+        mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
         mHostActivityDelegator.setTheme(pluginActivityInfo.themeResource)
         try {
@@ -67,10 +78,31 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
             val pluginActivity = PluginActivity::class.java.cast(aClass.newInstance())
             initPluginActivity(pluginActivity)
             mPluginActivity = pluginActivity
-            pluginActivity.onCreate(savedInstanceState)
+
+            val pluginSavedInstanceState: Bundle? = savedInstanceState?.getBundle(PLUGIN_OUT_STATE_KEY)
+            pluginSavedInstanceState?.classLoader = mPluginClassLoader
+            pluginActivity.onCreate(pluginSavedInstanceState)
             mPluginActivityCreated = true
         } catch (e: Exception) {
             throw RuntimeException(e)
+        }
+    }
+
+    /**
+     * @return true表示Intent不合法，应直接return onCreate方法。
+     */
+    private fun checkIllegalIntent(): Boolean {
+        //todo cubershi: 这里由于没有DI注入依赖已经不能正常工作。而且这个初始化一个empty的PluginActivity的做法也比较重，应该改在Container中做这个事。
+        if (mHostActivityDelegator.intent.hasExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY).not()) {
+            mHostActivityDelegator.superFinish()
+            val emptyPluginActivity: PluginActivity = object : ShadowActivity() {}
+            initPluginActivity(emptyPluginActivity)
+            mPluginActivity = emptyPluginActivity
+            emptyPluginActivity.onCreate(null)
+            mPluginActivityCreated = true
+            return true
+        } else {
+            return false
         }
     }
 
@@ -97,9 +129,12 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         mPluginActivity.onNewIntent(intent)
     }
 
-    override fun onSaveInstanceState(bundle: Bundle) {
-        mHostActivityDelegator.superOnSaveInstanceState(bundle)
-        mPluginActivity.onSaveInstanceState(bundle)
+    override fun onSaveInstanceState(outState: Bundle) {
+        val pluginOutState = Bundle(mPluginClassLoader)
+        mPluginActivity.onSaveInstanceState(pluginOutState)
+        outState.putBundle(PLUGIN_OUT_STATE_KEY, pluginOutState)
+        outState.putString(PART_KEY, mPartKey)
+        outState.putBundle(PLUGIN_LOADER_BUNDLE_KEY, mBundleForPluginLoader)
     }
 
     override fun onPause() {
@@ -148,14 +183,14 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         mPluginActivity.onChildTitleChanged(activity, charSequence)
     }
 
-    override fun onRestoreInstanceState(bundle: Bundle?) {
-        mHostActivityDelegator.superOnRestoreInstanceState(bundle)
-        mPluginActivity.onRestoreInstanceState(bundle)
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        val pluginSavedInstanceState: Bundle? = savedInstanceState?.getBundle(PLUGIN_OUT_STATE_KEY)
+        mPluginActivity.onRestoreInstanceState(pluginSavedInstanceState)
     }
 
-    override fun onPostCreate(bundle: Bundle?) {
-        mHostActivityDelegator.superOnPostCreate(bundle)
-        mPluginActivity.onPostCreate(bundle)
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        val pluginSavedInstanceState: Bundle? = savedInstanceState?.getBundle(PLUGIN_OUT_STATE_KEY)
+        mPluginActivity.onPostCreate(pluginSavedInstanceState)
     }
 
     override fun onRestart() {

@@ -7,12 +7,14 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity
 import com.tencent.shadow.loader.infos.PluginActivityInfo
 import com.tencent.shadow.loader.infos.PluginInfo
+import com.tencent.shadow.loader.infos.PluginInfo.Companion.PART_KEY
 import com.tencent.shadow.runtime.ShadowContext
 
 abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
     companion object {
         val AVOID_CLASS_VERIFY_EXCEPTION = PluginContainerActivity::class
         const val PLUGIN_LOADER_BUNDLE_KEY = "PLUGIN_LOADER_BUNDLE_KEY"
+        const val PLUGIN_EXTRAS_BUNDLE_KEY = "PLUGIN_EXTRAS_BUNDLE_KEY"
         const val PLUGIN_ACTIVITY_INFO_KEY = "PLUGIN_ACTIVITY_INFO_KEY"
         const val PLUGIN_ACTIVITY_CLASS_NAME_KEY = "PLUGIN_ACTIVITY_CLASS_NAME_KEY"
     }
@@ -96,6 +98,10 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
         val className = component.className
         component = ComponentName(packageNameMap[className], className)
         val containerActivity = getContainerActivity(component)
+
+        val pluginExtras: Bundle? = extras
+        replaceExtras(null as Bundle?)
+
         val containerActivityIntent = Intent(this)
         containerActivityIntent.component = containerActivity
 
@@ -105,6 +111,8 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
         bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[component])
 
         containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
+        containerActivityIntent.putExtra(PART_KEY, "part-test-1")
+        containerActivityIntent.putExtra(PLUGIN_EXTRAS_BUNDLE_KEY, pluginExtras)
         return containerActivityIntent
     }
 

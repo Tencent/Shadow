@@ -56,6 +56,7 @@ public abstract class PluginActivity extends ShadowContext {
     }
 
     public void onSaveInstanceState(Bundle outState) {
+        mHostActivityDelegator.superOnSaveInstanceState(outState);
     }
 
     public void onPause() {
@@ -88,9 +89,11 @@ public abstract class PluginActivity extends ShadowContext {
     }
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
+        mHostActivityDelegator.superOnRestoreInstanceState(savedInstanceState);
     }
 
     public void onPostCreate(Bundle savedInstanceState) {
+        mHostActivityDelegator.superOnPostCreate(savedInstanceState);
     }
 
     public void onRestart() {
