@@ -30,19 +30,33 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     private val mExecutorService = Executors.newSingleThreadExecutor()
 
+    /**
+     * loadPlugin方法是在子线程被调用的。而getHostActivityDelegate方法是在主线程被调用的。
+     * 两个方法需要传递数据（主要是PluginParts），因此需要同步。
+     */
     private val mLock = ReentrantLock()
 
     /**
      * 多插件Map
      * key: partKey
      * value: PluginParts
+     * @GuardedBy("mLock")
      */
     private val mPluginPartsMap = hashMapOf<String, PluginParts>()
 
+    /**
+     * @GuardedBy("mLock")
+     */
     abstract fun getBusinessPluginActivitiesManager(): PluginActivitiesManager
 
+    /**
+     * @GuardedBy("mLock")
+     */
     abstract fun getBusinessPluginServiceManager(): PluginServicesManager
 
+    /**
+     * @GuardedBy("mLock")
+     */
     abstract fun getBusinessPluginReceiverManger(hostAppContext: Context): PluginReceiverManager
 
     private val mPendingIntentManager: PendingIntentManager = PendingIntentManager(this)
