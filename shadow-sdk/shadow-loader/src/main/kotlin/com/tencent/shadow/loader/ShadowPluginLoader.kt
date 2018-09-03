@@ -36,8 +36,6 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     private lateinit var mPluginResources: Resources
 
-    private lateinit var mHostAppContext: Context
-
     abstract fun getBusinessPluginActivitiesManager(): PluginActivitiesManager
 
     abstract fun getBusinessPluginServiceManager(): PluginServicesManager
@@ -87,7 +85,6 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                     mPluginResources = resources
                     mPluginApplication = shadowApplication
                     mPluginPackageManager = pluginPackageManager
-                    mHostAppContext = hostAppContext
                 }
 
                 ShadowRunningPlugin(shadowApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
