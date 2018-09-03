@@ -32,19 +32,18 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     private val mLock = ReentrantLock()
 
-    private lateinit var mPluginClassLoader: PluginClassLoader
-
-    private lateinit var mPluginResources: Resources
+    /**
+     * 多插件Map
+     * key: partKey
+     * value: PluginParts
+     */
+    private val mPluginPartsMap = hashMapOf<String, PluginParts>()
 
     abstract fun getBusinessPluginActivitiesManager(): PluginActivitiesManager
 
     abstract fun getBusinessPluginServiceManager(): PluginServicesManager
 
     abstract fun getBusinessPluginReceiverManger(hostAppContext: Context): PluginReceiverManager
-
-    private lateinit var mPluginApplication: ShadowApplication
-
-    private lateinit var mPluginPackageManager: PluginPackageManager
 
     private val mPendingIntentManager: PendingIntentManager = PendingIntentManager(this)
 
@@ -81,10 +80,12 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                 mLock.withLock {
                     getBusinessPluginActivitiesManager().addPluginApkInfo(pluginInfo)
                     getBusinessPluginServiceManager().addPluginApkInfo(pluginInfo)
-                    mPluginClassLoader = pluginClassLoader
-                    mPluginResources = resources
-                    mPluginApplication = shadowApplication
-                    mPluginPackageManager = pluginPackageManager
+                    mPluginPartsMap["todo_support_multi_apk"] = PluginParts(
+                            pluginPackageManager,
+                            shadowApplication,
+                            pluginClassLoader,
+                            resources
+                    )
                 }
 
                 ShadowRunningPlugin(shadowApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
@@ -111,10 +112,11 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     override fun inject(delegate: ShadowDelegate, partKey: String) {
         mLock.withLock {
-            delegate.inject(mPluginPackageManager)
-            delegate.inject(mPluginApplication)
-            delegate.inject(mPluginClassLoader)
-            delegate.inject(mPluginResources)
+            val pluginParts = mPluginPartsMap[partKey]!!
+            delegate.inject(pluginParts.packageManager)
+            delegate.inject(pluginParts.application)
+            delegate.inject(pluginParts.classLoader)
+            delegate.inject(pluginParts.resources)
             delegate.inject(getBusinessPluginActivitiesManager())
             delegate.inject(getBusinessPluginServiceManager())
             delegate.inject(mPendingIntentManager)
@@ -126,3 +128,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
     }
 }
+
+class PluginParts(val packageManager: PluginPackageManager,
+                  val application: ShadowApplication,
+                  val classLoader: PluginClassLoader,
+                  val resources: Resources)

@@ -113,7 +113,7 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
 
         containerActivityIntent.putExtra(PluginContainerActivity.SHADOW_VERSION_KEY, BuildConfig.VERSION_NAME)
         containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
-        containerActivityIntent.putExtra(PART_KEY, "part-test-1")
+        containerActivityIntent.putExtra(PART_KEY, "todo_support_multi_apk")
         containerActivityIntent.putExtra(PLUGIN_EXTRAS_BUNDLE_KEY, pluginExtras)
         return containerActivityIntent
     }
