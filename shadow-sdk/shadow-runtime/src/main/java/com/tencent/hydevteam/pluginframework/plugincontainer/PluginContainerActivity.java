@@ -69,6 +69,9 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toolbar;
 
+import com.tencent.shadow.runtime.BuildConfig;
+import com.tencent.shadow.runtime.ShadowActivity;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -87,8 +90,9 @@ import java.util.List;
  */
 public class PluginContainerActivity extends Activity implements HostActivity, HostActivityDelegator {
     private static final String TAG = "PluginContainerActivity";
+    public static final String SHADOW_VERSION_KEY = "SHADOW_VERSION_KEY";
 
-    final HostActivityDelegate hostActivityDelegate;
+    HostActivityDelegate hostActivityDelegate;
 
     private boolean isBeforeOnCreate = true;
 
@@ -105,13 +109,25 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     final public Object getPluginActivity() {
-        return hostActivityDelegate.getPluginActivity();
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.getPluginActivity();
+        } else {
+            //在遇到IllegalIntent时hostActivityDelegate==null。需要返回一个空的Activity避免Crash。
+            return new ShadowActivity() {
+            };
+        }
     }
 
     @Override
     final protected void onCreate(Bundle savedInstanceState) {
         isBeforeOnCreate = false;
         mHostTheme = null;//释放资源
+
+        boolean illegalIntent = isIllegalIntent(savedInstanceState);
+        if (illegalIntent) {
+            hostActivityDelegate = null;
+            Log.e(TAG, "illegalIntent savedInstanceState==" + savedInstanceState + " getIntent().getExtras()==" + getIntent().getExtras());
+        }
 
         if (hostActivityDelegate != null) {
             hostActivityDelegate.onCreate(savedInstanceState);
@@ -122,6 +138,26 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             finish();
             System.exit(0);
         }
+    }
+
+    /**
+     * IllegalIntent指的是这些情况下的启动：
+     * 1.插件版本变化之后，残留于系统中的PendingIntent或系统因回收内存杀死进程残留的任务栈而启动。
+     * 由于插件版本变化，PluginLoader逻辑可能不一致，Intent中的参数可能不能满足新代码的启动条件。
+     * 2.外部的非法启动，无法确定一个插件的Activity。
+     *
+     * @param savedInstanceState onCreate时系统还回来的savedInstanceState
+     * @return <code>true</code>表示这次启动不是我们预料的，需要尽早finish并退出进程。
+     */
+    private boolean isIllegalIntent(Bundle savedInstanceState) {
+        Bundle extras = getIntent().getExtras();
+        if (extras == null && savedInstanceState == null) {
+            return true;
+        }
+        Bundle bundle;
+        bundle = savedInstanceState == null ? extras : savedInstanceState;
+        String shadowVersion = bundle.getString(SHADOW_VERSION_KEY);
+        return !BuildConfig.VERSION_NAME.equals(shadowVersion);
     }
 
     @Override
@@ -149,6 +185,8 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         } else {
             super.onSaveInstanceState(outState);
         }
+        //避免插件setIntent清空掉SHADOW_VERSION_KEY
+        outState.putString(PluginContainerActivity.SHADOW_VERSION_KEY, BuildConfig.VERSION_NAME);
     }
 
     @Override

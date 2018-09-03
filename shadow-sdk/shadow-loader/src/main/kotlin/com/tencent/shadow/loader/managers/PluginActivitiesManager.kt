@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity
+import com.tencent.shadow.loader.BuildConfig
 import com.tencent.shadow.loader.infos.PluginActivityInfo
 import com.tencent.shadow.loader.infos.PluginInfo
 import com.tencent.shadow.loader.infos.PluginInfo.Companion.PART_KEY
@@ -110,6 +111,7 @@ abstract class PluginActivitiesManager : ShadowContext.PluginActivityLauncher {
         bundleForPluginLoader.putString(PLUGIN_ACTIVITY_CLASS_NAME_KEY, className)
         bundleForPluginLoader.putParcelable(PLUGIN_ACTIVITY_INFO_KEY, activityInfoMap[component])
 
+        containerActivityIntent.putExtra(PluginContainerActivity.SHADOW_VERSION_KEY, BuildConfig.VERSION_NAME)
         containerActivityIntent.putExtra(PLUGIN_LOADER_BUNDLE_KEY, bundleForPluginLoader)
         containerActivityIntent.putExtra(PART_KEY, "part-test-1")
         containerActivityIntent.putExtra(PLUGIN_EXTRAS_BUNDLE_KEY, pluginExtras)

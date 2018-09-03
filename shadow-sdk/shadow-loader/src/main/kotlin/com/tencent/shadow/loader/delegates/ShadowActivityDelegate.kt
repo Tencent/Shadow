@@ -17,14 +17,12 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.loader.infos.PluginActivityInfo
 import com.tencent.shadow.loader.infos.PluginInfo.Companion.PART_KEY
-import com.tencent.shadow.loader.managers.PluginActivitiesManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
 import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_INFO_KEY
 import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_EXTRAS_BUNDLE_KEY
 import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_LOADER_BUNDLE_KEY
 import com.tencent.shadow.runtime.FixedContextLayoutInflater
 import com.tencent.shadow.runtime.PluginActivity
-import com.tencent.shadow.runtime.ShadowActivity
 
 /**
  * 壳子Activity与插件Activity转调关系的实现类
@@ -52,8 +50,6 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun getPluginActivity(): Any = mPluginActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        if (checkIllegalIntent()) return
-
         val pluginInitBundle = if (savedInstanceState == null) mHostActivityDelegator.intent.extras else savedInstanceState
 
         val partKey = pluginInitBundle.getString(PART_KEY)!!
@@ -90,24 +86,6 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
             mPluginActivityCreated = true
         } catch (e: Exception) {
             throw RuntimeException(e)
-        }
-    }
-
-    /**
-     * @return true表示Intent不合法，应直接return onCreate方法。
-     */
-    private fun checkIllegalIntent(): Boolean {
-        //todo cubershi: 这里由于没有DI注入依赖已经不能正常工作。而且这个初始化一个empty的PluginActivity的做法也比较重，应该改在Container中做这个事。
-        if (mHostActivityDelegator.intent.hasExtra(PluginActivitiesManager.PLUGIN_LOADER_BUNDLE_KEY).not()) {
-            mHostActivityDelegator.superFinish()
-            val emptyPluginActivity: PluginActivity = object : ShadowActivity() {}
-            initPluginActivity(emptyPluginActivity)
-            mPluginActivity = emptyPluginActivity
-            emptyPluginActivity.onCreate(null)
-            mPluginActivityCreated = true
-            return true
-        } else {
-            return false
         }
     }
 
@@ -267,10 +245,6 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     }
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
-        //todo cubershi: 这里判断isFinishing在Container层面处理了非法Intent后应该就不需要了
-        if (mHostActivityDelegator.isFinishing) {
-            return null
-        }
         return mPluginActivity.onCreateView(name, context, attrs)
     }
 
