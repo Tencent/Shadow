@@ -5,9 +5,13 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
 import android.util.Pair
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.KEY_CLASS_NAME
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.KEY_PKG_NAME
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.OPT_EXTRA_KEY
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.Operate.*
 import com.tencent.shadow.loader.infos.PluginInfo
 import com.tencent.shadow.loader.infos.PluginServiceInfo
-import com.tencent.shadow.loader.managers.PluginServicesManager.Operate.*
 import com.tencent.shadow.runtime.ShadowContext
 
 /**
@@ -16,14 +20,7 @@ import com.tencent.shadow.runtime.ShadowContext
 abstract class PluginServicesManager : ShadowContext.PluginServiceOperator {
     companion object {
         val AVOID_CLASS_VERIFY_EXCEPTION = PluginServicesManager::class
-        const val KEY_PKG_NAME = "packageName"
-        const val KEY_CLASS_NAME = "className"
-        const val KEY_OPT_NAME = "ServiceOpt"
         const val KEY_INTENT_KEY = "intentKey"
-    }
-
-    enum class Operate {
-        START, STOP, BIND, UNBIND
     }
 
     /**
@@ -74,7 +71,7 @@ abstract class PluginServicesManager : ShadowContext.PluginServiceOperator {
         return true
     }
 
-    public fun getContainerServiceIntent(intent: Intent, opt: Operate): Intent? {
+    public fun getContainerServiceIntent(intent: Intent, opt: ServiceContainerReuseDelegate.Companion.Operate): Intent? {
         val className = intent.component.className
         val packageName = packageNameMap[className] ?: return null
         intent.component = ComponentName(packageName, className)
@@ -84,10 +81,10 @@ abstract class PluginServicesManager : ShadowContext.PluginServiceOperator {
         containerServiceIntent.putExtra(KEY_PKG_NAME, packageName)
         containerServiceIntent.putExtra(KEY_CLASS_NAME, className)
         when (opt) {
-            START -> containerServiceIntent.putExtra(KEY_OPT_NAME, "start")
-            STOP -> containerServiceIntent.putExtra(KEY_OPT_NAME, "stop")
-            BIND -> containerServiceIntent.putExtra(KEY_OPT_NAME, "bind")
-            UNBIND -> containerServiceIntent.putExtra(KEY_OPT_NAME, "unbind")
+            START -> containerServiceIntent.putExtra(OPT_EXTRA_KEY, START.name)
+            STOP -> containerServiceIntent.putExtra(OPT_EXTRA_KEY, STOP.name)
+            BIND -> containerServiceIntent.putExtra(OPT_EXTRA_KEY, BIND.name)
+            UNBIND -> containerServiceIntent.putExtra(OPT_EXTRA_KEY, UNBIND.name)
         }
         return containerServiceIntent
     }
@@ -111,7 +108,7 @@ abstract class PluginServicesManager : ShadowContext.PluginServiceOperator {
 
     override fun unbindService(context: ShadowContext, conn: ServiceConnection): Pair<Boolean, Unit> {
         var intent = intentMap[conn] ?: return Pair(false, Unit)
-        var unBindIntent = intent.putExtra(KEY_OPT_NAME, "unbind")
+        var unBindIntent = intent.putExtra(OPT_EXTRA_KEY, UNBIND.name)
         return Pair(doServiceOpt(context, unBindIntent), Unit)
     }
 

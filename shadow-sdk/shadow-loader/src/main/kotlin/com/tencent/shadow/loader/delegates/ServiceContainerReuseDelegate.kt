@@ -7,6 +7,8 @@ import android.content.res.Configuration
 import android.os.IBinder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.KEY_CLASS_NAME
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.KEY_PKG_NAME
 import java.util.*
 
 /**
@@ -21,7 +23,13 @@ import java.util.*
  */
 class ServiceContainerReuseDelegate(val mDI: DI) : HostServiceDelegate {
     companion object {
-        private val OPT_EXTRA_KEY = "ServiceOpt"
+        const val OPT_EXTRA_KEY = "ServiceOpt"
+        const val KEY_PKG_NAME = "packageName"
+        const val KEY_CLASS_NAME = "className"
+
+        enum class Operate {
+            START, STOP, BIND, UNBIND
+        }
     }
 
     private lateinit var mHostServiceDelegator: HostServiceDelegator
@@ -67,15 +75,15 @@ class ServiceContainerReuseDelegate(val mDI: DI) : HostServiceDelegate {
         }
         val opt = intent.getStringExtra(OPT_EXTRA_KEY)
         when (opt) {
-            "stop" -> {
+            Operate.STOP.name -> {
                 mShadowServiceDelegateManager.stopDelegate(intent)
                 return Service.START_NOT_STICKY
             }
-            "bind" -> {
+            Operate.BIND.name -> {
                 mShadowServiceDelegateManager.bindToDelegate(intent)
                 return Service.START_NOT_STICKY
             }
-            "unbind" -> {
+            Operate.UNBIND.name -> {
                 mShadowServiceDelegateManager.unbindToDelegate(intent)
                 return Service.START_NOT_STICKY
             }
@@ -236,9 +244,4 @@ class ShadowServiceDelegateManager(private val mDI: DI,
         }
     }
 
-    companion object {
-        // hardcode了sixgod中的intent参数
-        private val KEY_PKG_NAME = "packageName"
-        private val KEY_CLASS_NAME = "className"
-    }
 }

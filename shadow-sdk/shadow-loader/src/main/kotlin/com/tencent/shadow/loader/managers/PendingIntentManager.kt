@@ -2,6 +2,7 @@ package com.tencent.shadow.loader.managers
 
 import android.content.Intent
 import com.tencent.shadow.loader.ShadowPluginLoader
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.Operate.START
 import com.tencent.shadow.runtime.ShadowContext
 
 class PendingIntentManager(private val mShadowPluginLoader: ShadowPluginLoader) : ShadowContext.PendingIntentConverter {
@@ -11,7 +12,7 @@ class PendingIntentManager(private val mShadowPluginLoader: ShadowPluginLoader) 
     }
 
     override fun convertPluginServiceIntent(pluginIntent: Intent): Intent {
-        return mShadowPluginLoader.getBusinessPluginServiceManager().getContainerServiceIntent(pluginIntent, PluginServicesManager.Operate.START)
+        return mShadowPluginLoader.getBusinessPluginServiceManager().getContainerServiceIntent(pluginIntent, START)
                 ?: pluginIntent
     }
 
