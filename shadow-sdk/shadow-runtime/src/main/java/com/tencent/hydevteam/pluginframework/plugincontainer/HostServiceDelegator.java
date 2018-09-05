@@ -1,6 +1,7 @@
 package com.tencent.hydevteam.pluginframework.plugincontainer;
 
 import android.content.Context;
+import android.content.Intent;
 
 /**
  * HostService作为委托者的接口。主要提供它的委托方法的super方法，
@@ -12,6 +13,8 @@ public interface HostServiceDelegator {
     void superOnCreate();
 
     void superStopSelf();
+
+    boolean superOnUnbind(Intent intent);
 
     Context getApplicationContext();
 

@@ -12,9 +12,9 @@ import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.loader.blocs.*
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.delegates.DI
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.loader.delegates.ShadowActivityDelegate
 import com.tencent.shadow.loader.delegates.ShadowDelegate
-import com.tencent.shadow.loader.delegates.ShadowServiceDelegate
 import com.tencent.shadow.loader.managers.*
 import com.tencent.shadow.runtime.ShadowApplication
 import org.slf4j.LoggerFactory
@@ -120,7 +120,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     }
 
     override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate? {
-        return ShadowServiceDelegate(this)
+        return ServiceContainerReuseDelegate(this)
     }
 
     override fun inject(delegate: ShadowDelegate, partKey: String) {
