@@ -2,7 +2,10 @@ package com.tencent.shadow.loader.infos
 
 import android.os.Bundle
 
-data class PluginInfo(val packageName: String, val applicationClassName: String) {
+data class PluginInfo(val partKey: String,
+                      val packageName: String,
+                      val applicationClassName: String
+) {
     companion object {
         const val PART_KEY = "PART_KEY"
     }

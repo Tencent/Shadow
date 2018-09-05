@@ -27,8 +27,16 @@ object ParsePluginApkBloc {
                 archiveFilePath,
                 GET_ACTIVITIES or GET_META_DATA or GET_SERVICES
         )
+
+        /*
+        partKey的作用是用来区分一个Component是来自于哪个插件apk的，
+        因此这里用插件apk的路径作为partKey从目前来看是满足需求的。
+         */
+        val partKey = archiveFilePath
+
         val pluginInfo = PluginInfo(
-                packageArchiveInfo.applicationInfo.packageName
+                partKey
+                , packageArchiveInfo.applicationInfo.packageName
                 , packageArchiveInfo.applicationInfo.className
         )
         packageArchiveInfo.activities.forEach {
