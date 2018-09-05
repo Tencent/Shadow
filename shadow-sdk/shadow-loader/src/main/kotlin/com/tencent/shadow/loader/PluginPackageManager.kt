@@ -12,6 +12,33 @@ import android.os.UserHandle
 import com.tencent.shadow.loader.infos.PluginInfo
 
 class PluginPackageManager(val pluginInfo: PluginInfo) : PackageManager() {
+    override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo {
+        val applicationInfo = ApplicationInfo()
+        applicationInfo.metaData = pluginInfo.metaData
+        return applicationInfo
+    }
+
+    override fun getPackageInfo(packageName: String?, flags: Int): PackageInfo? {
+        if (pluginInfo.packageName == packageName) {
+            val info = PackageInfo()
+            info.versionCode = pluginInfo.versionCode
+            info.versionName = pluginInfo.versionName
+            return info;
+        }
+        return null;
+    }
+
+    override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo {
+        val find = pluginInfo.mActivities.find {
+            it.className == component.className
+        }
+        if (find == null) {
+            throw NameNotFoundException(component.className)
+        } else {
+            return find.activityInfo
+        }
+    }
+
     override fun canonicalToCurrentPackageNames(names: Array<out String>?): Array<String> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -176,12 +203,6 @@ class PluginPackageManager(val pluginInfo: PluginInfo) : PackageManager() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo {
-        val applicationInfo = ApplicationInfo()
-        applicationInfo.metaData = pluginInfo.metaData
-        return applicationInfo
-    }
-
     override fun resolveActivity(intent: Intent?, flags: Int): ResolveInfo {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -192,16 +213,6 @@ class PluginPackageManager(val pluginInfo: PluginInfo) : PackageManager() {
 
     override fun getXml(packageName: String?, resid: Int, appInfo: ApplicationInfo?): XmlResourceParser {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getPackageInfo(packageName: String?, flags: Int): PackageInfo? {
-        if(pluginInfo.packageName == packageName){
-            val info = PackageInfo()
-            info.versionCode = pluginInfo.versionCode
-            info.versionName = pluginInfo.versionName
-            return info;
-        }
-        return null;
     }
 
     override fun getPackageInfo(versionedPackage: VersionedPackage?, flags: Int): PackageInfo {
@@ -318,17 +329,6 @@ class PluginPackageManager(val pluginInfo: PluginInfo) : PackageManager() {
 
     override fun getAllPermissionGroups(flags: Int): MutableList<PermissionGroupInfo> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo {
-        val find = pluginInfo.mActivities.find {
-            it.className == component.className
-        }
-        if (find == null) {
-            throw NameNotFoundException(component.className)
-        } else {
-            return find.activityInfo
-        }
     }
 
     override fun getNameForUid(uid: Int): String {
