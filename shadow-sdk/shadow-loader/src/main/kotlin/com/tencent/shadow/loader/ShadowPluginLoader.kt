@@ -15,10 +15,7 @@ import com.tencent.shadow.loader.delegates.DI
 import com.tencent.shadow.loader.delegates.ShadowActivityDelegate
 import com.tencent.shadow.loader.delegates.ShadowDelegate
 import com.tencent.shadow.loader.delegates.ShadowServiceDelegate
-import com.tencent.shadow.loader.managers.PendingIntentManager
-import com.tencent.shadow.loader.managers.PluginActivitiesManager
-import com.tencent.shadow.loader.managers.PluginReceiverManager
-import com.tencent.shadow.loader.managers.PluginServicesManager
+import com.tencent.shadow.loader.managers.*
 import com.tencent.shadow.runtime.ShadowApplication
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Callable
@@ -63,6 +60,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     abstract val mExceptionReporter: Reporter
 
+    private val mCommonPluginPackageManager = CommonPluginPackageManager()
+
     /**
      * 插件将要使用的so的ABI，Loader会将其从apk中解压出来。
      * 如果插件不需要so，则返回""空字符串。
@@ -75,7 +74,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
             val submit = mExecutorService.submit(Callable<RunningPlugin> {
                 //todo cubershi 下面这些步骤可能可以并发起来.
                 val pluginInfo = ParsePluginApkBloc.parse(installedPlugin.pluginFile.absolutePath, hostAppContext)
-                val pluginPackageManager = PluginPackageManager(pluginInfo)
+                val pluginPackageManager = PluginPackageManager(mCommonPluginPackageManager, pluginInfo)
                 val soDir = CopySoBloc.copySo(installedPlugin, mAbi)
                 val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir)
                 val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)

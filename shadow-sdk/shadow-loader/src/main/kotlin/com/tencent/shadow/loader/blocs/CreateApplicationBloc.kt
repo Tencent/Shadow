@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Handler
 import android.os.Looper
-import com.tencent.shadow.loader.PluginPackageManager
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.exceptions.CreateApplicationException
 import com.tencent.shadow.loader.managers.PendingIntentManager
 import com.tencent.shadow.loader.managers.PluginActivitiesManager
+import com.tencent.shadow.loader.managers.PluginPackageManager
 import com.tencent.shadow.loader.managers.PluginServicesManager
 import com.tencent.shadow.runtime.ShadowApplication
 import java.util.concurrent.CountDownLatch

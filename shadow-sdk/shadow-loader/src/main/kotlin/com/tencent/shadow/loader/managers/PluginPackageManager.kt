@@ -1,4 +1,4 @@
-package com.tencent.shadow.loader
+package com.tencent.shadow.loader.managers
 
 import android.content.ComponentName
 import android.content.Intent
@@ -11,7 +11,8 @@ import android.graphics.drawable.Drawable
 import android.os.UserHandle
 import com.tencent.shadow.loader.infos.PluginInfo
 
-class PluginPackageManager(val pluginInfo: PluginInfo) : PackageManager() {
+class PluginPackageManager(val commonPluginPackageManager: CommonPluginPackageManager,
+                           val pluginInfo: PluginInfo) : PackageManager() {
     override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo {
         val applicationInfo = ApplicationInfo()
         applicationInfo.metaData = pluginInfo.metaData
@@ -33,7 +34,7 @@ class PluginPackageManager(val pluginInfo: PluginInfo) : PackageManager() {
             it.className == component.className
         }
         if (find == null) {
-            throw NameNotFoundException(component.className)
+            return commonPluginPackageManager.getActivityInfo(component, flags)
         } else {
             return find.activityInfo
         }
