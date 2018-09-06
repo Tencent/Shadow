@@ -55,39 +55,23 @@ class ServiceContainerReuseDelegate(val mDI: DI) : HostServiceDelegate {
         mHostServiceDelegator.superOnCreate()
     }
 
-    /**
-     * http://tapd.oa.com/androidQQ/bugtrace/bugs/view?bug_id=1010066461057998459
-     * 2.17.6.6 目前默认认为：所有的service的onStartCommand都只返回{@link Service#START_STICKY}
-     * 在这种默认情况下
-     * 1、强制返回 {@link Service#START_REDELIVER_INTENT}
-     * 2、对于 {@link Service#START_FLAG_REDELIVERY}的调用，强制用null作为intent参数传入实际调用
-     * <p>
-     * 2017/11/28   add by owenguo
-     * 多插件的时候，由于群视频插件和交友插件的包名一致，先启动群视频插件后，需要杀进程再启动花样交友插件，这样
-     * service如果这个时候被重启了，在SixGodServiceDelegate创建service的逻辑里面会重新加载群视频插件，导致交友插件无法被加载
-     * 且启动交友插件变成了启动群视频插件了。这里返回值改成START_NOT_STICKY，让service不要在杀死后自动重启
-     */
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //todo cubershi: 这里有hardcode返回START_NOT_STICKY，也有返回插件的onStartCommand的返回值的，这显然是不对的。
-        if (intent == null) {
-            return Service.START_NOT_STICKY
-        }
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val opt = intent.getStringExtra(OPT_EXTRA_KEY)
         when (opt) {
+            Operate.START.name -> {
+                mShadowServiceDelegateManager.startDelegate(intent, flags, startId)
+            }
             Operate.STOP.name -> {
                 mShadowServiceDelegateManager.stopDelegate(intent)
-                return Service.START_NOT_STICKY
             }
             Operate.BIND.name -> {
                 mShadowServiceDelegateManager.bindToDelegate(intent)
-                return Service.START_NOT_STICKY
             }
             Operate.UNBIND.name -> {
                 mShadowServiceDelegateManager.unbindToDelegate(intent)
-                return Service.START_NOT_STICKY
             }
         }
-        return mShadowServiceDelegateManager.startDelegate(intent, flags, startId)
+        return Service.START_NOT_STICKY
     }
 
     override fun onDestroy() {

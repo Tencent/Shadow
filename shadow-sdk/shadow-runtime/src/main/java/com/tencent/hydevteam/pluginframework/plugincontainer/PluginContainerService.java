@@ -47,6 +47,10 @@ public class PluginContainerService extends Service implements HostService, Host
     }
 
     private boolean isIllegalIntent(Intent intent) {
+        if (intent == null) {
+            //intent == null是Service被重启的情况，这种情况下我们也无法分辨Loader是否升级了
+            return true;
+        }
         Bundle extras = intent.getExtras();
         if (extras == null) {
             return true;
