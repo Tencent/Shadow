@@ -3,8 +3,13 @@ package com.tencent.hydevteam.pluginframework.plugincontainer;
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+
+import com.tencent.shadow.runtime.BuildConfig;
+
+import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY;
 
 /**
  * 插件的容器Service。PluginLoader将把插件的Service放在其中。
@@ -41,9 +46,24 @@ public class PluginContainerService extends Service implements HostService, Host
         }
     }
 
+    private boolean isIllegalIntent(Intent intent) {
+        Bundle extras = intent.getExtras();
+        if (extras == null) {
+            return true;
+        }
+        String loaderVersion = extras.getString(LOADER_VERSION_KEY);
+        return !BuildConfig.VERSION_NAME.equals(loaderVersion);
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
+        if (isIllegalIntent(intent)) {
+            Log.e(TAG, "illegalIntent intent.getExtras()==" + intent.getExtras());
+            stopSelf();
+            hostServiceDelegate = null;
+            Log.e(TAG, "illegalIntent 杀进程");
+            System.exit(0);
+        }
         if (hostServiceDelegate != null) {
             return hostServiceDelegate.onBind(intent);
         } else {
@@ -53,6 +73,13 @@ public class PluginContainerService extends Service implements HostService, Host
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (isIllegalIntent(intent)) {
+            Log.e(TAG, "illegalIntent intent.getExtras()==" + intent.getExtras());
+            stopSelf();
+            hostServiceDelegate = null;
+            Log.e(TAG, "illegalIntent 杀进程");
+            System.exit(0);
+        }
         if (hostServiceDelegate != null) {
             return hostServiceDelegate.onStartCommand(intent, flags, startId);
         } else {

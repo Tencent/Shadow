@@ -82,6 +82,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
+import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY;
+
 /**
  * 插件的容器Activity。PluginLoader将把插件的Activity放在其中。
  * PluginContainerActivity以委托模式将Activity的所有回调方法委托给DelegateProviderHolder提供的Delegate。
@@ -90,7 +92,6 @@ import java.util.List;
  */
 public class PluginContainerActivity extends Activity implements HostActivity, HostActivityDelegator {
     private static final String TAG = "PluginContainerActivity";
-    public static final String SHADOW_VERSION_KEY = "SHADOW_VERSION_KEY";
 
     HostActivityDelegate hostActivityDelegate;
 
@@ -156,8 +157,8 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         }
         Bundle bundle;
         bundle = savedInstanceState == null ? extras : savedInstanceState;
-        String shadowVersion = bundle.getString(SHADOW_VERSION_KEY);
-        return !BuildConfig.VERSION_NAME.equals(shadowVersion);
+        String loaderVersion = bundle.getString(LOADER_VERSION_KEY);
+        return !BuildConfig.VERSION_NAME.equals(loaderVersion);
     }
 
     @Override
@@ -185,8 +186,8 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         } else {
             super.onSaveInstanceState(outState);
         }
-        //避免插件setIntent清空掉SHADOW_VERSION_KEY
-        outState.putString(PluginContainerActivity.SHADOW_VERSION_KEY, BuildConfig.VERSION_NAME);
+        //避免插件setIntent清空掉LOADER_VERSION_KEY
+        outState.putString(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME);
     }
 
     @Override

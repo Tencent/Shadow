@@ -5,8 +5,8 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.util.Pair
+import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
-import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity
 import com.tencent.shadow.loader.BuildConfig
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.Operate
@@ -23,7 +23,6 @@ import com.tencent.shadow.runtime.ShadowContext.PluginComponentLauncher
  */
 abstract class ComponentManager : PluginComponentLauncher {
     companion object {
-        val AVOID_CLASS_VERIFY_EXCEPTION = PluginContainerActivity::class
         const val CM_LOADER_BUNDLE_KEY = "CM_LOADER_BUNDLE"
         const val CM_EXTRAS_BUNDLE_KEY = "CM_EXTRAS_BUNDLE"
         const val CM_ACTIVITY_INFO_KEY = "CM_ACTIVITY_INFO"
@@ -226,7 +225,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         containerIntent.putExtra(CM_EXTRAS_BUNDLE_KEY, pluginExtras)
         containerIntent.putExtra(CM_PART_KEY, partKey)
         containerIntent.putExtra(CM_LOADER_BUNDLE_KEY, bundleForPluginLoader)
-        containerIntent.putExtra(PluginContainerActivity.SHADOW_VERSION_KEY, BuildConfig.VERSION_NAME)
+        containerIntent.putExtra(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME)
 
         return containerIntent
     }
