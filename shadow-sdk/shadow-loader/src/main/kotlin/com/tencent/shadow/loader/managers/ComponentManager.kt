@@ -99,7 +99,7 @@ abstract class ComponentManager : PluginComponentLauncher {
 
     override fun unbindService(context: ShadowContext, conn: ServiceConnection): Pair<Boolean, Unit> {
         val intent = connectionToContainerIntentMap[conn] ?: return Pair(false, Unit)
-        intent.getBundleExtra(CM_LOADER_BUNDLE_KEY).putString(ServiceContainerReuseDelegate.OPT_EXTRA_KEY, ServiceContainerReuseDelegate.Companion.Operate.UNBIND.name)
+        intent.getBundleExtra(CM_LOADER_BUNDLE_KEY).putSerializable(ServiceContainerReuseDelegate.OPT_EXTRA_KEY, ServiceContainerReuseDelegate.Companion.Operate.UNBIND)
         return Pair(doServiceOpt(context, intent), Unit)
     }
 
@@ -198,7 +198,7 @@ abstract class ComponentManager : PluginComponentLauncher {
      */
     private fun Intent.toServiceContainerIntent(opt: Operate): Intent {
         val bundleForPluginLoader = Bundle()
-        bundleForPluginLoader.putString(ServiceContainerReuseDelegate.OPT_EXTRA_KEY, opt.name)
+        bundleForPluginLoader.putSerializable(ServiceContainerReuseDelegate.OPT_EXTRA_KEY, opt)
         return toContainerIntent(bundleForPluginLoader)
     }
 

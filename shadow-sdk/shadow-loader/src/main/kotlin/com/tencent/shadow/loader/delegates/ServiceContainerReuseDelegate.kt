@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.IBinder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
+import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.Operate.*
 import com.tencent.shadow.loader.managers.ComponentManager
 import java.util.*
 
@@ -56,18 +57,20 @@ class ServiceContainerReuseDelegate(val mDI: DI) : HostServiceDelegate {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val opt = intent.getStringExtra(OPT_EXTRA_KEY)
+        val bundleForPluginLoader = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY)!!
+        bundleForPluginLoader.classLoader = this.javaClass.classLoader
+        val opt = Operate::class.java.cast(bundleForPluginLoader.getSerializable(OPT_EXTRA_KEY))!!
         when (opt) {
-            Operate.START.name -> {
+            START -> {
                 mShadowServiceDelegateManager.startDelegate(intent, flags, startId)
             }
-            Operate.STOP.name -> {
+            STOP -> {
                 mShadowServiceDelegateManager.stopDelegate(intent)
             }
-            Operate.BIND.name -> {
+            BIND -> {
                 mShadowServiceDelegateManager.bindToDelegate(intent)
             }
-            Operate.UNBIND.name -> {
+            UNBIND -> {
                 mShadowServiceDelegateManager.unbindToDelegate(intent)
             }
         }
