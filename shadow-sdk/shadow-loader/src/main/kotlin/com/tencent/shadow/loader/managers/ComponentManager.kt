@@ -161,7 +161,10 @@ abstract class ComponentManager : PluginComponentLauncher {
         ) {
             val componentName = ComponentName(pluginInfo.packageName, pluginComponentInfo.className)
             packageNameMap[pluginComponentInfo.className] = pluginInfo.packageName
-            pluginInfoMap[componentName] = pluginInfo
+            val previousValue = pluginInfoMap.put(componentName, pluginInfo)
+            if (previousValue != null) {
+                throw IllegalStateException("重复添加Component：$componentName")
+            }
             pluginComponentInfoMap[componentName] = pluginComponentInfo
             componentMap[componentName] = bind(componentName)
         }
