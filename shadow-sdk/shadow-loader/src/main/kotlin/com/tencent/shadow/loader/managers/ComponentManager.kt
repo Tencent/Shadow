@@ -188,7 +188,8 @@ abstract class ComponentManager : PluginComponentLauncher {
      */
     private fun Intent.toActivityContainerIntent(): Intent {
         val bundleForPluginLoader = Bundle()
-        bundleForPluginLoader.putParcelable(CM_ACTIVITY_INFO_KEY, pluginComponentInfoMap[component])
+        val pluginComponentInfo = pluginComponentInfoMap[component]!!
+        bundleForPluginLoader.putParcelable(CM_ACTIVITY_INFO_KEY, pluginComponentInfo)
         return toContainerIntent(bundleForPluginLoader)
     }
 
