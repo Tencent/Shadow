@@ -86,7 +86,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                         )
                 mLock.withLock {
                     mComponentManager.addPluginApkInfo(pluginInfo)
-                    mPluginPartsMap["todo_support_multi_apk"] = PluginParts(
+                    mPluginPartsMap[pluginInfo.partKey] = PluginParts(
                             pluginPackageManager,
                             shadowApplication,
                             pluginClassLoader,

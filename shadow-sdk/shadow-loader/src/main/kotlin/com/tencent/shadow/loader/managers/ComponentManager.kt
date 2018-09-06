@@ -10,9 +10,8 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActi
 import com.tencent.shadow.loader.BuildConfig
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.Operate
-import com.tencent.shadow.loader.infos.PluginActivityInfo
+import com.tencent.shadow.loader.infos.PluginComponentInfo
 import com.tencent.shadow.loader.infos.PluginInfo
-import com.tencent.shadow.loader.infos.PluginServiceInfo
 import com.tencent.shadow.runtime.ShadowContext
 import com.tencent.shadow.runtime.ShadowContext.PluginComponentLauncher
 
@@ -134,15 +133,15 @@ abstract class ComponentManager : PluginComponentLauncher {
 
     /**
      * key:插件ComponentName
-     * value:PluginActivityInfo
+     * value:PluginInfo
      */
-    private val activityInfoMap: MutableMap<ComponentName, PluginActivityInfo> = HashMap()
+    private val pluginInfoMap: MutableMap<ComponentName, PluginInfo> = hashMapOf()
 
     /**
      * key:插件ComponentName
-     * value:PluginServiceInfo
+     * value:PluginComponentInfo
      */
-    private val serviceInfoMap: MutableMap<ComponentName, PluginServiceInfo> = HashMap()
+    private val pluginComponentInfoMap: MutableMap<ComponentName, PluginComponentInfo> = hashMapOf()
 
     /**
      * key:long
@@ -157,20 +156,22 @@ abstract class ComponentManager : PluginComponentLauncher {
     private val connectionToContainerIntentMap: MutableMap<ServiceConnection, Intent> = HashMap()
 
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
-        pluginInfo.mActivities.forEach {
-            val componentName = ComponentName(pluginInfo.packageName, it.className)
-            packageNameMap[it.className] = pluginInfo.packageName
+        fun common(pluginComponentInfo: PluginComponentInfo,
+                   bind: (name: ComponentName) -> ComponentName
+        ) {
+            val componentName = ComponentName(pluginInfo.packageName, pluginComponentInfo.className)
+            packageNameMap[pluginComponentInfo.className] = pluginInfo.packageName
+            pluginInfoMap[componentName] = pluginInfo
+            pluginComponentInfoMap[componentName] = pluginComponentInfo
+            componentMap[componentName] = bind(componentName)
+        }
 
-            componentMap[componentName] = onBindContainerActivity(componentName)
-            activityInfoMap[componentName] = it
+        pluginInfo.mActivities.forEach {
+            common(it, ::onBindContainerActivity)
         }
 
         pluginInfo.mServices.forEach {
-            val componentName = ComponentName(pluginInfo.packageName, it.className)
-            packageNameMap[it.className] = pluginInfo.packageName
-
-            componentMap[componentName] = onBindContainerService(componentName)
-            serviceInfoMap[componentName] = it
+            common(it, ::onBindContainerService)
         }
     }
 
@@ -187,7 +188,7 @@ abstract class ComponentManager : PluginComponentLauncher {
      */
     private fun Intent.toActivityContainerIntent(): Intent {
         val bundleForPluginLoader = Bundle()
-        bundleForPluginLoader.putParcelable(CM_ACTIVITY_INFO_KEY, activityInfoMap[component])
+        bundleForPluginLoader.putParcelable(CM_ACTIVITY_INFO_KEY, pluginComponentInfoMap[component])
         return toContainerIntent(bundleForPluginLoader)
     }
 
@@ -209,6 +210,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         val packageName = packageNameMap[className]!!
         component = ComponentName(packageName, className)
         val containerComponent = componentMap[component]!!
+        val partKey = pluginInfoMap[component]!!.partKey
 
         val pluginExtras: Bundle? = extras
         replaceExtras(null as Bundle?)
@@ -220,7 +222,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         bundleForPluginLoader.putString(CM_PACKAGE_NAME_KEY, packageName)
 
         containerIntent.putExtra(CM_EXTRAS_BUNDLE_KEY, pluginExtras)
-        containerIntent.putExtra(PluginInfo.PART_KEY, "todo_support_multi_apk")
+        containerIntent.putExtra(PluginInfo.PART_KEY, partKey)
         containerIntent.putExtra(CM_LOADER_BUNDLE_KEY, bundleForPluginLoader)
         containerIntent.putExtra(PluginContainerActivity.SHADOW_VERSION_KEY, BuildConfig.VERSION_NAME)
 
