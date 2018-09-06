@@ -165,4 +165,7 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
 
+    public final void requestPermissions(String[] permissions, int requestCode) {
+        mHostActivityDelegator.requestPermissions(permissions, requestCode);
+    }
 }

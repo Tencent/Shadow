@@ -461,6 +461,15 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
     public void startActivityFromChild(Activity child, Intent intent, int requestCode) {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.startActivityFromChild(child, intent, requestCode);

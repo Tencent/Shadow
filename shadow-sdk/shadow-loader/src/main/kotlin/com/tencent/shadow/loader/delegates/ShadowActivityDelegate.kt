@@ -285,4 +285,8 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun onAttachFragment(fragment: Fragment?) {
         mPluginActivity.onAttachFragment(fragment)
     }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
+        mPluginActivity.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
 }
