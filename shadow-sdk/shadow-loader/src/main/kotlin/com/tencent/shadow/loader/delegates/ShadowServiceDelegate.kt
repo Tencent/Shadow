@@ -5,6 +5,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.IBinder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
+import com.tencent.shadow.loader.infos.PluginInfo
+import com.tencent.shadow.loader.managers.ComponentManager
 import com.tencent.shadow.runtime.ShadowService
 
 /**
@@ -21,9 +23,10 @@ class ShadowServiceDelegate(private val mDI: DI,
     }
 
     fun onUnbind(intent: Intent, allUnBind: Boolean): Boolean {
-        val conn = mPluginServicesManager.getConnection(intent)
+        val intentKey = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY).getLong(ComponentManager.CM_INTENT_KEY, -1)
+        val conn = mComponentManager.getConnection(intentKey)
         conn?.onServiceDisconnected(intent.component)
-        mPluginServicesManager.deleteConnection(conn)
+        mComponentManager.deleteConnection(conn)
         if (allUnBind) {
             return mPluginService.onUnbind(intent)
         }
@@ -43,7 +46,8 @@ class ShadowServiceDelegate(private val mDI: DI,
             mBinder = mPluginService.onBind(intent)
             mIsBound = true
         }
-        mPluginServicesManager.getConnection(intent)?.onServiceConnected(intent.component, mBinder)
+        val intentKey = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY).getLong(ComponentManager.CM_INTENT_KEY, -1)
+        mComponentManager.getConnection(intentKey)?.onServiceConnected(intent.component, mBinder)
         return mBinder
     }
 
@@ -61,17 +65,20 @@ class ShadowServiceDelegate(private val mDI: DI,
 
     fun onCreate(intent: Intent) {
         if (!mIsSetService) {
-            mDI.inject(this, "todo_support_multi_apk")
-            val cls = intent.getStringExtra("className")
+            val partKey = intent.getStringExtra(PluginInfo.PART_KEY)!!
+            mDI.inject(this, partKey)
+
+            val bundleForPluginLoader = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY)
+            bundleForPluginLoader.classLoader = this.javaClass.classLoader
+            val cls = bundleForPluginLoader.getString(ComponentManager.CM_CLASS_NAME_KEY)
+
             val aClass = mPluginClassLoader.loadClass(cls)
             mPluginService = ShadowService::class.java.cast(aClass.newInstance())
             mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
             mPluginService.setPluginResources(mPluginResources)
             mPluginService.setPluginClassLoader(mPluginClassLoader)
             mPluginService.setShadowApplication(mPluginApplication)
-            mPluginService.setPluginActivityLauncher(mPluginActivitiesManager)
-            mPluginService.setServiceOperator(mPluginServicesManager)
-            mPluginService.pendingIntentConverter = mPendingIntentManager;
+            mPluginService.setPluginComponentLauncher(mComponentManager)
             mPluginService.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
             mIsSetService = true
         }

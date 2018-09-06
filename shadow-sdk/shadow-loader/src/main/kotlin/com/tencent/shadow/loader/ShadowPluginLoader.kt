@@ -15,7 +15,10 @@ import com.tencent.shadow.loader.delegates.DI
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.loader.delegates.ShadowActivityDelegate
 import com.tencent.shadow.loader.delegates.ShadowDelegate
-import com.tencent.shadow.loader.managers.*
+import com.tencent.shadow.loader.managers.CommonPluginPackageManager
+import com.tencent.shadow.loader.managers.ComponentManager
+import com.tencent.shadow.loader.managers.PluginPackageManager
+import com.tencent.shadow.loader.managers.PluginReceiverManager
 import com.tencent.shadow.runtime.ShadowApplication
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Callable
@@ -44,19 +47,12 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     /**
      * @GuardedBy("mLock")
      */
-    abstract fun getBusinessPluginActivitiesManager(): PluginActivitiesManager
-
-    /**
-     * @GuardedBy("mLock")
-     */
-    abstract fun getBusinessPluginServiceManager(): PluginServicesManager
+    abstract val mComponentManager: ComponentManager
 
     /**
      * @GuardedBy("mLock")
      */
     abstract fun getBusinessPluginReceiverManger(hostAppContext: Context): PluginReceiverManager
-
-    private val mPendingIntentManager: PendingIntentManager = PendingIntentManager(this)
 
     abstract val mExceptionReporter: Reporter
 
@@ -85,14 +81,11 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                                 pluginPackageManager,
                                 resources,
                                 hostAppContext,
-                                getBusinessPluginActivitiesManager(),
-                                getBusinessPluginServiceManager(),
-                                getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName),
-                                mPendingIntentManager
+                                mComponentManager,
+                                getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName)
                         )
                 mLock.withLock {
-                    getBusinessPluginActivitiesManager().addPluginApkInfo(pluginInfo)
-                    getBusinessPluginServiceManager().addPluginApkInfo(pluginInfo)
+                    mComponentManager.addPluginApkInfo(pluginInfo)
                     mPluginPartsMap["todo_support_multi_apk"] = PluginParts(
                             pluginPackageManager,
                             shadowApplication,
@@ -101,7 +94,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                     )
                 }
 
-                ShadowRunningPlugin(shadowApplication, installedPlugin, pluginInfo, getBusinessPluginActivitiesManager())
+                ShadowRunningPlugin(shadowApplication, installedPlugin, pluginInfo, mComponentManager)
             })
             return ProgressFutureImpl(submit, null)
         } else if (installedPlugin.pluginFile != null)
@@ -130,10 +123,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
             delegate.inject(pluginParts.application)
             delegate.inject(pluginParts.classLoader)
             delegate.inject(pluginParts.resources)
-            delegate.inject(getBusinessPluginActivitiesManager())
-            delegate.inject(getBusinessPluginServiceManager())
-            delegate.inject(mPendingIntentManager)
             delegate.inject(mExceptionReporter)
+            delegate.inject(mComponentManager)
         }
     }
 

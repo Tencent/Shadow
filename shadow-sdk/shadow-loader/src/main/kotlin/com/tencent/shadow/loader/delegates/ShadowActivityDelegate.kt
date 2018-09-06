@@ -17,10 +17,10 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegat
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.loader.infos.PluginActivityInfo
 import com.tencent.shadow.loader.infos.PluginInfo.Companion.PART_KEY
-import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_CLASS_NAME_KEY
-import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_ACTIVITY_INFO_KEY
-import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_EXTRAS_BUNDLE_KEY
-import com.tencent.shadow.loader.managers.PluginActivitiesManager.Companion.PLUGIN_LOADER_BUNDLE_KEY
+import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_ACTIVITY_INFO_KEY
+import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_CLASS_NAME_KEY
+import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_EXTRAS_BUNDLE_KEY
+import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_LOADER_BUNDLE_KEY
 import com.tencent.shadow.runtime.FixedContextLayoutInflater
 import com.tencent.shadow.runtime.PluginActivity
 
@@ -57,14 +57,14 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         mDI.inject(this, partKey)
         mDependenciesInjected = true
 
-        val bundleForPluginLoader = pluginInitBundle.getBundle(PLUGIN_LOADER_BUNDLE_KEY)!!
+        val bundleForPluginLoader = pluginInitBundle.getBundle(CM_LOADER_BUNDLE_KEY)!!
         mBundleForPluginLoader = bundleForPluginLoader
         bundleForPluginLoader.classLoader = this.javaClass.classLoader
-        val pluginActivityClassName = bundleForPluginLoader.getString(PLUGIN_ACTIVITY_CLASS_NAME_KEY)
-        val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(PLUGIN_ACTIVITY_INFO_KEY)
+        val pluginActivityClassName = bundleForPluginLoader.getString(CM_CLASS_NAME_KEY)
+        val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(CM_ACTIVITY_INFO_KEY)
 
         if (savedInstanceState == null) {
-            val pluginExtras: Bundle? = pluginInitBundle.getBundle(PLUGIN_EXTRAS_BUNDLE_KEY)
+            val pluginExtras: Bundle? = pluginInitBundle.getBundle(CM_EXTRAS_BUNDLE_KEY)
             mHostActivityDelegator.intent.replaceExtras(pluginExtras)
         }
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
@@ -94,11 +94,9 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.setPluginResources(mPluginResources)
         pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
         pluginActivity.setPluginClassLoader(mPluginClassLoader)
-        pluginActivity.setPluginActivityLauncher(mPluginActivitiesManager)
-        pluginActivity.pendingIntentConverter = mPendingIntentManager
+        pluginActivity.setPluginComponentLauncher(mComponentManager)
         pluginActivity.setPluginApplication(mPluginApplication)
         pluginActivity.setPluginPackageManager(mPluginPackageManager)
-        pluginActivity.setServiceOperator(mPluginServicesManager)
         pluginActivity.setShadowApplication(mPluginApplication)
         pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
     }
@@ -116,7 +114,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         mPluginActivity.onSaveInstanceState(pluginOutState)
         outState.putBundle(PLUGIN_OUT_STATE_KEY, pluginOutState)
         outState.putString(PART_KEY, mPartKey)
-        outState.putBundle(PLUGIN_LOADER_BUNDLE_KEY, mBundleForPluginLoader)
+        outState.putBundle(CM_LOADER_BUNDLE_KEY, mBundleForPluginLoader)
     }
 
     override fun onPause() {

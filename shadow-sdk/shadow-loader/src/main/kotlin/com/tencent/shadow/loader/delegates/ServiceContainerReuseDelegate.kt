@@ -4,11 +4,11 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Bundle
 import android.os.IBinder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
-import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.KEY_CLASS_NAME
-import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.KEY_PKG_NAME
+import com.tencent.shadow.loader.managers.ComponentManager
 import java.util.*
 
 /**
@@ -24,8 +24,6 @@ import java.util.*
 class ServiceContainerReuseDelegate(val mDI: DI) : HostServiceDelegate {
     companion object {
         const val OPT_EXTRA_KEY = "ServiceOpt"
-        const val KEY_PKG_NAME = "packageName"
-        const val KEY_CLASS_NAME = "className"
 
         enum class Operate {
             START, STOP, BIND, UNBIND
@@ -70,6 +68,7 @@ class ServiceContainerReuseDelegate(val mDI: DI) : HostServiceDelegate {
      * 且启动交友插件变成了启动群视频插件了。这里返回值改成START_NOT_STICKY，让service不要在杀死后自动重启
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        //todo cubershi: 这里有hardcode返回START_NOT_STICKY，也有返回插件的onStartCommand的返回值的，这显然是不对的。
         if (intent == null) {
             return Service.START_NOT_STICKY
         }
@@ -153,20 +152,20 @@ class ShadowServiceDelegateManager(private val mDI: DI,
         this.mOnDelegateChanged = mOnDelegateChanged
     }
 
-    fun getDelegate(intent: Intent): ShadowServiceDelegate {
-        val pkg = intent.getStringExtra(KEY_PKG_NAME)
-        val cls = intent.getStringExtra(KEY_CLASS_NAME)
+    fun getDelegate(loaderBundle: Bundle): ShadowServiceDelegate {
+        val pkg = loaderBundle.getString(ComponentManager.CM_PACKAGE_NAME_KEY)!!
+        val cls = loaderBundle.getString(ComponentManager.CM_CLASS_NAME_KEY)!!
         return getDelegate(pkg, cls)
     }
 
-    private fun getComponetName(intent: Intent): ComponentName {
-        val pkg = intent.getStringExtra(KEY_PKG_NAME)
-        val cls = intent.getStringExtra(KEY_CLASS_NAME)
+    private fun getComponetName(loaderBundle: Bundle): ComponentName {
+        val pkg = loaderBundle.getString(ComponentManager.CM_PACKAGE_NAME_KEY)!!
+        val cls = loaderBundle.getString(ComponentManager.CM_CLASS_NAME_KEY)!!
         return ComponentName(pkg, cls)
     }
 
     private fun removeDelegate(intent: Intent) {
-        val delegate = serviceDelegates.remove(getComponetName(intent))
+        val delegate = serviceDelegates.remove(getComponetName(intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY)))
         if (delegate != null) {
             mOnDelegateChanged!!.onRemoveDelegate(delegate)
         }
@@ -189,7 +188,7 @@ class ShadowServiceDelegateManager(private val mDI: DI,
     }
 
     fun bindToDelegate(intent: Intent) {
-        val delegate = getDelegate(intent)
+        val delegate = getDelegate(intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY))
         if (servicesBindCount.containsKey(delegate)) {
             servicesBindCount[delegate] = servicesBindCount[delegate]!! + 1
         } else {
@@ -202,7 +201,7 @@ class ShadowServiceDelegateManager(private val mDI: DI,
     }
 
     fun unbindToDelegate(intent: Intent) {
-        val delegate = serviceDelegates[getComponetName(intent)]
+        val delegate = serviceDelegates[getComponetName(intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY))]
         if (delegate != null) {
             if (servicesBindCount.containsKey(delegate)) {
                 if (servicesBindCount[delegate]!! > 1) {
@@ -219,14 +218,14 @@ class ShadowServiceDelegateManager(private val mDI: DI,
     }
 
     fun startDelegate(intent: Intent, flags: Int, startId: Int): Int {
-        val delegate = getDelegate(intent)
+        val delegate = getDelegate(intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY))
         if (servicesStarter.add(delegate))
             delegate.onCreate(intent)
         return delegate.onStartCommand(intent, flags, startId)
     }
 
     fun stopDelegate(intent: Intent) {
-        val delegate = serviceDelegates[getComponetName(intent)]
+        val delegate = serviceDelegates[getComponetName(intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY))]
         if (delegate != null) {
             if (servicesStarter.remove(delegate)) {
                 handleUnbindAndStopDelegate(intent)
@@ -236,7 +235,7 @@ class ShadowServiceDelegateManager(private val mDI: DI,
     }
 
     fun handleUnbindAndStopDelegate(intent: Intent) {
-        val delegate = serviceDelegates[getComponetName(intent)]
+        val delegate = serviceDelegates[getComponetName(intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY))]
         if (delegate != null) {
             if (!servicesBindCount.containsKey(delegate) && !servicesStarter.contains(delegate)) {
                 removeDelegate(intent)

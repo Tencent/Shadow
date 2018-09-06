@@ -14,9 +14,7 @@ import android.view.LayoutInflater;
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
 public class ShadowContext extends ContextThemeWrapper {
-    PluginActivityLauncher mPluginActivityLauncher;
-    PluginServiceOperator mPluginServiceOperator;
-    PendingIntentConverter mPendingIntentConverter;
+    PluginComponentLauncher mPluginComponentLauncher;
     ClassLoader mPluginClassLoader;
     ShadowApplication mShadowApplication;
     Resources mPluginResources;
@@ -32,13 +30,8 @@ public class ShadowContext extends ContextThemeWrapper {
         mPluginClassLoader = classLoader;
     }
 
-    public final void setServiceOperator(PluginServiceOperator pluginServiceOperator) {
-        mPluginServiceOperator = pluginServiceOperator;
-    }
-
-
-    public void setPluginActivityLauncher(PluginActivityLauncher pluginActivityLauncher) {
-        mPluginActivityLauncher = pluginActivityLauncher;
+    public void setPluginComponentLauncher(PluginComponentLauncher pluginComponentLauncher) {
+        mPluginComponentLauncher = pluginComponentLauncher;
     }
 
     public void setShadowApplication(ShadowApplication shadowApplication) {
@@ -47,10 +40,6 @@ public class ShadowContext extends ContextThemeWrapper {
 
     public void setLibrarySearchPath(String mLibrarySearchPath) {
         this.mLibrarySearchPath = mLibrarySearchPath;
-    }
-
-    public final void setPendingIntentConverter(PendingIntentConverter pendingIntentConverter) {
-        this.mPendingIntentConverter = pendingIntentConverter;
     }
 
     @Override
@@ -96,9 +85,9 @@ public class ShadowContext extends ContextThemeWrapper {
         return mPluginClassLoader;
     }
 
-    public interface PluginActivityLauncher {
+    public interface PluginComponentLauncher {
         /**
-         * 启动Actvity
+         * 启动Activity
          *
          * @param shadowContext 启动context
          * @param intent  插件内传来的Intent.
@@ -108,7 +97,7 @@ public class ShadowContext extends ContextThemeWrapper {
         boolean startActivity(ShadowContext shadowContext, Intent intent);
 
         /**
-         * 启动Actvity
+         * 启动Activity
          *
          * @param delegator 发起启动的activity的delegator
          * @param intent    插件内传来的Intent.
@@ -117,11 +106,7 @@ public class ShadowContext extends ContextThemeWrapper {
          */
         boolean startActivityForResult(HostActivityDelegator delegator, Intent intent, int requestCode);
 
-    }
-
-    public interface PluginServiceOperator {
-
-        Pair<Boolean, ComponentName> startService(ShadowContext context, Intent intent);
+        Pair<Boolean, ComponentName> startService(ShadowContext context, Intent service);
 
         Pair<Boolean, Boolean> stopService(ShadowContext context, Intent name);
 
@@ -129,9 +114,6 @@ public class ShadowContext extends ContextThemeWrapper {
 
         Pair<Boolean, ?> unbindService(ShadowContext context, ServiceConnection conn);
 
-    }
-
-    public interface PendingIntentConverter{
         Intent convertPluginActivityIntent(Intent pluginIntent);
 
         Intent convertPluginServiceIntent(Intent pluginIntent);
@@ -141,7 +123,7 @@ public class ShadowContext extends ContextThemeWrapper {
     public void startActivity(Intent intent) {
         final Intent pluginIntent = new Intent(intent);
         pluginIntent.setExtrasClassLoader(mPluginClassLoader);
-        final boolean success = mPluginActivityLauncher.startActivity(this, pluginIntent);
+        final boolean success = mPluginComponentLauncher.startActivity(this, pluginIntent);
         if (!success) {
             super.startActivity(intent);
         }
@@ -153,7 +135,7 @@ public class ShadowContext extends ContextThemeWrapper {
 
     @Override
     public void unbindService(ServiceConnection conn) {
-        if (!mPluginServiceOperator.unbindService(this, conn).first)
+        if (!mPluginComponentLauncher.unbindService(this, conn).first)
             super.unbindService(conn);
     }
 
@@ -162,7 +144,7 @@ public class ShadowContext extends ContextThemeWrapper {
         if (service.getComponent() == null) {
             return super.bindService(service, conn, flags);
         }
-        Pair<Boolean, Boolean> ret = mPluginServiceOperator.bindService(this, service, conn, flags);
+        Pair<Boolean, Boolean> ret = mPluginComponentLauncher.bindService(this, service, conn, flags);
         if (!ret.first)
             return super.bindService(service, conn, flags);
         return ret.second;
@@ -173,7 +155,7 @@ public class ShadowContext extends ContextThemeWrapper {
         if (name.getComponent() == null) {
             return super.stopService(name);
         }
-        Pair<Boolean, Boolean> ret = mPluginServiceOperator.stopService(this, name);
+        Pair<Boolean, Boolean> ret = mPluginComponentLauncher.stopService(this, name);
         if (!ret.first)
             return super.stopService(name);
         return ret.second;
@@ -184,7 +166,7 @@ public class ShadowContext extends ContextThemeWrapper {
         if (service.getComponent() == null) {
             return super.startService(service);
         }
-        Pair<Boolean, ComponentName> ret = mPluginServiceOperator.startService(this, service);
+        Pair<Boolean, ComponentName> ret = mPluginComponentLauncher.startService(this, service);
         if (!ret.first)
             return super.startService(service);
         return ret.second;
@@ -197,7 +179,7 @@ public class ShadowContext extends ContextThemeWrapper {
         return applicationInfo;
     }
 
-    public PendingIntentConverter getPendingIntentConverter() {
-        return mPendingIntentConverter;
+    public PluginComponentLauncher getPendingIntentConverter() {
+        return mPluginComponentLauncher;
     }
 }
