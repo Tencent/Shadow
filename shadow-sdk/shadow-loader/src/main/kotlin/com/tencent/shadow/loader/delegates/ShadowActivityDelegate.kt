@@ -16,11 +16,11 @@ import android.view.*
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.loader.infos.PluginActivityInfo
-import com.tencent.shadow.loader.infos.PluginInfo.Companion.PART_KEY
 import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_ACTIVITY_INFO_KEY
 import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_CLASS_NAME_KEY
 import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_EXTRAS_BUNDLE_KEY
 import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_LOADER_BUNDLE_KEY
+import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_PART_KEY
 import com.tencent.shadow.runtime.FixedContextLayoutInflater
 import com.tencent.shadow.runtime.PluginActivity
 
@@ -52,7 +52,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun onCreate(savedInstanceState: Bundle?) {
         val pluginInitBundle = if (savedInstanceState == null) mHostActivityDelegator.intent.extras else savedInstanceState
 
-        val partKey = pluginInitBundle.getString(PART_KEY)!!
+        val partKey = pluginInitBundle.getString(CM_PART_KEY)!!
         mPartKey = partKey
         mDI.inject(this, partKey)
         mDependenciesInjected = true
@@ -113,7 +113,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         val pluginOutState = Bundle(mPluginClassLoader)
         mPluginActivity.onSaveInstanceState(pluginOutState)
         outState.putBundle(PLUGIN_OUT_STATE_KEY, pluginOutState)
-        outState.putString(PART_KEY, mPartKey)
+        outState.putString(CM_PART_KEY, mPartKey)
         outState.putBundle(CM_LOADER_BUNDLE_KEY, mBundleForPluginLoader)
     }
 

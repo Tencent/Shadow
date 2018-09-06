@@ -5,8 +5,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.IBinder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
-import com.tencent.shadow.loader.infos.PluginInfo
 import com.tencent.shadow.loader.managers.ComponentManager
+import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_PART_KEY
 import com.tencent.shadow.runtime.ShadowService
 
 /**
@@ -65,7 +65,7 @@ class ShadowServiceDelegate(private val mDI: DI,
 
     fun onCreate(intent: Intent) {
         if (!mIsSetService) {
-            val partKey = intent.getStringExtra(PluginInfo.PART_KEY)!!
+            val partKey = intent.getStringExtra(CM_PART_KEY)!!
             mDI.inject(this, partKey)
 
             val bundleForPluginLoader = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY)

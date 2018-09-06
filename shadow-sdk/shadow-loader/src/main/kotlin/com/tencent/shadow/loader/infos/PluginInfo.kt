@@ -6,9 +6,6 @@ data class PluginInfo(val partKey: String,
                       val packageName: String,
                       val applicationClassName: String
 ) {
-    companion object {
-        const val PART_KEY = "PART_KEY"
-    }
     //todo cubershi 找个语法让外部查询这个mActivities不能修改它.
     internal val mActivities: MutableSet<PluginActivityInfo> = HashSet()
     var metaData: Bundle? = null

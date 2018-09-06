@@ -30,6 +30,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         const val CM_CLASS_NAME_KEY = "CM_CLASS_NAME"
         const val CM_PACKAGE_NAME_KEY = "CM_PACKAGE_NAME"
         const val CM_INTENT_KEY = "CM_INTENT"
+        const val CM_PART_KEY = "CM_PART"
     }
 
     abstract val launcherActivity: ComponentName
@@ -223,7 +224,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         bundleForPluginLoader.putString(CM_PACKAGE_NAME_KEY, packageName)
 
         containerIntent.putExtra(CM_EXTRAS_BUNDLE_KEY, pluginExtras)
-        containerIntent.putExtra(PluginInfo.PART_KEY, partKey)
+        containerIntent.putExtra(CM_PART_KEY, partKey)
         containerIntent.putExtra(CM_LOADER_BUNDLE_KEY, bundleForPluginLoader)
         containerIntent.putExtra(PluginContainerActivity.SHADOW_VERSION_KEY, BuildConfig.VERSION_NAME)
 
