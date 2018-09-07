@@ -606,6 +606,9 @@ public interface HostActivityDelegator {
 
     void unregisterComponentCallbacks(ComponentCallbacks callback);
 
+    Cursor managedQuery(Uri uri, String[] projection, String selection,
+                        String[] selectionArgs, String sortOrder);
+
     Application superGetApplication();
 
     boolean superIsChild();

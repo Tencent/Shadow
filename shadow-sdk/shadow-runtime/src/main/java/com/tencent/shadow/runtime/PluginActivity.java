@@ -15,6 +15,7 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -209,5 +210,13 @@ public abstract class PluginActivity extends ShadowContext {
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         mHostActivityDelegator.superOnRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        return mHostActivityDelegator.superOnKeyDown(keyCode, event);
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return mHostActivityDelegator.superOnOptionsItemSelected(item);
     }
 }

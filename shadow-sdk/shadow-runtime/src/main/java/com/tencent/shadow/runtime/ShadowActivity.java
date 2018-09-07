@@ -1,12 +1,16 @@
 package com.tencent.shadow.runtime;
 
+import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -29,6 +33,10 @@ public abstract class ShadowActivity extends PluginActivity {
 
     public void setContentView(View view) {
         mHostActivityDelegator.setContentView(view);
+    }
+
+    public void addContentView(View view, ViewGroup.LayoutParams params) {
+        mHostActivityDelegator.superAddContentView(view, params);
     }
 
     public final ShadowApplication getApplication() {
@@ -167,5 +175,27 @@ public abstract class ShadowActivity extends PluginActivity {
 
     public final void requestPermissions(String[] permissions, int requestCode) {
         mHostActivityDelegator.requestPermissions(permissions, requestCode);
+    }
+
+    public ActionBar getActionBar() {
+        return mHostActivityDelegator.getActionBar();
+    }
+
+    public void setVisible(boolean visible) {
+        mHostActivityDelegator.setVisible(visible);
+    }
+
+    public void setIntent(Intent newIntent) {
+        mHostActivityDelegator.setIntent(newIntent);
+    }
+
+    public View getCurrentFocus() {
+        return mHostActivityDelegator.getCurrentFocus();
+    }
+
+    @Deprecated
+    public final Cursor managedQuery(Uri uri, String[] projection, String selection,
+                                     String[] selectionArgs, String sortOrder) {
+        return mHostActivityDelegator.managedQuery(uri, projection, selection, selectionArgs, sortOrder);
     }
 }
