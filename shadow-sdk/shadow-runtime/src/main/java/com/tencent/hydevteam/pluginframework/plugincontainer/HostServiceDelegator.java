@@ -1,5 +1,6 @@
 package com.tencent.hydevteam.pluginframework.plugincontainer;
 
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 
@@ -19,4 +20,8 @@ public interface HostServiceDelegator {
     Context getApplicationContext();
 
     Context getBaseContext();
+
+    void startForeground(int id, Notification notification);
+
+    void stopForeground(boolean removeNotification);
 }
