@@ -20,7 +20,7 @@ internal class ShadowRunningPlugin(
 ) : RunningPlugin {
 
     override fun startLauncherActivity(intent: Intent): ProgressFuture<*> {
-        val launcherActivity = mComponentManager.launcherActivity
+        val launcherActivity = mComponentManager.getLauncherActivity(pluginInfo.partKey)
         val pluginIntent = Intent(intent)
         pluginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         pluginIntent.component = launcherActivity

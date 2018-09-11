@@ -2,6 +2,7 @@ package com.tencent.shadow.loader.blocs
 
 import android.content.Context
 import android.content.pm.PackageManager.*
+import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.shadow.loader.exceptions.ParsePluginApkException
 import com.tencent.shadow.loader.infos.PluginActivityInfo
 import com.tencent.shadow.loader.infos.PluginInfo
@@ -21,7 +22,8 @@ object ParsePluginApkBloc {
      * @throws ParsePluginApkException 解析失败时抛出
      */
     @Throws(ParsePluginApkException::class)
-    fun parse(archiveFilePath: String, hostAppContext: Context): PluginInfo {
+    fun parse(installedPlugin: InstalledPlugin, hostAppContext: Context): PluginInfo {
+        val archiveFilePath = installedPlugin.pluginFile.absolutePath
         val packageManager = hostAppContext.packageManager
         val packageArchiveInfo = packageManager.getPackageArchiveInfo(
                 archiveFilePath,
@@ -50,10 +52,9 @@ object ParsePluginApkBloc {
         }
 
         /*
-        partKey的作用是用来区分一个Component是来自于哪个插件apk的，
-        因此这里用插件apk的路径作为partKey从目前来看是满足需求的。
+        partKey的作用是用来区分一个Component是来自于哪个插件apk的
          */
-        val partKey = archiveFilePath
+        val partKey = installedPlugin.pluginPackageName
 
         val pluginInfo = PluginInfo(
                 partKey

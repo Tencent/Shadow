@@ -32,7 +32,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         const val CM_PART_KEY = "CM_PART"
     }
 
-    abstract val launcherActivity: ComponentName
+    abstract fun getLauncherActivity(partKey: String): ComponentName
 
     /**
      * @param pluginActivity 插件Activity
