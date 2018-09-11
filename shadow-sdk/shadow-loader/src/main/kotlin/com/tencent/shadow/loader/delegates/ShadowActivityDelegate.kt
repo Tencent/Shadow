@@ -246,6 +246,10 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         return mPluginActivity.onCreateView(name, context, attrs)
     }
 
+    override fun onCreateView(parent: View?, name: String, context: Context, attrs: AttributeSet): View? {
+        return mPluginActivity.onCreateView(parent, name, context, attrs)
+    }
+
     override fun startActivityFromChild(child: Activity, intent: Intent, requestCode: Int) {
         mPluginActivity.startActivityFromChild(child, intent, requestCode)
     }

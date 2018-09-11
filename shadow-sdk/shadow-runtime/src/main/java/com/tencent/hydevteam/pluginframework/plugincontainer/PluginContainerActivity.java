@@ -461,6 +461,15 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.onCreateView(parent, name, context, attrs);
+        } else {
+            return super.onCreateView(parent, name, context, attrs);
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.onRequestPermissionsResult(requestCode, permissions, grantResults);

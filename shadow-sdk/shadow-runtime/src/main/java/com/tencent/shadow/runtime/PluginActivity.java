@@ -180,6 +180,10 @@ public abstract class PluginActivity extends ShadowContext {
         return mHostActivityDelegator.superOnCreateView(name, context, attrs);
     }
 
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        return mHostActivityDelegator.superOnCreateView(parent, name, context, attrs);
+    }
+
     public void startActivityFromChild(Activity child, Intent intent, int requestCode) {
         mHostActivityDelegator.superStartActivityFromChild(child, intent, requestCode);
     }
