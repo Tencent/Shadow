@@ -37,4 +37,6 @@ public interface IContainerFragment {
     String getTag();
 
     View getView();
+
+    void requestPermissions(String[] permissions, int requestCode);
 }
