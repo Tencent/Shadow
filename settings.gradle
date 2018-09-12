@@ -2,6 +2,8 @@ def includeShadowSdk() {
     include ':shadow-sdk:shadow-loader'
     include ':shadow-sdk:shadow-runtime'
     include ':shadow-sdk:shadow-transform'
+    include ':shadow-sdk:shadow-custom-lint:checks'
+    include ':shadow-sdk:shadow-custom-lint:shadow-lint'
 }
 
 def includeSdkDebug() {//shadow调试开发用的宿主和插件。

@@ -1,0 +1,39 @@
+apply plugin: 'kotlin'
+
+/*
+Lint Version
+The lint version of the libraries (specified in this project as the lintVersion variable in build.gradle) should be the same version that is used by the Gradle plugin.
+
+If the Gradle plugin version is X.Y.Z, then the Lint library version is X+23.Y.Z.
+ */
+ext.lintVersion = '26.1.2'
+
+dependencies {
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    compileOnly "com.android.tools.lint:lint-api:$lintVersion"
+    compileOnly "com.android.tools.lint:lint-checks:$lintVersion"
+    testCompile "junit:junit:4.12"
+    testCompile "com.android.tools.lint:lint:$lintVersion"
+    testCompile "com.android.tools.lint:lint-tests:$lintVersion"
+    testCompile "com.android.tools:testutils:$lintVersion"
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+jar {
+    manifest {
+        // Only use the "-v2" key here if your checks have been updated to the
+        // new 3.0 APIs (including UAST)
+        attributes("Lint-Registry-v2": "com.tencent.shadow.lint.ShadowCodeIssueRegistry")
+    }
+}

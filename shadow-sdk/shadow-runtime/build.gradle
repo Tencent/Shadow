@@ -26,6 +26,10 @@ android {
     }
 }
 
+dependencies{
+    implementation project(':shadow-sdk:shadow-custom-lint:shadow-lint')
+}
+
 def jarPackage(buildType) {
     return tasks.create("jar${buildType.capitalize()}Package", Copy) {
         def aarFile = file(project.buildDir.path + "/outputs/aar/${project.name}-${buildType}.aar")
