@@ -101,6 +101,9 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
             })
 
             val buildRunningPlugin = mExecutorService.submit(Callable<RunningPlugin> {
+                if (installedPlugin.pluginFile.exists().not()) {
+                    throw LoadPluginException("插件文件不存在.pluginFile==" + installedPlugin.pluginFile.absolutePath)
+                }
                 val pluginPackageManager = buildPackageManager.get()
                 val pluginClassLoader = buildClassLoader.get()
                 val resources = buildResources.get()
