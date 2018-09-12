@@ -15,8 +15,6 @@ data class PluginInfo(val partKey: String,
     var metaData: Bundle? = null
     var versionCode :Int = 0;
     var versionName :String? =null;
-    var firstInstallTime: Long? = null
-
 
     fun putActivityInfo(pluginActivityInfo: PluginActivityInfo) {
         _mActivities.add(pluginActivityInfo)
