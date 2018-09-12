@@ -45,7 +45,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     /**
      * @GuardedBy("mLock")
      */
-    abstract fun getBusinessPluginReceiverManger(hostAppContext: Context): PluginReceiverManager
+    abstract fun getBusinessPluginReceiverManager(hostAppContext: Context): PluginReceiverManager
 
     abstract val mExceptionReporter: Reporter
 
@@ -66,7 +66,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
             mAbi,
             mCommonPluginPackageManager,
             mComponentManager,
-            getBusinessPluginReceiverManger(hostAppContext),
+            getBusinessPluginReceiverManager(hostAppContext),
             mLock,
             mPluginPartsMap,
             hostAppContext,
