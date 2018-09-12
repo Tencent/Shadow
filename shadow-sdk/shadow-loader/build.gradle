@@ -49,6 +49,7 @@ dependencies {
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
 
     compileOnly project(':shadow-sdk:shadow-runtime')
+    implementation project(':shadow-sdk:shadow-custom-lint:shadow-lint')
 }
 
 apply plugin: 'maven-publish'
