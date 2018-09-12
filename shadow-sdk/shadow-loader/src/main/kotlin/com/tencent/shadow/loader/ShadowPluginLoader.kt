@@ -28,7 +28,7 @@ import kotlin.concurrent.withLock
 
 abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
-    private val mExecutorService = Executors.newSingleThreadExecutor()
+    private val mExecutorService = Executors.newCachedThreadPool()
 
     /**
      * loadPlugin方法是在子线程被调用的。而getHostActivityDelegate方法是在主线程被调用的。
@@ -66,24 +66,47 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     @Throws(LoadPluginException::class)
     override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
-        if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
-            val submit = mExecutorService.submit(Callable<RunningPlugin> {
-                //todo cubershi 下面这些步骤可能可以并发起来.
-                val pluginInfo = ParsePluginApkBloc.parse(installedPlugin, hostAppContext)
-                val pluginPackageManager = PluginPackageManager(mCommonPluginPackageManager, pluginInfo)
+        if (installedPlugin.pluginFile == null) {
+            throw LoadPluginException("pluginFile==null")
+        } else {
+            val buildClassLoader = mExecutorService.submit(Callable {
                 val soDir = CopySoBloc.copySo(installedPlugin, mAbi)
-                val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir)
-                val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
-                val shadowApplication =
-                        CreateApplicationBloc.callPluginApplicationOnCreate(
-                                pluginClassLoader,
-                                pluginInfo.applicationClassName,
-                                pluginPackageManager,
-                                resources,
-                                hostAppContext,
-                                mComponentManager,
-                                getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName)
-                        )
+                LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir)
+            })
+
+            val buildPackageManager = mExecutorService.submit(Callable {
+                val pluginInfo = ParsePluginApkBloc.parse(installedPlugin, hostAppContext)
+                PluginPackageManager(mCommonPluginPackageManager, pluginInfo)
+            })
+
+            val buildResources = mExecutorService.submit(Callable {
+                CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
+            })
+
+            val buildApplication = mExecutorService.submit(Callable {
+                val pluginClassLoader = buildClassLoader.get()
+                val pluginPackageManager = buildPackageManager.get()
+                val resources = buildResources.get()
+                val pluginInfo = pluginPackageManager.pluginInfo
+
+                CreateApplicationBloc.callPluginApplicationOnCreate(
+                        pluginClassLoader,
+                        pluginInfo.applicationClassName,
+                        pluginPackageManager,
+                        resources,
+                        hostAppContext,
+                        mComponentManager,
+                        getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName)
+                )
+            })
+
+            val buildRunningPlugin = mExecutorService.submit(Callable<RunningPlugin> {
+                val pluginPackageManager = buildPackageManager.get()
+                val pluginClassLoader = buildClassLoader.get()
+                val resources = buildResources.get()
+                val shadowApplication = buildApplication.get()
+                val pluginInfo = pluginPackageManager.pluginInfo
+
                 mLock.withLock {
                     mComponentManager.addPluginApkInfo(pluginInfo)
                     mPluginPartsMap[pluginInfo.partKey] = PluginParts(
@@ -93,15 +116,11 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                             resources
                     )
                 }
-
                 ShadowRunningPlugin(shadowApplication, installedPlugin, pluginInfo, mComponentManager)
             })
-            return ProgressFutureImpl(submit, null)
-        } else if (installedPlugin.pluginFile != null)
-            throw LoadPluginException("插件文件不存在.pluginFile==" + installedPlugin.pluginFile.absolutePath)
-        else
-            throw LoadPluginException("pluginFile==null")
 
+            return ProgressFutureImpl(buildRunningPlugin, null)
+        }
     }
 
     override fun setPluginDisabled(installedPlugin: InstalledPlugin): Boolean {
