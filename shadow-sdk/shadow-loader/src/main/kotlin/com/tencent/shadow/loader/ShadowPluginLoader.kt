@@ -1,22 +1,19 @@
 package com.tencent.shadow.loader
 
 import android.content.Context
-import android.content.res.Resources
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.plugincontainer.*
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
 import com.tencent.shadow.loader.blocs.LoadPluginBloc
-import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.delegates.DI
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.loader.delegates.ShadowActivityDelegate
 import com.tencent.shadow.loader.delegates.ShadowDelegate
+import com.tencent.shadow.loader.infos.PluginParts
 import com.tencent.shadow.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.loader.managers.ComponentManager
-import com.tencent.shadow.loader.managers.PluginPackageManager
 import com.tencent.shadow.loader.managers.PluginReceiverManager
-import com.tencent.shadow.runtime.ShadowApplication
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
@@ -104,8 +101,3 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
     }
 }
-
-class PluginParts(val packageManager: PluginPackageManager,
-                  val application: ShadowApplication,
-                  val classLoader: PluginClassLoader,
-                  val resources: Resources)

@@ -6,8 +6,8 @@ import com.tencent.hydevteam.common.progress.ProgressFutureImpl
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
-import com.tencent.shadow.loader.PluginParts
 import com.tencent.shadow.loader.ShadowRunningPlugin
+import com.tencent.shadow.loader.infos.PluginParts
 import com.tencent.shadow.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.loader.managers.ComponentManager
 import com.tencent.shadow.loader.managers.PluginPackageManager
