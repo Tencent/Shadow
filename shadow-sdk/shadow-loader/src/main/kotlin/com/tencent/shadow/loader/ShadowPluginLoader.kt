@@ -81,7 +81,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
         return ShadowActivityDelegate(this)
     }
 
-    override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate? {
+    override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate {
         return ServiceContainerReuseDelegate(this)
     }
 
