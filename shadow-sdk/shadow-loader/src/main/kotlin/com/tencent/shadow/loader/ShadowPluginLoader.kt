@@ -119,7 +119,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                 ShadowRunningPlugin(shadowApplication, installedPlugin, pluginInfo, mComponentManager)
             })
 
-            return ProgressFutureImpl(buildRunningPlugin, null)
+            return ProgressFutureImpl(buildRunningPlugin, null)//todo cubershi:加载进度没有实现
         }
     }
 
