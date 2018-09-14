@@ -2,6 +2,7 @@ package com.tencent.shadow.runtime;
 
 import android.app.ActionBar;
 import android.app.FragmentManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -197,5 +198,10 @@ public abstract class ShadowActivity extends PluginActivity {
     public final Cursor managedQuery(Uri uri, String[] projection, String selection,
                                      String[] selectionArgs, String sortOrder) {
         return mHostActivityDelegator.managedQuery(uri, projection, selection, selectionArgs, sortOrder);
+    }
+
+    public ComponentName getComponentName()
+    {
+        return mHostActivityDelegator.getComponentName();
     }
 }
