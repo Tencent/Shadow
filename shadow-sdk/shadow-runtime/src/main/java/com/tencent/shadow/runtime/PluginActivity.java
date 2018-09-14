@@ -12,17 +12,24 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.view.ActionMode;
 import android.view.KeyEvent;
+import android.view.KeyboardShortcutGroup;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.SearchEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.view.accessibility.AccessibilityEvent;
 
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
 
-public abstract class PluginActivity extends ShadowContext {
+import java.util.List;
+
+public abstract class PluginActivity extends ShadowContext implements Window.Callback{
     HostActivityDelegator mHostActivityDelegator;
 
     ShadowApplication mPluginApplication;
@@ -43,6 +50,11 @@ public abstract class PluginActivity extends ShadowContext {
 
     public void setPluginPackageManager(PackageManager packageManager) {
         mPluginPackageManager = packageManager;
+    }
+
+    public void onPreOnCreate(Bundle savedInstanceState){
+        Window window = mHostActivityDelegator.getWindow();
+        window.setCallback(this);
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -222,5 +234,80 @@ public abstract class PluginActivity extends ShadowContext {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         return mHostActivityDelegator.superOnOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean dispatchKeyShortcutEvent(KeyEvent event) {
+        return mHostActivityDelegator.superDispatchKeyEvent(event);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        return mHostActivityDelegator.superDispatchTouchEvent(event);
+    }
+
+    @Override
+    public boolean dispatchTrackballEvent(MotionEvent event) {
+        return mHostActivityDelegator.superDispatchTrackballEvent(event);
+    }
+
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent event) {
+        return mHostActivityDelegator.superDispatchGenericMotionEvent(event);
+    }
+
+    @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+        return mHostActivityDelegator.superDispatchPopulateAccessibilityEvent(event);
+    }
+
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        return mHostActivityDelegator.superOnMenuOpened(featureId, menu);
+    }
+
+    @Override
+    public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        return mHostActivityDelegator.superOnMenuItemSelected(featureId, item);
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        return mHostActivityDelegator.superOnSearchRequested();
+    }
+
+    @Override
+    public boolean onSearchRequested(SearchEvent searchEvent) {
+        return mHostActivityDelegator.superOnSearchRequested(searchEvent);
+    }
+
+    @Override
+    public ActionMode onWindowStartingActionMode(ActionMode.Callback callback) {
+        return mHostActivityDelegator.superOnWindowStartingActionMode(callback);
+    }
+
+    @Override
+    public ActionMode onWindowStartingActionMode(ActionMode.Callback callback, int type) {
+        return mHostActivityDelegator.superOnWindowStartingActionMode(callback, type);
+    }
+
+    @Override
+    public void onActionModeStarted(ActionMode mode) {
+        mHostActivityDelegator.superOnActionModeStarted(mode);
+    }
+
+    @Override
+    public void onActionModeFinished(ActionMode mode) {
+        mHostActivityDelegator.superOnActionModeFinished(mode);
+    }
+
+    @Override
+    public void onProvideKeyboardShortcuts(List<KeyboardShortcutGroup> data, Menu menu, int deviceId) {
+        mHostActivityDelegator.superOnProvideKeyboardShortcuts(data, menu, deviceId);
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        mHostActivityDelegator.superOnPointerCaptureChanged(hasCapture);
     }
 }

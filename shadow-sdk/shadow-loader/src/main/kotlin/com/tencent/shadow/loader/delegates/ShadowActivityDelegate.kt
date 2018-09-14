@@ -82,6 +82,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
             val pluginSavedInstanceState: Bundle? = savedInstanceState?.getBundle(PLUGIN_OUT_STATE_KEY)
             pluginSavedInstanceState?.classLoader = mPluginClassLoader
+            pluginActivity.onPreOnCreate(pluginSavedInstanceState)
             pluginActivity.onCreate(pluginSavedInstanceState)
             mPluginActivityCreated = true
         } catch (e: Exception) {
