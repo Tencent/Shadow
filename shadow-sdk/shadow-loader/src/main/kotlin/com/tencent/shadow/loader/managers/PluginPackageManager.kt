@@ -24,6 +24,7 @@ class PluginPackageManager(val commonPluginPackageManager: CommonPluginPackageMa
             val info = PackageInfo()
             info.versionCode = pluginInfo.versionCode
             info.versionName = pluginInfo.versionName
+            info.signatures = pluginInfo.signatures
             return info;
         }
         return null;

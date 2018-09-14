@@ -1,5 +1,6 @@
 package com.tencent.shadow.loader.infos
 
+import android.content.pm.Signature
 import android.os.Bundle
 
 data class PluginInfo(val partKey: String,
@@ -12,6 +13,7 @@ data class PluginInfo(val partKey: String,
     var versionCode :Int = 0;
     var versionName :String? =null;
     var firstInstallTime: Long? = null
+    var signatures : Array<Signature>? =null
 
     internal val mServices: MutableSet<PluginServiceInfo> = HashSet()
 
@@ -23,4 +25,5 @@ data class PluginInfo(val partKey: String,
     fun putServiceInfo(pluginServiceInfo: PluginServiceInfo) {
         mServices.add(pluginServiceInfo)
     }
+
 }

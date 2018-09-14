@@ -27,7 +27,7 @@ object ParsePluginApkBloc {
         val packageManager = hostAppContext.packageManager
         val packageArchiveInfo = packageManager.getPackageArchiveInfo(
                 archiveFilePath,
-                GET_ACTIVITIES or GET_META_DATA or GET_SERVICES
+                GET_ACTIVITIES or GET_META_DATA or GET_SERVICES or GET_SIGNATURES
         )
 
         if (packageArchiveInfo.applicationInfo.packageName != hostAppContext.packageName) {
@@ -68,6 +68,7 @@ object ParsePluginApkBloc {
         pluginInfo.metaData = packageArchiveInfo.applicationInfo.metaData
         pluginInfo.versionCode = packageArchiveInfo.versionCode;
         pluginInfo.versionName = packageArchiveInfo.versionName;
+        pluginInfo.signatures = packageArchiveInfo.signatures;
         return pluginInfo
     }
 }
