@@ -1,34 +1,27 @@
 package com.tencent.shadow.loader
 
 import android.content.Context
-import android.content.res.Resources
-import com.tencent.hydevteam.common.progress.ProgressFuture
-import com.tencent.hydevteam.common.progress.ProgressFutureImpl
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.plugincontainer.*
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
-import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
-import com.tencent.shadow.loader.blocs.*
-import com.tencent.shadow.loader.classloaders.PluginClassLoader
+import com.tencent.shadow.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.loader.delegates.DI
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.loader.delegates.ShadowActivityDelegate
 import com.tencent.shadow.loader.delegates.ShadowDelegate
+import com.tencent.shadow.loader.infos.PluginParts
 import com.tencent.shadow.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.loader.managers.ComponentManager
-import com.tencent.shadow.loader.managers.PluginPackageManager
 import com.tencent.shadow.loader.managers.PluginReceiverManager
-import com.tencent.shadow.runtime.ShadowApplication
 import org.slf4j.LoggerFactory
-import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
-    private val mExecutorService = Executors.newSingleThreadExecutor()
+    private val mExecutorService = Executors.newCachedThreadPool()
 
     /**
      * loadPlugin方法是在子线程被调用的。而getHostActivityDelegate方法是在主线程被调用的。
@@ -52,7 +45,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     /**
      * @GuardedBy("mLock")
      */
-    abstract fun getBusinessPluginReceiverManger(hostAppContext: Context): PluginReceiverManager
+    abstract fun getBusinessPluginReceiverManager(hostAppContext: Context): PluginReceiverManager
 
     abstract val mExceptionReporter: Reporter
 
@@ -65,44 +58,20 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     abstract val mAbi: String
 
     @Throws(LoadPluginException::class)
-    override fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin): ProgressFuture<RunningPlugin> {
-        if (installedPlugin.pluginFile != null && installedPlugin.pluginFile.exists()) {
-            val submit = mExecutorService.submit(Callable<RunningPlugin> {
-                //todo cubershi 下面这些步骤可能可以并发起来.
-                val pluginInfo = ParsePluginApkBloc.parse(installedPlugin, hostAppContext)
-                val pluginPackageManager = PluginPackageManager(mCommonPluginPackageManager, pluginInfo)
-                val soDir = CopySoBloc.copySo(installedPlugin, mAbi)
-                val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir)
-                val resources = CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
-                mComponentManager.addPluginApkInfo(pluginInfo)
-                val shadowApplication =
-                        CreateApplicationBloc.callPluginApplicationOnCreate(
-                                pluginClassLoader,
-                                pluginInfo.applicationClassName,
-                                pluginPackageManager,
-                                resources,
-                                hostAppContext,
-                                mComponentManager,
-                                getBusinessPluginReceiverManger(hostAppContext).getActionAndReceiverByApplication(pluginInfo.applicationClassName)
-                        )
-                mLock.withLock {
-                    mPluginPartsMap[pluginInfo.partKey] = PluginParts(
-                            pluginPackageManager,
-                            shadowApplication,
-                            pluginClassLoader,
-                            resources
-                    )
-                }
-
-                ShadowRunningPlugin(shadowApplication, installedPlugin, pluginInfo, mComponentManager)
-            })
-            return ProgressFutureImpl(submit, null)
-        } else if (installedPlugin.pluginFile != null)
-            throw LoadPluginException("插件文件不存在.pluginFile==" + installedPlugin.pluginFile.absolutePath)
-        else
-            throw LoadPluginException("pluginFile==null")
-
-    }
+    override fun loadPlugin(
+            hostAppContext: Context,
+            installedPlugin: InstalledPlugin
+    ) = LoadPluginBloc.loadPlugin(
+            mExecutorService,
+            mAbi,
+            mCommonPluginPackageManager,
+            mComponentManager,
+            getBusinessPluginReceiverManager(hostAppContext),
+            mLock,
+            mPluginPartsMap,
+            hostAppContext,
+            installedPlugin
+    )
 
     override fun setPluginDisabled(installedPlugin: InstalledPlugin): Boolean {
         return false
@@ -112,7 +81,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
         return ShadowActivityDelegate(this)
     }
 
-    override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate? {
+    override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate {
         return ServiceContainerReuseDelegate(this)
     }
 
@@ -132,8 +101,3 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
     }
 }
-
-class PluginParts(val packageManager: PluginPackageManager,
-                  val application: ShadowApplication,
-                  val classLoader: PluginClassLoader,
-                  val resources: Resources)

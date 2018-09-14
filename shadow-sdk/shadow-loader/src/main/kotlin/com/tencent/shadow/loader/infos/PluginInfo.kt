@@ -7,23 +7,25 @@ data class PluginInfo(val partKey: String,
                       val packageName: String,
                       val applicationClassName: String
 ) {
-    //todo cubershi 找个语法让外部查询这个mActivities不能修改它.
-    internal val mActivities: MutableSet<PluginActivityInfo> = HashSet()
+    private val _mActivities: MutableSet<PluginActivityInfo> = HashSet()
+    private val _mServices: MutableSet<PluginServiceInfo> = HashSet()
+    internal val mActivities: Set<PluginActivityInfo>
+        get() = _mActivities
+    internal val mServices: Set<PluginServiceInfo>
+        get() = _mServices
     var metaData: Bundle? = null
     var versionCode :Int = 0;
     var versionName :String? =null;
     var firstInstallTime: Long? = null
     var signatures : Array<Signature>? =null
 
-    internal val mServices: MutableSet<PluginServiceInfo> = HashSet()
-
 
     fun putActivityInfo(pluginActivityInfo: PluginActivityInfo) {
-        mActivities.add(pluginActivityInfo)
+        _mActivities.add(pluginActivityInfo)
     }
 
     fun putServiceInfo(pluginServiceInfo: PluginServiceInfo) {
-        mServices.add(pluginServiceInfo)
+        _mServices.add(pluginServiceInfo)
     }
 
 }

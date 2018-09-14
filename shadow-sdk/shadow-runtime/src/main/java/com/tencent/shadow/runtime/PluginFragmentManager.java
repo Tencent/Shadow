@@ -1,5 +1,6 @@
 package com.tencent.shadow.runtime;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.FragmentManager;
 
@@ -10,6 +11,7 @@ public class PluginFragmentManager {
         this.mBase = mBase;
     }
 
+    @SuppressLint("CommitTransaction")
     public PluginFragmentTransaction beginTransaction() {
         return new PluginFragmentTransaction(this, mBase.beginTransaction());
     }
