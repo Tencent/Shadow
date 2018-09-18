@@ -101,8 +101,7 @@ public class ShadowWebView extends WebView {
                 }
                 try {
                     return new WebResourceResponse(mime,"utf-8",mContext.getAssets().open(filePath));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignored) {
                 }
             }
             return null;

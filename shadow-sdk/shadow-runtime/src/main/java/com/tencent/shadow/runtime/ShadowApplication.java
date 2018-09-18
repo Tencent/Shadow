@@ -39,12 +39,8 @@ public abstract class ShadowApplication extends ShadowContext {
                 IntentFilter intentFilter = new IntentFilter();
                 intentFilter.addAction(entry.getKey());
                 mHostApplication.registerReceiver(receiver, intentFilter);
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
         mHostApplication.registerComponentCallbacks(new ComponentCallbacks2() {
