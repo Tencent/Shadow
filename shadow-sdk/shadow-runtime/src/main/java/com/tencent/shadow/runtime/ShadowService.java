@@ -19,7 +19,7 @@ public abstract class ShadowService extends ShadowContext {
         attachBaseContext(context);
     }
 
-    public void setContainerService(HostServiceDelegator delegator) {
+    public void setHostServiceDelegator(HostServiceDelegator delegator) {
         mHostServiceDelegator = delegator;
     }
 

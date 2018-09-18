@@ -75,7 +75,7 @@ class ShadowServiceDelegate(private val mDI: DI,
             val aClass = mPluginClassLoader.loadClass(cls)
             mPluginService = ShadowService::class.java.cast(aClass.newInstance())
             mPluginService.setHostContextAsBase(mHostServiceDelegator as Context)
-            mPluginService.setContainerService(mHostServiceDelegator)
+            mPluginService.setHostServiceDelegator(mHostServiceDelegator)
             mPluginService.setPluginResources(mPluginResources)
             mPluginService.setPluginClassLoader(mPluginClassLoader)
             mPluginService.setShadowApplication(mPluginApplication)

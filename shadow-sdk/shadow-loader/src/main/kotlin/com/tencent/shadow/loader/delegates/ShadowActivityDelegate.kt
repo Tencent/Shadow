@@ -93,7 +93,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     }
 
     private fun initPluginActivity(pluginActivity: PluginActivity) {
-        pluginActivity.setContainerActivity(mHostActivityDelegator)
+        pluginActivity.setHostActivityDelegator(mHostActivityDelegator)
         pluginActivity.setPluginResources(mPluginResources)
         pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
         pluginActivity.setPluginClassLoader(mPluginClassLoader)

@@ -40,7 +40,7 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
         attachBaseContext(context);
     }
 
-    public void setContainerActivity(HostActivityDelegator delegator) {
+    public void setHostActivityDelegator(HostActivityDelegator delegator) {
         mHostActivityDelegator = delegator;
     }
 
