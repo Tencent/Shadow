@@ -182,12 +182,4 @@ public class ShadowContext extends ContextThemeWrapper {
     public PluginComponentLauncher getPendingIntentConverter() {
         return mPluginComponentLauncher;
     }
-
-    @Override
-    public String getPackageName() {
-        if(Utils.shouldGetPluginPkgName()){
-            return "com.tencent.huayang";
-        }
-        return super.getPackageName();
-    }
 }
