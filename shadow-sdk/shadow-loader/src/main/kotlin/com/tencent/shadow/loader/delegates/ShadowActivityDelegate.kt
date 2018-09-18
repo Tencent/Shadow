@@ -76,13 +76,15 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
             initPluginActivity(pluginActivity)
             mPluginActivity = pluginActivity
 
+            //使PluginActivity替代ContainerActivity接收Window的Callback
+            mHostActivityDelegator.window.callback = pluginActivity
+
             //Activity.onCreate调用之前应该先收到onWindowAttributesChanged。
             pluginActivity.onWindowAttributesChanged(mBeforeOnCreateOnWindowAttributesChangedCalledParams)
             mBeforeOnCreateOnWindowAttributesChangedCalledParams = null
 
             val pluginSavedInstanceState: Bundle? = savedInstanceState?.getBundle(PLUGIN_OUT_STATE_KEY)
             pluginSavedInstanceState?.classLoader = mPluginClassLoader
-            pluginActivity.onPreOnCreate(pluginSavedInstanceState)
             pluginActivity.onCreate(pluginSavedInstanceState)
             mPluginActivityCreated = true
         } catch (e: Exception) {

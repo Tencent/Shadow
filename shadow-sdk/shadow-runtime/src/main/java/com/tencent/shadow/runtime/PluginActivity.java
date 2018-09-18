@@ -52,11 +52,6 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
         mPluginPackageManager = packageManager;
     }
 
-    public void onPreOnCreate(Bundle savedInstanceState){
-        Window window = mHostActivityDelegator.getWindow();
-        window.setCallback(this);
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         mHostActivityDelegator.superOnCreate(savedInstanceState);
     }
