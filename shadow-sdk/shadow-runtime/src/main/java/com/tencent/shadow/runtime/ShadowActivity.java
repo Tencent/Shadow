@@ -126,11 +126,11 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
     public final void setResult(int resultCode, Intent data) {
-        mHostActivityDelegator.setResult(resultCode,data);
+        mHostActivityDelegator.setResult(resultCode, data);
     }
 
     public SharedPreferences getPreferences(int mode) {
-        return super.getSharedPreferences(getLocalClassName(),mode);
+        return super.getSharedPreferences(getLocalClassName(), mode);
     }
 
     public String getLocalClassName() {
@@ -153,12 +153,12 @@ public abstract class ShadowActivity extends PluginActivity {
         return mHostActivityDelegator.getTitleColor();
     }
 
-    public void setTitle(int var1){
+    public void setTitle(int var1) {
         mHostActivityDelegator.setTitle(var1);
     }
 
-    public CharSequence getTitle(){
-       return mHostActivityDelegator.getTitle();
+    public CharSequence getTitle() {
+        return mHostActivityDelegator.getTitle();
     }
 
     public void setRequestedOrientation(int requestedOrientation) {
@@ -200,8 +200,7 @@ public abstract class ShadowActivity extends PluginActivity {
         return mHostActivityDelegator.managedQuery(uri, projection, selection, selectionArgs, sortOrder);
     }
 
-    public ComponentName getComponentName()
-    {
+    public ComponentName getComponentName() {
         return mHostActivityDelegator.getComponentName();
     }
 }
