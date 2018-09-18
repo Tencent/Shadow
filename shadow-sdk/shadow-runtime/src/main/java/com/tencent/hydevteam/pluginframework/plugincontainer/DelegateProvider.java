@@ -9,6 +9,8 @@ package com.tencent.hydevteam.pluginframework.plugincontainer;
  * @author cubershi
  */
 public interface DelegateProvider {
+    String LOADER_VERSION_KEY = "LOADER_VERSION";
+
     /**
      * 获取与delegator相应的HostActivityDelegate
      *

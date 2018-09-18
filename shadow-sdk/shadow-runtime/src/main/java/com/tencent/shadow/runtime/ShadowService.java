@@ -1,5 +1,6 @@
 package com.tencent.shadow.runtime;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +19,7 @@ public abstract class ShadowService extends ShadowContext {
         attachBaseContext(context);
     }
 
-    public void setContainerService(HostServiceDelegator delegator) {
+    public void setHostServiceDelegator(HostServiceDelegator delegator) {
         mHostServiceDelegator = delegator;
     }
 
@@ -58,4 +59,25 @@ public abstract class ShadowService extends ShadowContext {
 
     }
 
+    public void onRebind(Intent intent) {
+
+    }
+
+    @Deprecated
+    public void onStart(Intent intent, int startId) {
+    }
+
+    @Deprecated
+    public final void setForeground(boolean isForeground) {
+
+    }
+
+    public final void startForeground(int id, Notification notification) {
+        mHostServiceDelegator.startForeground(id, notification);
+    }
+
+    public final void stopForeground(boolean removeNotification) {
+        //todo cubershi: 这里没有考虑多Service复用的情况。多Service复用时不能其中一个Service要stop就stop。
+        mHostServiceDelegator.stopForeground(removeNotification);
+    }
 }

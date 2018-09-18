@@ -1,6 +1,8 @@
 package com.tencent.hydevteam.pluginframework.plugincontainer;
 
+import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
 
 /**
  * HostService作为委托者的接口。主要提供它的委托方法的super方法，
@@ -13,7 +15,13 @@ public interface HostServiceDelegator {
 
     void superStopSelf();
 
+    boolean superOnUnbind(Intent intent);
+
     Context getApplicationContext();
 
     Context getBaseContext();
+
+    void startForeground(int id, Notification notification);
+
+    void stopForeground(boolean removeNotification);
 }

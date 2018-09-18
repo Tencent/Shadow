@@ -1,12 +1,17 @@
 package com.tencent.shadow.runtime;
 
+import android.app.ActionBar;
 import android.app.FragmentManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -29,6 +34,10 @@ public abstract class ShadowActivity extends PluginActivity {
 
     public void setContentView(View view) {
         mHostActivityDelegator.setContentView(view);
+    }
+
+    public void addContentView(View view, ViewGroup.LayoutParams params) {
+        mHostActivityDelegator.superAddContentView(view, params);
     }
 
     public final ShadowApplication getApplication() {
@@ -106,7 +115,7 @@ public abstract class ShadowActivity extends PluginActivity {
     public void startActivityForResult(Intent intent, int requestCode) {
         final Intent pluginIntent = new Intent(intent);
         pluginIntent.setExtrasClassLoader(mPluginClassLoader);
-        final boolean success = mPluginActivityLauncher.startActivityForResult(mHostActivityDelegator, pluginIntent, requestCode);
+        final boolean success = mPluginComponentLauncher.startActivityForResult(mHostActivityDelegator, pluginIntent, requestCode);
         if (!success) {
             mHostActivityDelegator.startActivityForResult(intent, requestCode);
         }
@@ -117,11 +126,11 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
     public final void setResult(int resultCode, Intent data) {
-        mHostActivityDelegator.setResult(resultCode,data);
+        mHostActivityDelegator.setResult(resultCode, data);
     }
 
     public SharedPreferences getPreferences(int mode) {
-        return super.getSharedPreferences(getLocalClassName(),mode);
+        return super.getSharedPreferences(getLocalClassName(), mode);
     }
 
     public String getLocalClassName() {
@@ -144,12 +153,12 @@ public abstract class ShadowActivity extends PluginActivity {
         return mHostActivityDelegator.getTitleColor();
     }
 
-    public void setTitle(int var1){
+    public void setTitle(int var1) {
         mHostActivityDelegator.setTitle(var1);
     }
 
-    public CharSequence getTitle(){
-       return mHostActivityDelegator.getTitle();
+    public CharSequence getTitle() {
+        return mHostActivityDelegator.getTitle();
     }
 
     public void setRequestedOrientation(int requestedOrientation) {
@@ -167,5 +176,31 @@ public abstract class ShadowActivity extends PluginActivity {
 
     public final void requestPermissions(String[] permissions, int requestCode) {
         mHostActivityDelegator.requestPermissions(permissions, requestCode);
+    }
+
+    public ActionBar getActionBar() {
+        return mHostActivityDelegator.getActionBar();
+    }
+
+    public void setVisible(boolean visible) {
+        mHostActivityDelegator.setVisible(visible);
+    }
+
+    public void setIntent(Intent newIntent) {
+        mHostActivityDelegator.setIntent(newIntent);
+    }
+
+    public View getCurrentFocus() {
+        return mHostActivityDelegator.getCurrentFocus();
+    }
+
+    @Deprecated
+    public final Cursor managedQuery(Uri uri, String[] projection, String selection,
+                                     String[] selectionArgs, String sortOrder) {
+        return mHostActivityDelegator.managedQuery(uri, projection, selection, selectionArgs, sortOrder);
+    }
+
+    public ComponentName getComponentName() {
+        return mHostActivityDelegator.getComponentName();
     }
 }

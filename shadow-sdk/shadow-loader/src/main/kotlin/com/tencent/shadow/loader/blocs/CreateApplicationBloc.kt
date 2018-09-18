@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Handler
 import android.os.Looper
-import com.tencent.shadow.loader.PluginPackageManager
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.exceptions.CreateApplicationException
-import com.tencent.shadow.loader.managers.PendingIntentManager
-import com.tencent.shadow.loader.managers.PluginActivitiesManager
-import com.tencent.shadow.loader.managers.PluginServicesManager
+import com.tencent.shadow.loader.managers.ComponentManager
+import com.tencent.shadow.loader.managers.PluginPackageManager
 import com.tencent.shadow.runtime.ShadowApplication
 import java.util.concurrent.CountDownLatch
 
@@ -26,23 +24,19 @@ object CreateApplicationBloc {
             pluginPackageManager: PluginPackageManager,
             resources: Resources,
             hostAppContext: Context,
-            businessPluginActivitiesManager: PluginActivitiesManager,
-            businessPluginServiceManager: PluginServicesManager,
-            receivers: Map<String, String>,
-            mPendingIntentManager: PendingIntentManager
+            componentManager: ComponentManager,
+            receivers: Map<String, String>
     ): ShadowApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
             val shadowApplication = ShadowApplication::class.java.cast(appClass.newInstance())
             shadowApplication.setPluginResources(resources)
             shadowApplication.setPluginClassLoader(pluginClassLoader)
-            shadowApplication.setPluginActivityLauncher(businessPluginActivitiesManager)
-            shadowApplication.setServiceOperator(businessPluginServiceManager)
+            shadowApplication.setPluginComponentLauncher(componentManager)
             shadowApplication.setHostApplicationContextAsBase(hostAppContext)
             shadowApplication.setReceivers(receivers)
             shadowApplication.setPluginPackageManager(pluginPackageManager)
             shadowApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
-            shadowApplication.pendingIntentConverter = mPendingIntentManager;
             val uiHandler = Handler(Looper.getMainLooper())
             val lock = CountDownLatch(1)
             uiHandler.post {

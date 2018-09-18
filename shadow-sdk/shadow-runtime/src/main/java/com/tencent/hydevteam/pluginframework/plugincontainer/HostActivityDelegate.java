@@ -96,6 +96,8 @@ public interface HostActivityDelegate {
 
     View onCreateView(String name, Context context, AttributeSet attrs);
 
+    View onCreateView(View parent, String name, Context context, AttributeSet attrs);
+
     void startActivityFromChild(Activity child, Intent intent, int requestCode);
 
     ClassLoader getClassLoader();

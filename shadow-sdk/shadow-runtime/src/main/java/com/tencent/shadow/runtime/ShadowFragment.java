@@ -550,4 +550,9 @@ public class ShadowFragment {
     public final String getString(int resId, Object... formatArgs) {
         return getResources().getString(resId, formatArgs);
     }
+
+    public final void requestPermissions(String[] permissions, int requestCode) {
+        mContainerFragment.requestPermissions(permissions, requestCode);
+    }
+
 }

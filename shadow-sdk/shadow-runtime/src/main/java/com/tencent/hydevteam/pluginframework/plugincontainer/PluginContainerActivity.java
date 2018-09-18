@@ -69,6 +69,9 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toolbar;
 
+import com.tencent.shadow.runtime.BuildConfig;
+import com.tencent.shadow.runtime.ShadowActivity;
+
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -79,6 +82,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
+import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY;
+
 /**
  * 插件的容器Activity。PluginLoader将把插件的Activity放在其中。
  * PluginContainerActivity以委托模式将Activity的所有回调方法委托给DelegateProviderHolder提供的Delegate。
@@ -88,7 +93,9 @@ import java.util.List;
 public class PluginContainerActivity extends Activity implements HostActivity, HostActivityDelegator {
     private static final String TAG = "PluginContainerActivity";
 
-    final HostActivityDelegate hostActivityDelegate;
+    HostActivityDelegate hostActivityDelegate;
+
+    private boolean isBeforeOnCreate = true;
 
     public PluginContainerActivity() {
         HostActivityDelegate delegate;
@@ -103,11 +110,26 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     final public Object getPluginActivity() {
-        return hostActivityDelegate.getPluginActivity();
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.getPluginActivity();
+        } else {
+            //在遇到IllegalIntent时hostActivityDelegate==null。需要返回一个空的Activity避免Crash。
+            return new ShadowActivity() {
+            };
+        }
     }
 
     @Override
     final protected void onCreate(Bundle savedInstanceState) {
+        isBeforeOnCreate = false;
+        mHostTheme = null;//释放资源
+
+        boolean illegalIntent = isIllegalIntent(savedInstanceState);
+        if (illegalIntent) {
+            hostActivityDelegate = null;
+            Log.e(TAG, "illegalIntent savedInstanceState==" + savedInstanceState + " getIntent().getExtras()==" + getIntent().getExtras());
+        }
+
         if (hostActivityDelegate != null) {
             hostActivityDelegate.onCreate(savedInstanceState);
         } else {
@@ -117,6 +139,26 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             finish();
             System.exit(0);
         }
+    }
+
+    /**
+     * IllegalIntent指的是这些情况下的启动：
+     * 1.插件版本变化之后，残留于系统中的PendingIntent或系统因回收内存杀死进程残留的任务栈而启动。
+     * 由于插件版本变化，PluginLoader逻辑可能不一致，Intent中的参数可能不能满足新代码的启动条件。
+     * 2.外部的非法启动，无法确定一个插件的Activity。
+     *
+     * @param savedInstanceState onCreate时系统还回来的savedInstanceState
+     * @return <code>true</code>表示这次启动不是我们预料的，需要尽早finish并退出进程。
+     */
+    private boolean isIllegalIntent(Bundle savedInstanceState) {
+        Bundle extras = getIntent().getExtras();
+        if (extras == null && savedInstanceState == null) {
+            return true;
+        }
+        Bundle bundle;
+        bundle = savedInstanceState == null ? extras : savedInstanceState;
+        String loaderVersion = bundle.getString(LOADER_VERSION_KEY);
+        return !BuildConfig.VERSION_NAME.equals(loaderVersion);
     }
 
     @Override
@@ -144,6 +186,8 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         } else {
             super.onSaveInstanceState(outState);
         }
+        //避免插件setIntent清空掉LOADER_VERSION_KEY
+        outState.putString(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME);
     }
 
     @Override
@@ -413,6 +457,15 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             return hostActivityDelegate.onCreateView(name, context, attrs);
         } else {
             return super.onCreateView(name, context, attrs);
+        }
+    }
+
+    @Override
+    public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.onCreateView(parent, name, context, attrs);
+        } else {
+            return super.onCreateView(parent, name, context, attrs);
         }
     }
 
@@ -2021,6 +2074,33 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     public void onDetachedFromWindow() {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.onDetachedFromWindow();
+        }
+    }
+
+    /**
+     * Theme一旦设置了就不能更换Theme所在的Resouces了，见{@link Resources.Theme#setTo(Resources.Theme)}
+     * 而Activity在OnCreate之前需要设置Theme和使用Theme。我们需要在Activity OnCreate之后才能注入插件资源。
+     * 这就需要在Activity OnCreate之前不要调用Activity的setTheme方法，同时在getTheme时返回宿主的Theme资源。
+     * 注：{@link Activity#setTheme(int)}会触发初始化Theme，因此不能调用。
+     */
+    private Resources.Theme mHostTheme;
+
+    @Override
+    public Resources.Theme getTheme() {
+        if (isBeforeOnCreate) {
+            if (mHostTheme == null) {
+                mHostTheme = super.getResources().newTheme();
+            }
+            return mHostTheme;
+        } else {
+            return super.getTheme();
+        }
+    }
+
+    @Override
+    public void setTheme(int resid) {
+        if (!isBeforeOnCreate) {
+            super.setTheme(resid);
         }
     }
 }

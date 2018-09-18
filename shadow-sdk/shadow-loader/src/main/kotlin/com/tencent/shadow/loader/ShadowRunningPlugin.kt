@@ -5,7 +5,7 @@ import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.loader.infos.PluginInfo
-import com.tencent.shadow.loader.managers.PluginActivitiesManager
+import com.tencent.shadow.loader.managers.ComponentManager
 import com.tencent.shadow.runtime.ShadowApplication
 import org.slf4j.LoggerFactory
 import java.util.concurrent.ExecutionException
@@ -16,16 +16,16 @@ internal class ShadowRunningPlugin(
         private val shadowApplication: ShadowApplication
         , private val installedPlugin: InstalledPlugin
         , private val pluginInfo: PluginInfo
-        , private val mPluginActivitiesManager: PluginActivitiesManager
+        , private val mComponentManager: ComponentManager
 ) : RunningPlugin {
 
     override fun startLauncherActivity(intent: Intent): ProgressFuture<*> {
-        val launcherActivity = mPluginActivitiesManager.launcherActivity
+        val launcherActivity = mComponentManager.getLauncherActivity(pluginInfo.partKey)
         val pluginIntent = Intent(intent)
         pluginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         pluginIntent.component = launcherActivity
-        val hostApplicationContext = shadowApplication
-        hostApplicationContext.startActivity(pluginIntent)
+        val pluginApplicationContext = shadowApplication
+        pluginApplicationContext.startActivity(pluginIntent)
 
         return object : ProgressFuture<Any> {
             override fun getProgress(): Double {

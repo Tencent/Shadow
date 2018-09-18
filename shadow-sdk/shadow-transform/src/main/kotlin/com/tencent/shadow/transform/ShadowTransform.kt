@@ -44,6 +44,9 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
                 ,
                 AndroidDialogClassname
                         to ShadowDialogClassname
+                ,
+                "android.app.Instrumentation"
+                        to "com.tencent.shadow.runtime.ShadowInstrumentation"
 
         )
     }

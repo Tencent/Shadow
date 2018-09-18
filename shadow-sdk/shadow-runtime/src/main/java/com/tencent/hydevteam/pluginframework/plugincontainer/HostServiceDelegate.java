@@ -16,7 +16,7 @@ public interface HostServiceDelegate {
 
     IBinder onBind(Intent intent);
 
-    void onCreate(Intent intent);
+    void onCreate();
 
     int onStartCommand(Intent intent, int flags, int startId);
 
@@ -28,7 +28,7 @@ public interface HostServiceDelegate {
 
     void onTrimMemory(int level);
 
-    boolean onUnbind(Intent intent, Boolean allUnBind);
+    boolean onUnbind(Intent intent);
 
     void onTaskRemoved(Intent rootIntent);
 }
