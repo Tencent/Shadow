@@ -60,15 +60,15 @@ object ParsePluginApkBloc {
                 partKey
                 , packageArchiveInfo.applicationInfo.packageName
                 , packageArchiveInfo.applicationInfo.className
+                , packageArchiveInfo.applicationInfo.metaData
+                , packageArchiveInfo.versionCode
+                , packageArchiveInfo.versionName
+                , packageArchiveInfo.signatures
         )
         packageArchiveInfo.activities.forEach {
             pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource, it))
         }
         packageArchiveInfo.services.forEach { pluginInfo.putServiceInfo(PluginServiceInfo(it.name)) }
-        pluginInfo.metaData = packageArchiveInfo.applicationInfo.metaData
-        pluginInfo.versionCode = packageArchiveInfo.versionCode;
-        pluginInfo.versionName = packageArchiveInfo.versionName;
-        pluginInfo.signatures = packageArchiveInfo.signatures;
         return pluginInfo
     }
 }
