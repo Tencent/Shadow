@@ -80,4 +80,8 @@ public abstract class ShadowService extends ShadowContext {
         //todo cubershi: 这里没有考虑多Service复用的情况。多Service复用时不能其中一个Service要stop就stop。
         mHostServiceDelegator.stopForeground(removeNotification);
     }
+
+    public final ShadowApplication getApplication() {
+        return mShadowApplication;
+    }
 }
