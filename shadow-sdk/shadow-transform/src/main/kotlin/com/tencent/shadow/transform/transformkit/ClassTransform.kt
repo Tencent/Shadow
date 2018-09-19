@@ -119,8 +119,18 @@ abstract class ClassTransform : Transform() {
 
     override fun getScopes(): MutableSet<in Scope> = TransformManager.SCOPE_FULL_PROJECT
 
-    final override fun transform(invocation: TransformInvocation) {
+    /**
+     * 每一次执行transform前调用。在一次构建中可能有多个Variant，多个Variant会共用同一个
+     * Transform对象（就是这个类的对象）。在这里提供一个时机清理transform过程中产生的缓存，
+     * 避免对下一次transform产生影响。
+     */
+    open fun beforeTransform(invocation: TransformInvocation) {
         invocation.outputProvider.deleteAll()
+    }
+
+
+    final override fun transform(invocation: TransformInvocation) {
+        beforeTransform(invocation)
         input(invocation.inputs, invocation.outputProvider)
         onTransform()
         output(invocation.outputProvider)

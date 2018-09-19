@@ -1,13 +1,15 @@
 package com.tencent.shadow.transform.transformkit
 
+import com.android.build.api.transform.TransformInvocation
 import javassist.ClassPool
 import javassist.CtClass
 import java.io.File
 import java.io.OutputStream
 import java.util.zip.ZipInputStream
 
-open class JavassistTransform(val classPool: ClassPool) : ClassTransform() {
+open class JavassistTransform(val classPoolBuilder: ClassPoolBuilder) : ClassTransform() {
     val mCtClassInputMap = mutableMapOf<CtClass, InputClass>()
+    lateinit var classPool: ClassPool
 
     override fun onOutputClass(className: String, outputStream: OutputStream) {
         classPool[className].writeOut(outputStream)
@@ -25,6 +27,14 @@ open class JavassistTransform(val classPool: ClassPool) : ClassTransform() {
         mCtClassInputMap[ctClass] = this
     }
 
+    override fun beforeTransform(invocation: TransformInvocation) {
+        super.beforeTransform(invocation)
+        mCtClassInputMap.clear()
+        classPool = classPoolBuilder.build()
+    }
+
+
+
     override fun onTransform() {
         //do nothing.
     }
@@ -32,4 +42,8 @@ open class JavassistTransform(val classPool: ClassPool) : ClassTransform() {
     fun CtClass.writeOut(output: OutputStream) {
         this.toBytecode(java.io.DataOutputStream(output))
     }
+}
+
+interface ClassPoolBuilder {
+    fun build(): ClassPool
 }

@@ -1,12 +1,14 @@
 package com.tencent.shadow.transform
 
+import com.android.build.api.transform.TransformInvocation
+import com.tencent.shadow.transform.transformkit.ClassPoolBuilder
 import com.tencent.shadow.transform.transformkit.DirInputClass
 import com.tencent.shadow.transform.transformkit.JarInputClass
 import com.tencent.shadow.transform.transformkit.JavassistTransform
 import javassist.*
 import java.io.File
 
-class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: ShadowTransformPlugin.KeepHostObjectsExtension) : JavassistTransform(classPool) {
+class ShadowTransform(classPoolBuilder: ClassPoolBuilder, val keepHostObjectsExtension: ShadowTransformPlugin.KeepHostObjectsExtension) : JavassistTransform(classPoolBuilder) {
 
     companion object {
         const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"
@@ -51,11 +53,17 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
         )
     }
 
-    val ContainerFragmentCtClass = classPool["com.tencent.shadow.runtime.ContainerFragment"]
-    val ContainerDialogFragmentCtClass = classPool["com.tencent.shadow.runtime.ContainerDialogFragment"]
+    private val containerFragmentCtClass: CtClass get() = classPool["com.tencent.shadow.runtime.ContainerFragment"]
+    private val containerDialogFragmentCtClass: CtClass get() = classPool["com.tencent.shadow.runtime.ContainerDialogFragment"]
 
     val mAppFragments: MutableSet<CtClass> = mutableSetOf()
     val mAppDialogFragments: MutableSet<CtClass> = mutableSetOf()
+
+    override fun beforeTransform(invocation: TransformInvocation) {
+        super.beforeTransform(invocation)
+        mAppFragments.clear()
+        mAppDialogFragments.clear()
+    }
 
     override fun onTransform() {
         step1_renameShadowClass()
@@ -134,8 +142,8 @@ class ShadowTransform(classPool: ClassPool, val keepHostObjectsExtension: Shadow
             }
         }
         listOf(
-                mAppFragments to ContainerFragmentCtClass,
-                mAppDialogFragments to ContainerDialogFragmentCtClass
+                mAppFragments to containerFragmentCtClass,
+                mAppDialogFragments to containerDialogFragmentCtClass
         ).forEach { (fragmentSet, container) ->
             fragmentSet.forEach {
                 val inputClass = mCtClassInputMap[it]!!
