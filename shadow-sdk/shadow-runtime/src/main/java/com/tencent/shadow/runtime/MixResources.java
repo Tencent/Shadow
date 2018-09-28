@@ -1,11 +1,17 @@
 package com.tencent.shadow.runtime;
 
 import android.annotation.TargetApi;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
+import android.graphics.Movie;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.TypedValue;
+
+import java.io.InputStream;
 
 public class MixResources extends ResourcesWrapper {
 
@@ -186,6 +192,71 @@ public class MixResources extends ResourcesWrapper {
             return super.getText(id,def);
         } catch (NotFoundException e) {
             return mHostResources.getText(id,def);
+        }
+    }
+
+    @Override
+    public InputStream openRawResource(int id) throws NotFoundException {
+        try {
+            return super.openRawResource(id);
+        } catch (NotFoundException e) {
+            return mHostResources.openRawResource(id);
+        }
+
+    }
+
+    @Override
+    public XmlResourceParser getXml(int id) throws NotFoundException {
+        try {
+            return super.getXml(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getXml(id);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    @Override
+    public Typeface getFont(int id) throws NotFoundException {
+        try {
+            return super.getFont(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getFont(id);
+        }
+    }
+
+    @Override
+    public Movie getMovie(int id) throws NotFoundException {
+        try {
+            return super.getMovie(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getMovie(id);
+        }
+    }
+
+    @Override
+    public XmlResourceParser getAnimation(int id) throws NotFoundException {
+        try {
+            return super.getAnimation(id);
+        } catch (NotFoundException e) {
+            return mHostResources.getAnimation(id);
+        }
+    }
+
+    @Override
+    public InputStream openRawResource(int id, TypedValue value) throws NotFoundException {
+        try {
+            return super.openRawResource(id,value);
+        } catch (NotFoundException e) {
+            return mHostResources.openRawResource(id,value);
+        }
+    }
+
+    @Override
+    public AssetFileDescriptor openRawResourceFd(int id) throws NotFoundException {
+        try {
+            return super.openRawResourceFd(id);
+        } catch (NotFoundException e) {
+            return mHostResources.openRawResourceFd(id);
         }
     }
 }
