@@ -22,6 +22,7 @@ import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_EXTRAS_B
 import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_LOADER_BUNDLE_KEY
 import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_PART_KEY
 import com.tencent.shadow.runtime.FixedContextLayoutInflater
+import com.tencent.shadow.runtime.MixResources
 import com.tencent.shadow.runtime.PluginActivity
 
 /**
@@ -42,6 +43,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     private var mPluginActivityCreated = false
     private var mDependenciesInjected = false
     private var mBeforeOnCreateOnWindowAttributesChangedCalledParams: WindowManager.LayoutParams? = null
+    private lateinit var mMixResources: MixResources
 
     override fun setDelegator(hostActivityDelegator: HostActivityDelegator) {
         mHostActivityDelegator = hostActivityDelegator
@@ -56,6 +58,8 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         mPartKey = partKey
         mDI.inject(this, partKey)
         mDependenciesInjected = true
+
+        mMixResources = MixResources(mHostActivityDelegator.superGetResources(), mPluginResources)
 
         val bundleForPluginLoader = pluginInitBundle.getBundle(CM_LOADER_BUNDLE_KEY)!!
         mBundleForPluginLoader = bundleForPluginLoader
@@ -269,7 +273,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
     override fun getResources(): Resources {
         if (mDependenciesInjected) {
-            return mPluginResources
+            return mMixResources;
         } else {
             //预期只有android.view.Window.getDefaultFeatures会调用到这个分支，此时我们还无法确定插件资源
             //而getDefaultFeatures只需要访问系统资源
