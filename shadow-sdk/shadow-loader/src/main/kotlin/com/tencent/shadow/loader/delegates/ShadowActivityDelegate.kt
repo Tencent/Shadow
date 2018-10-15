@@ -42,6 +42,10 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     private lateinit var mBundleForPluginLoader: Bundle
     private var mPluginActivityCreated = false
     private var mDependenciesInjected = false
+    /**
+     * 判断是否调用过OnWindowAttributesChanged，如果调用过就说明需要在onCreate之前调用
+     */
+    private var mCallOnWindowAttributesChanged = false
     private var mBeforeOnCreateOnWindowAttributesChangedCalledParams: WindowManager.LayoutParams? = null
     private lateinit var mMixResources: MixResources
 
@@ -84,8 +88,10 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
             mHostActivityDelegator.window.callback = pluginActivity
 
             //Activity.onCreate调用之前应该先收到onWindowAttributesChanged。
-            pluginActivity.onWindowAttributesChanged(mBeforeOnCreateOnWindowAttributesChangedCalledParams)
-            mBeforeOnCreateOnWindowAttributesChangedCalledParams = null
+            if (mCallOnWindowAttributesChanged) {
+                pluginActivity.onWindowAttributesChanged(mBeforeOnCreateOnWindowAttributesChangedCalledParams)
+                mBeforeOnCreateOnWindowAttributesChangedCalledParams = null
+            }
 
             val pluginSavedInstanceState: Bundle? = savedInstanceState?.getBundle(PLUGIN_OUT_STATE_KEY)
             pluginSavedInstanceState?.classLoader = mPluginClassLoader
@@ -208,6 +214,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         } else {
             mBeforeOnCreateOnWindowAttributesChangedCalledParams = params
         }
+        mCallOnWindowAttributesChanged = true
     }
 
     override fun onContentChanged() {
