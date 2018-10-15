@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.util.Pair;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -105,6 +106,8 @@ public class ShadowContext extends ContextThemeWrapper {
          * <code>false</code>表示该Intent不是插件内的Activity.
          */
         boolean startActivityForResult(HostActivityDelegator delegator, Intent intent, int requestCode);
+
+        boolean startActivityForResult(HostActivityDelegator delegator, Intent intent, int requestCode, Bundle option);
 
         Pair<Boolean, ComponentName> startService(ShadowContext context, Intent service);
 

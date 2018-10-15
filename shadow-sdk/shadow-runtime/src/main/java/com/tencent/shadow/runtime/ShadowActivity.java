@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -120,6 +121,16 @@ public abstract class ShadowActivity extends PluginActivity {
             mHostActivityDelegator.startActivityForResult(intent, requestCode);
         }
     }
+
+    public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
+        final Intent pluginIntent = new Intent(intent);
+        pluginIntent.setExtrasClassLoader(mPluginClassLoader);
+        final boolean success = mPluginComponentLauncher.startActivityForResult(mHostActivityDelegator, pluginIntent, requestCode, options);
+        if (!success) {
+            mHostActivityDelegator.startActivityForResult(intent, requestCode, options);
+        }
+    }
+
 
     public final void setResult(int resultCode) {
         mHostActivityDelegator.setResult(resultCode);

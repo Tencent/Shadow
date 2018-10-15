@@ -60,6 +60,15 @@ abstract class ComponentManager : PluginComponentLauncher {
         }
     }
 
+    override fun startActivityForResult(delegator: HostActivityDelegator, pluginIntent: Intent, requestCode: Int, option: Bundle): Boolean {
+        return if (pluginIntent.isPluginComponent()) {
+            delegator.startActivityForResult(pluginIntent.toActivityContainerIntent(), requestCode, option)
+            true
+        } else {
+            false
+        }
+    }
+
     private fun doServiceOpt(context: ShadowContext, intent: Intent?): Boolean {
         intent ?: return false
         context.baseContext.startService(intent)
