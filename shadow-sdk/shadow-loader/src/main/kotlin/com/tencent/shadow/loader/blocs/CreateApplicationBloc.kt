@@ -37,6 +37,7 @@ object CreateApplicationBloc {
             shadowApplication.setReceivers(receivers)
             shadowApplication.setPluginPackageManager(pluginPackageManager)
             shadowApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
+            shadowApplication.setPluginPartKey(pluginPackageManager.pluginInfo.partKey)
             val uiHandler = Handler(Looper.getMainLooper())
             val lock = CountDownLatch(1)
             uiHandler.post {

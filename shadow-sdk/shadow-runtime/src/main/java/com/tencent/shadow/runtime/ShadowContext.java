@@ -22,6 +22,7 @@ public class ShadowContext extends ContextThemeWrapper {
     Resources mMixResources;
     LayoutInflater mLayoutInflater;
     String mLibrarySearchPath;
+    protected String mPartKey;
 
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;
@@ -41,6 +42,10 @@ public class ShadowContext extends ContextThemeWrapper {
 
     public void setLibrarySearchPath(String mLibrarySearchPath) {
         this.mLibrarySearchPath = mLibrarySearchPath;
+    }
+
+    public void setPluginPartKey(String partKey) {
+        this.mPartKey = partKey;
     }
 
     @Override
@@ -73,8 +78,7 @@ public class ShadowContext extends ContextThemeWrapper {
         if (LAYOUT_INFLATER_SERVICE.equals(name)) {
             if (mLayoutInflater == null) {
                 LayoutInflater inflater = (LayoutInflater) super.getSystemService(name);
-                assert inflater != null;
-                mLayoutInflater = new ShadowLayoutInflater(inflater.cloneInContext(this),this);
+                mLayoutInflater = ShadowLayoutInflater.build(inflater, this, mPartKey);
             }
             return mLayoutInflater;
         }
@@ -91,7 +95,7 @@ public class ShadowContext extends ContextThemeWrapper {
          * 启动Activity
          *
          * @param shadowContext 启动context
-         * @param intent  插件内传来的Intent.
+         * @param intent        插件内传来的Intent.
          * @return <code>true</code>表示该Intent是为了启动插件内Activity的,已经被正确消费了.
          * <code>false</code>表示该Intent不是插件内的Activity.
          */

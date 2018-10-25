@@ -2,6 +2,7 @@ package com.tencent.shadow.runtime;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -13,7 +14,7 @@ import android.view.View;
  *
  * @author cubershi
  */
-public class FixedContextLayoutInflater extends LayoutInflater {
+public abstract class FixedContextLayoutInflater extends LayoutInflater {
     private static final String[] sClassPrefixList = {
             "android.widget.",
             "android.webkit.",
@@ -32,7 +33,8 @@ public class FixedContextLayoutInflater extends LayoutInflater {
     protected View onCreateView(String name, AttributeSet attrs) throws ClassNotFoundException {
         for (String prefix : sClassPrefixList) {
             try {
-                View view = createView(name, prefix, attrs);
+                Pair<String,String> result = changeViewNameAndPrefix(prefix, name);
+                View view = createView(result.first, result.second, attrs);
                 if (view != null) {
                     return view;
                 }
@@ -47,6 +49,11 @@ public class FixedContextLayoutInflater extends LayoutInflater {
 
     @Override
     public LayoutInflater cloneInContext(Context newContext) {
-        return this;
+        return createNewContextLayoutInflater(newContext);
     }
+
+    abstract LayoutInflater createNewContextLayoutInflater(Context context);
+
+    abstract Pair<String,String> changeViewNameAndPrefix(String prefix, String name);
+
 }

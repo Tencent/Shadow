@@ -196,10 +196,8 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
     }
 
     public LayoutInflater getLayoutInflater() {
-        LayoutInflater inflater = (LayoutInflater) mHostActivityDelegator.getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-        assert inflater != null;
-        inflater.cloneInContext(this);
-        return new FixedContextLayoutInflater(inflater, this);
+        LayoutInflater inflater = mHostActivityDelegator.getWindow().getLayoutInflater();
+        return ShadowLayoutInflater.build(inflater, this, mPartKey);
     }
 
     public void onBackPressed() {

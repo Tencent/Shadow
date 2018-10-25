@@ -21,9 +21,9 @@ import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_CLASS_NA
 import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_EXTRAS_BUNDLE_KEY
 import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_LOADER_BUNDLE_KEY
 import com.tencent.shadow.loader.managers.ComponentManager.Companion.CM_PART_KEY
-import com.tencent.shadow.runtime.FixedContextLayoutInflater
 import com.tencent.shadow.runtime.MixResources
 import com.tencent.shadow.runtime.PluginActivity
+import com.tencent.shadow.runtime.ShadowLayoutInflater
 
 /**
  * 壳子Activity与插件Activity转调关系的实现类
@@ -112,6 +112,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.setPluginPackageManager(mPluginPackageManager)
         pluginActivity.setShadowApplication(mPluginApplication)
         pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
+        pluginActivity.setPluginPartKey(mPartKey)
     }
 
     override fun onResume() {
@@ -274,8 +275,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
     override fun getLayoutInflater(): LayoutInflater {
         val inflater = mHostActivityDelegator.applicationContext.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        inflater.cloneInContext(mPluginActivity)
-        return FixedContextLayoutInflater(inflater, mPluginActivity)
+        return ShadowLayoutInflater.build(inflater, mPluginActivity, mPartKey)
     }
 
     override fun getResources(): Resources {

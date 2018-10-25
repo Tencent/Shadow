@@ -81,6 +81,7 @@ class ShadowServiceDelegate(private val mDI: DI,
             mPluginService.setShadowApplication(mPluginApplication)
             mPluginService.setPluginComponentLauncher(mComponentManager)
             mPluginService.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
+            mPluginService.setPluginPartKey(partKey)
             mIsSetService = true
         }
         return mPluginService.onCreate()
