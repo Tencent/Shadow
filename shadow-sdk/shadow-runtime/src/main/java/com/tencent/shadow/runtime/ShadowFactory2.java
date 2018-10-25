@@ -3,7 +3,6 @@ package com.tencent.shadow.runtime;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewStub;
@@ -13,12 +12,12 @@ import java.util.HashMap;
 
 /**
  * 具备创建自定义View功能的Factory2
+ *
+ * // TODO: 2018/10/25  实现LayoutInflater 的 filter功能
  */
 public class ShadowFactory2 implements LayoutInflater.Factory2 {
 
     private String mPartKey;
-
-    private LayoutInflater.Filter mFilter;
 
     final Object[] mConstructorArgs = new Object[2];
 
@@ -27,8 +26,6 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
 
     private static final HashMap<String, Constructor<? extends View>> sConstructorMap =
             new HashMap<String, Constructor<? extends View>>();
-
-    private HashMap<String, Boolean> mFilterMap;
 
 
     private LayoutInflater mLayoutInflater;
@@ -46,11 +43,10 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
         View view;
         if (name.contains(".")) {//自定义view
-            String value = mPartKey + name;
             if (sCreateSystemMap.get(name) == null) {
-                sCreateSystemMap.put(name, value);
+                sCreateSystemMap.put(name, mPartKey);
             }
-            if (value.equals(sCreateSystemMap.get(name))) {//首个插件中的自定义view让系统构造，当有其他插件重名的view需要构造时，走下面的自定义构造
+            if (mPartKey.equals(sCreateSystemMap.get(name))) {//首个插件中的自定义view让系统构造，当有其他插件重名的view需要构造时，走下面的自定义构造
                 view = null;
             } else {
                 try {
@@ -74,13 +70,6 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
         return null;
     }
 
-    // TODO: 2018/10/25  需要实现，将外层的filter传过来
-    public void setFilter(LayoutInflater.Filter filter) {
-        mFilter = filter;
-        if (filter != null) {
-            mFilterMap = new HashMap<String, Boolean>();
-        }
-    }
 
     private View createCustomView(String name, Context context, AttributeSet attrs) {
         String cacheKey = mPartKey + name;
@@ -96,33 +85,9 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
                 // Class not found in the cache, see if it's real, and try to add it
                 clazz = context.getClassLoader().loadClass(name).asSubclass(View.class);
 
-                if (mFilter != null && clazz != null) {
-                    boolean allowed = mFilter.onLoadClass(clazz);
-                    if (!allowed) {
-                        failNotAllowed(name, attrs);
-                    }
-                }
                 constructor = clazz.getConstructor(mConstructorSignature);
                 constructor.setAccessible(true);
                 sConstructorMap.put(cacheKey, constructor);
-            } else {
-                // If we have a filter, apply it to cached constructor
-                if (mFilter != null) {
-                    // Have we seen this name before?
-                    Boolean allowedState = mFilterMap.get(name);
-                    if (allowedState == null) {
-                        // New class -- remember whether it is allowed
-                        clazz = context.getClassLoader().loadClass(name).asSubclass(View.class);
-
-                        boolean allowed = clazz != null && mFilter.onLoadClass(clazz);
-                        mFilterMap.put(name, allowed);
-                        if (!allowed) {
-                            failNotAllowed(name, attrs);
-                        }
-                    } else if (allowedState.equals(Boolean.FALSE)) {
-                        failNotAllowed(name, attrs);
-                    }
-                }
             }
 
             Object lastContext = mConstructorArgs[0];
@@ -167,13 +132,7 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
         return false;
     }
 
-    /**
-     * Throw an exception because the specified class is not allowed to be inflated.
-     */
-    private void failNotAllowed(String name, AttributeSet attrs) {
-        throw new InflateException(attrs.getPositionDescription()
-                + ": Class not allowed to be inflated " + name);
-    }
+
 
 
 }
