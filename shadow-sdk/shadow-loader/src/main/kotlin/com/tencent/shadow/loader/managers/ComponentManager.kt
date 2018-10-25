@@ -34,6 +34,8 @@ abstract class ComponentManager : PluginComponentLauncher {
 
     abstract fun getLauncherActivity(partKey: String): ComponentName
 
+    abstract fun getInitActivity(partKey: String): ComponentName
+
     /**
      * @param pluginActivity 插件Activity
      * @return 容器Activity

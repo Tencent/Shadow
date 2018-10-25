@@ -60,7 +60,43 @@ internal class ShadowRunningPlugin(
     }
 
     override fun startInitActivity(intent: Intent): ProgressFuture<*>? {
-        return null
+        val initActivity = mComponentManager.getInitActivity(pluginInfo.partKey)
+        val pluginIntent = Intent(intent)
+        pluginIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        pluginIntent.component = initActivity
+        val pluginApplicationContext = shadowApplication
+        pluginApplicationContext.startActivity(pluginIntent)
+
+        return object : ProgressFuture<Any> {
+            override fun getProgress(): Double {
+                return 1.0
+            }
+
+            override fun cancel(mayInterruptIfRunning: Boolean): Boolean {
+                return false
+            }
+
+            override fun isCancelled(): Boolean {
+                return false
+            }
+
+            override fun isDone(): Boolean {
+                return true
+            }
+
+            @Throws(InterruptedException::class, ExecutionException::class)
+            override fun get(): Any? {
+                if (mLogger.isInfoEnabled) {
+                    mLogger.info("startInitActivity path=={}", installedPlugin.pluginFile.absolutePath)
+                }
+                return null
+            }
+
+            @Throws(InterruptedException::class, ExecutionException::class, TimeoutException::class)
+            override operator fun get(timeout: Long, unit: TimeUnit): Any? {
+                return null
+            }
+        }
     }
 
     override fun unload() {
