@@ -81,6 +81,7 @@ public class ContainerFragment extends Fragment implements IContainerFragment {
      */
     private boolean mIsAppCreateFragment = false;
 
+    @Override
     public ShadowFragment getPluginFragment() {
         return mPluginFragment;
     }

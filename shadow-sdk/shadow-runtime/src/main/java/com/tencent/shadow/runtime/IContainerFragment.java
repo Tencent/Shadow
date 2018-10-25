@@ -8,6 +8,8 @@ import android.view.View;
 public interface IContainerFragment {
     Fragment asFragment();
 
+    ShadowFragment getPluginFragment();
+
     void bindPluginFragment(ShadowFragment pluginFragment);
 
     void unbindPluginFragment();

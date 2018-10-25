@@ -18,8 +18,8 @@ public class PluginFragmentManager {
 
     public ShadowFragment findFragmentByTag(String tag) {
         Fragment fragmentByTag = mBase.findFragmentByTag(tag);
-        if (fragmentByTag instanceof ContainerFragment) {
-            return ((ContainerFragment) fragmentByTag).getPluginFragment();
+        if (fragmentByTag instanceof IContainerFragment) {
+            return ((IContainerFragment) fragmentByTag).getPluginFragment();
         } else {
             return null;
         }
