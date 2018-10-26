@@ -62,7 +62,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         }
     }
 
-    override fun startActivityForResult(delegator: HostActivityDelegator, pluginIntent: Intent, requestCode: Int, option: Bundle): Boolean {
+    override fun startActivityForResult(delegator: HostActivityDelegator, pluginIntent: Intent, requestCode: Int, option: Bundle?): Boolean {
         return if (pluginIntent.isPluginComponent()) {
             delegator.startActivityForResult(pluginIntent.toActivityContainerIntent(), requestCode, option)
             true
