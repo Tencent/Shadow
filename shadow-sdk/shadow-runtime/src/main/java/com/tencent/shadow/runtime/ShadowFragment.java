@@ -1,8 +1,10 @@
 package com.tencent.shadow.runtime;
 
 import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.LoaderManager;
 import android.app.SharedElementCallback;
 import android.content.Context;
@@ -130,37 +132,37 @@ public class ShadowFragment {
 
 
     public Context getContext() {
-        return null;
+        return mAttachedContext;
     }
 
 
     public void onHiddenChanged(boolean hidden) {
-
+        mContainerFragment.superOnHiddenChanged(hidden);
     }
 
 
     public void setRetainInstance(boolean retain) {
-
+        mContainerFragment.superSetRetainInstance(retain);
     }
 
 
     public void setHasOptionsMenu(boolean hasMenu) {
-
+        mContainerFragment.superSetHasOptionsMenu(hasMenu);
     }
 
 
     public void setMenuVisibility(boolean menuVisible) {
-
+        mContainerFragment.superSetMenuVisibility(menuVisible);
     }
 
 
     public void setUserVisibleHint(boolean isVisibleToUser) {
-
+        mContainerFragment.superSetUserVisibleHint(isVisibleToUser);
     }
 
 
     public boolean getUserVisibleHint() {
-        return false;
+        return mContainerFragment.getUserVisibleHint();
     }
 
 
@@ -174,8 +176,9 @@ public class ShadowFragment {
     }
 
 
+    @TargetApi(16)
     public void startActivity(Intent intent, Bundle options) {
-
+        mAttachedContext.startActivity(intent, options);
     }
 
 
@@ -553,6 +556,10 @@ public class ShadowFragment {
 
     public final void requestPermissions(String[] permissions, int requestCode) {
         mContainerFragment.requestPermissions(permissions, requestCode);
+    }
+
+    public FragmentManager getChildFragmentManager() {
+        return mContainerFragment.getChildFragmentManager();
     }
 
 }

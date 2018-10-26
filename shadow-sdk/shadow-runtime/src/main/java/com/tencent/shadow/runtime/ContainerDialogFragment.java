@@ -207,11 +207,6 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
     }
 
     @Override
-    public boolean getUserVisibleHint() {
-        return mPluginFragment.getUserVisibleHint();
-    }
-
-    @Override
     public LoaderManager getLoaderManager() {
         return mPluginFragment.getLoaderManager();
     }
@@ -564,6 +559,31 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
     @Override
     public void onCancel(DialogInterface dialog) {
         mPluginFragment.onCancel(dialog);
+    }
+
+    @Override
+    public void superSetUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+    }
+
+    @Override
+    public void superSetRetainInstance(boolean retain) {
+        super.setRetainInstance(retain);
+    }
+
+    @Override
+    public void superSetHasOptionsMenu(boolean hasMenu) {
+        super.setHasOptionsMenu(hasMenu);
+    }
+
+    @Override
+    public void superSetMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
+    }
+
+    @Override
+    public void superOnHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
     }
 
 }
