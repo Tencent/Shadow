@@ -65,10 +65,10 @@ object ParsePluginApkBloc {
                 , packageArchiveInfo.versionName
                 , packageArchiveInfo.signatures
         )
-        packageArchiveInfo.activities.forEach {
+        packageArchiveInfo.activities?.forEach {
             pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource, it))
         }
-        packageArchiveInfo.services.forEach { pluginInfo.putServiceInfo(PluginServiceInfo(it.name)) }
+        packageArchiveInfo.services?.forEach { pluginInfo.putServiceInfo(PluginServiceInfo(it.name)) }
         return pluginInfo
     }
 }
