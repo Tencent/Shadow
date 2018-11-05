@@ -39,10 +39,9 @@ class ServiceContainerReuseDelegate(val mDI: DI) : HostServiceDelegate {
         mShadowServiceDelegateManager = ShadowServiceDelegateManager(mDI, delegator)
         mShadowServiceDelegateManager.setOnDelegateChanged(object : OnDelegateChanged {
             override fun onRemoveDelegate(shadowServiceDelegate: ShadowServiceDelegate) {
+                shadowServiceDelegate.onDestroy()
                 if (mShadowServiceDelegateManager.allDelegates.isEmpty()) {
                     mHostServiceDelegator.superStopSelf()
-                } else {
-                    shadowServiceDelegate.onDestroy()
                 }
             }
         })
@@ -164,6 +163,7 @@ class ShadowServiceDelegateManager(private val mDI: DI,
         var delegate: ShadowServiceDelegate? = serviceDelegates[componentName]
         if (delegate == null) {
             delegate = ShadowServiceDelegate(mDI, mHostServiceDelegator)
+            serviceDelegates[componentName] = delegate
         }
 
         return delegate
