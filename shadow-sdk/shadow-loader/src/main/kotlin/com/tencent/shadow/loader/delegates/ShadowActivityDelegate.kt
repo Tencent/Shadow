@@ -122,6 +122,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun onNewIntent(intent: Intent) {
         val pluginExtras: Bundle? = intent.getBundleExtra(CM_EXTRAS_BUNDLE_KEY)
         mHostActivityDelegator.intent.replaceExtras(pluginExtras)
+        mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
         intent.replaceExtras(pluginExtras)
         mPluginActivity.onNewIntent(intent)
     }
