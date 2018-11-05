@@ -3,6 +3,7 @@ package com.tencent.shadow.loader.delegates
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.os.Bundle
 import android.os.IBinder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
 import com.tencent.shadow.loader.managers.ComponentManager
@@ -19,6 +20,7 @@ class ShadowServiceDelegate(private val mDI: DI,
     private var mIsSetService: Boolean = false
     private var mIsBound: Boolean = false
     fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+        replaceIntentExtra(intent)
         return mPluginService.onStartCommand(intent, flags, startId)
     }
 
@@ -28,6 +30,7 @@ class ShadowServiceDelegate(private val mDI: DI,
         conn?.onServiceDisconnected(intent.component)
         mComponentManager.deleteConnection(conn)
         if (allUnBind) {
+            replaceIntentExtra(intent)
             return mPluginService.onUnbind(intent)
         }
         return false
@@ -42,11 +45,12 @@ class ShadowServiceDelegate(private val mDI: DI,
     }
 
     fun onBind(intent: Intent): IBinder {
+        val intentKey = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY).getLong(ComponentManager.CM_INTENT_KEY, -1)
         if (!mIsBound) {
+            replaceIntentExtra(intent)
             mBinder = mPluginService.onBind(intent)
             mIsBound = true
         }
-        val intentKey = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY).getLong(ComponentManager.CM_INTENT_KEY, -1)
         mComponentManager.getConnection(intentKey)?.onServiceConnected(intent.component, mBinder)
         return mBinder
     }
@@ -56,6 +60,7 @@ class ShadowServiceDelegate(private val mDI: DI,
     }
 
     fun onTaskRemoved(rootIntent: Intent) {
+        replaceIntentExtra(rootIntent)
         return mPluginService.onTaskRemoved(rootIntent)
     }
 
@@ -87,4 +92,8 @@ class ShadowServiceDelegate(private val mDI: DI,
         return mPluginService.onCreate()
     }
 
+    fun replaceIntentExtra(intent: Intent) {
+        val pluginExtras: Bundle? = intent.getBundleExtra(ComponentManager.CM_EXTRAS_BUNDLE_KEY)
+        intent.replaceExtras(pluginExtras)
+    }
 }
