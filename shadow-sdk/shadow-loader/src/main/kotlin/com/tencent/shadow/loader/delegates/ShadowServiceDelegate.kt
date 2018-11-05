@@ -50,7 +50,7 @@ class ShadowServiceDelegate(private val mDI: DI,
             mBinder = mPluginService.onBind(intent)
             mIsBound = true
         }
-        val intentKey = mLoaderBundle.getLong(ComponentManager.CM_INTENT_KEY, -1)
+        val intentKey = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY).getLong(ComponentManager.CM_INTENT_KEY, -1)
         mComponentManager.getConnection(intentKey)?.onServiceConnected(intent.component, mBinder)
         return mBinder
     }
