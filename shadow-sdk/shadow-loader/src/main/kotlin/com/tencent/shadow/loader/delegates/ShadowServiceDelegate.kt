@@ -3,7 +3,6 @@ package com.tencent.shadow.loader.delegates
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.os.Bundle
 import android.os.IBinder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
 import com.tencent.shadow.loader.managers.ComponentManager
@@ -19,15 +18,12 @@ class ShadowServiceDelegate(private val mDI: DI,
     private lateinit var mBinder: IBinder
     private var mIsSetService: Boolean = false
     private var mIsBound: Boolean = false
-    private lateinit var mLoaderBundle: Bundle
-    private var mExtrasBundle: Bundle? = null
-
     fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         return mPluginService.onStartCommand(intent, flags, startId)
     }
 
     fun onUnbind(intent: Intent, allUnBind: Boolean): Boolean {
-        val intentKey = mLoaderBundle.getLong(ComponentManager.CM_INTENT_KEY, -1)
+        val intentKey = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY).getLong(ComponentManager.CM_INTENT_KEY, -1)
         val conn = mComponentManager.getConnection(intentKey)
         conn?.onServiceDisconnected(intent.component)
         mComponentManager.deleteConnection(conn)
@@ -72,11 +68,9 @@ class ShadowServiceDelegate(private val mDI: DI,
             val partKey = intent.getStringExtra(CM_PART_KEY)!!
             mDI.inject(this, partKey)
 
-            mLoaderBundle = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY)
-            mLoaderBundle.classLoader = this.javaClass.classLoader
-            val cls = mLoaderBundle.getString(ComponentManager.CM_CLASS_NAME_KEY)
-
-            mExtrasBundle = intent.getBundleExtra(ComponentManager.CM_EXTRAS_BUNDLE_KEY)
+            val bundleForPluginLoader = intent.getBundleExtra(ComponentManager.CM_LOADER_BUNDLE_KEY)
+            bundleForPluginLoader.classLoader = this.javaClass.classLoader
+            val cls = bundleForPluginLoader.getString(ComponentManager.CM_CLASS_NAME_KEY)
 
             val aClass = mPluginClassLoader.loadClass(cls)
             mPluginService = ShadowService::class.java.cast(aClass.newInstance())
@@ -89,8 +83,6 @@ class ShadowServiceDelegate(private val mDI: DI,
             mPluginService.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
             mPluginService.setPluginPartKey(partKey)
             mIsSetService = true
-
-            intent.replaceExtras(mExtrasBundle)
         }
         return mPluginService.onCreate()
     }
