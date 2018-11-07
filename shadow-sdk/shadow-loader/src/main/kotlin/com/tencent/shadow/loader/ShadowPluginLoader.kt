@@ -87,13 +87,17 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     override fun inject(delegate: ShadowDelegate, partKey: String) {
         mLock.withLock {
-            val pluginParts = mPluginPartsMap[partKey]!!
-            delegate.inject(pluginParts.packageManager)
-            delegate.inject(pluginParts.application)
-            delegate.inject(pluginParts.classLoader)
-            delegate.inject(pluginParts.resources)
-            delegate.inject(mExceptionReporter)
-            delegate.inject(mComponentManager)
+            val pluginParts = mPluginPartsMap[partKey]
+            if (pluginParts == null) {
+                throw IllegalStateException("partKey==${partKey}在map中找不到。此时map：${mPluginPartsMap}")
+            } else {
+                delegate.inject(pluginParts.packageManager)
+                delegate.inject(pluginParts.application)
+                delegate.inject(pluginParts.classLoader)
+                delegate.inject(pluginParts.resources)
+                delegate.inject(mExceptionReporter)
+                delegate.inject(mComponentManager)
+            }
         }
     }
 

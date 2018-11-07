@@ -2,14 +2,11 @@ package com.tencent.shadow.loader.blocs
 
 import android.content.Context
 import android.content.res.Resources
-import android.os.Handler
-import android.os.Looper
 import com.tencent.shadow.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.loader.exceptions.CreateApplicationException
 import com.tencent.shadow.loader.managers.ComponentManager
 import com.tencent.shadow.loader.managers.PluginPackageManager
 import com.tencent.shadow.runtime.ShadowApplication
-import java.util.concurrent.CountDownLatch
 
 /**
  * 初始化插件Application类
@@ -18,7 +15,7 @@ import java.util.concurrent.CountDownLatch
  */
 object CreateApplicationBloc {
     @Throws(CreateApplicationException::class)
-    fun callPluginApplicationOnCreate(
+    fun createShadowApplication(
             pluginClassLoader: PluginClassLoader,
             appClassName: String,
             pluginPackageManager: PluginPackageManager,
@@ -38,13 +35,6 @@ object CreateApplicationBloc {
             shadowApplication.setPluginPackageManager(pluginPackageManager)
             shadowApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
             shadowApplication.setPluginPartKey(pluginPackageManager.pluginInfo.partKey)
-            val uiHandler = Handler(Looper.getMainLooper())
-            val lock = CountDownLatch(1)
-            uiHandler.post {
-                shadowApplication.onCreate()
-                lock.countDown()
-            }
-            lock.await()
             return shadowApplication
         } catch (e: Exception) {
             throw CreateApplicationException(e)
