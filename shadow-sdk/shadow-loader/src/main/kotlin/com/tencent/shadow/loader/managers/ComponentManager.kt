@@ -6,7 +6,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.util.Pair
 import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY
-import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PROCESS_VERSION_KEY
+import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PROCESS_ID_KEY
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.loader.BuildConfig
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
@@ -241,7 +241,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         containerIntent.putExtra(CM_PART_KEY, partKey)
         containerIntent.putExtra(CM_LOADER_BUNDLE_KEY, bundleForPluginLoader)
         containerIntent.putExtra(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME)
-        containerIntent.putExtra(PROCESS_VERSION_KEY,android.os.Process.myPid())
+        containerIntent.putExtra(PROCESS_ID_KEY,android.os.Process.myPid())
         return containerIntent
     }
 

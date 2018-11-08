@@ -84,7 +84,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY;
-import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PROCESS_VERSION_KEY;
+import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PROCESS_ID_KEY;
 
 /**
  * 插件的容器Activity。PluginLoader将把插件的Activity放在其中。
@@ -163,7 +163,7 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         Bundle bundle;
         bundle = savedInstanceState == null ? extras : savedInstanceState;
         String loaderVersion = bundle.getString(LOADER_VERSION_KEY);
-        int processVersion = bundle.getInt(PROCESS_VERSION_KEY);
+        int processVersion = bundle.getInt(PROCESS_ID_KEY);
         return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != Process.myPid();
     }
 
@@ -194,7 +194,7 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         }
         //避免插件setIntent清空掉LOADER_VERSION_KEY
         outState.putString(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME);
-        outState.putInt(PROCESS_VERSION_KEY, android.os.Process.myPid());
+        outState.putInt(PROCESS_ID_KEY, android.os.Process.myPid());
     }
 
     @Override
