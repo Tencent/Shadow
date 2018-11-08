@@ -1,8 +1,8 @@
 # 此文件配置**使用**这个lib时应该添加的Proguard规则.
 
 #kotlin一般性配置 START
--keep class kotlin.** { *; }
--keep class kotlin.Metadata { *; }
+#-keep class kotlin.** { *; }
+#-keep class kotlin.Metadata { *; }
 -dontwarn kotlin.**
 -keepclassmembers class **$WhenMappings {
     <fields>;
@@ -19,4 +19,5 @@
 #kotlin优化性能 END
 
 -keep class org.slf4j.**{*;}
+-keep class com.tencent.shadow.loader.**{*;}
 -dontwarn org.slf4j.impl.**

@@ -28,7 +28,7 @@ android {
 
         release {
             consumerProguardFiles 'plugin-loader-release.pro'
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
