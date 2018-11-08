@@ -11,6 +11,8 @@ package com.tencent.hydevteam.pluginframework.plugincontainer;
 public interface DelegateProvider {
     String LOADER_VERSION_KEY = "LOADER_VERSION";
 
+    String PROCESS_VERSION_KEY = "PROCESS_VERSION_KEY";
+
     /**
      * 获取与delegator相应的HostActivityDelegate
      *

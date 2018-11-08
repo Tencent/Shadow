@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Process;
 import android.util.Log;
 
 import com.tencent.shadow.runtime.BuildConfig;
 
 import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY;
+import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PROCESS_VERSION_KEY;
 
 /**
  * 插件的容器Service。PluginLoader将把插件的Service放在其中。
@@ -56,7 +58,8 @@ public class PluginContainerService extends Service implements HostService, Host
             return true;
         }
         String loaderVersion = extras.getString(LOADER_VERSION_KEY);
-        return !BuildConfig.VERSION_NAME.equals(loaderVersion);
+        int processVersion = extras.getInt(PROCESS_VERSION_KEY);
+        return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != Process.myPid();
     }
 
     @Override

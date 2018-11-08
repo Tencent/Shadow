@@ -44,6 +44,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PersistableBundle;
+import android.os.Process;
 import android.os.UserHandle;
 import android.transition.Scene;
 import android.transition.TransitionManager;
@@ -83,6 +84,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY;
+import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PROCESS_VERSION_KEY;
 
 /**
  * 插件的容器Activity。PluginLoader将把插件的Activity放在其中。
@@ -147,6 +149,9 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
      * 由于插件版本变化，PluginLoader逻辑可能不一致，Intent中的参数可能不能满足新代码的启动条件。
      * 2.外部的非法启动，无法确定一个插件的Activity。
      *
+     *
+     * 3.不支持进程重启后莫名其妙的原因loader也加载了，但是可能要启动的plugin没有load，出现异常
+     *
      * @param savedInstanceState onCreate时系统还回来的savedInstanceState
      * @return <code>true</code>表示这次启动不是我们预料的，需要尽早finish并退出进程。
      */
@@ -158,7 +163,8 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         Bundle bundle;
         bundle = savedInstanceState == null ? extras : savedInstanceState;
         String loaderVersion = bundle.getString(LOADER_VERSION_KEY);
-        return !BuildConfig.VERSION_NAME.equals(loaderVersion);
+        int processVersion = bundle.getInt(PROCESS_VERSION_KEY);
+        return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != Process.myPid();
     }
 
     @Override
@@ -188,6 +194,7 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         }
         //避免插件setIntent清空掉LOADER_VERSION_KEY
         outState.putString(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME);
+        outState.putInt(PROCESS_VERSION_KEY, android.os.Process.myPid());
     }
 
     @Override
