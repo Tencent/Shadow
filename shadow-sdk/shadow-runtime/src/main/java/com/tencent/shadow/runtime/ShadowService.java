@@ -81,6 +81,25 @@ public abstract class ShadowService extends ShadowContext {
         mHostServiceDelegator.stopForeground(removeNotification);
     }
 
+    public final void stopSelf() {
+        stopService(new Intent(this, getClass()));
+    }
+
+    /**
+     * 插件环境下Service不支持调用带参数的stopSelf
+     */
+    public final void stopSelf(int startId) {
+        stopSelf();
+    }
+
+    /**
+     * 插件环境下Service不支持调用带参数的stopSelf
+     */
+    public final boolean stopSelfResult(int startId) {
+        stopSelf();
+        return true;
+    }
+
     public final ShadowApplication getApplication() {
         return mShadowApplication;
     }
