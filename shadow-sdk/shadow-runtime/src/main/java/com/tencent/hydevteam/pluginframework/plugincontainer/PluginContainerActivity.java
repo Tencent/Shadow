@@ -44,7 +44,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.PersistableBundle;
-import android.os.Process;
 import android.os.UserHandle;
 import android.transition.Scene;
 import android.transition.TransitionManager;
@@ -163,8 +162,8 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         Bundle bundle;
         bundle = savedInstanceState == null ? extras : savedInstanceState;
         String loaderVersion = bundle.getString(LOADER_VERSION_KEY);
-        int processVersion = bundle.getInt(PROCESS_ID_KEY);
-        return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != Process.myPid();
+        long processVersion = bundle.getLong(PROCESS_ID_KEY);
+        return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != DelegateProviderHolder.sCustomPid;
     }
 
     @Override
@@ -194,7 +193,7 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         }
         //避免插件setIntent清空掉LOADER_VERSION_KEY
         outState.putString(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME);
-        outState.putInt(PROCESS_ID_KEY, android.os.Process.myPid());
+        outState.putLong(PROCESS_ID_KEY, DelegateProviderHolder.sCustomPid);
     }
 
     @Override

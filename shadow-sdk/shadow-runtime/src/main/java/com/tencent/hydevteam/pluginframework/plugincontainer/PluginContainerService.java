@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Process;
 import android.util.Log;
 
 import com.tencent.shadow.runtime.BuildConfig;
@@ -58,8 +57,8 @@ public class PluginContainerService extends Service implements HostService, Host
             return true;
         }
         String loaderVersion = extras.getString(LOADER_VERSION_KEY);
-        int processVersion = extras.getInt(PROCESS_ID_KEY);
-        return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != Process.myPid();
+        long processVersion = extras.getLong(PROCESS_ID_KEY);
+        return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != DelegateProviderHolder.sCustomPid;
     }
 
     @Override

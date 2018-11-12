@@ -1,6 +1,8 @@
 package com.tencent.hydevteam.pluginframework.plugincontainer;
 
 
+import android.os.SystemClock;
+
 /**
  * DelegateProvider依赖注入类
  * <p>
@@ -10,6 +12,16 @@ package com.tencent.hydevteam.pluginframework.plugincontainer;
  */
 public class DelegateProviderHolder {
     static DelegateProvider delegateProvider;
+
+    /**
+     * 为了防止系统有一定概率出现进程号重启后一致的问题，我们使用开机时间作为进程号来判断进程是否重启
+     */
+    public static long sCustomPid ;
+
+    static {
+        sCustomPid = SystemClock.elapsedRealtime();
+    }
+
 
     public static void setDelegateProvider(DelegateProvider delegateProvider) {
         DelegateProviderHolder.delegateProvider = delegateProvider;
