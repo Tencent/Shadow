@@ -161,9 +161,14 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         }
         Bundle bundle;
         bundle = savedInstanceState == null ? extras : savedInstanceState;
-        String loaderVersion = bundle.getString(LOADER_VERSION_KEY);
-        long processVersion = bundle.getLong(PROCESS_ID_KEY);
-        return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != DelegateProviderHolder.sCustomPid;
+        try {
+            String loaderVersion = bundle.getString(LOADER_VERSION_KEY);
+            long processVersion = bundle.getLong(PROCESS_ID_KEY);
+            return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != DelegateProviderHolder.sCustomPid;
+        } catch (Throwable ignored) {
+            //捕获可能的非法Intent中包含我们根本反序列化不了的数据
+            return true;
+        }
     }
 
     @Override

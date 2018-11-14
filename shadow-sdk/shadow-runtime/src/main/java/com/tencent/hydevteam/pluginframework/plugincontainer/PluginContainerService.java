@@ -56,9 +56,14 @@ public class PluginContainerService extends Service implements HostService, Host
         if (extras == null) {
             return true;
         }
-        String loaderVersion = extras.getString(LOADER_VERSION_KEY);
-        long processVersion = extras.getLong(PROCESS_ID_KEY);
-        return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != DelegateProviderHolder.sCustomPid;
+        try {
+            String loaderVersion = extras.getString(LOADER_VERSION_KEY);
+            long processVersion = extras.getLong(PROCESS_ID_KEY);
+            return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != DelegateProviderHolder.sCustomPid;
+        } catch (Throwable ignored) {
+            //捕获可能的非法Intent中包含我们根本反序列化不了的数据
+            return true;
+        }
     }
 
     @Override
