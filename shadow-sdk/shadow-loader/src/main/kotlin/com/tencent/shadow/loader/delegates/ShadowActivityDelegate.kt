@@ -74,6 +74,10 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         if (savedInstanceState == null) {
             val pluginExtras: Bundle? = pluginInitBundle.getBundle(CM_EXTRAS_BUNDLE_KEY)
             mHostActivityDelegator.intent.replaceExtras(pluginExtras)
+        } else {
+            //如果是被系统恢复重建的，系统会恢复原始的intent，所以应该从mHostActivityDelegator.intent里取出
+            val pluginExtras: Bundle? = mHostActivityDelegator.intent.getBundleExtra(CM_EXTRAS_BUNDLE_KEY)
+            mHostActivityDelegator.intent.replaceExtras(pluginExtras)
         }
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
