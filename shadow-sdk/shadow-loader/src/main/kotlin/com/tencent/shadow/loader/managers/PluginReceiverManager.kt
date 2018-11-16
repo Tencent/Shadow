@@ -41,7 +41,6 @@ open class PluginReceiverManager(private val mTotalContext: Context) {
              */
             val fakeIntent = Intent()
             fakeIntent.action = action
-            fakeIntent.putExtra("msg", "static broadcast")
             mTotalContext.sendBroadcast(fakeIntent)
             return
         }
