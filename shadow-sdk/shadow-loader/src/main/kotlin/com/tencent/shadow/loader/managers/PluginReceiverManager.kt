@@ -72,6 +72,17 @@ open class PluginReceiverManager(private val mTotalContext: Context) {
         mTotalContext.registerReceiver(mBroadcastReceiver, intentFilter)
     }
 
+    fun registerReceiverForPlg(className: String, packageName: String, vararg actions: String) {
+        var infoList = arrayListOf<ReceiverInfo>()
+        actions.forEach {
+            val receiverInfo = ReceiverInfo(className, packageName, it)
+            infoList.add(receiverInfo)
+        }
+        if (!infoList.isEmpty()) {
+            initReceiverInfo(infoList)
+        }
+    }
+
     fun getActionAndReceiverByApplication(application: String):MutableMap<String, String>{
         return mApplication2ActionList[application]?:HashMap()
     }
