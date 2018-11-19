@@ -13,7 +13,7 @@ import com.tencent.shadow.loader.infos.PluginParts
 import com.tencent.shadow.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.loader.managers.ComponentManager
 import com.tencent.shadow.loader.managers.PluginPackageManager
-import com.tencent.shadow.loader.managers.PluginReceiverManager
+import com.tencent.shadow.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.runtime.ShadowApplication
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
@@ -28,7 +28,7 @@ object LoadPluginBloc {
             abi: String,
             commonPluginPackageManager: CommonPluginPackageManager,
             componentManager: ComponentManager,
-            pluginReceiverManager: PluginReceiverManager,
+            pluginBroadcastManager: PluginBroadcastManager,
             lock: ReentrantLock,
             pluginPartsMap: MutableMap<String, PluginParts>,
             hostAppContext: Context,
@@ -64,7 +64,7 @@ object LoadPluginBloc {
                         resources,
                         hostAppContext,
                         componentManager,
-                        pluginReceiverManager.getActionAndReceiverByApplication(pluginInfo.applicationClassName)
+                        pluginBroadcastManager.getBroadcastsByApplication(pluginInfo.applicationClassName)
                 )
             })
 
