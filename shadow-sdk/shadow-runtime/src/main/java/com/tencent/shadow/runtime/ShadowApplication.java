@@ -12,6 +12,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,7 +23,7 @@ public abstract class ShadowApplication extends ShadowContext {
 
     private Application mHostApplication;
 
-    private Map<String, String> mReceivers;
+    private Map<String, List<String>> mBroadcasts;
 
     @Override
     public Context getApplicationContext() {
@@ -32,12 +33,15 @@ public abstract class ShadowApplication extends ShadowContext {
     private Map<ShadowActivityLifecycleCallbacks, Application.ActivityLifecycleCallbacks> mActivityLifecycleCallbacksMap = new HashMap<>();
 
     public void onCreate() {
-        for (Map.Entry<String, String> entry: mReceivers.entrySet()){
+        for (Map.Entry<String, List<String>> entry: mBroadcasts.entrySet()){
             try {
-                Class<?> clazz = mPluginClassLoader.loadClass(entry.getValue());
+                Class<?> clazz = mPluginClassLoader.loadClass(entry.getKey());
                 BroadcastReceiver receiver = ((BroadcastReceiver) clazz.newInstance());
                 IntentFilter intentFilter = new IntentFilter();
-                intentFilter.addAction(entry.getKey());
+                for (String action:entry.getValue()
+                     ) {
+                    intentFilter.addAction(action);
+                }
                 mHostApplication.registerReceiver(receiver, intentFilter);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -129,8 +133,8 @@ public abstract class ShadowApplication extends ShadowContext {
         mMixPackageManager = new MixPackageManager(super.getPackageManager(), pluginPackageManager);
     }
 
-    public void setReceivers(Map<String, String> receivers){
-        mReceivers = receivers;
+    public void setBroadcasts(Map<String, List<String>> broadcast){
+        mBroadcasts = broadcast;
     }
 
     @Override

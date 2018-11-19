@@ -13,7 +13,7 @@ import com.tencent.shadow.loader.delegates.ShadowDelegate
 import com.tencent.shadow.loader.infos.PluginParts
 import com.tencent.shadow.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.loader.managers.ComponentManager
-import com.tencent.shadow.loader.managers.PluginReceiverManager
+import com.tencent.shadow.loader.managers.PluginBroadcastManager
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
@@ -45,7 +45,7 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     /**
      * @GuardedBy("mLock")
      */
-    abstract fun getBusinessPluginReceiverManager(hostAppContext: Context): PluginReceiverManager
+    abstract fun getBusinessPluginReceiverManager(hostAppContext: Context): PluginBroadcastManager
 
     abstract val mExceptionReporter: Reporter
 

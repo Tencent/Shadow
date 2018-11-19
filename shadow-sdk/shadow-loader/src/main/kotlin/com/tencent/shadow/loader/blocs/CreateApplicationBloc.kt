@@ -22,7 +22,7 @@ object CreateApplicationBloc {
             resources: Resources,
             hostAppContext: Context,
             componentManager: ComponentManager,
-            receivers: Map<String, String>
+            broadcasts: Map<String, List<String>>
     ): ShadowApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
@@ -31,7 +31,7 @@ object CreateApplicationBloc {
             shadowApplication.setPluginClassLoader(pluginClassLoader)
             shadowApplication.setPluginComponentLauncher(componentManager)
             shadowApplication.setHostApplicationContextAsBase(hostAppContext)
-            shadowApplication.setReceivers(receivers)
+            shadowApplication.setBroadcasts(broadcasts)
             shadowApplication.setPluginPackageManager(pluginPackageManager)
             shadowApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
             shadowApplication.setPluginPartKey(pluginPackageManager.pluginInfo.partKey)
