@@ -46,6 +46,7 @@ public class ShadowDialogFragment extends ShadowFragment {
     }
 
     public void onDismiss(DialogInterface dialog) {
+        getContainerDialogFragment().superOnDismiss(dialog);
     }
 
     public void onCancel(DialogInterface dialog) {

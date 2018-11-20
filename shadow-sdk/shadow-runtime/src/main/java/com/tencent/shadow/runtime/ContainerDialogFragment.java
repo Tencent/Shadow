@@ -31,7 +31,7 @@ import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ContainerDialogFragment extends DialogFragment implements IContainerFragment {
+public class ContainerDialogFragment extends DialogFragment implements IContainerDialogFragment {
 
     private static Map<String, Constructor<?>> constructorMap = new HashMap<>();
 
@@ -586,4 +586,8 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
         super.onHiddenChanged(hidden);
     }
 
+    @Override
+    public void superOnDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+    }
 }
