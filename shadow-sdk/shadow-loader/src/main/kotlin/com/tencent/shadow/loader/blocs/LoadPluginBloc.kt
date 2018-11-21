@@ -64,7 +64,7 @@ object LoadPluginBloc {
                         resources,
                         hostAppContext,
                         componentManager,
-                        pluginBroadcastManager.getBroadcastsByApplication(pluginInfo.applicationClassName)
+                        pluginBroadcastManager.getBroadcastsByPartKey(pluginInfo.partKey)
                 )
             })
 

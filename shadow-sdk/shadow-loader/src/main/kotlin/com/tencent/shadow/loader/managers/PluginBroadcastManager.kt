@@ -8,16 +8,19 @@ abstract class PluginBroadcastManager {
 
     private var application2broadcastInfo: MutableMap
     <String, MutableMap<String, List<String>>> = HashMap()
-    abstract fun getBroadcastInfoList(application: String): List<BroadcastInfo>
-    fun getBroadcastsByApplication(application: String):MutableMap<String, List<String>>{
-        if (application2broadcastInfo[application] == null){
-            application2broadcastInfo[application] = HashMap()
-            val broadcastInfoList = getBroadcastInfoList(application)
-            for (broadcastInfo in broadcastInfoList){
-                application2broadcastInfo[application]!![broadcastInfo.className] =
-                        broadcastInfo.actions.toList()
+
+    abstract fun getBroadcastInfoList(partKey: String): List<BroadcastInfo>?
+    fun getBroadcastsByPartKey(partKey: String): MutableMap<String, List<String>> {
+        if (application2broadcastInfo[partKey] == null) {
+            application2broadcastInfo[partKey] = HashMap()
+            val broadcastInfoList = getBroadcastInfoList(partKey)
+            if (broadcastInfoList != null) {
+                for (broadcastInfo in broadcastInfoList) {
+                    application2broadcastInfo[partKey]!![broadcastInfo.className] =
+                            broadcastInfo.actions.toList()
+                }
             }
         }
-        return application2broadcastInfo[application]!!
+        return application2broadcastInfo[partKey]!!
     }
 }
