@@ -33,6 +33,10 @@ public class ShadowDialogFragment extends ShadowFragment {
         return getContainerDialogFragment().getShowsDialog();
     }
 
+    public void setShowsDialog(boolean showsDialog) {
+        getContainerDialogFragment().setShowsDialog(showsDialog);
+    }
+
     public void dismiss() {
         getContainerDialogFragment().dismiss();
     }
