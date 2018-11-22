@@ -29,6 +29,10 @@ public class ShadowDialogFragment extends ShadowFragment {
         return getContainerDialogFragment().getTheme();
     }
 
+    public boolean getShowsDialog() {
+        return getContainerDialogFragment().getShowsDialog();
+    }
+
     public void dismiss() {
         getContainerDialogFragment().dismiss();
     }
