@@ -23,7 +23,7 @@ object LoadApkBloc {
         val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
         val hostAppClassLoader = pluginLoaderClassLoader.parent
         val apk = installedPlugin.pluginFile
-        val odexDir = File(apk.parent, apk.name + "_odex_${installedPlugin.pluginVersionForPluginLoaderManage}")
+        val odexDir = PluginRunningPath.getPluginOptDexDir(hostAppContext, installedPlugin.pluginPackageName, installedPlugin.pluginVersionForPluginLoaderManage)
         prepareDirs(odexDir, soDir)
         return PluginClassLoader(
                 hostAppContext,

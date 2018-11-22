@@ -1,5 +1,6 @@
 package com.tencent.shadow.loader.blocs
 
+import android.content.Context
 import android.os.Build.VERSION_CODES.JELLY_BEAN_MR2
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
@@ -8,9 +9,9 @@ import java.io.File
 import java.util.zip.ZipFile
 
 object CopySoBloc {
-    fun copySo(installedPlugin: InstalledPlugin, abi: String): File {
+    fun copySo(hostContext: Context, installedPlugin: InstalledPlugin, abi: String): File {
         val apk = installedPlugin.pluginFile
-        val soDir = File(apk.parent, apk.name + "_lib_${installedPlugin.pluginVersionForPluginLoaderManage}")
+        val soDir = PluginRunningPath.getPluginLibDir(hostContext, installedPlugin.pluginPackageName, installedPlugin.pluginVersionForPluginLoaderManage)
         val copiedTagFile = File(soDir, "copied")
 
         //如果不需要so或者so文件已复制完成的标记已存在则直接返回成功

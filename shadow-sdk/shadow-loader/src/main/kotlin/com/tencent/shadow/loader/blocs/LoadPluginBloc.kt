@@ -12,8 +12,8 @@ import com.tencent.shadow.loader.ShadowRunningPlugin
 import com.tencent.shadow.loader.infos.PluginParts
 import com.tencent.shadow.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.loader.managers.ComponentManager
-import com.tencent.shadow.loader.managers.PluginPackageManager
 import com.tencent.shadow.loader.managers.PluginBroadcastManager
+import com.tencent.shadow.loader.managers.PluginPackageManager
 import com.tencent.shadow.runtime.ShadowApplication
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
@@ -38,7 +38,7 @@ object LoadPluginBloc {
             throw LoadPluginException("pluginFile==null")
         } else {
             val buildClassLoader = executorService.submit(Callable {
-                val soDir = CopySoBloc.copySo(installedPlugin, abi)
+                val soDir = CopySoBloc.copySo(hostAppContext,installedPlugin, abi)
                 LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir)
             })
 
