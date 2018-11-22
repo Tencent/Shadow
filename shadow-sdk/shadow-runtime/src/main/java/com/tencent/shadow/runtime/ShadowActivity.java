@@ -37,6 +37,10 @@ public abstract class ShadowActivity extends PluginActivity {
         mHostActivityDelegator.setContentView(view);
     }
 
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        mHostActivityDelegator.setContentView(view, params);
+    }
+
     public void addContentView(View view, ViewGroup.LayoutParams params) {
         mHostActivityDelegator.superAddContentView(view, params);
     }
