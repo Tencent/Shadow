@@ -40,6 +40,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     private lateinit var mPluginActivity: PluginActivity
     private lateinit var mPartKey: String
     private lateinit var mBundleForPluginLoader: Bundle
+    private lateinit var mRawIntentExtraBundle: Bundle
     private var mPluginActivityCreated = false
     private var mDependenciesInjected = false
     /**
@@ -71,14 +72,8 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         val pluginActivityClassName = bundleForPluginLoader.getString(CM_CLASS_NAME_KEY)
         val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(CM_ACTIVITY_INFO_KEY)
 
-        if (savedInstanceState == null) {
-            val pluginExtras: Bundle? = pluginInitBundle.getBundle(CM_EXTRAS_BUNDLE_KEY)
-            mHostActivityDelegator.intent.replaceExtras(pluginExtras)
-        } else {
-            //如果是被系统恢复重建的，系统会恢复原始的intent，所以应该从mHostActivityDelegator.intent里取出
-            val pluginExtras: Bundle? = mHostActivityDelegator.intent.getBundleExtra(CM_EXTRAS_BUNDLE_KEY)
-            mHostActivityDelegator.intent.replaceExtras(pluginExtras)
-        }
+        mRawIntentExtraBundle = pluginInitBundle.getBundle(CM_EXTRAS_BUNDLE_KEY)
+        mHostActivityDelegator.intent.replaceExtras(mRawIntentExtraBundle)
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
         mHostActivityDelegator.setTheme(pluginActivityInfo.themeResource)
@@ -135,6 +130,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         outState.putBundle(PLUGIN_OUT_STATE_KEY, pluginOutState)
         outState.putString(CM_PART_KEY, mPartKey)
         outState.putBundle(CM_LOADER_BUNDLE_KEY, mBundleForPluginLoader)
+        outState.putBundle(CM_EXTRAS_BUNDLE_KEY, mRawIntentExtraBundle)
     }
 
     override fun onPause() {
