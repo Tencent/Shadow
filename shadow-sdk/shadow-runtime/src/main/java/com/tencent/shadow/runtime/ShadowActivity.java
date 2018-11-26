@@ -25,8 +25,15 @@ public abstract class ShadowActivity extends PluginActivity {
     private PluginFragmentManager mPluginFragmentManager;
 
     public void setContentView(int layoutResID) {
-        final View inflate = LayoutInflater.from(this).inflate(layoutResID, null);
-        mHostActivityDelegator.setContentView(inflate);
+        if ("merge".equals(XmlPullParserUtil.getLayoutStartTagName(getResources(), layoutResID))) {
+            //如果传进来的xml文件的根tag是merge时，需要特殊处理
+            View decorView = mHostActivityDelegator.getWindow().getDecorView();
+            ViewGroup viewGroup = decorView.findViewById(android.R.id.content);
+            LayoutInflater.from(this).inflate(layoutResID, viewGroup);
+        } else {
+            View inflate = LayoutInflater.from(this).inflate(layoutResID, null);
+            mHostActivityDelegator.setContentView(inflate);
+        }
     }
 
     public Intent getIntent() {
