@@ -40,7 +40,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     private lateinit var mPluginActivity: PluginActivity
     private lateinit var mPartKey: String
     private lateinit var mBundleForPluginLoader: Bundle
-    private lateinit var mRawIntentExtraBundle: Bundle
+    private var mRawIntentExtraBundle: Bundle? = null
     private var mPluginActivityCreated = false
     private var mDependenciesInjected = false
     /**
