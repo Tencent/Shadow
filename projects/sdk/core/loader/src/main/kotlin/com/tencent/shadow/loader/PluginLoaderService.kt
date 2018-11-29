@@ -1,14 +1,14 @@
 package com.tencent.shadow.loader
 
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.os.RemoteException
 import com.tencent.hydevteam.common.classloader.ApkClassLoader
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
 import com.tencent.shadow.sdk.service.IPluginLoaderServiceInterface
-import com.tencent.shadow.sdk.service.IServiceConnection
 
-open class PluginLoaderService : IPluginLoaderServiceInterface.Stub() {
+open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInterface.Stub() {
 
     companion object {
 
@@ -19,13 +19,15 @@ open class PluginLoaderService : IPluginLoaderServiceInterface.Stub() {
 
     private val mApkClassLoader = PluginLoaderService::class.java.classLoader as ApkClassLoader
 
+    private var mContext: Context;
+
     init {
         try {
             mPluginLoader = mApkClassLoader.getInterface(PluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL)
         } catch (e: Exception) {
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
         }
-
+        mContext = hostContext;
     }
 
     @Throws(RemoteException::class)
