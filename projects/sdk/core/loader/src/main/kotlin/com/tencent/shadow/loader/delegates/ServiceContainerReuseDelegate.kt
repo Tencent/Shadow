@@ -2,6 +2,7 @@ package com.tencent.shadow.loader.delegates
 
 import android.app.Service
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -105,7 +106,7 @@ class ServiceContainerReuseDelegate(val mDI: DI) : HostServiceDelegate {
         // 这里如果要用到返回值的特性需要特殊处理，先这样 tracyluo 2018/6/9
         var flag = false
         mShadowServiceDelegateManager.allDelegates.forEach {
-            it.onUnbind(intent, true)
+            //it.onUnbind(intent, true)
             flag = true
         }
         return if (!flag) {
@@ -162,7 +163,7 @@ class ShadowServiceDelegateManager(private val mDI: DI,
         val componentName = ComponentName(pkg, cls)
         var delegate: ShadowServiceDelegate? = serviceDelegates[componentName]
         if (delegate == null) {
-            delegate = ShadowServiceDelegate(mDI, mHostServiceDelegator)
+            delegate = ShadowServiceDelegate(mDI, mHostServiceDelegator as Context)
             serviceDelegates[componentName] = delegate
         }
 
@@ -193,10 +194,10 @@ class ShadowServiceDelegateManager(private val mDI: DI,
             if (servicesBindCount.containsKey(delegate)) {
                 if (servicesBindCount[delegate]!! > 1) {
                     servicesBindCount[delegate] = servicesBindCount[delegate]!! - 1
-                    delegate.onUnbind(intent, false)
+                    //delegate.onUnbind(intent, false)
                 } else {
                     servicesBindCount.remove(delegate)
-                    delegate.onUnbind(intent, true)
+                    //delegate.onUnbind(intent, true)
                     handleUnbindAndStopDelegate(intent)
                 }
             }

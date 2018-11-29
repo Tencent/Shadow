@@ -10,6 +10,7 @@ import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PR
 import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProviderHolder
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.loader.BuildConfig
+import com.tencent.shadow.loader.PluginServiceManager
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate.Companion.Operate
 import com.tencent.shadow.loader.infos.PluginComponentInfo
@@ -32,6 +33,13 @@ abstract class ComponentManager : PluginComponentLauncher {
         const val CM_PACKAGE_NAME_KEY = "CM_PACKAGE_NAME"
         const val CM_INTENT_KEY = "CM_INTENT"
         const val CM_PART_KEY = "CM_PART"
+
+        private var startId : Int = 0
+        fun getNewStartId() : Int {
+            startId++
+
+            return startId
+        }
     }
 
     abstract fun getLauncherActivity(partKey: String): ComponentName
@@ -80,40 +88,44 @@ abstract class ComponentManager : PluginComponentLauncher {
     }
 
     override fun startService(context: ShadowContext, service: Intent): Pair<Boolean, ComponentName> {
-        val containerIntent = if (service.isPluginComponent()) {
-            service.toServiceContainerIntent(ServiceContainerReuseDelegate.Companion.Operate.START)
-        } else {
-            null
+        if (service.isPluginComponent()) {
+            // 插件service intent不需要转换成container service intent，直接使用intent
+            val component = mPluginServiceManager!!.startPluginService(service, 0, getNewStartId())
+            if (component != null) {
+                return Pair(true, component)
+            }
         }
-        return Pair(doServiceOpt(context, containerIntent), service.component)
+
+        return Pair(false, service.component)
+
     }
 
-    override fun stopService(context: ShadowContext, name: Intent): Pair<Boolean, Boolean> {
-        val containerIntent = if (name.isPluginComponent()) {
-            name.toServiceContainerIntent(ServiceContainerReuseDelegate.Companion.Operate.STOP)
-        } else {
-            null
+    override fun stopService(context: ShadowContext, intent: Intent): Pair<Boolean, Boolean> {
+        if (intent.isPluginComponent()) {
+            // 插件service intent不需要转换成container service intent，直接使用intent
+            mPluginServiceManager!!.stopPluginService(intent)
+            return Pair(true, true)
         }
-        return Pair(doServiceOpt(context, containerIntent), true)
+
+
+        return Pair(false, true)
     }
 
-    override fun bindService(context: ShadowContext, service: Intent, conn: ServiceConnection, flags: Int): Pair<Boolean, Boolean> {
-        val intent = if (service.isPluginComponent()) {
-            service.toServiceContainerIntent(ServiceContainerReuseDelegate.Companion.Operate.BIND)
+    override fun bindService(context: ShadowContext, intent: Intent, conn: ServiceConnection, flags: Int): Pair<Boolean, Boolean> {
+        return if (intent.isPluginComponent()) {
+            // 插件service intent不需要转换成container service intent，直接使用intent
+            mPluginServiceManager!!.bindPluginService(intent, conn, flags)
+            Pair(true, true)
         } else {
-            return Pair(false, false)
+            Pair(false, false)
         }
-        val timeAsKey = System.nanoTime()
-        containerIntentKeyToConnectionMap[timeAsKey] = conn
-        connectionToContainerIntentMap[conn] = intent
-        intent.getBundleExtra(CM_LOADER_BUNDLE_KEY).putLong(CM_INTENT_KEY, timeAsKey)
-        return Pair(doServiceOpt(context, intent), true)
+
+
     }
 
     override fun unbindService(context: ShadowContext, conn: ServiceConnection): Pair<Boolean, Unit> {
-        val intent = connectionToContainerIntentMap[conn] ?: return Pair(false, Unit)
-        intent.getBundleExtra(CM_LOADER_BUNDLE_KEY).putSerializable(ServiceContainerReuseDelegate.OPT_EXTRA_KEY, ServiceContainerReuseDelegate.Companion.Operate.UNBIND)
-        return Pair(doServiceOpt(context, intent), Unit)
+        mPluginServiceManager!!.unbindPluginService(conn)
+        return Pair(true, Unit)
     }
 
     override fun convertPluginActivityIntent(pluginIntent: Intent): Intent {
@@ -191,6 +203,15 @@ abstract class ComponentManager : PluginComponentLauncher {
         }
     }
 
+    fun getComponentPartKey(componentName: ComponentName) : String? {
+        return pluginInfoMap[componentName]?.partKey
+    }
+
+    private var mPluginServiceManager : PluginServiceManager? = null
+    fun setPluginServiceManager(pluginServiceManager : PluginServiceManager) {
+        mPluginServiceManager = pluginServiceManager
+    }
+
     private fun Intent.isPluginComponent(): Boolean {
         if (component == null) {
             return false
@@ -217,6 +238,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         bundleForPluginLoader.putSerializable(ServiceContainerReuseDelegate.OPT_EXTRA_KEY, opt)
         return toContainerIntent(bundleForPluginLoader)
     }
+
 
     /**
      * 构造pluginIntent对应的ContainerIntent

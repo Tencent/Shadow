@@ -7,21 +7,16 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.IBinder;
 
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator;
-
 /**
  * Created by tracyluo on 2018/6/5.
  */
 public abstract class ShadowService extends ShadowContext {
-    HostServiceDelegator mHostServiceDelegator;
+
 
     public final void setHostContextAsBase(Context context) {
         attachBaseContext(context);
     }
 
-    public void setHostServiceDelegator(HostServiceDelegator delegator) {
-        mHostServiceDelegator = delegator;
-    }
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -73,12 +68,13 @@ public abstract class ShadowService extends ShadowContext {
     }
 
     public final void startForeground(int id, Notification notification) {
-        mHostServiceDelegator.startForeground(id, notification);
+        //mHostServiceDelegator.startForeground(id, notification);
+        // todo: 这里需要重新实现
     }
 
     public final void stopForeground(boolean removeNotification) {
         //todo cubershi: 这里没有考虑多Service复用的情况。多Service复用时不能其中一个Service要stop就stop。
-        mHostServiceDelegator.stopForeground(removeNotification);
+        //mHostServiceDelegator.stopForeground(removeNotification);
     }
 
     public final void stopSelf() {
