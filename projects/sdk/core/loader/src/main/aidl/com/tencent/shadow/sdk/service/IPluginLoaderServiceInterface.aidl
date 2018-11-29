@@ -2,6 +2,7 @@
 package com.tencent.shadow.sdk.service;
 
 import android.content.Intent;
+import com.tencent.shadow.sdk.service.IServiceConnection;
 
 interface IPluginLoaderServiceInterface {
 
@@ -13,5 +14,7 @@ interface IPluginLoaderServiceInterface {
 
     void startPluginService(in Intent pluginServiceIntent);
 
-    IBinder bindPluginService(in Intent pluginServiceIntent);
+    IBinder bindPluginService(in Intent pluginServiceIntent,in IServiceConnection connection);
+
+    void unbindService(in IServiceConnection conn);
 }

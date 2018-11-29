@@ -6,6 +6,7 @@ import android.os.RemoteException
 import com.tencent.hydevteam.common.classloader.ApkClassLoader
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
 import com.tencent.shadow.sdk.service.IPluginLoaderServiceInterface
+import com.tencent.shadow.sdk.service.IServiceConnection
 
 open class PluginLoaderService : IPluginLoaderServiceInterface.Stub() {
 
@@ -19,14 +20,12 @@ open class PluginLoaderService : IPluginLoaderServiceInterface.Stub() {
     private val mApkClassLoader = PluginLoaderService::class.java.classLoader as ApkClassLoader
 
     init {
-        if (mPluginLoader != null) {
-            try {
-                mPluginLoader = mApkClassLoader.getInterface(PluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL)
-            } catch (e: Exception) {
-                throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
-            }
-
+        try {
+            mPluginLoader = mApkClassLoader.getInterface(PluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL)
+        } catch (e: Exception) {
+            throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
         }
+
     }
 
     @Throws(RemoteException::class)
@@ -49,9 +48,11 @@ open class PluginLoaderService : IPluginLoaderServiceInterface.Stub() {
 
     }
 
-    @Throws(RemoteException::class)
-    override fun bindPluginService(pluginServiceIntent: Intent): IBinder? {
-        return null
+    override fun bindPluginService(pluginServiceIntent: Intent?, connection: IServiceConnection?): IBinder {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
+    override fun unbindService(conn: IServiceConnection?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 }
