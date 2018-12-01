@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
-import kotlin.properties.Delegates
 
 abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
@@ -61,6 +60,11 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
      * 如果插件不需要so，则返回""空字符串。
      */
     abstract val mAbi: String
+
+
+    fun getPluginServiceManager(): PluginServiceManager {
+        return mPluginServiceManager
+    }
 
     @Throws(LoadPluginException::class)
     override fun loadPlugin(
