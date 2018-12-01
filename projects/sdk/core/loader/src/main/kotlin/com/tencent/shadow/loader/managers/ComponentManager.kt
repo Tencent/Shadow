@@ -33,13 +33,6 @@ abstract class ComponentManager : PluginComponentLauncher {
         const val CM_PACKAGE_NAME_KEY = "CM_PACKAGE_NAME"
         const val CM_INTENT_KEY = "CM_INTENT"
         const val CM_PART_KEY = "CM_PART"
-
-        private var startId : Int = 0
-        fun getNewStartId() : Int {
-            startId++
-
-            return startId
-        }
     }
 
     abstract fun getLauncherActivity(partKey: String): ComponentName
@@ -90,7 +83,7 @@ abstract class ComponentManager : PluginComponentLauncher {
     override fun startService(context: ShadowContext, service: Intent): Pair<Boolean, ComponentName> {
         if (service.isPluginComponent()) {
             // 插件service intent不需要转换成container service intent，直接使用intent
-            val component = mPluginServiceManager!!.startPluginService(service, 0, getNewStartId())
+            val component = mPluginServiceManager!!.startPluginService(service)
             if (component != null) {
                 return Pair(true, component)
             }
@@ -103,8 +96,8 @@ abstract class ComponentManager : PluginComponentLauncher {
     override fun stopService(context: ShadowContext, intent: Intent): Pair<Boolean, Boolean> {
         if (intent.isPluginComponent()) {
             // 插件service intent不需要转换成container service intent，直接使用intent
-            mPluginServiceManager!!.stopPluginService(intent)
-            return Pair(true, true)
+            val stopped = mPluginServiceManager!!.stopPluginService(intent)
+            return Pair(true, stopped)
         }
 
 

@@ -33,13 +33,20 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
     // 存在mAliveServicesMap中，且stopService已经调用的service集合
     private val mServiceStopCalledMap = HashSet<ComponentName>()
 
-
     private val allDelegates: Collection<ShadowService>
         get() = mAliveServicesMap.values
 
+    companion object {
+        private var startId: Int = 0
+        fun getNewStartId(): Int {
+            startId++
+
+            return startId
+        }
+    }
 
 
-    fun startPluginService(intent: Intent, flags: Int, startId: Int): ComponentName? {
+    fun startPluginService(intent: Intent): ComponentName? {
         val componentName = intent.component
 
 
@@ -51,22 +58,23 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
             // 通过startService启动集合
             mServiceStartByStartServiceSet.add(componentName)
         }
-        mAliveServicesMap[componentName]?.onStartCommand(intent, flags, startId)
+        mAliveServicesMap[componentName]?.onStartCommand(intent, 0, getNewStartId())
 
 
         return componentName
     }
 
-    fun stopPluginService(intent: Intent) {
+    fun stopPluginService(intent: Intent): Boolean {
         val componentName = intent.component
 
         if (mAliveServicesMap.containsKey(componentName)) {
             mServiceStopCalledMap.add(componentName)
 
             // 看是否需要结束掉该service
-            destroyServiceIfNeed(componentName)
+            return destroyServiceIfNeed(componentName)
         }
 
+        return false
     }
 
     fun bindPluginService(intent: Intent, conn: ServiceConnection, flags: Int): Boolean {
@@ -214,7 +222,7 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
     }
 
 
-    private fun destroyServiceIfNeed(service: ComponentName) {
+    private fun destroyServiceIfNeed(service: ComponentName): Boolean {
 
         val destroy = {
             // 移除该service，及相关数据
@@ -232,15 +240,19 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
             if (mServiceConnectionMap[service] == null) {
                 // 结束该service
                 destroy()
+                return true
             }
         } else {
             // 如果该service，有通过startService,则必须调用过stopService且没有bind了，才能销毁
             if (mServiceStopCalledMap.contains(service) && !mServiceConnectionMap.containsKey(service)) {
                 // 结束该service
                 destroy()
+                return true
             }
 
         }
+
+        return false
     }
 
 }
