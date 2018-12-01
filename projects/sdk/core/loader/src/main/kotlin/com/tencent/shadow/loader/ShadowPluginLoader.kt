@@ -66,6 +66,12 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
         return mPluginServiceManager
     }
 
+    fun getPluginParts(partKey: String): PluginParts? {
+        mLock.withLock {
+            return mPluginPartsMap[partKey]
+        }
+    }
+
     @Throws(LoadPluginException::class)
     override fun loadPlugin(
             hostAppContext: Context,

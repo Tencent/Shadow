@@ -4,14 +4,18 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.os.RemoteException
 import com.tencent.hydevteam.common.classloader.ApkClassLoader
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
+import com.tencent.shadow.runtime.ShadowApplication
 import com.tencent.shadow.sdk.service.IPluginLoaderServiceInterface
 import com.tencent.shadow.sdk.service.IServiceConnection
 import java.io.File
+import java.util.concurrent.CountDownLatch
 
 open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInterface.Stub() {
 
@@ -43,20 +47,39 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
     @Throws(RemoteException::class)
     override fun loadPlugin(partKey: String, pluginApkFilePath: String, isInterface: Boolean) {
 
-        val pluginFile = File(pluginApkFilePath)
-        val installedPlugin = InstalledPlugin(partKey, null, pluginFile, 0)
 
-        mPluginLoader.loadPlugin(mContext, installedPlugin)
+        val pluginFile = File(pluginApkFilePath)
+        val installedPlugin = InstalledPlugin(partKey, pluginFile.lastModified().toString(), pluginFile, 0)
+
+        val runningPlugin = mPluginLoader.loadPlugin(mContext, installedPlugin)
+        runningPlugin.get()
     }
 
     @Throws(RemoteException::class)
     override fun callApplicationOnCreate(partKey: String) {
 
+        val pluginParts = mPluginLoader.getPluginParts(partKey)
+
+        pluginParts?.let {
+            fun callApplicationOnCreate(shadowApplication: ShadowApplication) {
+                val uiHandler = Handler(Looper.getMainLooper())
+                val waitUiLock = CountDownLatch(1)
+                uiHandler.post {
+                    shadowApplication.onCreate()
+                    waitUiLock.countDown()
+                }
+                waitUiLock.await()
+            }
+
+            callApplicationOnCreate(it.application)
+        }
+
+
     }
 
     @Throws(RemoteException::class)
     override fun convertActivityIntent(pluginActivityIntent: Intent): Intent? {
-        return null
+        return mPluginLoader.mComponentManager.convertPluginActivityIntent(pluginActivityIntent)
     }
 
     @Throws(RemoteException::class)
