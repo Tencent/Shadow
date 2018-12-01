@@ -6,5 +6,7 @@ import android.content.ComponentName;
 
 interface IServiceConnection {
 
-    void connected(in ComponentName name, IBinder service);
+    void onServiceConnected(in ComponentName name, IBinder service);
+
+    void onServiceDisconnected(in ComponentName name);
 }

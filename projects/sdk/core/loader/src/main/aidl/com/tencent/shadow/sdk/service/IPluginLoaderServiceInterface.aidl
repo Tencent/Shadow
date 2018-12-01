@@ -6,15 +6,17 @@ import com.tencent.shadow.sdk.service.IServiceConnection;
 
 interface IPluginLoaderServiceInterface {
 
-    void loadPlugin(String partKey);
+    void loadPlugin(String partKey, String apkFilePath, boolean isInterface);
 
     void callApplicationOnCreate(String partKey);
 
     Intent convertActivityIntent(in Intent pluginActivityIntent);
 
-    void startPluginService(in Intent pluginServiceIntent);
+    ComponentName startPluginService(in Intent pluginServiceIntent);
 
-    IBinder bindPluginService(in Intent pluginServiceIntent,in IServiceConnection connection);
+    boolean stopPluginService(in Intent pluginServiceIntent);
+
+    boolean bindPluginService(in Intent pluginServiceIntent,in IServiceConnection connection, int flags);
 
     void unbindService(in IServiceConnection conn);
 }

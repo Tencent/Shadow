@@ -1,8 +1,8 @@
 package com.tencent.shadow.loader
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.IBinder
 import android.os.RemoteException
 import com.tencent.hydevteam.common.classloader.ApkClassLoader
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
@@ -31,7 +31,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
     }
 
     @Throws(RemoteException::class)
-    override fun loadPlugin(partKey: String) {
+    override fun loadPlugin(partKey: String, pluginApkFilePath: String, isInterface: Boolean) {
 
     }
 
@@ -46,15 +46,19 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
     }
 
     @Throws(RemoteException::class)
-    override fun startPluginService(pluginServiceIntent: Intent) {
-
+    override fun startPluginService(pluginServiceIntent: Intent): ComponentName? {
+        return null
     }
 
-    override fun bindPluginService(pluginServiceIntent: Intent?, connection: IServiceConnection?): IBinder {
+    override fun stopPluginService(pluginServiceIntent: Intent): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun unbindService(conn: IServiceConnection?) {
+    override fun bindPluginService(pluginServiceIntent: Intent, connection: IServiceConnection, flags: Int): Boolean {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun unbindService(conn: IServiceConnection) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
