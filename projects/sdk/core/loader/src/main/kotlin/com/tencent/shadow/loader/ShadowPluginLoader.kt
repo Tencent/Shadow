@@ -55,6 +55,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     private lateinit var mPluginServiceManager: PluginServiceManager
 
+    private val mPluginServiceManagerLock = ReentrantLock()
+
     /**
      * 插件将要使用的so的ABI，Loader会将其从apk中解压出来。
      * 如果插件不需要so，则返回""空字符串。
@@ -63,7 +65,10 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
 
     fun getPluginServiceManager(): PluginServiceManager {
-        return mPluginServiceManager
+        mPluginServiceManagerLock.withLock {
+            return mPluginServiceManager
+        }
+
     }
 
     fun getPluginParts(partKey: String): PluginParts? {
@@ -78,11 +83,16 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
             installedPlugin: InstalledPlugin) : ProgressFuture<RunningPlugin> {
 
         // 在这里初始化PluginServiceManager
-        if (!::mPluginServiceManager.isInitialized) {
-            mPluginServiceManager = PluginServiceManager(this, hostAppContext)
+        mPluginServiceManagerLock.withLock {
+            if (!::mPluginServiceManager.isInitialized) {
+                mPluginServiceManager = PluginServiceManager(this, hostAppContext)
+            }
+
+            mComponentManager.setPluginServiceManager(mPluginServiceManager)
         }
 
-        mComponentManager.setPluginServiceManager(mPluginServiceManager)
+
+
         return LoadPluginBloc.loadPlugin(
                 mExecutorService,
                 mAbi,

@@ -11,7 +11,6 @@ import android.os.RemoteException
 import com.tencent.hydevteam.common.classloader.ApkClassLoader
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
-import com.tencent.shadow.runtime.ShadowApplication
 import com.tencent.shadow.sdk.service.IPluginLoaderServiceInterface
 import com.tencent.shadow.sdk.service.IServiceConnection
 import java.io.File
@@ -29,6 +28,8 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
     private val mApkClassLoader = PluginLoaderService::class.java.classLoader as ApkClassLoader
 
     private var mContext: Context;
+
+    private val mUiHandler = Handler(Looper.getMainLooper())
 
     /**
      * 同一个IServiceConnection只会对应一个ServiceConnection对象，此Map就是保存这种对应关系
@@ -56,25 +57,28 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
     }
 
     @Throws(RemoteException::class)
+    @Synchronized
     override fun callApplicationOnCreate(partKey: String) {
 
-        val pluginParts = mPluginLoader.getPluginParts(partKey)
+        fun realAction() {
+            val pluginParts = mPluginLoader.getPluginParts(partKey)
 
-        pluginParts?.let {
-            fun callApplicationOnCreate(shadowApplication: ShadowApplication) {
-                val uiHandler = Handler(Looper.getMainLooper())
-                val waitUiLock = CountDownLatch(1)
-                uiHandler.post {
-                    shadowApplication.onCreate()
-                    waitUiLock.countDown()
-                }
-                waitUiLock.await()
+            pluginParts?.let {
+                pluginParts.application.onCreate()
             }
-
-            callApplicationOnCreate(it.application)
         }
 
 
+        // 确保在ui线程调用
+        if (isUiThread()) {
+            realAction()
+        } else {
+            val waitUiLock = CountDownLatch(1)
+            mUiHandler.post {
+                realAction()
+                waitUiLock.countDown()
+            }
+        }
     }
 
     @Throws(RemoteException::class)
@@ -83,33 +87,93 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
     }
 
     @Throws(RemoteException::class)
+    @Synchronized
     override fun startPluginService(pluginServiceIntent: Intent): ComponentName? {
-        return mPluginLoader.getPluginServiceManager().startPluginService(pluginServiceIntent)
-    }
 
-    override fun stopPluginService(pluginServiceIntent: Intent): Boolean {
-        return mPluginLoader.getPluginServiceManager().stopPluginService(pluginServiceIntent)
-    }
-
-    override fun bindPluginService(pluginServiceIntent: Intent, connection: IServiceConnection, flags: Int): Boolean {
-
-        // client端同一个IServiceConnection对象，通过IPC传过来不会对应服务端这边的同一个IServiceConnection
-        // 但是asBinder返回是同一个对象
-        val connBinder = connection.asBinder()
-
-        if (mConnectionMap[connBinder] == null) {
-            mConnectionMap[connBinder] = ServiceConnectionWrapper(connection)
+        fun realAction(): ComponentName? {
+            return mPluginLoader.getPluginServiceManager().startPluginService(pluginServiceIntent)
         }
 
-        val connWrapper = mConnectionMap[connBinder]!!
-        return mPluginLoader.getPluginServiceManager().bindPluginService(pluginServiceIntent, connWrapper, flags)
+
+        // 确保在ui线程调用
+        var componentName: ComponentName? = null
+        if (isUiThread()) {
+            componentName = realAction()
+        } else {
+            val waitUiLock = CountDownLatch(1)
+            mUiHandler.post {
+                componentName = realAction()
+                waitUiLock.countDown()
+            }
+        }
+
+        return componentName
     }
 
+    @Throws(RemoteException::class)
+    @Synchronized
+    override fun stopPluginService(pluginServiceIntent: Intent): Boolean {
+
+        fun realAction(): Boolean {
+            return mPluginLoader.getPluginServiceManager().stopPluginService(pluginServiceIntent)
+        }
+
+        // 确保在ui线程调用
+        var stopped: Boolean = false
+        if (isUiThread()) {
+            stopped = realAction()
+        } else {
+            val waitUiLock = CountDownLatch(1)
+            mUiHandler.post {
+                stopped = realAction()
+                waitUiLock.countDown()
+            }
+        }
+        return stopped
+    }
+
+    @Throws(RemoteException::class)
+    @Synchronized
+    override fun bindPluginService(pluginServiceIntent: Intent, connection: IServiceConnection, flags: Int): Boolean {
+
+        fun realAction(): Boolean {
+            // client端同一个IServiceConnection对象，通过IPC传过来不会对应服务端这边的同一个IServiceConnection
+            // 但是asBinder返回是同一个对象
+            val connBinder = connection.asBinder()
+
+            if (mConnectionMap[connBinder] == null) {
+                mConnectionMap[connBinder] = ServiceConnectionWrapper(connection)
+            }
+
+            val connWrapper = mConnectionMap[connBinder]!!
+            return mPluginLoader.getPluginServiceManager().bindPluginService(pluginServiceIntent, connWrapper, flags)
+        }
+
+        // 确保在ui线程调用
+        var stop: Boolean = false
+        if (isUiThread()) {
+            stop = realAction()
+        } else {
+            val waitUiLock = CountDownLatch(1)
+            mUiHandler.post {
+                stop = realAction()
+                waitUiLock.countDown()
+            }
+        }
+
+        return stop
+
+    }
+
+    @Throws(RemoteException::class)
+    @Synchronized
     override fun unbindService(conn: IServiceConnection) {
-        val connBinder = conn.asBinder()
-        mConnectionMap[connBinder]?.let {
-            mConnectionMap.remove(connBinder)
-            mPluginLoader.getPluginServiceManager().unbindPluginService(it)
+        mUiHandler.post {
+            val connBinder = conn.asBinder()
+            mConnectionMap[connBinder]?.let {
+                mConnectionMap.remove(connBinder)
+                mPluginLoader.getPluginServiceManager().unbindPluginService(it)
+            }
         }
     }
 
@@ -123,5 +187,10 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
             mConnection.onServiceConnected(name, service)
         }
 
+    }
+
+    private fun isUiThread(): Boolean {
+
+        return Looper.myLooper() == Looper.getMainLooper()
     }
 }
