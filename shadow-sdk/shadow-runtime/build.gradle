@@ -27,7 +27,7 @@ android {
 }
 
 dependencies{
-    implementation project(':shadow-sdk:shadow-custom-lint:shadow-lint')
+    implementation 'com.tencent.shadow:shadow-lint'
 }
 
 def jarPackage(buildType) {
