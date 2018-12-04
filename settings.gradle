@@ -18,6 +18,6 @@ def includeSdkDebug() {//shadow调试开发用的宿主和插件。
 rootProject.name = 'shadow'
 
 includeBuild 'shadow-custom-lint'
-
+includeBuild 'runtime-and-transform'
 includeShadowSdk()
 includeSdkDebug()

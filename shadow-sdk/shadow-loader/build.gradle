@@ -48,7 +48,7 @@ dependencies {
     compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:'+PLUGINMANAGER_VERSION
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
 
-    compileOnly project(':shadow-sdk:shadow-runtime')
+    compileOnly 'com.tencent.shadow:shadow-runtime'
     implementation 'com.tencent.shadow:shadow-lint'
 }
 

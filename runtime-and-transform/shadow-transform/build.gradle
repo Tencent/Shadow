@@ -2,9 +2,9 @@ apply plugin: 'java-gradle-plugin'
 
 apply plugin: 'kotlin'
 
-apply from: "$rootDir/buildScripts/gradle/GitHelper.gradle"
+apply from: "${rootDir.parentFile}/buildScripts/gradle/GitHelper.gradle"
 
-group 'com.tencent.shadow.transform'
+group 'com.tencent.shadow'
 version 'local'
 
 gradlePlugin {
@@ -20,14 +20,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.tools.build:gradle:3.1.2'
     implementation 'org.javassist:javassist:3.22.0-GA'
-    implementation files("${project(":shadow-sdk:shadow-runtime").getBuildDir()}/outputs/jar/shadow-runtime-release.jar")
 }
 
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.6"
     }
-}.dependsOn(":shadow-sdk:shadow-runtime:jarReleasePackage")
+}
 
 compileTestKotlin {
     kotlinOptions {

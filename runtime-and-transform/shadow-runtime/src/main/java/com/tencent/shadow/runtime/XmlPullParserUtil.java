@@ -32,6 +32,7 @@ public class XmlPullParserUtil {
         } catch (Exception e) {
             final InflateException ie = new InflateException(e.getMessage(), e);
             ie.setStackTrace(new StackTraceElement[0]);
+            ie.printStackTrace();
             throw ie;
         }
         return name;

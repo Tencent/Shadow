@@ -2,7 +2,6 @@ package com.tencent.shadow.runtime;
 
 import android.annotation.TargetApi;
 import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
