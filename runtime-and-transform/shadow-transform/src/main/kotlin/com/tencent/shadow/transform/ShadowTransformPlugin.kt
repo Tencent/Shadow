@@ -13,6 +13,9 @@ class ShadowTransformPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         System.err.println("ShadowTransformPlugin project.name==" + project.name)
 
+        val currentJar = File(this::class.java.protectionDomain.codeSource.location.toURI())
+        val pluginJarSelf = project.files(currentJar)
+
         val plugin = project.plugins.getPlugin(AppPlugin::class.java)
         val sdkDirectory = plugin.extension.sdkDirectory
         val androidJarPath = "platforms/${plugin.extension.compileSdkVersion}/android.jar"
@@ -32,7 +35,7 @@ class ShadowTransformPlugin : Plugin<Project> {
         }
 
         val keepHostObjectsExtension = project.extensions.create("keepHostObjects", KeepHostObjectsExtension::class.java)
-        plugin.extension.registerTransform(ShadowTransform(classPoolBuilder, keepHostObjectsExtension))
+        plugin.extension.registerTransform(ShadowTransform(pluginJarSelf, classPoolBuilder, keepHostObjectsExtension))
     }
 
     open class KeepHostObjectsExtension {
