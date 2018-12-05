@@ -1,9 +1,3 @@
-def includeShadowSdk() {
-    include ':shadow-sdk:shadow-loader'
-    include ':shadow-sdk:shadow-runtime'
-    include ':shadow-sdk:shadow-transform'
-}
-
 def includeSdkDebug() {//shadow调试开发用的宿主和插件。
     include ':sdk-debug:host-app:host-apk'
     include ':sdk-debug:host-app:slf4j-logcat'
@@ -19,5 +13,5 @@ rootProject.name = 'shadow'
 
 includeBuild 'shadow-custom-lint'
 includeBuild 'runtime-and-transform'
-includeShadowSdk()
+include ':shadow-sdk:shadow-loader'
 includeSdkDebug()
