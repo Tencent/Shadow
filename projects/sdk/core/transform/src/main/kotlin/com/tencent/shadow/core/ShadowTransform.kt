@@ -1,15 +1,15 @@
-package com.tencent.shadow.transform
+package com.tencent.shadow.core
 
 import com.android.build.api.transform.TransformInvocation
-import com.tencent.shadow.transform.transformkit.ClassPoolBuilder
-import com.tencent.shadow.transform.transformkit.DirInputClass
-import com.tencent.shadow.transform.transformkit.JarInputClass
-import com.tencent.shadow.transform.transformkit.JavassistTransform
+import com.tencent.shadow.core.transformkit.ClassPoolBuilder
+import com.tencent.shadow.core.transformkit.DirInputClass
+import com.tencent.shadow.core.transformkit.JarInputClass
+import com.tencent.shadow.core.transformkit.JavassistTransform
 import javassist.*
 import org.gradle.api.file.FileCollection
 import java.io.File
 
-class ShadowTransform(pluginJarSelf: FileCollection, classPoolBuilder: ClassPoolBuilder, val keepHostObjectsExtension: ShadowTransformPlugin.KeepHostObjectsExtension) : JavassistTransform(pluginJarSelf, classPoolBuilder) {
+class ShadowTransform(pluginJarSelf: FileCollection, classPoolBuilder: ClassPoolBuilder, val useHostContext: () -> Array<String>) : JavassistTransform(pluginJarSelf, classPoolBuilder) {
 
     companion object {
         const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"
@@ -264,7 +264,7 @@ class ShadowTransform(pluginJarSelf: FileCollection, classPoolBuilder: ClassPool
 
             val appClasses = mCtClassInputMap.keys
 
-            return keepHostObjectsExtension.useHostContext.map { rule ->
+            return useHostContext().map { rule ->
                 rule.assertRuleHasOnlyOneChar('(')
                 rule.assertRuleHasOnlyOneChar(')')
 

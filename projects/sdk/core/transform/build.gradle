@@ -1,24 +1,12 @@
-apply plugin: 'java-gradle-plugin'
-
 apply plugin: 'kotlin'
 
-apply from: "${rootDir.parentFile.parentFile.parentFile}/buildScripts/gradle/GitHelper.gradle"
-
 group 'com.tencent.shadow.core'
-
-gradlePlugin {
-    plugins {
-        shadowTransform {
-            id = "com.tencent.shadow.transform"
-            implementationClass = "com.tencent.shadow.transform.ShadowTransformPlugin"
-        }
-    }
-}
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.tools.build:gradle:3.1.2'
     implementation 'org.javassist:javassist:3.22.0-GA'
+    implementation gradleApi()
 }
 
 compileKotlin {
@@ -31,68 +19,4 @@ compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.6"
     }
-}
-
-apply plugin: 'maven-publish'
-
-static def getDependencyNode(scope, groupId, artifactId, version) {
-    Node node = new Node(null, 'dependency')
-    node.appendNode('groupId', groupId)
-    node.appendNode('artifactId', artifactId)
-    node.appendNode('version', version)
-    node.appendNode('scope', scope)
-    return node
-}
-
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId 'com.tencent.shadow'
-            artifactId "${project.name}"
-            version project.ARTIFACT_VERSION
-            artifact("build/libs/${project.name}-${project.version}.jar")
-
-            pom.withXml {
-                def root = asNode()
-                def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('runtime', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', "$kotlin_version"))
-                dependencies.append(getDependencyNode('runtime', 'com.android.tools.build', 'gradle', '3.1.2'))
-                dependencies.append(getDependencyNode('runtime', 'org.javassist', 'javassist', '3.22.0-GA'))
-                dependencies.append(getDependencyNode('runtime', 'com.tencent.shadow', 'shadow-runtime', "${project.ARTIFACT_VERSION}"))
-
-                def scm = root.appendNode('scm')
-                scm.appendNode('connection', 'http://git.code.oa.com/plugin-framework/shadow.git')
-                scm.appendNode('url', "http://git.code.oa.com/plugin-framework/shadow/commit/$project.GIT_SHORT_REV")
-            }
-        }
-    }
-    repositories {
-        maven {
-            credentials {
-                username "rdm"
-                password "rdm"
-            }
-            if (isPublishRelease()) {
-                url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
-            } else {
-                url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots"
-            }
-        }
-    }
-}
-
-model {
-    tasks.generatePomFileForReleasePublication {
-        destination = file("$buildDir/release-pom.xml")
-    }
-}
-
-tasks.whenTaskAdded { theTask ->
-    if (theTask.name.equals("generatePomFileForReleasePublication")) {
-        theTask.dependsOn(project.getTasksByName("assemble", false).first())
-    }
-}
-
-static def isPublishRelease() {
-    return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
 }
