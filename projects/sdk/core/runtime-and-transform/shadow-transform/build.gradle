@@ -2,7 +2,7 @@ apply plugin: 'java-gradle-plugin'
 
 apply plugin: 'kotlin'
 
-apply from: "${rootDir.parentFile}/buildScripts/gradle/GitHelper.gradle"
+apply from: "${rootDir.parentFile.parentFile.parentFile.parentFile}/buildScripts/gradle/GitHelper.gradle"
 
 group 'com.tencent.shadow'
 version 'local'

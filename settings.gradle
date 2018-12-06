@@ -1,5 +1,5 @@
 rootProject.name = 'shadow'
 
-includeBuild 'shadow-custom-lint'
-includeBuild 'runtime-and-transform'
-include ':shadow-sdk:shadow-loader'
+includeBuild 'projects/sdk/lint'
+includeBuild 'projects/sdk/core/runtime-and-transform'
+include ':projects:sdk:core:loader'

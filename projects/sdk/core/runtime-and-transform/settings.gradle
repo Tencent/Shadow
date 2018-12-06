@@ -1,2 +1,2 @@
-includeBuild '../shadow-custom-lint'
+includeBuild '../../lint'
 include 'shadow-runtime', 'shadow-transform', 'shadow-runtime-java-lib'
