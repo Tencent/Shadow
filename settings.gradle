@@ -2,6 +2,7 @@ rootProject.name = 'shadow'
 
 includeBuild 'projects/sdk/lint'
 includeBuild 'projects/sdk/core'
+includeBuild 'projects/sdk/dynamic'
 
 include ':projects:debug:host-app:host-apk'
 include ':projects:debug:host-app:slf4j-logcat'
