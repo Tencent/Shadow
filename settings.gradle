@@ -1,17 +1,5 @@
-def includeSdkDebug() {//shadow调试开发用的宿主和插件。
-    include ':sdk-debug:host-app:host-apk'
-    include ':sdk-debug:host-app:slf4j-logcat'
-
-    include ':sdk-debug:plugin-app:demo-main'//demo用来构造测试用例
-    include ':sdk-debug:plugin-app:demo-install'//将demo-main构建成apk安装运行
-    include ':sdk-debug:plugin-app:demo-plugin'//将demo-main构建成plugin.即构建成apk并应用shadow-transform
-    include ':sdk-debug:plugin-app:plugin-loader-apk'
-    include ':sdk-debug:plugin-app:shadow-runtime-apk'
-}
-
 rootProject.name = 'shadow'
 
 includeBuild 'shadow-custom-lint'
 includeBuild 'runtime-and-transform'
 include ':shadow-sdk:shadow-loader'
-includeSdkDebug()
