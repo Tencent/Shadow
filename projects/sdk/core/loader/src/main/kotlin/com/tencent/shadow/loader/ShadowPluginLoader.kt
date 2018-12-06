@@ -1,11 +1,14 @@
 package com.tencent.shadow.loader
 
 import android.content.Context
+import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.plugincontainer.*
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
+import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.loader.blocs.LoadPluginBloc
+import com.tencent.shadow.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.loader.delegates.DI
 import com.tencent.shadow.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.loader.delegates.ShadowActivityDelegate
@@ -51,6 +54,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
 
     private val mCommonPluginPackageManager = CommonPluginPackageManager()
 
+    private val mInterfaceClassLoader = InterfaceClassLoader(ShadowPluginLoader::class.java.classLoader.parent)
+
     /**
      * 插件将要使用的so的ABI，Loader会将其从apk中解压出来。
      * 如果插件不需要so，则返回""空字符串。
@@ -61,17 +66,32 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     override fun loadPlugin(
             hostAppContext: Context,
             installedPlugin: InstalledPlugin
-    ) = LoadPluginBloc.loadPlugin(
-            mExecutorService,
-            mAbi,
-            mCommonPluginPackageManager,
-            mComponentManager,
-            getBusinessPluginReceiverManager(hostAppContext),
-            mLock,
-            mPluginPartsMap,
-            hostAppContext,
-            installedPlugin
-    )
+    ): ProgressFuture<RunningPlugin> {
+
+        if (installedPlugin.pluginFileType == 1) { // 是接口apk
+
+            return LoadPluginBloc.loadInterface(
+                    mExecutorService,
+                    mAbi,
+                    hostAppContext,
+                    mInterfaceClassLoader,
+                    installedPlugin
+                    )
+        } else {
+            return LoadPluginBloc.loadPlugin(
+                    mExecutorService,
+                    mAbi,
+                    mCommonPluginPackageManager,
+                    mComponentManager,
+                    getBusinessPluginReceiverManager(hostAppContext),
+                    mLock,
+                    mPluginPartsMap,
+                    hostAppContext,
+                    installedPlugin,
+                    mInterfaceClassLoader
+            )
+        }
+    }
 
     override fun setPluginDisabled(installedPlugin: InstalledPlugin): Boolean {
         return false
