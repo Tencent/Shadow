@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.core'
+
+dependencies {
+    api files("${project(":concept:aar").getBuildDir()}/outputs/jar/aar-release.jar")
+}
+
+compileJava.dependsOn(":concept:aar:jarReleasePackage")
