@@ -4,7 +4,9 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-apply from: "$rootDir/buildScripts/gradle/GitHelper.gradle"
+apply from: "${rootDir.parentFile.parentFile.parentFile}/buildScripts/gradle/GitHelper.gradle"
+
+group 'com.tencent.shadow.core'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -45,10 +47,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:'+PLUGINMANAGER_VERSION
-    compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:'+PLUGINMANAGER_VERSION
+    compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:1.3.8'
+    compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:1.3.8'
 
-    compileOnly 'com.tencent.shadow:shadow-runtime-java-lib'
+    compileOnly project(':runtime')
     implementation 'com.tencent.shadow:shadow-lint'
 }
 

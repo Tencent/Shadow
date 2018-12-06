@@ -1,0 +1,2 @@
+includeBuild '../lint'
+include 'loader', 'runtime', 'runtime:aar', 'transform'

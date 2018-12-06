@@ -10,9 +10,9 @@
 
 apply plugin: 'com.android.library'
 
-apply from: "${rootDir.parentFile.parentFile.parentFile.parentFile}/buildScripts/gradle/GitHelper.gradle"
+apply from: "${rootDir.parentFile.parentFile.parentFile}/buildScripts/gradle/GitHelper.gradle"
 
-group 'com.tencent.shadow'
+group 'com.tencent.shadow.core'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
