@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.view.LayoutInflater;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
 
@@ -15,6 +16,8 @@ import static android.content.pm.PackageManager.GET_META_DATA;
 public class PluginManagerContext extends ContextWrapper {
 
     private Resources mResources;
+
+    private LayoutInflater mLayoutInflater;
 
     public PluginManagerContext(Context base, String apkPath) {
         super(base);
@@ -41,6 +44,18 @@ public class PluginManagerContext extends ContextWrapper {
     @Override
     public Resources getResources() {
         return mResources;
+    }
+
+    @Override
+    public Object getSystemService(String name) {
+        if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {
+            if (mLayoutInflater == null) {
+                LayoutInflater layoutInflater = (LayoutInflater) super.getSystemService(name);
+                mLayoutInflater = layoutInflater.cloneInContext(this);
+            }
+            return mLayoutInflater;
+        }
+        return super.getSystemService(name);
     }
 }
 
