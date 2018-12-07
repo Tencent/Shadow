@@ -26,6 +26,13 @@ public class ShadowContext extends ContextThemeWrapper {
     protected String mPartKey;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
 
+    public ShadowContext() {
+    }
+
+    public ShadowContext(Context base, int themeResId) {
+        super(base, themeResId);
+    }
+
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;
     }
