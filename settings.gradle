@@ -13,8 +13,6 @@ include ':projects:debug:plugin-app:demo-plugin'
 include ':projects:debug:plugin-app:plugin-loader-apk'
 include ':projects:debug:plugin-app:shadow-runtime-apk'
 
-include ':projects:debug:manager-apk'
-
 include ':projects:now:channel'
 include ':projects:now:manager'
 include ':projects:now:qqinterface'
