@@ -17,6 +17,9 @@ import com.tencent.shadow.loader.infos.PluginParts
 import com.tencent.shadow.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.loader.managers.ComponentManager
 import com.tencent.shadow.loader.managers.PluginBroadcastManager
+import com.tencent.shadow.loader.remoteview.ShadowRemoteViewCreatorImp
+import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator
+import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.locks.ReentrantLock
@@ -61,6 +64,10 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
      * 如果插件不需要so，则返回""空字符串。
      */
     abstract val mAbi: String
+
+    private val  mShadowRemoteViewCreatorProvider: ShadowRemoteViewCreatorProvider = ShadowRemoteViewCreatorProviderImpl()
+
+
 
     fun getPluginParts(partKey: String) : PluginParts? {
         mLock.withLock {
@@ -123,11 +130,19 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                 delegate.inject(pluginParts.resources)
                 delegate.inject(mExceptionReporter)
                 delegate.inject(mComponentManager)
+                delegate.inject(mShadowRemoteViewCreatorProvider)
             }
         }
     }
 
     companion object {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
+    }
+
+    private inner class ShadowRemoteViewCreatorProviderImpl: ShadowRemoteViewCreatorProvider {
+        override fun createRemoteViewCreator(context: Context): ShadowRemoteViewCreator {
+            return ShadowRemoteViewCreatorImp(context, this@ShadowPluginLoader)
+        }
+
     }
 }
