@@ -23,7 +23,7 @@ import static com.tencent.shadow.sdk.dynamic.BuildConfig.COMPATIBLE_SUFFIX;
 
 public class UpgradeablePluginManager {
 
-    private String appType;
+    private final String appType;
 
     private final Object mLock = new Object();
 
@@ -106,16 +106,16 @@ public class UpgradeablePluginManager {
     /**
      * 判断测试环境的文件
      */
-    private File mDevFile;
+    private final File mDevFile;
 
     /**
      * 是否测试环境
      */
-    private boolean mDevMode;
+    private final boolean mDevMode;
     /**
      * PluginManager下载地址
      */
-    private String mDownloadUrl;
+    private final String mDownloadUrl;
     /**
      * PluginManager文件最后的修改时间
      */
@@ -132,6 +132,22 @@ public class UpgradeablePluginManager {
         mDownloadUrl = REMOTE_PLUGIN_MANAGER_URL + "_" + appType;
     }
 
+    /**
+     * TEST用途
+     *
+     * @param mPluginManagerRootDir
+     * @param mPluginStoreDir
+     * @param mRemotePluginManagerApk
+     */
+    public UpgradeablePluginManager(File mPluginManagerRootDir, File mPluginStoreDir, File mRemotePluginManagerApk) {
+        this.mPluginManagerRootDir = mPluginManagerRootDir;
+        this.mPluginStoreDir = mPluginStoreDir;
+        this.mRemotePluginManagerApk = mRemotePluginManagerApk;
+        appType = "local";
+        mDevFile = null;
+        mDevMode = false;
+        mDownloadUrl = "local";
+    }
 
     /**
      * 【同步方法】如果有必要则升级PluginManager，然后初始化。
