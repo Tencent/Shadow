@@ -11,8 +11,6 @@ import android.os.RemoteException
 import com.tencent.hydevteam.common.classloader.ApkClassLoader
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
-import com.tencent.shadow.core.loader.IPluginLoaderServiceInterface
-import com.tencent.shadow.core.loader.IServiceConnection
 import java.io.File
 import java.util.concurrent.CountDownLatch
 
