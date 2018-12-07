@@ -112,6 +112,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.setShadowApplication(mPluginApplication)
         pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
         pluginActivity.setPluginPartKey(mPartKey)
+        pluginActivity.remoteViewCreatorProvider = mRemoteViewCreatorProvider
     }
 
     override fun onResume() {

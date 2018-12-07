@@ -101,7 +101,8 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                     mPluginPartsMap,
                     hostAppContext,
                     installedPlugin,
-                    mInterfaceClassLoader
+                    mInterfaceClassLoader,
+                    mShadowRemoteViewCreatorProvider
             )
         }
     }

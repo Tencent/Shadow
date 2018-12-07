@@ -17,6 +17,7 @@ import com.tencent.shadow.loader.managers.ComponentManager
 import com.tencent.shadow.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.loader.managers.PluginPackageManager
 import com.tencent.shadow.runtime.ShadowApplication
+import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutorService
@@ -35,7 +36,8 @@ object LoadPluginBloc {
             pluginPartsMap: MutableMap<String, PluginParts>,
             hostAppContext: Context,
             installedPlugin: InstalledPlugin,
-            parentClassLoader: ClassLoader
+            parentClassLoader: ClassLoader,
+            remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): ProgressFuture<RunningPlugin> {
         if (installedPlugin.pluginFile == null) {
             throw LoadPluginException("pluginFile==null")
@@ -67,7 +69,8 @@ object LoadPluginBloc {
                         resources,
                         hostAppContext,
                         componentManager,
-                        pluginBroadcastManager.getBroadcastsByPartKey(pluginInfo.partKey)
+                        pluginBroadcastManager.getBroadcastsByPartKey(pluginInfo.partKey),
+                        remoteViewCreatorProvider
                 )
             })
 

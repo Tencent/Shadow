@@ -87,6 +87,7 @@ class ShadowServiceDelegate(private val mDI: DI,
             mPluginService.setPluginComponentLauncher(mComponentManager)
             mPluginService.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
             mPluginService.setPluginPartKey(partKey)
+            mPluginService.remoteViewCreatorProvider = mRemoteViewCreatorProvider
             mIsSetService = true
         }
         return mPluginService.onCreate()
