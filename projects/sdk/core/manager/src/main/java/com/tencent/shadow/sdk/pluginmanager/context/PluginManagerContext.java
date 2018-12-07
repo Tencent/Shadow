@@ -47,6 +47,11 @@ public class PluginManagerContext extends ContextWrapper {
     }
 
     @Override
+    public Resources.Theme getTheme() {
+        return mResources.newTheme();
+    }
+
+    @Override
     public Object getSystemService(String name) {
         if (Context.LAYOUT_INFLATER_SERVICE.equals(name)) {
             if (mLayoutInflater == null) {
