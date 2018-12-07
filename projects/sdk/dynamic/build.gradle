@@ -1,0 +1,59 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext.kotlin_version = '1.2.41'
+    repositories {
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/jcenter"
+        }
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
+        }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    ext.COMPILE_SDK_VERSION = 27
+    ext.MIN_SDK_VERSION = 15
+    ext.TARGET_SDK_VERSION = 27
+    if ("${System.env.CI}".equalsIgnoreCase("true")) {
+        ext.VERSION_CODE = Integer.parseInt("${System.env.BuildNo}")
+        ext.VERSION_NAME = "${System.env.MajorVersion}.${System.env.MinorVersion}.${System.env.FixVersion}"
+    } else {
+        ext.VERSION_CODE = 1
+        ext.VERSION_NAME = "local"
+    }
+    if ("${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")) {
+        ext.VERSION_SUFFIX = ""
+    } else {
+        ext.VERSION_SUFFIX = "-SNAPSHOT"
+    }
+    ext.ARTIFACT_VERSION = ext.VERSION_NAME + ext.VERSION_SUFFIX
+    repositories {
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
+        }
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/jcenter"
+        }
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
+        }
+        if (!"${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")) {
+            maven {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots/"
+            }
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
