@@ -7,3 +7,8 @@
 /captures
 .externalNativeBuild
 .gradletasknamecache
+
+gradle
+gradlew
+gradlew.bat
+gradle.properties
