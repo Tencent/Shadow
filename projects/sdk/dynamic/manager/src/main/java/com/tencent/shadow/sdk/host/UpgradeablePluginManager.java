@@ -74,6 +74,8 @@ public class UpgradeablePluginManager {
     protected static final String[] REMOTE_PLUGIN_MANAGER_INTERFACES = new String[]
             {
                     "com.tencent.shadow.core.host",
+                    "com.tencent.shadow.core.host.common",
+
             };
     /**
      * 远程PluginManager中实现PluginManager接口的类的类名
