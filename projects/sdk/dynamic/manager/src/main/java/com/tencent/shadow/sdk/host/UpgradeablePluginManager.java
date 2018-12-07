@@ -75,6 +75,7 @@ public class UpgradeablePluginManager {
             {
                     "com.tencent.shadow.core.host",
                     "com.tencent.shadow.core.host.common",
+                    "com.tencent.commonsdk.zip",
 
             };
     /**
