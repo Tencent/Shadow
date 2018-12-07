@@ -57,6 +57,11 @@ public class PluginManagerContext extends ContextWrapper {
         }
         return super.getSystemService(name);
     }
+
+    @Override
+    public ClassLoader getClassLoader() {
+        return PluginManagerContext.class.getClassLoader();
+    }
 }
 
 
