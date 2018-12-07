@@ -12,6 +12,8 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 
+import com.tencent.shadow.core.host.PluginManager;
+import com.tencent.shadow.core.host.ViewCallback;
 import com.tencent.shadow.sdk.pluginmanager.installplugin.InstalledDao;
 import com.tencent.shadow.sdk.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.sdk.pluginmanager.installplugin.InstalledPluginDBHelper;

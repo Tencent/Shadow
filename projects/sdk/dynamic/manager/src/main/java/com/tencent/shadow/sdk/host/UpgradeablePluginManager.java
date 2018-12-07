@@ -4,14 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.tencent.shadow.sdk.common.annotation.API;
-import com.tencent.shadow.sdk.common.classloader.ApkClassLoader;
+import com.tencent.shadow.core.host.PluginManager;
+import com.tencent.shadow.core.host.ViewCallback;
+import com.tencent.shadow.core.host.common.annotation.API;
+import com.tencent.shadow.core.host.common.classloader.ApkClassLoader;
 import com.tencent.shadow.sdk.host.download.DownloadException;
 import com.tencent.shadow.sdk.host.download.Downloader;
 import com.tencent.shadow.sdk.host.download.LengthHashURLConnectionDownloader;
 import com.tencent.shadow.sdk.host.download.TargetDownloadInfo;
-import com.tencent.shadow.sdk.pluginmanager.PluginManager;
-import com.tencent.shadow.sdk.pluginmanager.ViewCallback;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.common.annotation;
+package com.tencent.shadow.core.host.common.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

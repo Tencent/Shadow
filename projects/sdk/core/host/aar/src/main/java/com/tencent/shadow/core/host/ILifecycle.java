@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.pluginmanager;
+package com.tencent.shadow.core.host;
 
 import android.os.Bundle;
 

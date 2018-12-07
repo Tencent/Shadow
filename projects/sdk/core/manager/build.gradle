@@ -29,7 +29,7 @@ dependencies {
     })
     testImplementation 'junit:junit:4.12'
 
-    compileOnly project(':concept')
+    compileOnly project(':host')
     compileOnly files('libs/qzip.jar')
 }
 

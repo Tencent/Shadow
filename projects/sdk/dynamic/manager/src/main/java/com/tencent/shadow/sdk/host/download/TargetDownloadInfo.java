@@ -1,7 +1,7 @@
 package com.tencent.shadow.sdk.host.download;
 
 
-import com.tencent.shadow.sdk.common.annotation.API;
+import com.tencent.shadow.core.host.common.annotation.API;
 
 /**
  * 下载目标文件信息

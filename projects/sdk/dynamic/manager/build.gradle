@@ -30,5 +30,5 @@ dependencies {
     })
     testImplementation 'junit:junit:4.12'
     compileOnly files('libs/qzip.jar')
-    implementation 'com.tencent.shadow.core:concept'
+    implementation 'com.tencent.shadow.core:host'
 }

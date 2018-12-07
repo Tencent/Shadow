@@ -1,7 +1,7 @@
 package com.tencent.shadow.sdk.host.download;
 
 
-import com.tencent.shadow.sdk.common.MinFileUtils;
+import com.tencent.shadow.core.host.common.MinFileUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;

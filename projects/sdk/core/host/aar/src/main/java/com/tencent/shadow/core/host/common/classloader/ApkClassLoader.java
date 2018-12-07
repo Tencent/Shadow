@@ -1,8 +1,8 @@
-package com.tencent.shadow.sdk.common.classloader;
+package com.tencent.shadow.core.host.common.classloader;
 
 import android.os.Build;
 
-import com.tencent.shadow.sdk.common.annotation.API;
+import com.tencent.shadow.core.host.common.annotation.API;
 
 import java.io.File;
 import java.lang.reflect.Constructor;

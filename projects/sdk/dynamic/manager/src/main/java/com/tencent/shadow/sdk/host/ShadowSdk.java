@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import com.tencent.shadow.sdk.pluginmanager.ViewCallback;
+import com.tencent.shadow.core.host.ViewCallback;
 
 import java.util.HashMap;
 import java.util.Map;
