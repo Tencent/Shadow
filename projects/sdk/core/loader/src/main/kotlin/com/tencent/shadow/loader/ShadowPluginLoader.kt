@@ -62,6 +62,12 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
      */
     abstract val mAbi: String
 
+    fun getPluginParts(partKey: String) : PluginParts? {
+        mLock.withLock {
+            return mPluginPartsMap[partKey]
+        }
+    }
+
     @Throws(LoadPluginException::class)
     override fun loadPlugin(
             hostAppContext: Context,
