@@ -73,12 +73,7 @@ public class UpgradeablePluginManager {
      */
     protected static final String[] REMOTE_PLUGIN_MANAGER_INTERFACES = new String[]
             {
-                    "com.tencent.shadow.sdk.common",
-                    "com.tencent.shadow.sdk.host.download",
-                    "com.tencent.shadow.sdk.pluginmanager",
-                    "com.tencent.qphone.base.util",
-                    "com.tencent.commonsdk.zip",
-                    "com.tencent.mobileqq.intervideo.now.dynamic"
+                    "com.tencent.shadow.core.host",
             };
     /**
      * 远程PluginManager中实现PluginManager接口的类的类名
@@ -147,6 +142,8 @@ public class UpgradeablePluginManager {
         mDevFile = null;
         mDevMode = false;
         mDownloadUrl = "local";
+
+        mPluginManagerFile = mRemotePluginManagerApk;
     }
 
     /**
