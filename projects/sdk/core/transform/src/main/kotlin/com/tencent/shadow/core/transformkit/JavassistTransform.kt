@@ -3,12 +3,12 @@ package com.tencent.shadow.core.transformkit
 import com.android.build.api.transform.TransformInvocation
 import javassist.ClassPool
 import javassist.CtClass
-import org.gradle.api.file.FileCollection
+import org.gradle.api.Project
 import java.io.File
 import java.io.OutputStream
 import java.util.zip.ZipInputStream
 
-open class JavassistTransform(pluginJarSelf: FileCollection, val classPoolBuilder: ClassPoolBuilder) : ClassTransform(pluginJarSelf) {
+open class JavassistTransform(project: Project, val classPoolBuilder: ClassPoolBuilder) : ClassTransform(project) {
     val mCtClassInputMap = mutableMapOf<CtClass, InputClass>()
     lateinit var classPool: ClassPool
 

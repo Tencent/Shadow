@@ -13,9 +13,6 @@ class ShadowPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         System.err.println("ShadowPlugin project.name==" + project.name)
 
-        val currentJar = File(this::class.java.protectionDomain.codeSource.location.toURI())
-        val pluginJarSelf = project.files(currentJar)
-
         val plugin = project.plugins.getPlugin(AppPlugin::class.java)
         val sdkDirectory = plugin.extension.sdkDirectory
         val androidJarPath = "platforms/${plugin.extension.compileSdkVersion}/android.jar"
@@ -28,7 +25,7 @@ class ShadowPlugin : Plugin<Project> {
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
         plugin.extension.registerTransform(ShadowTransform(
-                pluginJarSelf,
+                project,
                 classPoolBuilder,
                 { shadowExtension.transformConfig.useHostContext }
         ))
