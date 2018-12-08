@@ -6,10 +6,10 @@ import com.tencent.shadow.core.transformkit.DirInputClass
 import com.tencent.shadow.core.transformkit.JarInputClass
 import com.tencent.shadow.core.transformkit.JavassistTransform
 import javassist.*
-import org.gradle.api.file.FileCollection
+import org.gradle.api.Project
 import java.io.File
 
-class ShadowTransform(pluginJarSelf: FileCollection, classPoolBuilder: ClassPoolBuilder, val useHostContext: () -> Array<String>) : JavassistTransform(pluginJarSelf, classPoolBuilder) {
+class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val useHostContext: () -> Array<String>) : JavassistTransform(project, classPoolBuilder) {
 
     companion object {
         const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"

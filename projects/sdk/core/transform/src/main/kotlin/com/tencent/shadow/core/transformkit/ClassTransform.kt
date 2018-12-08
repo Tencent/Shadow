@@ -8,7 +8,7 @@ import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.utils.FileUtils
 import com.google.common.collect.ImmutableList
 import com.google.common.io.Files
-import org.gradle.api.file.FileCollection
+import org.gradle.api.Project
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -22,7 +22,7 @@ import java.util.zip.ZipOutputStream
  *
  * @author cubershi
  */
-abstract class ClassTransform(val thisClassJarSelf: FileCollection) : Transform() {
+abstract class ClassTransform(val project: Project) : Transform() {
     val inputSet: MutableSet<TransformInput> = mutableSetOf()
 
     /**
@@ -138,12 +138,15 @@ abstract class ClassTransform(val thisClassJarSelf: FileCollection) : Transform(
         output(invocation.outputProvider)
     }
 
-    override fun getSecondaryFiles() = ImmutableList.of(
-            //将当前类运行所在的jar本身作为转换输入的SecondaryFiles，也就作为了这个transform task的inputs的
-            //一部分，这使得当这个Transform程序变化时，构建能检测到这个Transform需要重新执行。这是直接编辑这个
-            //Transform源码后，应用了这个Plugin的debug工程能直接生效的关键。
-            SecondaryFile.nonIncremental(thisClassJarSelf)
-    )
+    override fun getSecondaryFiles(): ImmutableList<SecondaryFile>? {
+        val currentJar = File(this::class.java.protectionDomain.codeSource.location.toURI())
+        return ImmutableList.of(
+                //将当前类运行所在的jar本身作为转换输入的SecondaryFiles，也就作为了这个transform task的inputs的
+                //一部分，这使得当这个Transform程序变化时，构建能检测到这个Transform需要重新执行。这是直接编辑这个
+                //Transform源码后，应用了这个Plugin的debug工程能直接生效的关键。
+                SecondaryFile.nonIncremental(project.files(currentJar))
+        )
+    }
 }
 typealias ClassName_OutputFile = Pair<String, File>
 typealias ClassName_EntryName = Pair<String, String>
