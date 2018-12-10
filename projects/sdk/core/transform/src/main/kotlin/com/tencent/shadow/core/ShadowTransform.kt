@@ -209,7 +209,7 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
         val codeConverter = CodeConverter()
         codeConverter.replaceNew(classPool[AndroidWebViewClassname], classPool[ShadowWebViewClassname])
-        forEachCanRecompileAppClass{ appCtClass ->
+        forEachCanRecompileAppClass(listOf(AndroidWebViewClassname)) { appCtClass ->
             try {
                 appCtClass.instrument(codeConverter)
             } catch (e: Exception) {
@@ -235,7 +235,7 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
             }
         }
 
-        forEachCanRecompileAppClass{ appCtClass ->
+        forEachCanRecompileAppClass(listOf(AndroidPendingIntentClassname)) { appCtClass ->
             try {
                 appCtClass.instrument(codeConverter)
             } catch (e: Exception) {
