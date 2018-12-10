@@ -1,2 +1,2 @@
 includeBuild '../lint'
-include 'loader', 'runtime', 'runtime:aar', 'transform', 'gradle-plugin', 'host', 'host:aar', 'manager'
+include 'loader', 'loader:loader-aar', 'runtime', 'runtime:aar', 'transform', 'gradle-plugin', 'host', 'host:aar', 'manager'
