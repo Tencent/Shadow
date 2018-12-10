@@ -36,21 +36,21 @@ public class ShadowSdk {
     private static Map<Long, ViewCreateCallback> sViewCreateCallbacks = new HashMap<>();
 
 
-    public static void enter(Context context, final long formId, Bundle bundle, ViewCreateCallback viewCreateCallback) throws Exception {
+    public static void enter(Context context, final long fromId, Bundle bundle, ViewCreateCallback viewCreateCallback) throws Exception {
         initReceiverIfNeeded(context);
-        UpgradeablePluginManager upgradeablePluginManager = getUpgradeablePluginManager(context, String.valueOf(formId));
+        UpgradeablePluginManager upgradeablePluginManager = getUpgradeablePluginManager(context, String.valueOf(fromId));
         upgradeablePluginManager.upgradeIfNeededThenInit(TIME_OUT, TimeUnit.MILLISECONDS);
         ViewCallback viewCallback = new ViewCallback() {
             @Override
             public void onViewCreated(long fromId, View view) {
-                ViewCreateCallback callback = sViewCreateCallbacks.get(formId);
+                ViewCreateCallback callback = sViewCreateCallbacks.get(fromId);
                 if (callback != null) {
                     callback.onViewCreated(view);
                 }
             }
         };
-        sViewCreateCallbacks.put(formId, viewCreateCallback);
-        upgradeablePluginManager.enter(context, formId, bundle, viewCallback);
+        sViewCreateCallbacks.put(fromId, viewCreateCallback);
+        upgradeablePluginManager.enter(context, fromId, bundle, viewCallback);
     }
 
     private static UpgradeablePluginManager getUpgradeablePluginManager(Context context, String appType) {
