@@ -1,6 +1,6 @@
 // IServiceConnection.aidl
 // Same as android.app.IServiceConnection
-package com.tencent.shadow.sdk.service;
+package com.tencent.shadow.core.loader;
 
 import android.content.ComponentName;
 

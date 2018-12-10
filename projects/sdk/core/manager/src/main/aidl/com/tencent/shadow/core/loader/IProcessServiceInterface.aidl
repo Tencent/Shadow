@@ -1,5 +1,5 @@
 // IProcessServicelInterface.aidl
-package com.tencent.shadow.sdk.service;
+package com.tencent.shadow.core.loader;
 
 interface IProcessServiceInterface {
 

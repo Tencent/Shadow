@@ -1,8 +1,8 @@
 // IPluginLoaderServiceInterface.aidl
-package com.tencent.shadow.sdk.service;
+package com.tencent.shadow.core.loader;
 
 import android.content.Intent;
-import com.tencent.shadow.sdk.service.IServiceConnection;
+import com.tencent.shadow.core.loader.IServiceConnection;
 
 interface IPluginLoaderServiceInterface {
 
