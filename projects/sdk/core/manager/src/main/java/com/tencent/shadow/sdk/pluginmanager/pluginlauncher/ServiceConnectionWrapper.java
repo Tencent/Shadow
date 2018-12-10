@@ -5,7 +5,8 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.tencent.shadow.sdk.service.IServiceConnection;
+import com.tencent.shadow.core.loader.IServiceConnection;
+
 
 public class ServiceConnectionWrapper {
 

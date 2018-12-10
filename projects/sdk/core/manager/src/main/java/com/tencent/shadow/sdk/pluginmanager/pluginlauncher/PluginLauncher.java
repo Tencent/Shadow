@@ -6,7 +6,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.RemoteException;
 
-import com.tencent.shadow.sdk.service.IPluginLoaderServiceInterface;
+import com.tencent.shadow.core.loader.IPluginLoaderServiceInterface;
+
 
 public class PluginLauncher implements IPluginLauncher {
 

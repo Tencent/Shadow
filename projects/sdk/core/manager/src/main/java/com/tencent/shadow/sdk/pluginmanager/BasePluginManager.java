@@ -14,6 +14,8 @@ import android.view.View;
 
 import com.tencent.shadow.core.host.PluginManager;
 import com.tencent.shadow.core.host.ViewCallback;
+import com.tencent.shadow.core.loader.IPluginLoaderServiceInterface;
+import com.tencent.shadow.core.loader.IProcessServiceInterface;
 import com.tencent.shadow.sdk.pluginmanager.installplugin.InstalledDao;
 import com.tencent.shadow.sdk.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.sdk.pluginmanager.installplugin.InstalledPluginDBHelper;
@@ -21,8 +23,6 @@ import com.tencent.shadow.sdk.pluginmanager.installplugin.PartInfo;
 import com.tencent.shadow.sdk.pluginmanager.installplugin.PluginConfig;
 import com.tencent.shadow.sdk.pluginmanager.installplugin.UnpackManager;
 import com.tencent.shadow.sdk.pluginmanager.pluginlauncher.PluginLauncher;
-import com.tencent.shadow.sdk.service.IPluginLoaderServiceInterface;
-import com.tencent.shadow.sdk.service.IProcessServiceInterface;
 
 import org.json.JSONException;
 
