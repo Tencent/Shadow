@@ -10,15 +10,16 @@ import android.os.Looper
 import android.os.RemoteException
 import com.tencent.hydevteam.common.classloader.ApkClassLoader
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
-import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
+import com.tencent.hydevteam.pluginframework.plugincontainer.*
+
 import java.io.File
 import java.util.concurrent.CountDownLatch
 
-open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInterface.Stub() {
+open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInterface.Stub(), DelegateProvider {
 
     companion object {
 
-        private val CLASSS_PLUGIN_LOADER_IMPL = "com.tencent.shadow.sdk.pluginloader.pluginLoaderImpl"
+        private val CLASSS_PLUGIN_LOADER_IMPL = "com.tencent.shadow.sdk.pluginloader.PluginLoaderImpl"
     }
 
     private val mPluginLoader: ShadowPluginLoader
@@ -36,7 +37,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
 
     init {
         try {
-            mPluginLoader = mApkClassLoader.getInterface(PluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL) as ShadowPluginLoader
+            mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL)
         } catch (e: Exception) {
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
         }
@@ -48,10 +49,9 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
 
 
         val pluginFile = File(pluginApkFilePath)
-        val installedPlugin = InstalledPlugin(partKey, pluginFile.lastModified().toString(), pluginFile, 0)
+        val installedPlugin = InstalledPlugin(partKey, pluginFile.lastModified().toString(), pluginFile, if (isInterface) 1 else 0)
 
-        val runningPlugin = mPluginLoader.loadPlugin(mContext, installedPlugin)
-        runningPlugin.get()
+        mPluginLoader.loadPlugin(mContext, installedPlugin)
     }
 
     @Throws(RemoteException::class)
@@ -76,6 +76,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
                 realAction()
                 waitUiLock.countDown()
             }
+            waitUiLock.await();
         }
     }
 
@@ -103,6 +104,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
                 componentName = realAction()
                 waitUiLock.countDown()
             }
+            waitUiLock.await();
         }
 
         return componentName
@@ -126,6 +128,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
                 stopped = realAction()
                 waitUiLock.countDown()
             }
+            waitUiLock.await();
         }
         return stopped
     }
@@ -157,6 +160,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
                 stop = realAction()
                 waitUiLock.countDown()
             }
+            waitUiLock.await();
         }
 
         return stop
@@ -190,5 +194,13 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
     private fun isUiThread(): Boolean {
 
         return Looper.myLooper() == Looper.getMainLooper()
+    }
+
+    override fun getHostActivityDelegate(delegator: Class<out HostActivityDelegator>): HostActivityDelegate {
+        return mPluginLoader.getHostActivityDelegate(delegator)
+    }
+
+    override fun getHostServiceDelegate(delegator: Class<out HostServiceDelegator>): HostServiceDelegate {
+        return mPluginLoader.getHostServiceDelegate(delegator)
     }
 }
