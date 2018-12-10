@@ -8,12 +8,12 @@ import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
 import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.core.loader.ShadowRunningPlugin
+import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
-import com.tencent.shadow.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService

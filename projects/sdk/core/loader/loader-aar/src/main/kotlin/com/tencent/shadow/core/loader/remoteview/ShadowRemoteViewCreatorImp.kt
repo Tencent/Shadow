@@ -1,4 +1,4 @@
-package com.tencent.shadow.loader.remoteview
+package com.tencent.shadow.core.loader.remoteview
 
 import android.content.Context
 import android.view.View

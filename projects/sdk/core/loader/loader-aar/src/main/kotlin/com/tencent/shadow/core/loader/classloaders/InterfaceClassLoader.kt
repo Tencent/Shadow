@@ -1,4 +1,4 @@
-package com.tencent.shadow.loader.classloaders
+package com.tencent.shadow.core.loader.classloaders
 
 import android.os.Build
 
