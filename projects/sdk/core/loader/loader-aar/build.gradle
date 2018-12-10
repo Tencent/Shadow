@@ -47,7 +47,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    compileOnly 'com.tencent.hydevteam.pluginframework:pluginloader:1.3.8'
     compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:1.3.8'
 
     compileOnly project(':runtime')

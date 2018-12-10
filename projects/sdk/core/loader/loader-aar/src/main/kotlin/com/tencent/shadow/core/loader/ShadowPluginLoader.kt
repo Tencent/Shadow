@@ -1,18 +1,15 @@
 package com.tencent.shadow.core.loader
 
 import android.content.Context
-import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.plugincontainer.*
-import com.tencent.hydevteam.pluginframework.pluginloader.LoadPluginException
-import com.tencent.hydevteam.pluginframework.pluginloader.PluginLoader
-import com.tencent.hydevteam.pluginframework.pluginloader.RunningPlugin
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.core.loader.delegates.DI
 import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.core.loader.delegates.ShadowActivityDelegate
 import com.tencent.shadow.core.loader.delegates.ShadowDelegate
+import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
@@ -22,10 +19,11 @@ import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
+abstract class ShadowPluginLoader : DelegateProvider, DI {
 
     private val mExecutorService = Executors.newCachedThreadPool()
 
@@ -86,9 +84,9 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
     }
 
     @Throws(LoadPluginException::class)
-    override fun loadPlugin(
+    fun loadPlugin(
             hostAppContext: Context,
-            installedPlugin: InstalledPlugin) : ProgressFuture<RunningPlugin> {
+            installedPlugin: InstalledPlugin): Future<*> {
 
         // 在这里初始化PluginServiceManager
         mPluginServiceManagerLock.withLock {
@@ -123,10 +121,6 @@ abstract class ShadowPluginLoader : PluginLoader, DelegateProvider, DI {
                     mShadowRemoteViewCreatorProvider
             )
         }
-    }
-
-    override fun setPluginDisabled(installedPlugin: InstalledPlugin): Boolean {
-        return false
     }
 
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {
