@@ -76,7 +76,8 @@ public class UpgradeablePluginManager {
                     "com.tencent.shadow.core.host",
                     "com.tencent.shadow.core.host.common",
                     "com.tencent.commonsdk.zip",
-
+                    "com.tencent.mobileqq.intervideo.now.dynamic",
+                    "com.tencent.qqinterface"
             };
     /**
      * 远程PluginManager中实现PluginManager接口的类的类名

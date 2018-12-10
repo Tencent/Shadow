@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.View;
 
 import com.tencent.shadow.core.host.ViewCallback;
 
@@ -32,12 +33,24 @@ public class ShadowSdk {
      */
     private static final long TIME_OUT = 3000;
 
+    private static Map<Long, ViewCreateCallback> sViewCreateCallbacks = new HashMap<>();
 
-    public static void enter(Context context, long formId, Bundle bundle, ViewCallback viewCallback) throws Exception {
+
+    public static void enter(Context context, final long fromId, Bundle bundle, ViewCreateCallback viewCreateCallback) throws Exception {
         initReceiverIfNeeded(context);
-        UpgradeablePluginManager upgradeablePluginManager = getUpgradeablePluginManager(context, String.valueOf(formId));
+        UpgradeablePluginManager upgradeablePluginManager = getUpgradeablePluginManager(context, String.valueOf(fromId));
         upgradeablePluginManager.upgradeIfNeededThenInit(TIME_OUT, TimeUnit.MILLISECONDS);
-        upgradeablePluginManager.enter(context, formId, bundle, viewCallback);
+        ViewCallback viewCallback = new ViewCallback() {
+            @Override
+            public void onViewCreated(long fromId, View view) {
+                ViewCreateCallback callback = sViewCreateCallbacks.get(fromId);
+                if (callback != null) {
+                    callback.onViewCreated(view);
+                }
+            }
+        };
+        sViewCreateCallbacks.put(fromId, viewCreateCallback);
+        upgradeablePluginManager.enter(context, fromId, bundle, viewCallback);
     }
 
     private static UpgradeablePluginManager getUpgradeablePluginManager(Context context, String appType) {
