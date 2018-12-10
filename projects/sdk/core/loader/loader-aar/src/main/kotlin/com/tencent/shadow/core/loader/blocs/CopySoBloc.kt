@@ -45,9 +45,9 @@ object CopySoBloc {
             } catch (e: Exception) {
                 throw LoadPluginException("创建so复制完毕Tag文件${copiedTagFile.absolutePath}失败", e)
             }
-            if (count == 0) {
-                throw LoadPluginException("apk==${apk.absolutePath}中没有${abi}的so")
-            }
+//            if (count == 0) {
+//                throw LoadPluginException("apk==${apk.absolutePath}中没有${abi}的so")
+//            }
         } catch (e: Exception) {
             throw LoadPluginException("解压so失败", e)
         }
