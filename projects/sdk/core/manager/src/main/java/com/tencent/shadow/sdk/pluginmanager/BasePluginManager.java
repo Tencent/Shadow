@@ -57,6 +57,11 @@ public abstract class BasePluginManager implements PluginManager {
     protected String mAppID;
 
     /**
+     * 来源id
+     */
+    protected long mFromId;
+
+    /**
      * 从压缩包中将插件解压出来，解析成InstalledPlugin
      */
     private UnpackManager mUnpackManager;
@@ -142,6 +147,10 @@ public abstract class BasePluginManager implements PluginManager {
         }
     };
 
+    @Override
+    public void enter(Context context, long fromId, Bundle bundle) {
+        mFromId = fromId;
+    }
 
     /**
      * 将view对象回调给mViewCallback
@@ -150,7 +159,7 @@ public abstract class BasePluginManager implements PluginManager {
      */
     public final void onViewLoaded(View view) {
         if (mViewCallback != null) {
-            mViewCallback.onViewCreated(view);
+            mViewCallback.onViewCreated(mFromId,view);
         }
     }
 

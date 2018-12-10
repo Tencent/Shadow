@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.View;
 
 import com.tencent.shadow.core.host.ViewCallback;
 
@@ -32,11 +33,23 @@ public class ShadowSdk {
      */
     private static final long TIME_OUT = 3000;
 
+    private static Map<Long, ViewCreateCallback> sViewCreateCallbacks = new HashMap<>();
 
-    public static void enter(Context context, long formId, Bundle bundle, ViewCallback viewCallback) throws Exception {
+
+    public static void enter(Context context, final long formId, Bundle bundle, ViewCreateCallback viewCreateCallback) throws Exception {
         initReceiverIfNeeded(context);
         UpgradeablePluginManager upgradeablePluginManager = getUpgradeablePluginManager(context, String.valueOf(formId));
         upgradeablePluginManager.upgradeIfNeededThenInit(TIME_OUT, TimeUnit.MILLISECONDS);
+        ViewCallback viewCallback = new ViewCallback() {
+            @Override
+            public void onViewCreated(long fromId, View view) {
+                ViewCreateCallback callback = sViewCreateCallbacks.get(formId);
+                if (callback != null) {
+                    callback.onViewCreated(view);
+                }
+            }
+        };
+        sViewCreateCallbacks.put(formId, viewCreateCallback);
         upgradeablePluginManager.enter(context, formId, bundle, viewCallback);
     }
 

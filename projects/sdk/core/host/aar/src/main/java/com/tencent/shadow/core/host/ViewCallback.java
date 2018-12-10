@@ -4,6 +4,6 @@ import android.view.View;
 
 public interface ViewCallback {
 
-    void onViewCreated(View view);
+    void onViewCreated(long fromId, View view);
 
 }
