@@ -52,6 +52,14 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                         to "com.tencent.shadow.runtime.ShadowInstrumentation"
 
         )
+
+        const val RemoteLocalSdkPackageName = "com.tencent.shadow.remoteview.localsdk"
+        val RemoteViewRenameMap = mapOf(
+                "com.tencent.shadow.remoteview.localsdk.RemoteViewCreator" to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator",
+                "com.tencent.shadow.remoteview.localsdk.RemoteViewCreatorFactory" to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorFactory",
+                "com.tencent.shadow.remoteview.localsdk.RemoteViewCreateCallback" to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreateCallback",
+                "com.tencent.shadow.remoteview.localsdk.RemoteViewCreateException" to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreateException"
+        )
     }
 
     private val containerFragmentCtClass: CtClass get() = classPool["com.tencent.shadow.runtime.ContainerFragment"]
@@ -74,6 +82,20 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()
         step7_keepHostContext()
+    }
+
+
+
+    private fun renameRemoteViewCreatorClass() {
+        forEachAppClass { ctClass ->
+            // 除RemoteLocalSdk包外的所有类，都需要替换
+            if (RemoteLocalSdkPackageName != ctClass.packageName) {
+                RemoteViewRenameMap.forEach {
+                    ctClass.replaceClassName(it.key, it.value)
+                }
+            }
+
+        }
     }
 
     private inline fun forEachAppClass(action: (CtClass) -> Unit) {
@@ -123,6 +145,9 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                 ctClass.replaceClassName(it.key, it.value)
             }
         }
+
+        // 替换跨插件apk创建view相关的类
+        renameRemoteViewCreatorClass()
     }
 
     private fun step2_findFragments() {

@@ -6,6 +6,7 @@ import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
 import com.tencent.shadow.runtime.ShadowApplication
+import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 
 abstract class ShadowDelegate() {
     fun inject(pluginPackageManager: PluginPackageManager) {
@@ -32,12 +33,17 @@ abstract class ShadowDelegate() {
         _componentManager = componentManager
     }
 
+    fun inject(remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider) {
+        _remoteViewCreatorProvider = remoteViewCreatorProvider
+    }
+
     private lateinit var _pluginPackageManager: PluginPackageManager
     private lateinit var _pluginApplication: ShadowApplication
     private lateinit var _pluginClassLoader: PluginClassLoader
     private lateinit var _pluginResources: Resources
     private lateinit var _exceptionReporter: Reporter
     private lateinit var _componentManager: ComponentManager
+    private lateinit var _remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider
 
     protected val mPluginPackageManager: PluginPackageManager
         get() = _pluginPackageManager
@@ -51,5 +57,8 @@ abstract class ShadowDelegate() {
         get() = _exceptionReporter
     protected val mComponentManager: ComponentManager
         get() = _componentManager
+
+    protected val mRemoteViewCreatorProvider: ShadowRemoteViewCreatorProvider
+        get() = _remoteViewCreatorProvider
 
 }

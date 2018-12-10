@@ -7,6 +7,7 @@ import com.tencent.shadow.core.loader.exceptions.CreateApplicationException
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
 import com.tencent.shadow.runtime.ShadowApplication
+import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 
 /**
  * 初始化插件Application类
@@ -22,7 +23,8 @@ object CreateApplicationBloc {
             resources: Resources,
             hostAppContext: Context,
             componentManager: ComponentManager,
-            broadcasts: Map<String, List<String>>
+            broadcasts: Map<String, List<String>>,
+            remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): ShadowApplication {
         try {
             val appClass = pluginClassLoader.loadClass(appClassName)
@@ -35,6 +37,7 @@ object CreateApplicationBloc {
             shadowApplication.setPluginPackageManager(pluginPackageManager)
             shadowApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
             shadowApplication.setPluginPartKey(pluginPackageManager.pluginInfo.partKey)
+            shadowApplication.remoteViewCreatorProvider = remoteViewCreatorProvider
             return shadowApplication
         } catch (e: Exception) {
             throw CreateApplicationException(e)

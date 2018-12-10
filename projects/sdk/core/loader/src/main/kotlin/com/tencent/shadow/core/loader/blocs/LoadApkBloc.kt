@@ -19,9 +19,7 @@ object LoadApkBloc {
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin, soDir: File): PluginClassLoader {
-        val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
-        val hostAppClassLoader = pluginLoaderClassLoader.parent
+    fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin, soDir: File, parentClassLoader: ClassLoader): PluginClassLoader {
         val apk = installedPlugin.pluginFile
         val odexDir = PluginRunningPath.getPluginOptDexDir(hostAppContext, installedPlugin.pluginPackageName, installedPlugin.pluginVersionForPluginLoaderManage)
         prepareDirs(odexDir, soDir)
@@ -30,7 +28,7 @@ object LoadApkBloc {
                 apk.absolutePath,
                 odexDir.absolutePath,
                 soDir.absolutePath,
-                hostAppClassLoader
+                parentClassLoader
         )
     }
 

@@ -1,6 +1,7 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
+import android.content.Intent
 import com.tencent.hydevteam.common.progress.ProgressFuture
 import com.tencent.hydevteam.common.progress.ProgressFutureImpl
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
@@ -12,6 +13,8 @@ import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
+import com.tencent.shadow.loader.classloaders.InterfaceClassLoader
+import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.locks.ReentrantLock
@@ -28,14 +31,16 @@ object LoadPluginBloc {
             lock: ReentrantLock,
             pluginPartsMap: MutableMap<String, PluginParts>,
             hostAppContext: Context,
-            installedPlugin: InstalledPlugin
+            installedPlugin: InstalledPlugin,
+            parentClassLoader: ClassLoader,
+            remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): ProgressFuture<RunningPlugin> {
         if (installedPlugin.pluginFile == null) {
             throw LoadPluginException("pluginFile==null")
         } else {
             val buildClassLoader = executorService.submit(Callable {
-                val soDir = CopySoBloc.copySo(hostAppContext, installedPlugin, abi)
-                LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir)
+                val soDir = CopySoBloc.copySo(hostAppContext,installedPlugin, abi)
+                LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir, parentClassLoader)
             })
 
             val buildPackageManager = executorService.submit(Callable {
@@ -60,7 +65,8 @@ object LoadPluginBloc {
                         resources,
                         hostAppContext,
                         componentManager,
-                        pluginBroadcastManager.getBroadcastsByPartKey(pluginInfo.partKey)
+                        pluginBroadcastManager.getBroadcastsByPartKey(pluginInfo.partKey),
+                        remoteViewCreatorProvider
                 )
             })
 
@@ -99,6 +105,47 @@ object LoadPluginBloc {
             })
 
             return ProgressFutureImpl(buildRunningPlugin, null)//todo cubershi:加载进度没有实现
+        }
+    }
+
+    fun loadInterface(
+            executorService: ExecutorService,
+            abi: String,
+            hostAppContext: Context,
+            comInterface: InterfaceClassLoader,
+            installedPlugin: InstalledPlugin
+    ): ProgressFuture<RunningPlugin> {
+        if (installedPlugin.pluginFile == null) {
+            throw LoadPluginException("pluginFile==null")
+        } else {
+
+            val buildRunningPlugin = executorService.submit(Callable<RunningPlugin> {
+                val soDir = CopySoBloc.copySo(hostAppContext, installedPlugin, abi)
+                val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
+                val hostAppParentClassLoader = pluginLoaderClassLoader.parent.parent
+                val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir, hostAppParentClassLoader)
+
+                comInterface.addInterfaceClassLoader(pluginClassLoader)
+
+                FakeRunningPlugin()
+            })
+
+            return ProgressFutureImpl(buildRunningPlugin, null)
+
+        }
+    }
+
+
+    class FakeRunningPlugin: RunningPlugin {
+        override fun startLauncherActivity(p0: Intent?): ProgressFuture<*>? {
+            return null
+        }
+
+        override fun unload() {
+        }
+
+        override fun startInitActivity(p0: Intent?): ProgressFuture<*>? {
+           return null
         }
     }
 }

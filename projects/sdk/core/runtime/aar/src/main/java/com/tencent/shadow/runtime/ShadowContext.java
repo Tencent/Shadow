@@ -13,6 +13,7 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 
 import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
+import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider;
 
 public class ShadowContext extends ContextThemeWrapper {
     PluginComponentLauncher mPluginComponentLauncher;
@@ -23,6 +24,14 @@ public class ShadowContext extends ContextThemeWrapper {
     LayoutInflater mLayoutInflater;
     String mLibrarySearchPath;
     protected String mPartKey;
+    private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
+
+    public ShadowContext() {
+    }
+
+    public ShadowContext(Context base, int themeResId) {
+        super(base, themeResId);
+    }
 
     public final void setPluginResources(Resources resources) {
         mPluginResources = resources;
@@ -46,6 +55,14 @@ public class ShadowContext extends ContextThemeWrapper {
 
     public void setPluginPartKey(String partKey) {
         this.mPartKey = partKey;
+    }
+
+    public final void setRemoteViewCreatorProvider(ShadowRemoteViewCreatorProvider provider) {
+        mRemoteViewCreatorProvider = provider;
+    }
+
+    public final ShadowRemoteViewCreatorProvider getRemoteViewCreatorProvider() {
+        return mRemoteViewCreatorProvider;
     }
 
     @Override
