@@ -51,18 +51,20 @@ public class InstalledPlugin implements Serializable {
     }
 
 
-    public PartInfo getPartInfo(String partKey) {
-        Part part = plugins.get(partKey);
-        PartInfo partInfo = null;
-        if (part != null) {
-            partInfo = new PartInfo(part.file.getAbsolutePath(), false);
-        } else {
-            part = interfaces.get(partKey);
-            if (part != null) {
-                partInfo = new PartInfo(part.file.getAbsolutePath(), true);
-            }
-        }
-        return partInfo;
+    public boolean hasPart(String partKey) {
+        return plugins.containsKey(partKey) || interfaces.containsKey(partKey);
+    }
+
+    public boolean isInterface(String partKey) {
+        return interfaces.containsKey(partKey);
+    }
+
+    public Part getInterface(String partKey) {
+        return interfaces.get(partKey);
+    }
+
+    public PluginPart getPlugin(String partKey) {
+        return plugins.get(partKey);
     }
 
     static public class Part implements Serializable {
@@ -73,8 +75,8 @@ public class InstalledPlugin implements Serializable {
         }
     }
 
-    static class PluginPart extends Part {
-        final String[] dependsOn;
+    static public class PluginPart extends Part {
+        final public String[] dependsOn;
 
         PluginPart(File file, String[] dependsOn) {
             super(file);

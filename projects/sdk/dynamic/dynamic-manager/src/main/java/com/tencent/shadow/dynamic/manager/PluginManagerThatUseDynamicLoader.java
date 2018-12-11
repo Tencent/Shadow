@@ -12,7 +12,6 @@ import android.util.Log;
 import com.tencent.shadow.core.host.ViewCallback;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
-import com.tencent.shadow.core.pluginmanager.installplugin.PartInfo;
 import com.tencent.shadow.dynamic.host.IProcessServiceInterface;
 import com.tencent.shadow.dynamic.loader.IPluginLoaderServiceInterface;
 
@@ -104,7 +103,6 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
             }
 
         }
-        PartInfo partInfo = installedPlugin.getPartInfo(partKey);
         if (installedPlugin.pluginLoaderFile != null) {
             mIProcessServiceInterface.loadRuntime(installedPlugin.UUID, installedPlugin.runtimeFile.file.getAbsolutePath());
         }
@@ -112,7 +110,33 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
             IBinder iBinder = mIProcessServiceInterface.loadPluginLoader(installedPlugin.UUID, installedPlugin.pluginLoaderFile.file.getAbsolutePath());
             mPluginLoaderService = IPluginLoaderServiceInterface.Stub.asInterface(iBinder);
         }
-        mPluginLoaderService.loadPlugin(partKey, partInfo.filePath, partInfo.isInterface);
-        return new PluginLauncher(mPluginLoaderService);
+
+        boolean hasPart = installedPlugin.hasPart(partKey);
+        if (!hasPart) {
+            throw new RemoteException("在" + installedPlugin + "中找不到partKey==" + partKey);
+        } else {
+            com.tencent.shadow.core.loader.infos.InstalledPlugin loaderInstalledPlugin;
+            if (installedPlugin.isInterface(partKey)) {
+                InstalledPlugin.Part interfacePart = installedPlugin.getInterface(partKey);
+                loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
+                        interfacePart.file,
+                        1,
+                        partKey,
+                        Long.toString(interfacePart.file.lastModified()),
+                        null
+                );
+            } else {
+                InstalledPlugin.PluginPart pluginPart = installedPlugin.getPlugin(partKey);
+                loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
+                        pluginPart.file,
+                        0,
+                        partKey,
+                        Long.toString(pluginPart.file.lastModified()),
+                        pluginPart.dependsOn
+                );
+            }
+            mPluginLoaderService.loadPlugin(loaderInstalledPlugin);
+            return new PluginLauncher(mPluginLoaderService);
+        }
     }
 }

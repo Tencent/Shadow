@@ -12,7 +12,6 @@ import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.dynamic.host.ApkClassLoader
 import com.tencent.shadow.runtime.container.*
-import java.io.File
 import java.util.concurrent.CountDownLatch
 
 open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInterface.Stub(), DelegateProvider {
@@ -45,12 +44,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
     }
 
     @Throws(RemoteException::class)
-    override fun loadPlugin(partKey: String, pluginApkFilePath: String, isInterface: Boolean) {
-
-
-        val pluginFile = File(pluginApkFilePath)
-        val installedPlugin = InstalledPlugin(pluginFile, if (isInterface) 1 else 0, partKey, pluginFile.lastModified().toString(), null)
-
+    override fun loadPlugin(installedPlugin: InstalledPlugin) {
         val future = mPluginLoader.loadPlugin(mContext, installedPlugin)
         future.get()
     }
