@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.loader
+package com.tencent.shadow.dynamic.loader
 
 import android.content.ComponentName
 import android.content.Context
@@ -11,6 +11,7 @@ import android.os.RemoteException
 import com.tencent.hydevteam.common.classloader.ApkClassLoader
 import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.plugincontainer.*
+import com.tencent.shadow.core.loader.ShadowPluginLoader
 import java.io.File
 import java.util.concurrent.CountDownLatch
 

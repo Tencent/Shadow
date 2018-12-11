@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.dynamic'
+
+dependencies {
+    api files("${project(":loader:loader-aar").getBuildDir()}/outputs/jar/loader-aar-debug.jar")
+}
+
+compileJava.dependsOn(":loader:loader-aar:jarDebugPackage")
