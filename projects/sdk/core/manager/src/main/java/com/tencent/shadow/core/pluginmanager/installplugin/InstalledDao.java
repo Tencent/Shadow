@@ -97,7 +97,7 @@ public class InstalledDao {
                     String partKey = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PARTKEY));
                     if (type == InstalledRow.TYPE_PLUGIN) {
                         int columnIndex = cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_DEPENDSON);
-                        boolean hasDependencies = cursor.isNull(columnIndex);
+                        boolean hasDependencies = !cursor.isNull(columnIndex);
                         String[] dependsOn;
                         if (hasDependencies) {
                             String string = cursor.getString(columnIndex);
