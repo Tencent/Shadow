@@ -49,7 +49,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
 
 
         val pluginFile = File(pluginApkFilePath)
-        val installedPlugin = InstalledPlugin(pluginFile, if (isInterface) 1 else 0, partKey, pluginFile.lastModified().toString())
+        val installedPlugin = InstalledPlugin(pluginFile, if (isInterface) 1 else 0, partKey, pluginFile.lastModified().toString(), null)
 
         val future = mPluginLoader.loadPlugin(mContext, installedPlugin)
         future.get()

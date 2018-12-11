@@ -6,5 +6,6 @@ class InstalledPlugin(
         val pluginFile: File,
         val pluginFileType: Int,
         val pluginPackageName: String,
-        val pluginVersionForPluginLoaderManage: String
+        val pluginVersionForPluginLoaderManage: String,
+        val dependsOn: Array<String>?
 )
