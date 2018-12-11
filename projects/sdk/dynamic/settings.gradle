@@ -1,4 +1,4 @@
 includeBuild '../lint'
 includeBuild '../core'
-include 'manager', 'host'
+include 'dynamic-manager', 'host'
 include 'loader', 'loader:loader-aar'

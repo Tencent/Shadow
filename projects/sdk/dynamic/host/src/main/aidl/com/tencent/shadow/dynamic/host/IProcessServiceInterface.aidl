@@ -1,5 +1,5 @@
 // IProcessServicelInterface.aidl
-package com.tencent.shadow.core.loader;
+package com.tencent.shadow.dynamic.host;
 
 interface IProcessServiceInterface {
 

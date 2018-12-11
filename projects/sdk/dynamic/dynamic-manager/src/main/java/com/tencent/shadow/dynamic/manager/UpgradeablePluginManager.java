@@ -75,6 +75,8 @@ public class UpgradeablePluginManager {
             {
                     "com.tencent.shadow.core.host",
                     "com.tencent.shadow.core.host.common",
+                    "com.tencent.shadow.core.pluginmanager",
+                    "com.tencent.shadow.dynamic.manager",
                     "com.tencent.commonsdk.zip",
                     "com.tencent.mobileqq.intervideo.now.dynamic",
                     "com.tencent.qqinterface"

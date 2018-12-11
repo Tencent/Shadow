@@ -1,11 +1,11 @@
-package com.tencent.shadow.core.pluginmanager.pluginlauncher;
+package com.tencent.shadow.dynamic.manager;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.tencent.shadow.core.loader.IServiceConnection;
+import com.tencent.shadow.dynamic.loader.IServiceConnection;
 
 
 public class ServiceConnectionWrapper {
