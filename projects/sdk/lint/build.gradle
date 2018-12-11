@@ -45,4 +45,5 @@ allprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+    dependsOn subprojects*.getTasksByName('clean', true)
 }
