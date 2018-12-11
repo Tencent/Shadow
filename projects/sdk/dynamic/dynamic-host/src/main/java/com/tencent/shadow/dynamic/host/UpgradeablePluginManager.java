@@ -1,4 +1,4 @@
-package com.tencent.shadow.dynamic.manager;
+package com.tencent.shadow.dynamic.host;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,18 +7,15 @@ import android.util.Log;
 import com.tencent.shadow.core.host.PluginManager;
 import com.tencent.shadow.core.host.ViewCallback;
 import com.tencent.shadow.core.host.common.annotation.API;
-import com.tencent.shadow.core.host.common.classloader.ApkClassLoader;
-import com.tencent.shadow.dynamic.manager.download.DownloadException;
-import com.tencent.shadow.dynamic.manager.download.Downloader;
-import com.tencent.shadow.dynamic.manager.download.LengthHashURLConnectionDownloader;
-import com.tencent.shadow.dynamic.manager.download.TargetDownloadInfo;
+import com.tencent.shadow.dynamic.host.download.DownloadException;
+import com.tencent.shadow.dynamic.host.download.Downloader;
+import com.tencent.shadow.dynamic.host.download.LengthHashURLConnectionDownloader;
+import com.tencent.shadow.dynamic.host.download.TargetDownloadInfo;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import static com.tencent.shadow.dynamic.manager.BuildConfig.COMPATIBLE_SUFFIX;
 
 
 public class UpgradeablePluginManager {
@@ -44,19 +41,19 @@ public class UpgradeablePluginManager {
     /**
      * 远程PluginManager实现的下载地址
      */
-    private static final String REMOTE_PLUGIN_MANAGER_URL = "http://dldir1.qq.com/huayang/Android/ShadowPluginManager" + COMPATIBLE_SUFFIX;
+    private static final String REMOTE_PLUGIN_MANAGER_URL = "http://dldir1.qq.com/huayang/Android/ShadowPluginManager" + BuildConfig.COMPATIBLE_SUFFIX;
     /**
      * 远程PluginManager下载回来保存的文件名
      */
-    private static final String REMOTE_PLUGIN_MANAGER_APK_FILENAME = "ShadowPluginManager" + COMPATIBLE_SUFFIX + ".apk";
+    private static final String REMOTE_PLUGIN_MANAGER_APK_FILENAME = "ShadowPluginManager" + BuildConfig.COMPATIBLE_SUFFIX + ".apk";
     /**
      * 远程PluginManager的odex目录名
      */
-    private static final String REMOTE_PLUGIN_MANAGER_ODEX_DIRNAME = "ShadowPluginManager" + COMPATIBLE_SUFFIX + "_odex";
+    private static final String REMOTE_PLUGIN_MANAGER_ODEX_DIRNAME = "ShadowPluginManager" + BuildConfig.COMPATIBLE_SUFFIX + "_odex";
     /**
      * 远程PluginManager下载过程中临时文件文件名
      */
-    private static final String REMOTE_PLUGIN_MANAGER_APK_TMP_FILENAME = "ShadowPluginManager" + COMPATIBLE_SUFFIX + ".apk.downloading";
+    private static final String REMOTE_PLUGIN_MANAGER_APK_TMP_FILENAME = "ShadowPluginManager" + BuildConfig.COMPATIBLE_SUFFIX + ".apk.downloading";
     /**
      * 系统中可读的临时文件夹。这是个特殊的文件夹，可以无需root权限通过adb push进来，程序也可以直接读取。
      * 主要用于测试包直接在本地加载

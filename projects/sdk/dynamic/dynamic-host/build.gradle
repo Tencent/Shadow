@@ -13,6 +13,7 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+        buildConfigField "String", "COMPATIBLE_SUFFIX", "\"1_1\""
     }
 
     buildTypes {
@@ -25,6 +26,7 @@ android {
 
 
 dependencies {
+    compileOnly project(':loader')
     compileOnly 'com.tencent.shadow.core:host'
     compileOnly 'com.tencent.shadow.core:runtime'
     implementation "com.tencent.hydevteam:common:1.0.6"

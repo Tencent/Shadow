@@ -1,7 +1,7 @@
 package com.tencent.shadow.core.pluginmanager.installplugin;
 
 import com.tencent.commonsdk.zip.QZipInputStream;
-import com.tencent.shadow.core.host.common.MinFileUtils;
+import com.tencent.shadow.core.host.MinFileUtils;
 
 import org.json.JSONException;
 

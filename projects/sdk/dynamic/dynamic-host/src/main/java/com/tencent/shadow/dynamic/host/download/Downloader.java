@@ -1,4 +1,4 @@
-package com.tencent.shadow.dynamic.manager.download;
+package com.tencent.shadow.dynamic.host.download;
 
 
 import com.tencent.shadow.core.host.common.annotation.API;

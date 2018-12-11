@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.host.common;
+package com.tencent.shadow.core.host;
 
 import java.io.File;
 import java.io.FileInputStream;

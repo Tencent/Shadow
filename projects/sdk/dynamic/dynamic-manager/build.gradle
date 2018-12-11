@@ -13,8 +13,6 @@ android {
         versionName project.VERSION_NAME
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "COMPATIBLE_SUFFIX", "\"1_1\""
-
     }
     buildTypes {
         release {

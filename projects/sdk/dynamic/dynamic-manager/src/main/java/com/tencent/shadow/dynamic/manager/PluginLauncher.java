@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.RemoteException;
 
-import com.tencent.shadow.core.pluginmanager.pluginlauncher.IPluginLauncher;
+import com.tencent.shadow.dynamic.host.IPluginLauncher;
 import com.tencent.shadow.dynamic.loader.IPluginLoaderServiceInterface;
 
 
