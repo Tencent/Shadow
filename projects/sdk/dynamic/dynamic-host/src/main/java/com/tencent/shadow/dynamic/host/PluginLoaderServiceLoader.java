@@ -11,7 +11,7 @@ import java.io.File;
 public class PluginLoaderServiceLoader {
 
     private final static String[] sInterfaces = new String[]{"com.tencent.hydevteam.common.progress",
-            "com.tencent.hydevteam.common.classloader",
+            "com.tencent.shadow.dynamic.host",
             "com.tencent.hydevteam.pluginframework.pluginloader",
             "com.tencent.hydevteam.pluginframework.plugincontainer",
             "com.tencent.hydevteam.pluginframework.installedplugin",
