@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.pluginmanager.context;
+package com.tencent.shadow.core.pluginmanager.context;
 
 import android.content.Context;
 import android.content.ContextWrapper;

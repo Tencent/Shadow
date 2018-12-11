@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.pluginmanager;
+package com.tencent.shadow.core.pluginmanager;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,13 +16,13 @@ import com.tencent.shadow.core.host.PluginManager;
 import com.tencent.shadow.core.host.ViewCallback;
 import com.tencent.shadow.core.loader.IPluginLoaderServiceInterface;
 import com.tencent.shadow.core.loader.IProcessServiceInterface;
-import com.tencent.shadow.sdk.pluginmanager.installplugin.InstalledDao;
-import com.tencent.shadow.sdk.pluginmanager.installplugin.InstalledPlugin;
-import com.tencent.shadow.sdk.pluginmanager.installplugin.InstalledPluginDBHelper;
-import com.tencent.shadow.sdk.pluginmanager.installplugin.PartInfo;
-import com.tencent.shadow.sdk.pluginmanager.installplugin.PluginConfig;
-import com.tencent.shadow.sdk.pluginmanager.installplugin.UnpackManager;
-import com.tencent.shadow.sdk.pluginmanager.pluginlauncher.PluginLauncher;
+import com.tencent.shadow.core.pluginmanager.installplugin.InstalledDao;
+import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
+import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPluginDBHelper;
+import com.tencent.shadow.core.pluginmanager.installplugin.PartInfo;
+import com.tencent.shadow.core.pluginmanager.installplugin.PluginConfig;
+import com.tencent.shadow.core.pluginmanager.installplugin.UnpackManager;
+import com.tencent.shadow.core.pluginmanager.pluginlauncher.PluginLauncher;
 
 import org.json.JSONException;
 

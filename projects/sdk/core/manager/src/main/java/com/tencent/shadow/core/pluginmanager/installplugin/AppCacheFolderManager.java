@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.pluginmanager.installplugin;
+package com.tencent.shadow.core.pluginmanager.installplugin;
 
 import java.io.File;
 

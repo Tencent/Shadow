@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.pluginmanager.pluginlauncher;
+package com.tencent.shadow.core.pluginmanager.pluginlauncher;
 
 import android.content.ServiceConnection;
 
