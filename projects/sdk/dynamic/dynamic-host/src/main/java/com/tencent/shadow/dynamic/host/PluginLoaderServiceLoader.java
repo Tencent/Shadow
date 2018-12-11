@@ -3,7 +3,6 @@ package com.tencent.shadow.dynamic.host;
 import android.content.Context;
 import android.os.IBinder;
 
-import com.tencent.hydevteam.common.classloader.ApkClassLoader;
 import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider;
 import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProviderHolder;
 
