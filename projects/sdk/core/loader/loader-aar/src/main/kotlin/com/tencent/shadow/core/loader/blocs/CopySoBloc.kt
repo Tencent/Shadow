@@ -2,8 +2,8 @@ package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
 import android.os.Build.VERSION_CODES.JELLY_BEAN_MR2
-import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
+import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import java.io.Closeable
 import java.io.File
 import java.util.zip.ZipFile

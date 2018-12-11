@@ -47,8 +47,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    compileOnly 'com.tencent.hydevteam.pluginframework:installed-plugin:1.3.8'
-
     compileOnly project(':runtime')
     implementation 'com.tencent.shadow:shadow-lint'
 }
@@ -100,8 +98,6 @@ publishing {
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', "$kotlin_version"))
                 dependencies.append(getDependencyNode('compile', 'org.slf4j', 'slf4j-api', '1.7.25'))
-                dependencies.append(getDependencyNode('provided', 'com.tencent.hydevteam.pluginframework', 'pluginloader', "$PLUGINMANAGER_VERSION"))
-                dependencies.append(getDependencyNode('provided', 'com.tencent.hydevteam.pluginframework', 'installed-plugin', "$PLUGINMANAGER_VERSION"))
                 dependencies.append(getDependencyNode('provided', 'com.tencent.shadow', 'shadow-runtime', "${project.ARTIFACT_VERSION}"))
 
                 def scm = root.appendNode('scm')

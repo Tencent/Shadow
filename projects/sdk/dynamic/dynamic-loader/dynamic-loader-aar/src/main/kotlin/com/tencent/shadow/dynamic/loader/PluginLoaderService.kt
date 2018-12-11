@@ -8,10 +8,10 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.os.RemoteException
-import com.tencent.hydevteam.common.classloader.ApkClassLoader
-import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.plugincontainer.*
 import com.tencent.shadow.core.loader.ShadowPluginLoader
+import com.tencent.shadow.core.loader.infos.InstalledPlugin
+import com.tencent.shadow.dynamic.host.ApkClassLoader
 import java.io.File
 import java.util.concurrent.CountDownLatch
 
@@ -49,7 +49,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
 
 
         val pluginFile = File(pluginApkFilePath)
-        val installedPlugin = InstalledPlugin(partKey, pluginFile.lastModified().toString(), pluginFile, if (isInterface) 1 else 0)
+        val installedPlugin = InstalledPlugin(pluginFile, if (isInterface) 1 else 0, partKey, pluginFile.lastModified().toString())
 
         val future = mPluginLoader.loadPlugin(mContext, installedPlugin)
         future.get()

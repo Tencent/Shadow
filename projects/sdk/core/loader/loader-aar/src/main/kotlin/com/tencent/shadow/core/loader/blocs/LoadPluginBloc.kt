@@ -1,9 +1,9 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
-import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
+import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager

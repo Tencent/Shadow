@@ -30,6 +30,6 @@ dependencies {
     compileOnly files('libs/qzip.jar')
     implementation 'com.tencent.shadow.core:host'
     implementation 'com.tencent.shadow.core:manager'
-    implementation project(':loader')
+    implementation project(':dynamic-loader')
     implementation project(':dynamic-host')
 }

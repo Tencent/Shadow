@@ -26,7 +26,6 @@ android {
 
 
 dependencies {
-    compileOnly project(':loader')
     compileOnly 'com.tencent.shadow.core:host'
     compileOnly 'com.tencent.shadow.core:runtime'
     implementation "com.tencent.hydevteam:common:1.0.6"

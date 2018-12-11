@@ -1,7 +1,7 @@
 package com.tencent.shadow.core.pluginmanager.installplugin;
 
 
-import com.tencent.shadow.core.host.common.annotation.API;
+import com.tencent.shadow.core.host.API;
 
 import java.io.File;
 import java.io.Serializable;

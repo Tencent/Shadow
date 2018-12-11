@@ -1,7 +1,6 @@
 package com.tencent.shadow.core.loader
 
 import android.content.Context
-import com.tencent.hydevteam.pluginframework.installedplugin.InstalledPlugin
 import com.tencent.hydevteam.pluginframework.plugincontainer.*
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
@@ -10,6 +9,7 @@ import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.core.loader.delegates.ShadowActivityDelegate
 import com.tencent.shadow.core.loader.delegates.ShadowDelegate
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
+import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager

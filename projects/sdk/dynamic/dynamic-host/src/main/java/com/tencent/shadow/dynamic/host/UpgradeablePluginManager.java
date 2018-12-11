@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.tencent.shadow.core.host.API;
 import com.tencent.shadow.core.host.PluginManager;
 import com.tencent.shadow.core.host.ViewCallback;
-import com.tencent.shadow.core.host.common.annotation.API;
 import com.tencent.shadow.dynamic.host.download.DownloadException;
 import com.tencent.shadow.dynamic.host.download.Downloader;
 import com.tencent.shadow.dynamic.host.download.LengthHashURLConnectionDownloader;
