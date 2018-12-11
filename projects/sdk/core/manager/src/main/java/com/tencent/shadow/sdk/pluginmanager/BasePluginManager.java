@@ -248,10 +248,10 @@ public abstract class BasePluginManager implements PluginManager {
         }
         PartInfo partInfo = installedPlugin.getPartInfo(partKey);
         if (installedPlugin.pluginLoaderFile != null) {
-            mIProcessServiceInterface.loadRuntime(installedPlugin.UUID, installedPlugin.runtimeFile.getAbsolutePath());
+            mIProcessServiceInterface.loadRuntime(installedPlugin.UUID, installedPlugin.runtimeFile.file.getAbsolutePath());
         }
         if (mPluginLoaderService == null) {
-            IBinder iBinder = mIProcessServiceInterface.loadPluginLoader(installedPlugin.UUID, installedPlugin.pluginLoaderFile.getAbsolutePath());
+            IBinder iBinder = mIProcessServiceInterface.loadPluginLoader(installedPlugin.UUID, installedPlugin.pluginLoaderFile.file.getAbsolutePath());
             mPluginLoaderService = IPluginLoaderServiceInterface.Stub.asInterface(iBinder);
         }
         mPluginLoaderService.loadPlugin(partKey, partInfo.filePath, partInfo.isInterface);

@@ -35,6 +35,10 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
      */
     public final static String COLUMN_PARTKEY = "partKey";
     /**
+     * 插件的依赖
+     */
+    public final static String COLUMN_DEPENDSON = "dependsOn";
+    /**
      * 插件的uuid
      */
     public final static String COLUMN_UUID = "uuid";
@@ -78,6 +82,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 + COLUMN_PATH + " VARCHAR, "
                 + COLUMN_TYPE + " INTEGER, "
                 + COLUMN_PARTKEY + " VARCHAR, "
+                + COLUMN_DEPENDSON + " VARCHAR, "
                 + COLUMN_UUID + " VARCHAR, "
                 + COLUMN_VERSION + " VARCHAR, "
                 + COLUMN_APPID + " VARCHAR, "

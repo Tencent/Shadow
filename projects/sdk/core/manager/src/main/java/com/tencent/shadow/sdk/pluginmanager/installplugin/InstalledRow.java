@@ -2,6 +2,10 @@ package com.tencent.shadow.sdk.pluginmanager.installplugin;
 
 import android.content.ContentValues;
 
+import org.json.JSONArray;
+
+import java.util.Arrays;
+
 public class InstalledRow {
 
     public final static int TYPE_PLUGIN = 1;
@@ -20,6 +24,8 @@ public class InstalledRow {
     public long installedTime;
 
     public String partKey;
+
+    public String[] dependsOn;
 
     public String filePath;
 
@@ -41,6 +47,11 @@ public class InstalledRow {
         this.type = type;
     }
 
+    public InstalledRow(String hash, String partKey, String[] dependsOn, String filePath, int type) {
+        this(hash, partKey, filePath, type);
+        this.dependsOn = dependsOn;
+    }
+
     public ContentValues toContentValues() {
         ContentValues contentValues = new ContentValues();
         contentValues.put(InstalledPluginDBHelper.COLUMN_APPID, appId);
@@ -48,6 +59,10 @@ public class InstalledRow {
         contentValues.put(InstalledPluginDBHelper.COLUMN_INSTALL_TIME, installedTime);
         if (partKey != null) {
             contentValues.put(InstalledPluginDBHelper.COLUMN_PARTKEY, partKey);
+        }
+        if (dependsOn != null) {
+            JSONArray jsonArray = new JSONArray(Arrays.asList(dependsOn));
+            contentValues.put(InstalledPluginDBHelper.COLUMN_DEPENDSON, jsonArray.toString());
         }
         contentValues.put(InstalledPluginDBHelper.COLUMN_TYPE, type);
         contentValues.put(InstalledPluginDBHelper.COLUMN_UUID, UUID);

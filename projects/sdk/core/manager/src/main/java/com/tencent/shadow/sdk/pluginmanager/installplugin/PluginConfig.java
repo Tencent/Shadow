@@ -37,7 +37,7 @@ public class PluginConfig {
     /**
      * 业务插件 key: partKey value:文件信息
      */
-    public Map<String, FileInfo> plugins = new HashMap<>();
+    public Map<String, PluginFileInfo> plugins = new HashMap<>();
     /**
      * interface插件  key: partKey value:文件信息
      */
@@ -54,6 +54,19 @@ public class PluginConfig {
         FileInfo(File file, String hash) {
             this.file = file;
             this.hash = hash;
+        }
+    }
+
+    static class PluginFileInfo extends FileInfo {
+        final String[] dependsOn;
+
+        PluginFileInfo(FileInfo fileInfo, String[] dependsOn) {
+            this(fileInfo.file, fileInfo.hash, dependsOn);
+        }
+
+        PluginFileInfo(File file, String hash, String[] dependsOn) {
+            super(file, hash);
+            this.dependsOn = dependsOn;
         }
     }
 
@@ -87,7 +100,7 @@ public class PluginConfig {
             for (int i = 0; i < pluginArray.length(); i++) {
                 JSONObject plugin = pluginArray.getJSONObject(i);
                 String partKey = plugin.getString("partKey");
-                pluginConfig.plugins.put(partKey, getFileInfo(plugin, storageDir));
+                pluginConfig.plugins.put(partKey, getPluginFileInfo(plugin, storageDir));
             }
         }
 
@@ -109,5 +122,13 @@ public class PluginConfig {
         return new FileInfo(new File(storageDir, name), hash);
     }
 
-
+    private static PluginFileInfo getPluginFileInfo(JSONObject jsonObject, File storageDir) throws JSONException {
+        FileInfo fileInfo = getFileInfo(jsonObject, storageDir);
+        JSONArray jsonArray = jsonObject.getJSONArray("dependsOn");
+        String[] dependsOn = new String[jsonArray.length()];
+        for (int i = 0; i < jsonArray.length(); i++) {
+            dependsOn[i] = jsonArray.getString(i);
+        }
+        return new PluginFileInfo(fileInfo, dependsOn);
+    }
 }

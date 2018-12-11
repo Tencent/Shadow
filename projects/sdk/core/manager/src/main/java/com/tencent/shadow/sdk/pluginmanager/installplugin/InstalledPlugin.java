@@ -31,20 +31,20 @@ public class InstalledPlugin implements Serializable {
     /**
      * pluginLoader文件
      */
-    public File pluginLoaderFile;
+    public Part pluginLoaderFile;
 
     /**
      * runtime文件
      */
-    public File runtimeFile;
+    public Part runtimeFile;
     /**
      * 插件文件
      */
-    public Map<String, File> plugins = new HashMap<>();
+    public Map<String, PluginPart> plugins = new HashMap<>();
     /**
      * 接口文件
      */
-    public Map<String, File> interfaces = new HashMap<>();
+    public Map<String, Part> interfaces = new HashMap<>();
 
 
     public InstalledPlugin() {
@@ -52,17 +52,33 @@ public class InstalledPlugin implements Serializable {
 
 
     public PartInfo getPartInfo(String partKey) {
-        File file = plugins.get(partKey);
+        Part part = plugins.get(partKey);
         PartInfo partInfo = null;
-        if (file != null) {
-            partInfo = new PartInfo(file.getAbsolutePath(), false);
+        if (part != null) {
+            partInfo = new PartInfo(part.file.getAbsolutePath(), false);
         } else {
-            file = interfaces.get(partKey);
-            if (file != null) {
-                partInfo = new PartInfo(file.getAbsolutePath(), true);
+            part = interfaces.get(partKey);
+            if (part != null) {
+                partInfo = new PartInfo(part.file.getAbsolutePath(), true);
             }
         }
         return partInfo;
     }
 
+    static public class Part implements Serializable {
+        final public File file;
+
+        Part(File file) {
+            this.file = file;
+        }
+    }
+
+    static class PluginPart extends Part {
+        final String[] dependsOn;
+
+        PluginPart(File file, String[] dependsOn) {
+            super(file);
+            this.dependsOn = dependsOn;
+        }
+    }
 }
