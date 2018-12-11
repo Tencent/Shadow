@@ -20,7 +20,11 @@ public class PluginLoaderServiceLoader {
     private final static String CLASS_NAME_LOADER = "com.tencent.shadow.dynamic.loader.PluginLoaderService";
 
     public static IBinder loadPluginLoaderService(Context context, String UUID, String apkPath) {
-        File odexDir = new File(new File(apkPath).getParent(), "plugin_loader_odex_" + UUID);
+        File file = new File(apkPath);
+        if (!file.exists()) {
+            throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
+        }
+        File odexDir = new File(file.getParent(), "plugin_loader_odex_" + UUID);
         odexDir.mkdirs();
         ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(apkPath,
                 odexDir.getAbsolutePath(), null, PluginLoaderServiceLoader.class.getClassLoader(), sInterfaces);
