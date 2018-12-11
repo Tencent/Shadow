@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.service.load;
+package com.tencent.shadow.dynamic.host;
 
 import android.os.Build;
 import android.text.TextUtils;

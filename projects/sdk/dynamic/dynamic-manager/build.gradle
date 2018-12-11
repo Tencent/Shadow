@@ -33,5 +33,5 @@ dependencies {
     implementation 'com.tencent.shadow.core:host'
     implementation 'com.tencent.shadow.core:manager'
     implementation project(':loader')
-    implementation project(':host')
+    implementation project(':dynamic-host')
 }

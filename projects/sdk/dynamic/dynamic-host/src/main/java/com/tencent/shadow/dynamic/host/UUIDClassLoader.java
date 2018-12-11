@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.service.load;
+package com.tencent.shadow.dynamic.host;
 
 import java.io.File;
 

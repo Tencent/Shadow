@@ -1,14 +1,10 @@
-package com.tencent.shadow.sdk.service;
+package com.tencent.shadow.dynamic.host;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-
-import com.tencent.shadow.dynamic.host.IProcessServiceInterface;
-import com.tencent.shadow.sdk.service.load.PluginLoaderServiceLoader;
-import com.tencent.shadow.sdk.service.load.RunTimeLoader;
 
 
 public class PluginProcessService extends Service {
