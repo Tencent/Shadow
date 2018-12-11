@@ -124,11 +124,17 @@ public class PluginConfig {
 
     private static PluginFileInfo getPluginFileInfo(JSONObject jsonObject, File storageDir) throws JSONException {
         FileInfo fileInfo = getFileInfo(jsonObject, storageDir);
-        JSONArray jsonArray = jsonObject.getJSONArray("dependsOn");
-        String[] dependsOn = new String[jsonArray.length()];
-        for (int i = 0; i < jsonArray.length(); i++) {
-            dependsOn[i] = jsonArray.getString(i);
+        JSONArray jsonArray = jsonObject.optJSONArray("dependsOn");
+        String[] dependsOn;
+        if (jsonArray != null) {
+            dependsOn = new String[jsonArray.length()];
+            for (int i = 0; i < jsonArray.length(); i++) {
+                dependsOn[i] = jsonArray.getString(i);
+            }
+        } else {
+            dependsOn = new String[]{};
         }
+
         return new PluginFileInfo(fileInfo, dependsOn);
     }
 }
