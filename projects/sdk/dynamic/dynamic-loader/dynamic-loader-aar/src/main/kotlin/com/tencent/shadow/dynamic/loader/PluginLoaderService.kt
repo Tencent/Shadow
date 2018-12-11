@@ -8,10 +8,10 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.os.RemoteException
-import com.tencent.hydevteam.pluginframework.plugincontainer.*
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.dynamic.host.ApkClassLoader
+import com.tencent.shadow.runtime.container.*
 import java.io.File
 import java.util.concurrent.CountDownLatch
 

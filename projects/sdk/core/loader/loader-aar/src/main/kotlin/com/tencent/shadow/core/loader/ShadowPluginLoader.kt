@@ -1,7 +1,6 @@
 package com.tencent.shadow.core.loader
 
 import android.content.Context
-import com.tencent.hydevteam.pluginframework.plugincontainer.*
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.core.loader.delegates.DI
@@ -15,6 +14,7 @@ import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.core.loader.remoteview.ShadowRemoteViewCreatorImp
+import com.tencent.shadow.runtime.container.*
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import org.slf4j.LoggerFactory

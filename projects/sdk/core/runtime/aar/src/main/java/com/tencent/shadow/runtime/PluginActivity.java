@@ -25,7 +25,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator;
+import com.tencent.shadow.runtime.container.HostActivityDelegator;
 
 import java.util.List;
 

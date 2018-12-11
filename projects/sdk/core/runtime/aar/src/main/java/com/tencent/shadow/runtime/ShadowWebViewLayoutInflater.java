@@ -4,8 +4,8 @@ import android.content.Context;
 import android.util.Pair;
 import android.view.LayoutInflater;
 
-import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerActivity;
-import com.tencent.hydevteam.pluginframework.plugincontainer.PluginContainerService;
+import com.tencent.shadow.runtime.container.PluginContainerActivity;
+import com.tencent.shadow.runtime.container.PluginContainerService;
 
 /**
  * 1.模拟PhoneLayoutInflater的系统view构造过程

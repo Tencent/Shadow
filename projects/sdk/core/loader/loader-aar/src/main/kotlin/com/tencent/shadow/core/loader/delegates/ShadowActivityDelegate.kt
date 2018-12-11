@@ -13,8 +13,6 @@ import android.graphics.Canvas
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.*
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegate
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.core.loader.infos.PluginActivityInfo
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_ACTIVITY_INFO_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CLASS_NAME_KEY
@@ -24,6 +22,8 @@ import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_PAR
 import com.tencent.shadow.runtime.MixResources
 import com.tencent.shadow.runtime.PluginActivity
 import com.tencent.shadow.runtime.ShadowLayoutInflater
+import com.tencent.shadow.runtime.container.HostActivityDelegate
+import com.tencent.shadow.runtime.container.HostActivityDelegator
 
 /**
  * 壳子Activity与插件Activity转调关系的实现类

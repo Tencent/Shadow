@@ -1,4 +1,4 @@
-package com.tencent.hydevteam.pluginframework.plugincontainer;
+package com.tencent.shadow.runtime.container;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,10 +7,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.tencent.shadow.runtime.BuildConfig;
+import com.tencent.shadow.lint.BuildConfig;
 
-import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY;
-import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PROCESS_ID_KEY;
+import static com.tencent.shadow.runtime.container.DelegateProvider.LOADER_VERSION_KEY;
+import static com.tencent.shadow.runtime.container.DelegateProvider.PROCESS_ID_KEY;
 
 /**
  * 插件的容器Service。PluginLoader将把插件的Service放在其中。

@@ -1,4 +1,4 @@
-package com.tencent.hydevteam.pluginframework.plugincontainer;
+package com.tencent.shadow.runtime.container;
 
 import android.app.Notification;
 import android.content.Context;

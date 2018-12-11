@@ -1,4 +1,4 @@
-package com.tencent.hydevteam.pluginframework.plugincontainer;
+package com.tencent.shadow.runtime.container;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -69,7 +69,7 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toolbar;
 
-import com.tencent.shadow.runtime.BuildConfig;
+import com.tencent.shadow.lint.BuildConfig;
 import com.tencent.shadow.runtime.ShadowActivity;
 
 import java.io.File;
@@ -82,8 +82,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.List;
 
-import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY;
-import static com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PROCESS_ID_KEY;
+import static com.tencent.shadow.runtime.container.DelegateProvider.LOADER_VERSION_KEY;
+import static com.tencent.shadow.runtime.container.DelegateProvider.PROCESS_ID_KEY;
 
 /**
  * 插件的容器Activity。PluginLoader将把插件的Activity放在其中。

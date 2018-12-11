@@ -7,10 +7,10 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.IBinder
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegate
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostServiceDelegator
 import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate.Companion.Operate.*
 import com.tencent.shadow.core.loader.managers.ComponentManager
+import com.tencent.shadow.runtime.container.HostServiceDelegate
+import com.tencent.shadow.runtime.container.HostServiceDelegator
 import java.util.*
 
 /**

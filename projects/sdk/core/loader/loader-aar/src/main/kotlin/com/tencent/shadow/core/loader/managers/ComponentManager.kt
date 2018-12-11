@@ -5,10 +5,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.util.Pair
-import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.LOADER_VERSION_KEY
-import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProvider.PROCESS_ID_KEY
-import com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProviderHolder
-import com.tencent.hydevteam.pluginframework.plugincontainer.HostActivityDelegator
 import com.tencent.shadow.core.loader.BuildConfig
 import com.tencent.shadow.core.loader.PluginServiceManager
 import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate
@@ -17,6 +13,10 @@ import com.tencent.shadow.core.loader.infos.PluginComponentInfo
 import com.tencent.shadow.core.loader.infos.PluginInfo
 import com.tencent.shadow.runtime.ShadowContext
 import com.tencent.shadow.runtime.ShadowContext.PluginComponentLauncher
+import com.tencent.shadow.runtime.container.DelegateProvider.LOADER_VERSION_KEY
+import com.tencent.shadow.runtime.container.DelegateProvider.PROCESS_ID_KEY
+import com.tencent.shadow.runtime.container.DelegateProviderHolder
+import com.tencent.shadow.runtime.container.HostActivityDelegator
 
 /**
  * 插件组件管理
