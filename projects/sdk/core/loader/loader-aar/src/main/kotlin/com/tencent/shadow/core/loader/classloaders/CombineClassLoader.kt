@@ -2,7 +2,7 @@ package com.tencent.shadow.core.loader.classloaders
 
 import android.os.Build
 
-class CombineClassLoader(private val classLoaders: Array<ClassLoader>, parent: ClassLoader) : ClassLoader(parent) {
+class CombineClassLoader(private val classLoaders: Array<out ClassLoader>, parent: ClassLoader) : ClassLoader(parent) {
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(name: String, resolve: Boolean): Class<*> {

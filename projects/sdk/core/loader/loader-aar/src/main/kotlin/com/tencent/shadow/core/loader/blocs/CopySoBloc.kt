@@ -11,7 +11,7 @@ import java.util.zip.ZipFile
 object CopySoBloc {
     fun copySo(hostContext: Context, installedPlugin: InstalledPlugin, abi: String): File {
         val apk = installedPlugin.pluginFile
-        val soDir = PluginRunningPath.getPluginLibDir(hostContext, installedPlugin.pluginPackageName, installedPlugin.pluginVersionForPluginLoaderManage)
+        val soDir = PluginRunningPath.getPluginLibDir(hostContext, installedPlugin.partKey, installedPlugin.pluginVersionForPluginLoaderManage)
         val copiedTagFile = File(soDir, "copied")
 
         //如果不需要so或者so文件已复制完成的标记已存在则直接返回成功

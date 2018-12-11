@@ -36,7 +36,9 @@ object LoadPluginBloc {
         } else {
             val buildClassLoader = executorService.submit(Callable {
                 val soDir = CopySoBloc.copySo(hostAppContext,installedPlugin, abi)
-                LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir, parentClassLoader)
+                lock.withLock {
+                    LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir, parentClassLoader, pluginPartsMap)
+                }
             })
 
             val buildPackageManager = executorService.submit(Callable {
@@ -105,7 +107,7 @@ object LoadPluginBloc {
                 val soDir = CopySoBloc.copySo(hostAppContext, installedPlugin, abi)
                 val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
                 val hostAppParentClassLoader = pluginLoaderClassLoader.parent.parent
-                val pluginClassLoader = LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir, hostAppParentClassLoader)
+                val pluginClassLoader = LoadApkBloc.loadInterface(hostAppContext, installedPlugin, soDir, hostAppParentClassLoader)
 
                 comInterface.addInterfaceClassLoader(pluginClassLoader)
             }

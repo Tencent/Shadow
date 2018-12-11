@@ -54,7 +54,7 @@ object ParsePluginApkBloc {
         /*
         partKey的作用是用来区分一个Component是来自于哪个插件apk的
          */
-        val partKey = installedPlugin.pluginPackageName
+        val partKey = installedPlugin.partKey
 
         val pluginInfo = PluginInfo(
                 partKey
