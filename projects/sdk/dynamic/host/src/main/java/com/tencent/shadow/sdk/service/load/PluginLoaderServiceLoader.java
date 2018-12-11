@@ -18,7 +18,7 @@ public class PluginLoaderServiceLoader {
             "com.tencent.hydevteam.pluginframework.installedplugin",
             "com.tencent.qphone.base.util"};
 
-    private final static String CLASS_NAME_LOADER = "com.tencent.shadow.core.loader.PluginLoaderService";
+    private final static String CLASS_NAME_LOADER = "com.tencent.shadow.dynamic.loader.PluginLoaderService";
 
     public static IBinder loadPluginLoaderService(Context context, String UUID, String apkPath) {
         File odexDir = new File(new File(apkPath).getParent(), "plugin_loader_odex_" + UUID);
