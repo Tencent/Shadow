@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.host.download;
+package com.tencent.shadow.dynamic.manager.download;
 
 
 import android.util.Log;

@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.host;
+package com.tencent.shadow.dynamic.manager;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,17 +8,17 @@ import com.tencent.shadow.core.host.PluginManager;
 import com.tencent.shadow.core.host.ViewCallback;
 import com.tencent.shadow.core.host.common.annotation.API;
 import com.tencent.shadow.core.host.common.classloader.ApkClassLoader;
-import com.tencent.shadow.sdk.host.download.DownloadException;
-import com.tencent.shadow.sdk.host.download.Downloader;
-import com.tencent.shadow.sdk.host.download.LengthHashURLConnectionDownloader;
-import com.tencent.shadow.sdk.host.download.TargetDownloadInfo;
+import com.tencent.shadow.dynamic.manager.download.DownloadException;
+import com.tencent.shadow.dynamic.manager.download.Downloader;
+import com.tencent.shadow.dynamic.manager.download.LengthHashURLConnectionDownloader;
+import com.tencent.shadow.dynamic.manager.download.TargetDownloadInfo;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static com.tencent.shadow.sdk.dynamic.BuildConfig.COMPATIBLE_SUFFIX;
+import static com.tencent.shadow.dynamic.manager.BuildConfig.COMPATIBLE_SUFFIX;
 
 
 public class UpgradeablePluginManager {
@@ -82,7 +82,7 @@ public class UpgradeablePluginManager {
     /**
      * 远程PluginManager中实现PluginManager接口的类的类名
      */
-    protected static final String REMOTE_PLUGIN_MANAGER_IMPL_CLASS_NAME = "com.tencent.shadow.sdk.pluginmanager.PluginManagerImpl";
+    protected static final String REMOTE_PLUGIN_MANAGER_IMPL_CLASS_NAME = "com.tencent.shadow.dynamic.manager.PluginManagerImpl";
 
     /**
      * 没有进行升级

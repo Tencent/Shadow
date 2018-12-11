@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.host;
+package com.tencent.shadow.dynamic.manager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
