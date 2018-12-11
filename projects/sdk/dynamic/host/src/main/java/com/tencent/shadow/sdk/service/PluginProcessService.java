@@ -6,7 +6,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.tencent.shadow.core.loader.IProcessServiceInterface;
+import com.tencent.shadow.dynamic.host.IProcessServiceInterface;
 import com.tencent.shadow.sdk.service.load.PluginLoaderServiceLoader;
 import com.tencent.shadow.sdk.service.load.RunTimeLoader;
 
