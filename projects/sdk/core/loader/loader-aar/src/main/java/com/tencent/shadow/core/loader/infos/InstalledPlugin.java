@@ -5,6 +5,15 @@ import android.os.Parcelable;
 
 import java.io.File;
 
+/**
+ * Loader加载插件的输入参数结构体
+ * <p>
+ * 这个类不能用Kotlin写是因为这个类可能会由非Kotlin写的代码new出来，
+ * 而Loader打包的kotlin运行时可能连同Loader一起在一个独立的ClassLoader中。
+ * 如果这个类用Kotlin写，就要求构造这个类对象的代码具有Kotlin运行时。
+ *
+ * @author cubershi
+ */
 public class InstalledPlugin implements Parcelable {
     final public File pluginFile;
     final public int pluginFileType;
