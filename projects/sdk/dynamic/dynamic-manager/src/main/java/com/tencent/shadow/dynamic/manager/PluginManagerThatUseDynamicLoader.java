@@ -12,6 +12,7 @@ import android.util.Log;
 import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
+import com.tencent.shadow.dynamic.host.IPluginLauncher;
 import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
@@ -89,7 +90,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
      * @param partKey         要加载的插件的partkey
      * @param installedPlugin installedPlugin
      */
-    public final PluginLauncher loadPlugin(String partKey, InstalledPlugin installedPlugin) throws RemoteException {
+    public final IPluginLauncher loadPlugin(String partKey, InstalledPlugin installedPlugin) throws RemoteException {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("loadPlugin 不能在主线程中调用");
         }

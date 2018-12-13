@@ -10,11 +10,11 @@ import com.tencent.shadow.dynamic.host.IPluginLauncher;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 
-public class PluginLauncher implements IPluginLauncher {
+class PluginLauncher implements IPluginLauncher {
 
     private PluginLoader mPluginLoader;
 
-    public PluginLauncher(PluginLoader mPluginLoader) {
+    PluginLauncher(PluginLoader mPluginLoader) {
         this.mPluginLoader = mPluginLoader;
     }
 
