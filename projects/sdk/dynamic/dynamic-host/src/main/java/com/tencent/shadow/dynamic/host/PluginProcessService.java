@@ -59,6 +59,7 @@ public class PluginProcessService extends Service {
                 // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
                 "com.tencent.shadow.runtime.container",
                 "com.tencent.shadow.dynamic.host",
+                "com.tencent.shadow.core.interface_.log",
         };
 
         private final static String sDynamicPluginLoaderClassName
