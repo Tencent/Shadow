@@ -79,7 +79,7 @@ public class UpgradeablePluginManager {
     /**
      * 远程PluginManager中实现PluginManager接口的类的类名
      */
-    protected static final String REMOTE_PLUGIN_MANAGER_IMPL_CLASS_NAME = "com.tencent.shadow.dynamic.manager.PluginManagerImpl";
+    protected static final String REMOTE_PLUGIN_MANAGER_IMPL_CLASS_NAME = "com.tencent.shadow.dynamic.impl.PluginManagerImpl";
 
     /**
      * 没有进行升级
