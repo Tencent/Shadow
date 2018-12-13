@@ -10,12 +10,16 @@ import java.io.File;
 
 public class PluginLoaderServiceLoader {
 
-    private final static String[] sInterfaces = new String[]{"com.tencent.hydevteam.common.progress",
+    /**
+     * 加载{@link PluginLoaderServiceLoader#CLASS_NAME_LOADER}时
+     * 需要从宿主PathClassLoader（含双亲委派）中加载的类
+     */
+    private final static String[] sInterfaces = new String[]{
+            //当runtime是动态加载的时候，runtime的ClassLoader是PathClassLoader的parent，
+            // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
+            "com.tencent.shadow.runtime.container",
             "com.tencent.shadow.dynamic.host",
-            "com.tencent.hydevteam.pluginframework.pluginloader",
-            "com.tencent.hydevteam.pluginframework.plugincontainer",
-            "com.tencent.hydevteam.pluginframework.installedplugin",
-            "com.tencent.qphone.base.util"};
+    };
 
     private final static String CLASS_NAME_LOADER = "com.tencent.shadow.dynamic.loader.PluginLoaderService";
 

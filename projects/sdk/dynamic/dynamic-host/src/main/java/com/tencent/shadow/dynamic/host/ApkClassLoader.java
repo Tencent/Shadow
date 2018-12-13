@@ -22,17 +22,23 @@ import dalvik.system.BaseDexClassLoader;
  */
 @API
 public class ApkClassLoader extends BaseDexClassLoader {
-    /**
-     * 宿主apk的ClassLoader的Parent,应该是PathClassLoader。
-     */
     private ClassLoader mGrandParent;
     private final String[] mInterfacePackageNames;
 
 
     public ApkClassLoader(String dexPath, String optimizedDirectory, String libraryPath,
                           ClassLoader parent, String[] mInterfacePackageNames) {
+        this(dexPath, optimizedDirectory, libraryPath, parent, mInterfacePackageNames, 1);
+    }
+
+    public ApkClassLoader(String dexPath, String optimizedDirectory, String libraryPath,
+                          ClassLoader parent, String[] mInterfacePackageNames, int grandTimes) {
         super(dexPath, optimizedDirectory == null ? null : new File(optimizedDirectory), libraryPath, parent);
-        mGrandParent = parent.getParent();
+        ClassLoader grand = parent;
+        for (int i = 0; i < grandTimes; i++) {
+            grand = grand.getParent();
+        }
+        mGrandParent = grand;
         this.mInterfacePackageNames = mInterfacePackageNames;
     }
 

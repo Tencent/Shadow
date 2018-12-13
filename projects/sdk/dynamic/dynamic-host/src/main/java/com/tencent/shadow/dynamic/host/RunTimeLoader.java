@@ -40,7 +40,7 @@ public class RunTimeLoader {
         } else { //如果parent不是UUIDClassLoader 那么有2种可能，1是加载了历史版本的runtime，需要卸载更新  2是首次加载runtime
             try {
                 //DelegateProviderHolder是所有版本的Container都应该有的类
-                Class<?> aClass = contextClassLoader.loadClass("com.tencent.hydevteam.pluginframework.plugincontainer.DelegateProviderHolder");
+                Class<?> aClass = contextClassLoader.loadClass("com.tencent.shadow.runtime.container.DelegateProviderHolder");
                 //没有异常，说明加载过其他版本的Container.需要先恢复contextClassLoader
                 try {
                     hackParentClassLoader(contextClassLoader, aClass.getClassLoader().getParent());
