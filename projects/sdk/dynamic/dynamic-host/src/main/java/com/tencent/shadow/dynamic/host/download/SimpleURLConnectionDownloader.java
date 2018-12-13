@@ -1,7 +1,7 @@
 package com.tencent.shadow.dynamic.host.download;
 
 
-import com.tencent.shadow.core.host.MinFileUtils;
+import com.tencent.shadow.core.interface_.MinFileUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;

@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.host;
+package com.tencent.shadow.core.interface_;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

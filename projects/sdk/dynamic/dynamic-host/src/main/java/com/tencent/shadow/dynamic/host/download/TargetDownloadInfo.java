@@ -1,7 +1,7 @@
 package com.tencent.shadow.dynamic.host.download;
 
 
-import com.tencent.shadow.core.host.API;
+import com.tencent.shadow.core.interface_.API;
 
 /**
  * 下载目标文件信息

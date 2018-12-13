@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.tencent.shadow.core.host.API;
-import com.tencent.shadow.core.host.PluginManager;
-import com.tencent.shadow.core.host.ViewCallback;
+import com.tencent.shadow.core.interface_.API;
+import com.tencent.shadow.core.interface_.PluginManager;
+import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.dynamic.host.download.DownloadException;
 import com.tencent.shadow.dynamic.host.download.Downloader;
 import com.tencent.shadow.dynamic.host.download.LengthHashURLConnectionDownloader;
@@ -70,7 +70,7 @@ public class UpgradeablePluginManager {
      */
     protected static final String[] REMOTE_PLUGIN_MANAGER_INTERFACES = new String[]
             {
-                    "com.tencent.shadow.core.host",
+                    "com.tencent.shadow.core.interface_",
                     "com.tencent.shadow.dynamic.host",
                     "com.tencent.commonsdk.zip",
                     "com.tencent.mobileqq.intervideo.now.dynamic",

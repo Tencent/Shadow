@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.host.log;
+package com.tencent.shadow.core.interface_.log;
 
 public interface ILoggerFactory {
 

@@ -26,6 +26,6 @@ android {
 
 
 dependencies {
-    compileOnly 'com.tencent.shadow.core:host'
+    compileOnly 'com.tencent.shadow.core:interface'
     compileOnly 'com.tencent.shadow.core:runtime'
 }

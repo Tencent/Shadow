@@ -7,8 +7,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 
-import com.tencent.shadow.core.host.PluginManager;
-import com.tencent.shadow.core.host.ViewCallback;
+import com.tencent.shadow.core.interface_.PluginManager;
+import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledDao;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPluginDBHelper;

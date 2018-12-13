@@ -28,7 +28,7 @@ dependencies {
     })
     testImplementation 'junit:junit:4.12'
     compileOnly files('libs/qzip.jar')
-    implementation 'com.tencent.shadow.core:host'
+    implementation 'com.tencent.shadow.core:interface'
     implementation 'com.tencent.shadow.core:manager'
     implementation 'com.tencent.shadow.core:loader'
     implementation project(':dynamic-loader')

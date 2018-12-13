@@ -2,7 +2,7 @@ package com.tencent.shadow.dynamic.host;
 
 import android.os.Build;
 
-import com.tencent.shadow.core.host.API;
+import com.tencent.shadow.core.interface_.API;
 
 import java.io.File;
 import java.lang.reflect.Constructor;

@@ -9,7 +9,7 @@ import android.os.Looper;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.tencent.shadow.core.host.ViewCallback;
+import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.IProcessServiceInterface;
