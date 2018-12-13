@@ -1,7 +1,8 @@
-// IProcessServicelInterface.aidl
+// PpsController.aidl
 package com.tencent.shadow.dynamic.host;
 
-interface IProcessServiceInterface {
+//PluginProcessServiceController
+interface PpsController {
 
      void loadRuntime(String uuid,String apkPath);
 

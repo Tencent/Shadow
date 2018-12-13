@@ -12,7 +12,7 @@ import android.util.Log;
 import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
-import com.tencent.shadow.dynamic.host.IProcessServiceInterface;
+import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 import java.util.concurrent.CountDownLatch;
@@ -29,7 +29,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
     /**
      * 插件进程PluginProcessService的接口
      */
-    protected IProcessServiceInterface mIProcessServiceInterface;
+    protected PpsController mPpsController;
 
     /**
      * 插件加载服务端接口
@@ -49,7 +49,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mIProcessServiceInterface = IProcessServiceInterface.Stub.asInterface(service);
+            mPpsController = PpsController.Stub.asInterface(service);
             mConnectCountDownLatch.countDown();
             Log.d(TAG, "onServiceConnected");
         }
@@ -57,7 +57,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
         @Override
         public void onServiceDisconnected(ComponentName name) {
             mServiceConnecting.set(false);
-            mIProcessServiceInterface = null;
+            mPpsController = null;
             mPluginLoader = null;
         }
     };
@@ -93,7 +93,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("loadPlugin 不能在主线程中调用");
         }
-        if (mIProcessServiceInterface == null) {
+        if (mPpsController == null) {
             try {
                 long s = System.currentTimeMillis();
                 mConnectCountDownLatch.await();
@@ -104,10 +104,10 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
         }
         if (installedPlugin.pluginLoaderFile != null) {
-            mIProcessServiceInterface.loadRuntime(installedPlugin.UUID, installedPlugin.runtimeFile.file.getAbsolutePath());
+            mPpsController.loadRuntime(installedPlugin.UUID, installedPlugin.runtimeFile.file.getAbsolutePath());
         }
         if (mPluginLoader == null) {
-            IBinder iBinder = mIProcessServiceInterface.loadPluginLoader(installedPlugin.UUID, installedPlugin.pluginLoaderFile.file.getAbsolutePath());
+            IBinder iBinder = mPpsController.loadPluginLoader(installedPlugin.UUID, installedPlugin.pluginLoaderFile.file.getAbsolutePath());
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
         }
 

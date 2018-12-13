@@ -62,7 +62,7 @@ public class PluginProcessService extends Service {
         Log.d(TAG, "onDestroy");
     }
 
-    private final IProcessServiceInterface.Stub mBinder = new IProcessServiceInterface.Stub() {
+    private final PpsController.Stub mBinder = new PpsController.Stub() {
         @Override
         public void loadRuntime(String uuid, String apkPath) throws RemoteException {
             RunTimeLoader.loadRunTime(uuid, apkPath);
@@ -81,7 +81,7 @@ public class PluginProcessService extends Service {
                         apkPath,
                         odexDir.getAbsolutePath(),
                         null,
-                        PluginLoaderServiceLoader.class.getClassLoader(),
+                        this.getClass().getClassLoader(),
                         sInterfaces
                 );
                 try {
