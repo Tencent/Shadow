@@ -4,11 +4,12 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 
 import com.tencent.shadow.core.interface_.PluginManager;
 import com.tencent.shadow.core.interface_.ViewCallback;
+import com.tencent.shadow.core.interface_.log.ILogger;
+import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledDao;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPluginDBHelper;
@@ -24,6 +25,8 @@ import java.util.List;
 public abstract class BasePluginManager implements PluginManager {
 
     public final static String TAG = "BasePluginManager";
+
+    private ILogger mLogger = ShadowLoggerFactory.getLogger(TAG);
     /*
      * 宿主的context对象
      */
@@ -82,7 +85,9 @@ public abstract class BasePluginManager implements PluginManager {
      */
     @Override
     public void onCreate(Bundle bundle) {
-        Log.d(TAG, "onCreate bundle:" + bundle);
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onCreate bundle:" + bundle);
+        }
     }
 
     /**
@@ -92,7 +97,9 @@ public abstract class BasePluginManager implements PluginManager {
      */
     @Override
     public void onSaveInstanceState(Bundle bundle) {
-        Log.d(TAG, "onSaveInstanceState:" + bundle);
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onSaveInstanceState:" + bundle);
+        }
     }
 
     /**
@@ -100,7 +107,9 @@ public abstract class BasePluginManager implements PluginManager {
      */
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy ");
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onDestroy:");
+        }
     }
 
 
@@ -116,7 +125,7 @@ public abstract class BasePluginManager implements PluginManager {
      */
     public final void onViewLoaded(View view) {
         if (mViewCallback != null) {
-            mViewCallback.onViewCreated(mFromId,view);
+            mViewCallback.onViewCreated(mFromId, view);
         }
     }
 

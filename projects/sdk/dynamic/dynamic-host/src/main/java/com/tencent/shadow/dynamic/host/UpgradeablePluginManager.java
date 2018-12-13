@@ -71,6 +71,7 @@ public class UpgradeablePluginManager {
     protected static final String[] REMOTE_PLUGIN_MANAGER_INTERFACES = new String[]
             {
                     "com.tencent.shadow.core.interface_",
+                    "com.tencent.shadow.core.interface_.log",
                     "com.tencent.shadow.dynamic.host",
                     "com.tencent.commonsdk.zip",
                     "com.tencent.mobileqq.intervideo.now.dynamic",

@@ -48,6 +48,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     compileOnly project(':runtime')
+    compileOnly project(':interface')
     implementation 'com.tencent.shadow.coding:lint'
 }
 

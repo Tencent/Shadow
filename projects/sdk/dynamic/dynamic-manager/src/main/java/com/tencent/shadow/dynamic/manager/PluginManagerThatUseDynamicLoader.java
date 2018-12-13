@@ -7,9 +7,10 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.tencent.shadow.core.interface_.ViewCallback;
+import com.tencent.shadow.core.interface_.log.ILogger;
+import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.IPluginLauncher;
@@ -22,6 +23,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static android.content.Context.BIND_AUTO_CREATE;
 
 public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
+
+    private ILogger mLogger = ShadowLoggerFactory.getLogger("BasePluginManager");
 
     public PluginManagerThatUseDynamicLoader(String appId, Context context, ViewCallback viewCallback, String apkPath) {
         super(appId, context, viewCallback, apkPath);
@@ -52,7 +55,9 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
         public void onServiceConnected(ComponentName name, IBinder service) {
             mPpsController = PpsController.Stub.asInterface(service);
             mConnectCountDownLatch.countDown();
-            Log.d(TAG, "onServiceConnected");
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("onServiceConnected");
+            }
         }
 
         @Override
@@ -70,7 +75,9 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
      */
     public final void startPluginProcessService(final String serviceName) {
         if (mServiceConnecting.get()) {
-            Log.d(TAG, "pps service connecting ");
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("pps service connecting");
+            }
             return;
         }
         mServiceConnecting.set(true);
@@ -98,7 +105,9 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
             try {
                 long s = System.currentTimeMillis();
                 mConnectCountDownLatch.await();
-                Log.d(TAG, "wait service connect:" + (System.currentTimeMillis() - s));
+                if (mLogger.isInfoEnabled()) {
+                    mLogger.info("wait service connect:" + (System.currentTimeMillis() - s));
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

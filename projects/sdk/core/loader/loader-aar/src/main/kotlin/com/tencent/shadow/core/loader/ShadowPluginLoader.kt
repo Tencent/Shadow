@@ -1,6 +1,7 @@
 package com.tencent.shadow.core.loader
 
 import android.content.Context
+import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.core.loader.delegates.DI
@@ -70,6 +71,8 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
     private val  mShadowRemoteViewCreatorProvider: ShadowRemoteViewCreatorProvider = ShadowRemoteViewCreatorProviderImpl()
 
 
+    private val mLogger = ShadowLoggerFactory.getLogger("ShadowPluginLoader")
+
     fun getPluginServiceManager(): PluginServiceManager {
         mPluginServiceManagerLock.withLock {
             return mPluginServiceManager
@@ -87,6 +90,10 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
     fun loadPlugin(
             hostAppContext: Context,
             installedPlugin: InstalledPlugin): Future<*> {
+
+        if (mLogger.isInfoEnabled) {
+            mLogger.info("start loadPlugin")
+        }
 
         // 在这里初始化PluginServiceManager
         mPluginServiceManagerLock.withLock {
