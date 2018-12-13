@@ -5,6 +5,7 @@ includeBuild 'projects/sdk/core'
 includeBuild 'projects/sdk/dynamic'
 
 include ':projects:debug:host-app:host-apk'
+include ':projects:debug:host-app:slf4j-logback'
 include ':projects:debug:host-app:slf4j-logcat'
 
 include ':projects:debug:plugin-app:demo-install'
