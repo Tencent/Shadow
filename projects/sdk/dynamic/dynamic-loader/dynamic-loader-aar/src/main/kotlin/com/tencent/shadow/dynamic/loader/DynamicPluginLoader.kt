@@ -14,7 +14,7 @@ import com.tencent.shadow.dynamic.host.ApkClassLoader
 import com.tencent.shadow.runtime.container.*
 import java.util.concurrent.CountDownLatch
 
-open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInterface.Stub(), DelegateProvider {
+open class DynamicPluginLoader(hostContext: Context) : PluginLoader.Stub(), DelegateProvider {
 
     companion object {
 
@@ -23,7 +23,7 @@ open class PluginLoaderService(hostContext: Context) : IPluginLoaderServiceInter
 
     private val mPluginLoader: ShadowPluginLoader
 
-    private val mApkClassLoader = PluginLoaderService::class.java.classLoader as ApkClassLoader
+    private val mApkClassLoader = DynamicPluginLoader::class.java.classLoader as ApkClassLoader
 
     private var mContext: Context;
 

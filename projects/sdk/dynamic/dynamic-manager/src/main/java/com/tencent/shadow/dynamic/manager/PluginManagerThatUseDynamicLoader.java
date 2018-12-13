@@ -13,7 +13,7 @@ import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.IProcessServiceInterface;
-import com.tencent.shadow.dynamic.loader.IPluginLoaderServiceInterface;
+import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,7 +34,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
     /**
      * 插件加载服务端接口
      */
-    private IPluginLoaderServiceInterface mPluginLoaderService;
+    private PluginLoader mPluginLoader;
 
     /**
      * 防止绑定service重入
@@ -58,7 +58,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
         public void onServiceDisconnected(ComponentName name) {
             mServiceConnecting.set(false);
             mIProcessServiceInterface = null;
-            mPluginLoaderService = null;
+            mPluginLoader = null;
         }
     };
 
@@ -106,9 +106,9 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
         if (installedPlugin.pluginLoaderFile != null) {
             mIProcessServiceInterface.loadRuntime(installedPlugin.UUID, installedPlugin.runtimeFile.file.getAbsolutePath());
         }
-        if (mPluginLoaderService == null) {
+        if (mPluginLoader == null) {
             IBinder iBinder = mIProcessServiceInterface.loadPluginLoader(installedPlugin.UUID, installedPlugin.pluginLoaderFile.file.getAbsolutePath());
-            mPluginLoaderService = IPluginLoaderServiceInterface.Stub.asInterface(iBinder);
+            mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
         }
 
         boolean hasPart = installedPlugin.hasPart(partKey);
@@ -135,8 +135,8 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
                         pluginPart.dependsOn
                 );
             }
-            mPluginLoaderService.loadPlugin(loaderInstalledPlugin);
-            return new PluginLauncher(mPluginLoaderService);
+            mPluginLoader.loadPlugin(loaderInstalledPlugin);
+            return new PluginLauncher(mPluginLoader);
         }
     }
 }

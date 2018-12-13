@@ -1,18 +1,36 @@
 package com.tencent.shadow.dynamic.host;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.tencent.shadow.runtime.container.DelegateProvider;
+import com.tencent.shadow.runtime.container.DelegateProviderHolder;
+
+import java.io.File;
+
 
 public class PluginProcessService extends Service {
 
     private final static String TAG = "PluginProcessService";
+    /**
+     * 加载{@link #sDynamicPluginLoaderClassName}时
+     * 需要从宿主PathClassLoader（含双亲委派）中加载的类
+     */
+    private final static String[] sInterfaces = new String[]{
+            //当runtime是动态加载的时候，runtime的ClassLoader是PathClassLoader的parent，
+            // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
+            "com.tencent.shadow.runtime.container",
+            "com.tencent.shadow.dynamic.host",
+    };
 
-    private IBinder mLoaderBinder;
+    private final static String sDynamicPluginLoaderClassName
+            = "com.tencent.shadow.dynamic.loader.DynamicPluginLoader";
 
+    private IBinder mPluginLoader;
 
     @Override
     public void onCreate() {
@@ -52,12 +70,38 @@ public class PluginProcessService extends Service {
 
         @Override
         public IBinder loadPluginLoader(String uuid, String apkPath) throws RemoteException {
-            if (mLoaderBinder == null) {
-                mLoaderBinder = PluginLoaderServiceLoader.loadPluginLoaderService(PluginProcessService.this, uuid, apkPath);
+            if (mPluginLoader == null) {
+                File file = new File(apkPath);
+                if (!file.exists()) {
+                    throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
+                }
+                File odexDir = new File(file.getParent(), "plugin_loader_odex_" + uuid);
+                odexDir.mkdirs();
+                ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
+                        apkPath,
+                        odexDir.getAbsolutePath(),
+                        null,
+                        PluginLoaderServiceLoader.class.getClassLoader(),
+                        sInterfaces
+                );
+                try {
+                    IBinder iBinder = pluginLoaderClassLoader.getInterface(
+                            IBinder.class,
+                            sDynamicPluginLoaderClassName,
+                            new Class[]{Context.class},
+                            new Object[]{PluginProcessService.this.getApplicationContext()}
+                    );
+                    DelegateProviderHolder.setDelegateProvider((DelegateProvider) iBinder);
+                    mPluginLoader = iBinder;
+                } catch (Exception e) {
+                    throw new RuntimeException(
+                            pluginLoaderClassLoader + " 没有找到：" + sDynamicPluginLoaderClassName,
+                            e
+                    );
+                }
             }
-            return mLoaderBinder;
+            return mPluginLoader;
         }
 
     };
-
 }
