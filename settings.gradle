@@ -1,6 +1,6 @@
 rootProject.name = 'shadow'
 
-includeBuild 'projects/sdk/lint'
+includeBuild 'projects/sdk/coding'
 includeBuild 'projects/sdk/core'
 includeBuild 'projects/sdk/dynamic'
 

@@ -49,7 +49,7 @@ dependencies {
 
     implementation 'com.tencent.shadow.core:loader'
     implementation 'com.tencent.shadow.core:runtime'
-    implementation 'com.tencent.shadow:shadow-lint'
+    implementation 'com.tencent.shadow.coding:lint'
     compileOnly project(':dynamic-host')
 }
 

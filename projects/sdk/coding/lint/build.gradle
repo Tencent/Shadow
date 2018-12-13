@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 
-group 'com.tencent.shadow'
+group 'com.tencent.shadow.coding'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION

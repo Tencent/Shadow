@@ -1,5 +1,7 @@
 apply plugin: 'kotlin'
 
+group 'com.tencent.shadow.coding'
+
 /*
 Lint Version
 The lint version of the libraries (specified in this project as the lintVersion variable in build.gradle) should be the same version that is used by the Gradle plugin.
