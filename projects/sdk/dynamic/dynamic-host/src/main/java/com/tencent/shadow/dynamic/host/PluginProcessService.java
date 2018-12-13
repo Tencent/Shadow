@@ -16,21 +16,8 @@ import java.io.File;
 public class PluginProcessService extends Service {
 
     private final static String TAG = "PluginProcessService";
-    /**
-     * 加载{@link #sDynamicPluginLoaderClassName}时
-     * 需要从宿主PathClassLoader（含双亲委派）中加载的类
-     */
-    private final static String[] sInterfaces = new String[]{
-            //当runtime是动态加载的时候，runtime的ClassLoader是PathClassLoader的parent，
-            // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
-            "com.tencent.shadow.runtime.container",
-            "com.tencent.shadow.dynamic.host",
-    };
 
-    private final static String sDynamicPluginLoaderClassName
-            = "com.tencent.shadow.dynamic.loader.DynamicPluginLoader";
-
-    private IBinder mPluginLoader;
+    private final PpsController.Stub mPpsController = new PpsControllerImpl();
 
     @Override
     public void onCreate() {
@@ -41,7 +28,7 @@ public class PluginProcessService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind");
-        return mBinder;
+        return mPpsController;
     }
 
     @Override
@@ -62,7 +49,23 @@ public class PluginProcessService extends Service {
         Log.d(TAG, "onDestroy");
     }
 
-    private final PpsController.Stub mBinder = new PpsController.Stub() {
+    private class PpsControllerImpl extends PpsController.Stub {
+        /**
+         * 加载{@link #sDynamicPluginLoaderClassName}时
+         * 需要从宿主PathClassLoader（含双亲委派）中加载的类
+         */
+        private final String[] sInterfaces = new String[]{
+                //当runtime是动态加载的时候，runtime的ClassLoader是PathClassLoader的parent，
+                // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
+                "com.tencent.shadow.runtime.container",
+                "com.tencent.shadow.dynamic.host",
+        };
+
+        private final static String sDynamicPluginLoaderClassName
+                = "com.tencent.shadow.dynamic.loader.DynamicPluginLoader";
+
+        private IBinder mPluginLoader;
+
         @Override
         public void loadRuntime(String uuid, String apkPath) throws RemoteException {
             RunTimeLoader.loadRunTime(uuid, apkPath);
@@ -102,6 +105,5 @@ public class PluginProcessService extends Service {
             }
             return mPluginLoader;
         }
-
-    };
+    }
 }
