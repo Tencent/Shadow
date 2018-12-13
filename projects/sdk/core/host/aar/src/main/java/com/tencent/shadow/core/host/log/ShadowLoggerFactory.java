@@ -15,7 +15,7 @@ public final class ShadowLoggerFactory {
 
     public static ILoggerFactory getILoggerFactory() {
         if (sILoggerFactory == null) {
-            sILoggerFactory = new SimpleLoggerFactory();
+            throw new RuntimeException("没有找到 ILoggerFactory 实现，请先调用setILoggerFactory");
         }
         return sILoggerFactory;
     }
