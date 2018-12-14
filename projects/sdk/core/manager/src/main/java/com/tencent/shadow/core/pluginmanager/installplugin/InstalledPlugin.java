@@ -44,7 +44,12 @@ public class InstalledPlugin implements Serializable {
     /**
      * 接口文件
      */
-    public Map<String, Part> interfaces = new HashMap<>();
+    public Map<String, PluginPart> interfaces = new HashMap<>();
+
+    /**
+     * 插件的存储目录
+     */
+    public File storageDir;
 
 
     public InstalledPlugin() {
@@ -59,7 +64,7 @@ public class InstalledPlugin implements Serializable {
         return interfaces.containsKey(partKey);
     }
 
-    public Part getInterface(String partKey) {
+    public PluginPart getInterface(String partKey) {
         return interfaces.get(partKey);
     }
 
@@ -67,19 +72,33 @@ public class InstalledPlugin implements Serializable {
         return plugins.get(partKey);
     }
 
-    static public class Part implements Serializable {
-        final public File file;
+    public Part getPart(String partKey) {
+        Part part = plugins.get(partKey);
+        if (part == null) {
+            part = interfaces.get(partKey);
+        }
+        return part;
+    }
 
-        Part(File file) {
-            this.file = file;
+    static public class Part implements Serializable {
+        final public File pluginFile;
+
+
+        Part(File pluginFile) {
+            this.pluginFile = pluginFile;
+
         }
     }
 
     static public class PluginPart extends Part {
         final public String[] dependsOn;
+        final public File oDexDir;
+        final public File libraryDir;
 
-        PluginPart(File file, String[] dependsOn) {
+        PluginPart(File file, File oDexDir, File libraryDir, String[] dependsOn) {
             super(file);
+            this.oDexDir = oDexDir;
+            this.libraryDir = libraryDir;
             this.dependsOn = dependsOn;
         }
     }

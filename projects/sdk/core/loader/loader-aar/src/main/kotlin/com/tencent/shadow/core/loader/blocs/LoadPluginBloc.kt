@@ -35,9 +35,8 @@ object LoadPluginBloc {
             throw LoadPluginException("pluginFile==null")
         } else {
             val buildClassLoader = executorService.submit(Callable {
-                val soDir = CopySoBloc.copySo(hostAppContext,installedPlugin, abi)
                 lock.withLock {
-                    LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, soDir, parentClassLoader, pluginPartsMap)
+                    LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, parentClassLoader, pluginPartsMap)
                 }
             })
 
@@ -104,10 +103,9 @@ object LoadPluginBloc {
         } else {
 
             return executorService.submit {
-                val soDir = CopySoBloc.copySo(hostAppContext, installedPlugin, abi)
                 val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
                 val hostAppParentClassLoader = pluginLoaderClassLoader.parent.parent
-                val pluginClassLoader = LoadApkBloc.loadInterface(hostAppContext, installedPlugin, soDir, hostAppParentClassLoader)
+                val pluginClassLoader = LoadApkBloc.loadInterface(hostAppContext, installedPlugin, hostAppParentClassLoader)
 
                 comInterface.addInterfaceClassLoader(pluginClassLoader)
             }

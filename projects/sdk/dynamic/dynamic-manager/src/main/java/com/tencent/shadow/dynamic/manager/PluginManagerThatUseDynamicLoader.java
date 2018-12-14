@@ -118,10 +118,10 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
         }
         if (installedPlugin.pluginLoaderFile != null) {
-            mPpsController.loadRuntime(installedPlugin.UUID, installedPlugin.runtimeFile.file.getAbsolutePath());
+            mPpsController.loadRuntime(installedPlugin.UUID, installedPlugin.runtimeFile.pluginFile.getAbsolutePath());
         }
         if (mPluginLoader == null) {
-            IBinder iBinder = mPpsController.loadPluginLoader(installedPlugin.UUID, installedPlugin.pluginLoaderFile.file.getAbsolutePath());
+            IBinder iBinder = mPpsController.loadPluginLoader(installedPlugin.UUID, installedPlugin.pluginLoaderFile.pluginFile.getAbsolutePath());
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
         }
 
@@ -133,24 +133,26 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
             File soDir = new File(mSoDirRoot, installedPlugin.UUID);
 
             if (installedPlugin.isInterface(partKey)) {
-                InstalledPlugin.Part interfacePart = installedPlugin.getInterface(partKey);
+                InstalledPlugin.PluginPart interfacePart = installedPlugin.getInterface(partKey);
                 loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
-                        interfacePart.file,
+                        interfacePart.pluginFile,
                         1,
                         partKey,
-                        Long.toString(interfacePart.file.lastModified()),
+                        Long.toString(interfacePart.pluginFile.lastModified()),
                         null,
-                        soDir
+                        interfacePart.oDexDir,
+                        null
                 );
             } else {
                 InstalledPlugin.PluginPart pluginPart = installedPlugin.getPlugin(partKey);
                 loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
-                        pluginPart.file,
+                        pluginPart.pluginFile,
                         0,
                         partKey,
-                        Long.toString(pluginPart.file.lastModified()),
+                        Long.toString(pluginPart.pluginFile.lastModified()),
                         pluginPart.dependsOn,
-                        soDir
+                        pluginPart.oDexDir,
+                        pluginPart.libraryDir
                 );
             }
             mPluginLoader.loadPlugin(loaderInstalledPlugin);

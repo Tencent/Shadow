@@ -1,5 +1,6 @@
 package com.tencent.shadow.core.pluginmanager;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,9 +11,12 @@ import com.tencent.shadow.core.interface_.PluginManager;
 import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+import com.tencent.shadow.core.pluginmanager.installplugin.CopySoBloc;
+import com.tencent.shadow.core.pluginmanager.installplugin.InstallPluginException;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledDao;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPluginDBHelper;
+import com.tencent.shadow.core.pluginmanager.installplugin.ODexBloc;
 import com.tencent.shadow.core.pluginmanager.installplugin.PluginConfig;
 import com.tencent.shadow.core.pluginmanager.installplugin.UnpackManager;
 
@@ -21,6 +25,7 @@ import org.json.JSONException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BasePluginManager implements PluginManager {
 
@@ -66,6 +71,11 @@ public abstract class BasePluginManager implements PluginManager {
      * PluginManager的apk路径
      */
     protected String mApkPath;
+
+    /**
+     * 记录安装过的插件
+     */
+    private ConcurrentHashMap<String, InstalledPlugin> mInstallPlugins = new ConcurrentHashMap<>();
 
 
     public BasePluginManager(String appId, Context context, ViewCallback viewCallback, String apkPath) {
@@ -149,17 +159,31 @@ public abstract class BasePluginManager implements PluginManager {
      */
     public final InstalledPlugin installPluginFromZip(File zip, String hash) throws IOException, JSONException {
         PluginConfig pluginConfig = mUnpackManager.unpackPlugin(mAppID, hash, zip);
-        return mInstalledDao.insert(pluginConfig);
+        InstalledPlugin installedPlugin = mInstalledDao.insert(pluginConfig);
+
+        mInstallPlugins.put(installedPlugin.UUID, installedPlugin);
+        return installedPlugin;
     }
 
     /**
      * odex优化
      *
      * @param uuid    插件包的uuid
-     * @param partKey 要odex的插件partkey
+     * @param partKey 要oDex的插件partkey
      */
-    public final void odexPlugin(String uuid, String partKey) {
-        throw new UnsupportedOperationException("TODO");
+    public final void oDexPlugin(String uuid, String partKey) throws InstallPluginException {
+        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(mAppID, uuid);
+        InstalledPlugin.Part part = installedPlugin.getPart(partKey);
+        try {
+            File oDexDir = ODexBloc.oDexPlugin(mUnpackManager.getAppDir(mAppID), part.pluginFile, uuid, partKey);
+
+            ContentValues values = new ContentValues();
+            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX, oDexDir.getAbsolutePath());
+            mInstalledDao.updatePlugin(mAppID, uuid, partKey, values);
+        } catch (InstallPluginException e) {
+            throw e;
+        }
+
     }
 
     /**
@@ -168,8 +192,18 @@ public abstract class BasePluginManager implements PluginManager {
      * @param uuid    插件包的uuid
      * @param partKey 要解压so的插件partkey
      */
-    public final void extractSo(String uuid, String partKey) {
-        throw new UnsupportedOperationException("TODO");
+    public final void extractSo(String uuid, String partKey) throws InstallPluginException {
+        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(mAppID, uuid);
+        InstalledPlugin.Part part = installedPlugin.getPart(partKey);
+        try {
+            File soDir = CopySoBloc.copySo(mUnpackManager.getAppDir(mAppID), part.pluginFile, uuid, partKey, getAbi());
+
+            ContentValues values = new ContentValues();
+            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soDir.getAbsolutePath());
+            mInstalledDao.updatePlugin(mAppID, uuid, partKey, values);
+        } catch (InstallPluginException e) {
+            throw e;
+        }
     }
 
 
@@ -180,5 +214,14 @@ public abstract class BasePluginManager implements PluginManager {
      */
     public final List<InstalledPlugin> getInstalledPlugins(int limit) {
         return mInstalledDao.getLastPlugins(mAppID, limit);
+    }
+
+    /**
+     * 业务插件的abi
+     *
+     * @return
+     */
+    public String getAbi() {
+        return null;
     }
 }

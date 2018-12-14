@@ -20,15 +20,17 @@ public class InstalledPlugin implements Parcelable {
     final public String partKey;
     final public String pluginVersionForPluginLoaderManage;
     final public String[] dependsOn;
-    final public File soDir;
+    final public File oDexDir;
+    final public File libraryDir;
 
-    public InstalledPlugin(File pluginFile, int pluginFileType, String partKey, String pluginVersionForPluginLoaderManage, String[] dependsOn, File soDir) {
+    public InstalledPlugin(File pluginFile, int pluginFileType, String partKey, String pluginVersionForPluginLoaderManage, String[] dependsOn, File oDexDir, File libraryDir) {
         this.pluginFile = pluginFile;
         this.pluginFileType = pluginFileType;
         this.partKey = partKey;
         this.pluginVersionForPluginLoaderManage = pluginVersionForPluginLoaderManage;
         this.dependsOn = dependsOn;
-        this.soDir = soDir;
+        this.oDexDir = oDexDir;
+        this.libraryDir = libraryDir;
     }
 
     protected InstalledPlugin(Parcel in) {
@@ -37,7 +39,10 @@ public class InstalledPlugin implements Parcelable {
         partKey = in.readString();
         pluginVersionForPluginLoaderManage = in.readString();
         dependsOn = in.createStringArray();
-        soDir = new File(in.readString());
+        String oDexPath = in.readString();
+        oDexDir = oDexPath == null ? null : new File(oDexPath);
+        String libraryDirPath = in.readString();
+        libraryDir = libraryDirPath == null ? null : new File(libraryDirPath);
     }
 
     @Override
@@ -47,7 +52,8 @@ public class InstalledPlugin implements Parcelable {
         dest.writeString(partKey);
         dest.writeString(pluginVersionForPluginLoaderManage);
         dest.writeStringArray(dependsOn);
-        dest.writeString(soDir.getAbsolutePath());
+        dest.writeString(oDexDir == null ? null :oDexDir.getAbsolutePath());
+        dest.writeString(libraryDir == null ? null :libraryDir.getAbsolutePath());
     }
 
     @Override
