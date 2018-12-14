@@ -73,6 +73,10 @@ public class ShadowFragment {
 
     protected IContainerFragment mContainerFragment;
 
+    private int mChildPluginFragmentManagerHash;
+
+    private PluginFragmentManager mChildPluginFragmentManager;
+
     public void setContainerFragment(IContainerFragment containerFragment) {
         mIsAppCreateFragment = false;
         mContainerFragment.unbindPluginFragment();
@@ -112,6 +116,16 @@ public class ShadowFragment {
             mPluginFragmentManager = getActivity().getFragmentManager();
         }
         return mPluginFragmentManager;
+    }
+
+    public PluginFragmentManager getChildFragmentManager() {
+        FragmentManager fragmentManager = mContainerFragment.getChildFragmentManager();
+        int hash = System.identityHashCode(fragmentManager);
+        if (hash != mChildPluginFragmentManagerHash) {
+            mChildPluginFragmentManagerHash = hash;
+            mChildPluginFragmentManager = new PluginFragmentManager(fragmentManager);
+        }
+        return mChildPluginFragmentManager;
     }
 
     final public Resources getResources() {
@@ -556,10 +570,6 @@ public class ShadowFragment {
 
     public final void requestPermissions(String[] permissions, int requestCode) {
         mContainerFragment.requestPermissions(permissions, requestCode);
-    }
-
-    public FragmentManager getChildFragmentManager() {
-        return mContainerFragment.getChildFragmentManager();
     }
 
 }
