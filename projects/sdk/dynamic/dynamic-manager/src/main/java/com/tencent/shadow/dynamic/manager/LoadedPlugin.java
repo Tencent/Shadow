@@ -9,11 +9,11 @@ import android.os.RemoteException;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 
-public class PluginLauncher {
+public class LoadedPlugin {
 
     private PluginLoader mPluginLoader;
 
-    PluginLauncher(PluginLoader mPluginLoader) {
+    LoadedPlugin(PluginLoader mPluginLoader) {
         this.mPluginLoader = mPluginLoader;
     }
 

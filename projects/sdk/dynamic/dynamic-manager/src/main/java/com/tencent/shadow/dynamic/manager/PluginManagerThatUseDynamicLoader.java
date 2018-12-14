@@ -96,7 +96,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
      * @param partKey         要加载的插件的partkey
      * @param installedPlugin installedPlugin
      */
-    public final PluginLauncher loadPlugin(String partKey, InstalledPlugin installedPlugin) throws RemoteException {
+    public final LoadedPlugin loadPlugin(String partKey, InstalledPlugin installedPlugin) throws RemoteException {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("loadPlugin 不能在主线程中调用");
         }
@@ -145,7 +145,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
                 );
             }
             mPluginLoader.loadPlugin(loaderInstalledPlugin);
-            return new PluginLauncher(mPluginLoader);
+            return new LoadedPlugin(mPluginLoader);
         }
     }
 }
