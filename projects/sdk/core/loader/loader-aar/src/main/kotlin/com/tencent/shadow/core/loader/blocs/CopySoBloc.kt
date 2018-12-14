@@ -11,20 +11,12 @@ import java.util.zip.ZipFile
 object CopySoBloc {
     fun copySo(hostContext: Context, installedPlugin: InstalledPlugin, abi: String): File {
         val apk = installedPlugin.pluginFile
-        val soDir = PluginRunningPath.getPluginLibDir(hostContext, installedPlugin.partKey, installedPlugin.pluginVersionForPluginLoaderManage)
-        val copiedTagFile = File(soDir, "copied")
+        val soDir = installedPlugin.soDir
+        val copiedTagFile = File(soDir, "${installedPlugin.partKey}.copied")
 
         //如果不需要so或者so文件已复制完成的标记已存在则直接返回成功
         if (abi.isEmpty() || copiedTagFile.exists()) {
             return soDir
-        }
-
-        //如果so目录存在，但copiedTagFile不存在，可能是上一次复制中断了，因此清除目录
-        if (soDir.exists() && soDir.isDirectory) {
-            val success = soDir.deleteRecursively()
-            if (!success) {
-                throw LoadPluginException("soDir==${soDir.absolutePath}目录已存在，需要清理，但清理失败")
-            }
         }
 
         //如果so目录存在但是个文件，不是目录，那超出预料了。删除了也不一定能工作正常。

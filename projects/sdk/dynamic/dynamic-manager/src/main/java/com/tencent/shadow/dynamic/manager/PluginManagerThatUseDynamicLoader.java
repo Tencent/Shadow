@@ -16,6 +16,7 @@ import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
+import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,8 +26,12 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
     private ILogger mLogger = ShadowLoggerFactory.getLogger("BasePluginManager");
 
+    final private File mSoDirRoot;
+
     public PluginManagerThatUseDynamicLoader(String appId, Context context, ViewCallback viewCallback, String apkPath) {
         super(appId, context, viewCallback, apkPath);
+        File dir = context.getDir("dynamic-manager", Context.MODE_PRIVATE);
+        mSoDirRoot = new File(dir, "SoDirRoot");
     }
 
     /**
@@ -125,6 +130,8 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
             throw new RemoteException("在" + installedPlugin + "中找不到partKey==" + partKey);
         } else {
             com.tencent.shadow.core.loader.infos.InstalledPlugin loaderInstalledPlugin;
+            File soDir = new File(mSoDirRoot, installedPlugin.UUID);
+
             if (installedPlugin.isInterface(partKey)) {
                 InstalledPlugin.Part interfacePart = installedPlugin.getInterface(partKey);
                 loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
@@ -132,7 +139,8 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
                         1,
                         partKey,
                         Long.toString(interfacePart.file.lastModified()),
-                        null
+                        null,
+                        soDir
                 );
             } else {
                 InstalledPlugin.PluginPart pluginPart = installedPlugin.getPlugin(partKey);
@@ -141,7 +149,8 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
                         0,
                         partKey,
                         Long.toString(pluginPart.file.lastModified()),
-                        pluginPart.dependsOn
+                        pluginPart.dependsOn,
+                        soDir
                 );
             }
             mPluginLoader.loadPlugin(loaderInstalledPlugin);
