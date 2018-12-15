@@ -19,20 +19,17 @@ public class CopySoBloc {
 
     private static ConcurrentHashMap<String, Object> sLocks = new ConcurrentHashMap<>();
 
-    public static File copySo(File root, File apkFile, String UUID, String partKey, String abi) throws InstallPluginException {
-        String key = UUID + "_" + partKey;
+    public static File copySo(File apkFile, File soDir, File copiedTagFile, String filter) throws InstallPluginException {
+        String key = apkFile.getAbsolutePath();
         Object lock = sLocks.get(key);
         if (lock == null) {
             lock = new Object();
             sLocks.put(key, lock);
         }
-        File libRoot = new File(root, "lib");
-        File soDir = new File(libRoot, UUID + "_lib");
-        File copiedTagFile = new File(soDir, key + "_copied");
-        String filter = "lib/" + abi+"/";
+
         synchronized (lock) {
 
-            if (TextUtils.isEmpty(abi) || copiedTagFile.exists()) {
+            if (TextUtils.isEmpty(filter) || copiedTagFile.exists()) {
                 return soDir;
             }
 
@@ -79,7 +76,7 @@ public class CopySoBloc {
                 }
 
             } catch (Exception e) {
-                throw new InstallPluginException("解压so 失败 apkFile:" + apkFile.getAbsolutePath() + " abi:" + abi, e);
+                throw new InstallPluginException("解压so 失败 apkFile:" + apkFile.getAbsolutePath() + " abi:" + filter, e);
             } finally {
                 try {
                     if (zipInputStream != null) {

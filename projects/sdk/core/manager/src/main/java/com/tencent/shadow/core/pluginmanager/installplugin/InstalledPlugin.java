@@ -44,7 +44,7 @@ public class InstalledPlugin implements Serializable {
     /**
      * 接口文件
      */
-    public Map<String, PluginPart> interfaces = new HashMap<>();
+    public Map<String, Part> interfaces = new HashMap<>();
 
 
     public InstalledPlugin() {
@@ -59,7 +59,7 @@ public class InstalledPlugin implements Serializable {
         return interfaces.containsKey(partKey);
     }
 
-    public PluginPart getInterface(String partKey) {
+    public Part getInterface(String partKey) {
         return interfaces.get(partKey);
     }
 
@@ -77,23 +77,21 @@ public class InstalledPlugin implements Serializable {
 
     static public class Part implements Serializable {
         final public File pluginFile;
+        final public File oDexDir;
+        final public File libraryDir;
 
-
-        Part(File pluginFile) {
-            this.pluginFile = pluginFile;
-
+        Part(File file, File oDexDir, File libraryDir) {
+            this.oDexDir = oDexDir;
+            this.libraryDir = libraryDir;
+            this.pluginFile = file;
         }
     }
 
     static public class PluginPart extends Part {
         final public String[] dependsOn;
-        final public File oDexDir;
-        final public File libraryDir;
 
         PluginPart(File file, File oDexDir, File libraryDir, String[] dependsOn) {
-            super(file);
-            this.oDexDir = oDexDir;
-            this.libraryDir = libraryDir;
+            super(file,oDexDir,libraryDir);
             this.dependsOn = dependsOn;
         }
     }

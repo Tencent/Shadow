@@ -8,17 +8,6 @@ import java.util.Arrays;
 
 public class InstalledRow {
 
-    public final static int TYPE_PLUGIN = 1;
-
-    public final static int TYPE_INTERFACE = 2;
-
-    public final static int TYPE_PLUGIN_LOADER = 3;
-
-    public final static int TYPE_PLUGIN_RUNTIME = 4;
-
-    public final static int TYPE_UUID = 5;
-
-
     public String hash;
 
     public long installedTime;

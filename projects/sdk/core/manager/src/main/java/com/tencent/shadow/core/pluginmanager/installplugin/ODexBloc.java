@@ -9,18 +9,15 @@ public class ODexBloc {
 
     private static ConcurrentHashMap<String, Object> sLocks = new ConcurrentHashMap<>();
 
-    public static File oDexPlugin(File root, File apkFile, String UUID, String partKey) throws InstallPluginException {
+    public static File oDexPlugin(File apkFile, File oDexDir, File copiedTagFile) throws InstallPluginException {
 
-        String key = UUID + "_" + partKey;
+        String key = apkFile.getAbsolutePath();
         Object lock = sLocks.get(key);
         if (lock == null) {
             lock = new Object();
             sLocks.put(key, lock);
         }
 
-        File oDexRoot = new File(root,"oDex");
-        File oDexDir = new File(oDexRoot, UUID + "_" + partKey + "_odex");
-        File copiedTagFile = new File(oDexDir, UUID + "_" + partKey + "_copied");
 
         synchronized (lock) {
             if (copiedTagFile.exists()) {

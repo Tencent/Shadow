@@ -12,6 +12,8 @@ import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
+import com.tencent.shadow.dynamic.host.InstalledPL;
+import com.tencent.shadow.dynamic.host.InstalledPLCallback;
 import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
@@ -108,15 +110,17 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                     mLogger.info("wait service connect:" + (System.currentTimeMillis() - s));
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                if (mLogger.isErrorEnabled()) {
+                    mLogger.error(e);
+                }
             }
-
         }
+        mPpsController.setInstalledPLCallback(mInstalledPLCallback);
         if (installedPlugin.pluginLoaderFile != null) {
-            mPpsController.loadRuntime(installedPlugin.UUID, installedPlugin.runtimeFile.pluginFile.getAbsolutePath());
+            mPpsController.loadRuntime(installedPlugin.UUID);
         }
         if (mPluginLoader == null) {
-            IBinder iBinder = mPpsController.loadPluginLoader(installedPlugin.UUID, installedPlugin.pluginLoaderFile.pluginFile.getAbsolutePath());
+            IBinder iBinder = mPpsController.loadPluginLoader(installedPlugin.UUID);
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
         }
 
@@ -127,7 +131,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             com.tencent.shadow.core.loader.infos.InstalledPlugin loaderInstalledPlugin;
 
             if (installedPlugin.isInterface(partKey)) {
-                InstalledPlugin.PluginPart interfacePart = installedPlugin.getInterface(partKey);
+                InstalledPlugin.Part interfacePart = installedPlugin.getInterface(partKey);
                 loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
                         interfacePart.pluginFile,
                         1,
@@ -151,6 +155,28 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             }
             mPluginLoader.loadPlugin(loaderInstalledPlugin);
             return new LoadedPlugin(mPluginLoader);
+        }
+    }
+
+    private InstalledPLCallback.Stub mInstalledPLCallback = new InstalledPLCallback.Stub() {
+        @Override
+        public InstalledPL onReceive(int type, String uuid) throws RemoteException {
+            InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid,type);
+            return new InstalledPL(uuid,part.pluginFile.getAbsolutePath(),
+                    part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath());
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            mPpsController.setInstalledPLCallback(null);
+        } catch (RemoteException e) {
+            if (mLogger.isErrorEnabled()) {
+                mLogger.error(e);
+            }
         }
     }
 }

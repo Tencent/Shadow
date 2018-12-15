@@ -4,9 +4,11 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.tencent.shadow.core.interface_.InstalledType;
 import com.tencent.shadow.runtime.container.DelegateProvider;
 import com.tencent.shadow.runtime.container.DelegateProviderHolder;
 
@@ -50,6 +52,10 @@ public class PluginProcessService extends Service {
     }
 
     private class PpsControllerImpl extends PpsController.Stub {
+
+        private RemoteCallbackList<InstalledPLCallback> mCallbacks = new RemoteCallbackList<>();
+
+        private InstalledPLCallback mInstalledPLCallback;
         /**
          * 加载{@link #sDynamicPluginLoaderClassName}时
          * 需要从宿主PathClassLoader（含双亲委派）中加载的类
@@ -68,23 +74,23 @@ public class PluginProcessService extends Service {
         private IBinder mPluginLoader;
 
         @Override
-        public void loadRuntime(String uuid, String apkPath) throws RemoteException {
-            RunTimeLoader.loadRunTime(uuid, apkPath);
+        public void loadRuntime(String uuid) throws RemoteException {
+            InstalledPL installedPL = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_RUNTIME);
+            RunTimeLoader.loadRunTime(installedPL);
         }
 
         @Override
-        public IBinder loadPluginLoader(String uuid, String apkPath) throws RemoteException {
+        public IBinder loadPluginLoader(String uuid) throws RemoteException {
             if (mPluginLoader == null) {
-                File file = new File(apkPath);
+                InstalledPL installedPL = getInstalledPL(uuid,InstalledType.TYPE_PLUGIN_LOADER);
+                File file = new File(installedPL.filePath);
                 if (!file.exists()) {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
                 }
-                File odexDir = new File(file.getParent(), "plugin_loader_odex_" + uuid);
-                odexDir.mkdirs();
                 ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
-                        apkPath,
-                        odexDir.getAbsolutePath(),
-                        null,
+                        installedPL.filePath,
+                        installedPL.oDexPath,
+                        installedPL.libraryPath,
                         this.getClass().getClassLoader(),
                         sInterfaces
                 );
@@ -105,6 +111,30 @@ public class PluginProcessService extends Service {
                 }
             }
             return mPluginLoader;
+        }
+
+        @Override
+        public void setInstalledPLCallback(InstalledPLCallback callback) throws RemoteException {
+            if (mInstalledPLCallback != null && callback != null) {
+                if (!mInstalledPLCallback.asBinder().equals(callback.asBinder())) {
+                    throw new RemoteException("不能反复注册不同的InstalledPLCallback");
+                }
+            }
+            if (mInstalledPLCallback != null && callback == null) {
+                mCallbacks.unregister(mInstalledPLCallback);
+                return;
+            }
+            mCallbacks.register(callback);
+        }
+
+        private InstalledPL getInstalledPL(String uuid,int type) throws RemoteException {
+            int N = mCallbacks.beginBroadcast();
+            if (N == 0) {
+                throw new RuntimeException("客户端必须先调用 setInstalledPLCallback");
+            }
+            InstalledPL installedPL = mCallbacks.getBroadcastItem(0).onReceive(type,uuid);
+            mCallbacks.finishBroadcast();
+            return installedPL;
         }
     }
 }

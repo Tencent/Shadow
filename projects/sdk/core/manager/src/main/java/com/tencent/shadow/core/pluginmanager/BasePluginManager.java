@@ -7,9 +7,11 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.tencent.shadow.core.interface_.EnterCallback;
+import com.tencent.shadow.core.interface_.InstalledType;
 import com.tencent.shadow.core.interface_.PluginManager;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+import com.tencent.shadow.core.pluginmanager.installplugin.AppCacheFolderManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.CopySoBloc;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstallPluginException;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledDao;
@@ -23,6 +25,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,7 +57,7 @@ public abstract class BasePluginManager implements PluginManager {
     /**
      * 记录安装过的插件
      */
-    private ConcurrentHashMap<String, InstalledPlugin> mInstallPlugins = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, List<InstalledPlugin>> mInstallPlugins = new ConcurrentHashMap<>();
 
 
     public BasePluginManager(Context context) {
@@ -102,6 +105,7 @@ public abstract class BasePluginManager implements PluginManager {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("onDestroy:");
         }
+        mInstallPlugins.clear();
     }
 
 
@@ -131,8 +135,62 @@ public abstract class BasePluginManager implements PluginManager {
         PluginConfig pluginConfig = mUnpackManager.unpackPlugin(hash, zip);
         InstalledPlugin installedPlugin = mInstalledDao.insert(pluginConfig);
 
-        mInstallPlugins.put(installedPlugin.UUID, installedPlugin);
+        List<InstalledPlugin> plugins = null;
+        if (mInstallPlugins.get(installedPlugin.UUID) == null) {
+            plugins = new ArrayList<>();
+        }else {
+            plugins = mInstallPlugins.get(installedPlugin.UUID);
+        }
+        plugins.add(installedPlugin);
+        mInstallPlugins.put(installedPlugin.UUID, plugins);
         return installedPlugin;
+    }
+
+    protected InstalledPlugin.Part getPluginPartByPartKey(String uuid, String partKey) {
+        if (mInstallPlugins.get(uuid) != null) {
+            List<InstalledPlugin> plugins = mInstallPlugins.get(uuid);
+            for (InstalledPlugin installedPlugin : plugins) {
+                if (installedPlugin.getPart(partKey) != null) {
+                    return installedPlugin.getPart(partKey);
+                }
+            }
+        } else {
+            InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID( uuid);
+            return installedPlugin.getPart(partKey);
+        }
+        throw new RuntimeException("没有找到Part partKey:" + partKey);
+    }
+
+    protected InstalledPlugin.Part getLoaderOrRunTimePart(String uuid, int type) {
+        if (type != InstalledType.TYPE_PLUGIN_LOADER && type != InstalledType.TYPE_PLUGIN_RUNTIME) {
+            throw new RuntimeException("不支持的type:" + type);
+        }
+        if (mInstallPlugins.get(uuid) != null) {
+            List<InstalledPlugin> plugins = mInstallPlugins.get(uuid);
+            for (InstalledPlugin installedPlugin : plugins) {
+                if (type == InstalledType.TYPE_PLUGIN_RUNTIME) {
+                    if (installedPlugin.runtimeFile != null) {
+                        return installedPlugin.runtimeFile;
+                    }
+                } else if (type == InstalledType.TYPE_PLUGIN_LOADER) {
+                    if (installedPlugin.pluginLoaderFile != null) {
+                        return installedPlugin.pluginLoaderFile;
+                    }
+                }
+            }
+        } else {
+            InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
+            if (type == InstalledType.TYPE_PLUGIN_RUNTIME) {
+                if (installedPlugin.runtimeFile != null) {
+                    return installedPlugin.runtimeFile;
+                }
+            } else if (type == InstalledType.TYPE_PLUGIN_LOADER) {
+                if (installedPlugin.pluginLoaderFile != null) {
+                    return installedPlugin.pluginLoaderFile;
+                }
+            }
+        }
+        throw new RuntimeException("没有找到Part type :" + type);
     }
 
     /**
@@ -142,19 +200,43 @@ public abstract class BasePluginManager implements PluginManager {
      * @param partKey 要oDex的插件partkey
      */
     public final void oDexPlugin(String uuid, String partKey) throws InstallPluginException {
-        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
-        InstalledPlugin.Part part = installedPlugin.getPart(partKey);
+        InstalledPlugin.Part part = getPluginPartByPartKey(uuid, partKey);
         try {
-            File oDexDir = ODexBloc.oDexPlugin(mUnpackManager.getAppDir(), part.pluginFile, uuid, partKey);
+            File root = mUnpackManager.getAppDir();
+            File oDexDir = AppCacheFolderManager.getODexDir(root, uuid);
+            File oDexPath = ODexBloc.oDexPlugin(part.pluginFile, oDexDir, AppCacheFolderManager.getODexCopiedFile(oDexDir, partKey));
 
             ContentValues values = new ContentValues();
-            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX, oDexDir.getAbsolutePath());
+            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX, oDexPath.getAbsolutePath());
             mInstalledDao.updatePlugin(uuid, partKey, values);
         } catch (InstallPluginException e) {
             throw e;
         }
-
     }
+
+
+    /**
+     * odex优化
+     *
+     * @param uuid 插件包的uuid
+     * @param type 要oDex的插件类型 @class IntalledType  loader or runtime
+     */
+    public final void oDexPluginLoaderOrRunTime(String uuid, int type) throws InstallPluginException {
+        InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
+        try {
+            File root = mUnpackManager.getAppDir();
+            File oDexDir = AppCacheFolderManager.getODexDir(root, uuid);
+            String key = type == InstalledType.TYPE_PLUGIN_LOADER ? "loader" : "runtime";
+            File oDexPath = ODexBloc.oDexPlugin(part.pluginFile, oDexDir, AppCacheFolderManager.getODexCopiedFile(oDexDir, key));
+
+            ContentValues values = new ContentValues();
+            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX, oDexPath.getAbsolutePath());
+            mInstalledDao.updatePlugin(uuid, type, values);
+        } catch (InstallPluginException e) {
+            throw e;
+        }
+    }
+
 
     /**
      * 插件apk的so解压
@@ -163,14 +245,41 @@ public abstract class BasePluginManager implements PluginManager {
      * @param partKey 要解压so的插件partkey
      */
     public final void extractSo(String uuid, String partKey) throws InstallPluginException {
-        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
-        InstalledPlugin.Part part = installedPlugin.getPart(partKey);
+        InstalledPlugin.Part part = getPluginPartByPartKey(uuid, partKey);
         try {
-            File soDir = CopySoBloc.copySo(mUnpackManager.getAppDir(), part.pluginFile, uuid, partKey, getAbi());
+            File root = mUnpackManager.getAppDir();
+            String filter = "lib/" + getAbi() + "/";
+            File soDir = AppCacheFolderManager.getLibDir(root, uuid);
+            File soPath = CopySoBloc.copySo(part.pluginFile, soDir
+                    , AppCacheFolderManager.getLibCopiedFile(soDir, partKey), filter);
 
             ContentValues values = new ContentValues();
-            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soDir.getAbsolutePath());
-            mInstalledDao.updatePlugin(uuid, partKey, values);
+            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soPath.getAbsolutePath());
+            mInstalledDao.updatePlugin( uuid, partKey, values);
+        } catch (InstallPluginException e) {
+            throw e;
+        }
+    }
+
+    /**
+     * 插件apk的so解压
+     *
+     * @param uuid    插件包的uuid
+     * @param type 要oDex的插件类型 @class IntalledType  loader or runtime
+     */
+    public final void extractLoaderOrRunTimeSo(String uuid, int type) throws InstallPluginException {
+        InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
+        try {
+            File root = mUnpackManager.getAppDir();
+            String key = type == InstalledType.TYPE_PLUGIN_LOADER ? "loader" : "runtime";
+            String filter = "lib/" + getAbi() + "/";
+            File soDir = AppCacheFolderManager.getLibDir(root, uuid);
+            File soPath = CopySoBloc.copySo(part.pluginFile, soDir
+                    , AppCacheFolderManager.getLibCopiedFile(soDir, key), filter);
+
+            ContentValues values = new ContentValues();
+            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soPath.getAbsolutePath());
+            mInstalledDao.updatePlugin(uuid, type, values);
         } catch (InstallPluginException e) {
             throw e;
         }

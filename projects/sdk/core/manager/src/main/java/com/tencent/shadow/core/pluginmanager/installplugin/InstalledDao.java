@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
+import com.tencent.shadow.core.interface_.InstalledType;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -80,19 +82,22 @@ public class InstalledDao {
         installedPlugin.UUID = UUID;
         while (cursor.moveToNext()) {
             int type = cursor.getInt(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_TYPE));
-            if (type == InstalledRow.TYPE_UUID) {
+            if (type == InstalledType.TYPE_UUID) {
                 installedPlugin.UUID_NickName = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_VERSION));
             } else {
                 File pluginFile = new File(cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PATH)));
-                if (type == InstalledRow.TYPE_PLUGIN_LOADER) {
-                    installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(pluginFile);
-                } else if (type == InstalledRow.TYPE_PLUGIN_RUNTIME) {
-                    installedPlugin.runtimeFile = new InstalledPlugin.Part(pluginFile);
+                String oDexPath = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX));
+                File oDexDir = oDexPath == null ? null : new File(oDexPath);
+                String libPath = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB));
+                File libDir = libPath == null ? null : new File(libPath);
+                if (type == InstalledType.TYPE_PLUGIN_LOADER) {
+                    installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(pluginFile, oDexDir, libDir);
+                } else if (type == InstalledType.TYPE_PLUGIN_RUNTIME) {
+                    installedPlugin.runtimeFile = new InstalledPlugin.Part(pluginFile, oDexDir, libDir);
                 } else {
                     String partKey = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PARTKEY));
-                    String oDexPath = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX));
-                    File oDexDir = oDexPath == null ? null : new File(oDexPath);
-                    if (type == InstalledRow.TYPE_PLUGIN) {
+
+                    if (type == InstalledType.TYPE_PLUGIN) {
                         int columnIndex = cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_DEPENDSON);
                         boolean hasDependencies = !cursor.isNull(columnIndex);
                         String[] dependsOn;
@@ -110,11 +115,9 @@ public class InstalledDao {
                         } else {
                             dependsOn = null;
                         }
-                        String libPath = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB));
-                        File libDir = libPath == null ? null : new File(libPath);
                         installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(pluginFile, oDexDir, libDir, dependsOn));
-                    } else if (type == InstalledRow.TYPE_INTERFACE) {
-                        installedPlugin.interfaces.put(partKey, new InstalledPlugin.PluginPart(pluginFile, oDexDir, null, null));
+                    } else if (type == InstalledType.TYPE_INTERFACE) {
+                        installedPlugin.interfaces.put(partKey, new InstalledPlugin.Part(pluginFile, oDexDir, libDir));
                     } else {
                         throw new RuntimeException("出现不认识的type==" + type);
                     }
@@ -133,7 +136,7 @@ public class InstalledDao {
      */
     public List<InstalledPlugin> getLastPlugins(int limit) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select uuid from shadowPluginManager where  type = ?   order by installedTime desc limit " + limit, new String[]{String.valueOf(InstalledRow.TYPE_UUID)});
+        Cursor cursor = db.rawQuery("select uuid from shadowPluginManager where  type = ?   order by installedTime desc limit " + limit, new String[]{String.valueOf(InstalledType.TYPE_UUID)});
         List<String> uuids = new ArrayList<>();
         while (cursor.moveToNext()) {
             String uuid = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_UUID));
@@ -164,16 +167,34 @@ public class InstalledDao {
         return row > 0;
     }
 
+    public boolean updatePlugin(String UUID, int type, ContentValues contentValues) {
+        if (type != InstalledType.TYPE_PLUGIN_LOADER && type != InstalledType.TYPE_PLUGIN_RUNTIME) {
+            throw new RuntimeException("不支持更新 type:" + type);
+        }
+        SQLiteDatabase db = mDBHelper.getWritableDatabase();
+        db.beginTransaction();
+        int row = 0;
+        try {
+            row = db.update(InstalledPluginDBHelper.TABLE_NAME_MANAGER, contentValues,
+                    InstalledPluginDBHelper.COLUMN_UUID + " = ? and " + InstalledPluginDBHelper.COLUMN_TYPE + " = ?",
+                    new String[]{UUID, String.valueOf(type)});
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+        return row > 0;
+    }
+
     private Pair<InstalledPlugin, List<ContentValues>> parseConfig(PluginConfig pluginConfig) {
         List<InstalledRow> installedRows = new ArrayList<>();
         InstalledPlugin installedPlugin = new InstalledPlugin();
         if (pluginConfig.pluginLoader != null) {
-            installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(pluginConfig.pluginLoader.file);
-            installedRows.add(new InstalledRow(pluginConfig.pluginLoader.hash, null, pluginConfig.pluginLoader.file.getAbsolutePath(), InstalledRow.TYPE_PLUGIN_LOADER));
+            installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(pluginConfig.pluginLoader.file, null, null);
+            installedRows.add(new InstalledRow(pluginConfig.pluginLoader.hash, null, pluginConfig.pluginLoader.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_LOADER));
         }
         if (pluginConfig.runTime != null) {
-            installedPlugin.runtimeFile = new InstalledPlugin.Part(pluginConfig.runTime.file);
-            installedRows.add(new InstalledRow(pluginConfig.runTime.hash, null, pluginConfig.runTime.file.getAbsolutePath(), InstalledRow.TYPE_PLUGIN_RUNTIME));
+            installedPlugin.runtimeFile = new InstalledPlugin.Part(pluginConfig.runTime.file, null, null);
+            installedRows.add(new InstalledRow(pluginConfig.runTime.hash, null, pluginConfig.runTime.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_RUNTIME));
         }
         if (pluginConfig.plugins != null) {
             Set<Map.Entry<String, PluginConfig.PluginFileInfo>> plugins = pluginConfig.plugins.entrySet();
@@ -181,22 +202,22 @@ public class InstalledDao {
             for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : plugins) {
                 PluginConfig.PluginFileInfo fileInfo = plugin.getValue();
                 map.put(plugin.getKey(), new InstalledPlugin.PluginPart(fileInfo.file, null, null, fileInfo.dependsOn));
-                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.dependsOn, fileInfo.file.getAbsolutePath(), InstalledRow.TYPE_PLUGIN));
+                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.dependsOn, fileInfo.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN));
             }
             installedPlugin.plugins = map;
         }
         if (pluginConfig.interfaces != null) {
             Set<Map.Entry<String, PluginConfig.FileInfo>> plugins = pluginConfig.interfaces.entrySet();
-            Map<String, InstalledPlugin.PluginPart> map = new HashMap<>();
+            Map<String, InstalledPlugin.Part> map = new HashMap<>();
             for (Map.Entry<String, PluginConfig.FileInfo> plugin : plugins) {
                 PluginConfig.FileInfo fileInfo = plugin.getValue();
-                map.put(plugin.getKey(), new InstalledPlugin.PluginPart(fileInfo.file,null,null,null));
-                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.file.getAbsolutePath(), InstalledRow.TYPE_INTERFACE));
+                map.put(plugin.getKey(), new InstalledPlugin.Part(fileInfo.file, null, null));
+                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.file.getAbsolutePath(), InstalledType.TYPE_INTERFACE));
             }
             installedPlugin.interfaces = map;
         }
         InstalledRow uuidRow = new InstalledRow();
-        uuidRow.type = InstalledRow.TYPE_UUID;
+        uuidRow.type = InstalledType.TYPE_UUID;
         uuidRow.filePath = pluginConfig.UUID;
         installedRows.add(uuidRow);
         List<ContentValues> contentValues = new ArrayList<>();

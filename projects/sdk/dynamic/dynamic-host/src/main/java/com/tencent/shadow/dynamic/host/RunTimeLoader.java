@@ -1,9 +1,7 @@
 package com.tencent.shadow.dynamic.host;
 
-import android.os.Build;
 import android.text.TextUtils;
 
-import java.io.File;
 import java.lang.reflect.Field;
 
 /**
@@ -18,15 +16,13 @@ public class RunTimeLoader {
     /**
      * 加载runtime apk
      *
-     * @param UUID    版本号
-     * @param apkPath apk的路径
      */
-    public static void loadRunTime(String UUID, String apkPath) {
+    public static void loadRunTime(InstalledPL installedPL) {
         ClassLoader contextClassLoader = RunTimeLoader.class.getClassLoader();
         ClassLoader parent = contextClassLoader.getParent();
         if (parent instanceof UUIDClassLoader) {
             String currentUUID = ((UUIDClassLoader) parent).UUID;
-            if (TextUtils.equals(currentUUID, UUID)) {
+            if (TextUtils.equals(currentUUID, installedPL.UUID)) {
                 //已经加载相同版本的runtime了,不需要加载
                 return;
             } else {
@@ -53,10 +49,8 @@ public class RunTimeLoader {
         }
         //正常处理，将runtime 挂到pathclassLoader之上
         try {
-            File odexDir = new File(new File(apkPath).getParent(), "plugin_runtime_odex_" + UUID);
-            odexDir.mkdirs();
-            UUIDClassLoader pluginContainerClassLoader = new UUIDClassLoader(UUID, apkPath,
-                    Build.VERSION.SDK_INT >= 21 ? null : odexDir.getAbsolutePath(), null, parent);
+            UUIDClassLoader pluginContainerClassLoader = new UUIDClassLoader(installedPL.UUID, installedPL.filePath,
+                    installedPL.oDexPath, installedPL.libraryPath, parent);
             hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
         } catch (Exception e) {
             throw new RuntimeException(e);
