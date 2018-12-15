@@ -227,6 +227,7 @@ public class UpgradeablePluginManager {
         if (lastModified != mPMLastModified || mActualPluginManager == null) {//有PM更新或者还没初始化PM时 创建新的PluginManager实例
             File dexFile = new File(mPluginStoreDir, REMOTE_PLUGIN_MANAGER_ODEX_DIRNAME + "_" + mPluginManagerFile.lastModified());
             ApkClassLoader apkClassLoader = loadRemotePluginManagerApk(mPluginManagerFile, dexFile, REMOTE_PLUGIN_MANAGER_INTERFACES);
+            Context pluginManagerContext = new PluginManagerContext(context, mPluginManagerFile.getAbsolutePath(), apkClassLoader);
             Bundle saveSate = null;
             if (mActualPluginManager != null) {
                 saveSate = new Bundle();
@@ -234,8 +235,8 @@ public class UpgradeablePluginManager {
                 mActualPluginManager.onDestroy();
             }
             mActualPluginManager = apkClassLoader.getInterface(PluginManager.class, REMOTE_PLUGIN_MANAGER_IMPL_CLASS_NAME,
-                    new Class[]{String.class, Context.class, ViewCallback.class, String.class},
-                    new Object[]{appType, context, viewCallback, mPluginManagerFile.getAbsolutePath()});
+                    new Class[]{String.class, Context.class, ViewCallback.class},
+                    new Object[]{appType, pluginManagerContext, viewCallback});
             mActualPluginManager.onCreate(saveSate);
             Log.d(TAG, "lastModified:" + lastModified + " mPMLastModified:" + mPMLastModified);
         }

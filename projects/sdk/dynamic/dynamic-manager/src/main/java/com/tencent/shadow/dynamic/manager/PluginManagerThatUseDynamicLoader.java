@@ -28,8 +28,8 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
     final private File mSoDirRoot;
 
-    public PluginManagerThatUseDynamicLoader(String appId, Context context, ViewCallback viewCallback, String apkPath) {
-        super(appId, context, viewCallback, apkPath);
+    public PluginManagerThatUseDynamicLoader(String appId, Context context, ViewCallback viewCallback) {
+        super(appId, context, viewCallback);
         File dir = context.getDir("dynamic-manager", Context.MODE_PRIVATE);
         mSoDirRoot = new File(dir, "SoDirRoot");
     }

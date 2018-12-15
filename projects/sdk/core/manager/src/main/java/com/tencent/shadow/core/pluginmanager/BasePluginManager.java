@@ -68,23 +68,17 @@ public abstract class BasePluginManager implements PluginManager {
     protected Handler mHandler = new Handler(Looper.getMainLooper());
 
     /**
-     * PluginManager的apk路径
-     */
-    protected String mApkPath;
-
-    /**
      * 记录安装过的插件
      */
     private ConcurrentHashMap<String, InstalledPlugin> mInstallPlugins = new ConcurrentHashMap<>();
 
 
-    public BasePluginManager(String appId, Context context, ViewCallback viewCallback, String apkPath) {
+    public BasePluginManager(String appId, Context context, ViewCallback viewCallback) {
         this.mHostContext = context.getApplicationContext();
         this.mViewCallback = viewCallback;
         this.mAppID = appId;
         this.mUnpackManager = new UnpackManager(mHostContext.getFilesDir());
         this.mInstalledDao = new InstalledDao(InstalledPluginDBHelper.getInstance(mHostContext), mAppID);
-        this.mApkPath = apkPath;
     }
 
     /**
