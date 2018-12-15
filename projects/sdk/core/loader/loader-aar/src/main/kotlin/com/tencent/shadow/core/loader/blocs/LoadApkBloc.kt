@@ -24,12 +24,16 @@ object LoadApkBloc {
     fun loadInterface(hostAppContext: Context, installedPlugin: InstalledPlugin, parentClassLoader: ClassLoader): PluginClassLoader {
         val apk = installedPlugin.pluginFile
         val odexDir = installedPlugin.oDexDir
+        var libraryPath : String ? = null;
+        if(installedPlugin.libraryDir != null){
+            libraryPath = installedPlugin.libraryDir.absolutePath
+        }
 //        prepareDirs(odexDir, installedPlugin.libraryDir)
         return PluginClassLoader(
                 hostAppContext,
                 apk.absolutePath,
                 odexDir,
-                installedPlugin.libraryDir.absolutePath,
+                libraryPath,
                 parentClassLoader
         )
     }
