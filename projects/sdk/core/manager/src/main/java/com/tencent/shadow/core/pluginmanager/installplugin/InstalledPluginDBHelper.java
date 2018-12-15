@@ -27,10 +27,6 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
      */
     public final static String COLUMN_TYPE = "type";
     /**
-     * 插件的名称
-     */
-    public final static String COLUMN_FILE_NAME = "fileName";
-    /**
      * 插件的路径
      */
     public final static String COLUMN_PATH = "filePath";
@@ -94,7 +90,6 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 + COLUMN_PATH + " VARCHAR, "
                 + COLUMN_TYPE + " INTEGER, "
                 + COLUMN_PARTKEY + " VARCHAR, "
-                + COLUMN_FILE_NAME + " VARCHAR, "
                 + COLUMN_DEPENDSON + " VARCHAR, "
                 + COLUMN_UUID + " VARCHAR, "
                 + COLUMN_VERSION + " VARCHAR, "
@@ -102,7 +97,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 + COLUMN_INSTALL_TIME + " INTEGER ,"
                 + COLUMN_PLUGIN_ODEX + " VARCHAR ,"
                 + COLUMN_PLUGIN_LIB + " VARCHAR ,"
-                + " PRIMARY KEY (" + COLUMN_UUID + "," + COLUMN_APPID + "," + COLUMN_FILE_NAME + ")"
+                + " PRIMARY KEY (" + COLUMN_UUID + "," + COLUMN_APPID + "," + COLUMN_PATH + ")"
                 + ");";
         db.execSQL(sql);
     }

@@ -46,11 +46,6 @@ public class InstalledPlugin implements Serializable {
      */
     public Map<String, PluginPart> interfaces = new HashMap<>();
 
-    /**
-     * 插件的存储目录
-     */
-    public File storageDir;
-
 
     public InstalledPlugin() {
     }

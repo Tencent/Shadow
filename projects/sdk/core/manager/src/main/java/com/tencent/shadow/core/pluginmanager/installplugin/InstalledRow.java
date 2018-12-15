@@ -27,8 +27,6 @@ public class InstalledRow {
 
     public String[] dependsOn;
 
-    public String fileName;
-
     public String filePath;
 
     public int type;
@@ -42,10 +40,10 @@ public class InstalledRow {
     public InstalledRow() {
     }
 
-    public InstalledRow(String hash, String partKey, String fileName, int type) {
+    public InstalledRow(String hash, String partKey, String filePath, int type) {
         this.hash = hash;
         this.partKey = partKey;
-        this.fileName = fileName;
+        this.filePath = filePath;
         this.type = type;
     }
 
@@ -70,7 +68,6 @@ public class InstalledRow {
         contentValues.put(InstalledPluginDBHelper.COLUMN_UUID, UUID);
         contentValues.put(InstalledPluginDBHelper.COLUMN_VERSION, version);
         contentValues.put(InstalledPluginDBHelper.COLUMN_PATH, filePath);
-        contentValues.put(InstalledPluginDBHelper.COLUMN_FILE_NAME, fileName);
         return contentValues;
     }
 }

@@ -87,9 +87,7 @@ public class InstalledDao {
             if (type == InstalledRow.TYPE_UUID) {
                 installedPlugin.UUID_NickName = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_VERSION));
             } else {
-                File dir = new File(cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PATH)));
-                File pluginFile = new File(dir,cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_FILE_NAME)));
-                installedPlugin.storageDir = dir;
+                File pluginFile = new File(cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PATH)));
                 if (type == InstalledRow.TYPE_PLUGIN_LOADER) {
                     installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(pluginFile);
                 } else if (type == InstalledRow.TYPE_PLUGIN_RUNTIME) {
@@ -176,11 +174,11 @@ public class InstalledDao {
         InstalledPlugin installedPlugin = new InstalledPlugin();
         if (pluginConfig.pluginLoader != null) {
             installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(pluginConfig.pluginLoader.file);
-            installedRows.add(new InstalledRow(pluginConfig.pluginLoader.hash, null, pluginConfig.pluginLoader.file.getName(), InstalledRow.TYPE_PLUGIN_LOADER));
+            installedRows.add(new InstalledRow(pluginConfig.pluginLoader.hash, null, pluginConfig.pluginLoader.file.getAbsolutePath(), InstalledRow.TYPE_PLUGIN_LOADER));
         }
         if (pluginConfig.runTime != null) {
             installedPlugin.runtimeFile = new InstalledPlugin.Part(pluginConfig.runTime.file);
-            installedRows.add(new InstalledRow(pluginConfig.runTime.hash, null, pluginConfig.runTime.file.getName(), InstalledRow.TYPE_PLUGIN_RUNTIME));
+            installedRows.add(new InstalledRow(pluginConfig.runTime.hash, null, pluginConfig.runTime.file.getAbsolutePath(), InstalledRow.TYPE_PLUGIN_RUNTIME));
         }
         if (pluginConfig.plugins != null) {
             Set<Map.Entry<String, PluginConfig.PluginFileInfo>> plugins = pluginConfig.plugins.entrySet();
@@ -188,7 +186,7 @@ public class InstalledDao {
             for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : plugins) {
                 PluginConfig.PluginFileInfo fileInfo = plugin.getValue();
                 map.put(plugin.getKey(), new InstalledPlugin.PluginPart(fileInfo.file, null, null, fileInfo.dependsOn));
-                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.dependsOn, fileInfo.file.getName(), InstalledRow.TYPE_PLUGIN));
+                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.dependsOn, fileInfo.file.getAbsolutePath(), InstalledRow.TYPE_PLUGIN));
             }
             installedPlugin.plugins = map;
         }
@@ -198,13 +196,13 @@ public class InstalledDao {
             for (Map.Entry<String, PluginConfig.FileInfo> plugin : plugins) {
                 PluginConfig.FileInfo fileInfo = plugin.getValue();
                 map.put(plugin.getKey(), new InstalledPlugin.PluginPart(fileInfo.file,null,null,null));
-                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.file.getName(), InstalledRow.TYPE_INTERFACE));
+                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.file.getAbsolutePath(), InstalledRow.TYPE_INTERFACE));
             }
             installedPlugin.interfaces = map;
         }
         InstalledRow uuidRow = new InstalledRow();
         uuidRow.type = InstalledRow.TYPE_UUID;
-        uuidRow.fileName = pluginConfig.UUID;
+        uuidRow.filePath = pluginConfig.UUID;
         installedRows.add(uuidRow);
         List<ContentValues> contentValues = new ArrayList<>();
         for (InstalledRow row : installedRows) {
@@ -212,12 +210,10 @@ public class InstalledDao {
             row.installedTime = pluginConfig.storageDir.lastModified();
             row.UUID = pluginConfig.UUID;
             row.version = pluginConfig.UUID_NickName;
-            row.filePath = pluginConfig.storageDir.getAbsolutePath();
             contentValues.add(row.toContentValues());
         }
         installedPlugin.UUID = pluginConfig.UUID;
         installedPlugin.UUID_NickName = pluginConfig.UUID_NickName;
-        installedPlugin.storageDir = pluginConfig.storageDir;
         return new Pair<>(installedPlugin, contentValues);
     }
 
