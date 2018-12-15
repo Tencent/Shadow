@@ -52,11 +52,8 @@ public class CopySoBloc {
                     if (zipEntry.getName().startsWith(filter)) {
                         BufferedOutputStream output = null;
                         try {
-                            File file = new File(soDir, zipEntry.getName());
-                            File parent = file.getParentFile();
-                            if (!parent.exists()) {
-                                parent.mkdirs();
-                            }
+                            String fileName = zipEntry.getName().substring(filter.length());
+                            File file = new File(soDir, fileName);
                             output = new BufferedOutputStream(
                                     new FileOutputStream(file));
                             BufferedInputStream input = new BufferedInputStream(zipInputStream);
