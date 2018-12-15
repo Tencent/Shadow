@@ -141,7 +141,7 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
                         Long.toString(interfacePart.pluginFile.lastModified()),
                         null,
                         interfacePart.oDexDir,
-                        null
+                        interfacePart.libraryDir
                 );
             } else {
                 InstalledPlugin.PluginPart pluginPart = installedPlugin.getPlugin(partKey);
