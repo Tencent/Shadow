@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
 
-import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
@@ -28,8 +27,8 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
     final private File mSoDirRoot;
 
-    public PluginManagerThatUseDynamicLoader(String appId, Context context, ViewCallback viewCallback) {
-        super(appId, context, viewCallback);
+    public PluginManagerThatUseDynamicLoader(String appId, Context context) {
+        super(appId, context);
         File dir = context.getDir("dynamic-manager", Context.MODE_PRIVATE);
         mSoDirRoot = new File(dir, "SoDirRoot");
     }

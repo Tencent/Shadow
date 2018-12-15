@@ -5,10 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
 
+import com.tencent.shadow.core.interface_.EnterCallback;
 import com.tencent.shadow.core.interface_.PluginManager;
-import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.installplugin.CopySoBloc;
@@ -38,19 +37,9 @@ public abstract class BasePluginManager implements PluginManager {
     public Context mHostContext;
 
     /**
-     * 用于view对象创建的回调
-     */
-    private ViewCallback mViewCallback;
-
-    /**
      * 业务类型
      */
     protected String mAppID;
-
-    /**
-     * 来源id
-     */
-    protected long mFromId;
 
     /**
      * 从压缩包中将插件解压出来，解析成InstalledPlugin
@@ -73,9 +62,8 @@ public abstract class BasePluginManager implements PluginManager {
     private ConcurrentHashMap<String, InstalledPlugin> mInstallPlugins = new ConcurrentHashMap<>();
 
 
-    public BasePluginManager(String appId, Context context, ViewCallback viewCallback) {
+    public BasePluginManager(String appId, Context context) {
         this.mHostContext = context.getApplicationContext();
-        this.mViewCallback = viewCallback;
         this.mAppID = appId;
         this.mUnpackManager = new UnpackManager(mHostContext.getFilesDir());
         this.mInstalledDao = new InstalledDao(InstalledPluginDBHelper.getInstance(mHostContext), mAppID);
@@ -118,21 +106,9 @@ public abstract class BasePluginManager implements PluginManager {
 
 
     @Override
-    public void enter(Context context, long fromId, Bundle bundle) {
-        mFromId = fromId;
-    }
+    public void enter(Context context, long fromId, Bundle bundle, EnterCallback callback) {
 
-    /**
-     * 将view对象回调给mViewCallback
-     *
-     * @param view
-     */
-    public final void onViewLoaded(View view) {
-        if (mViewCallback != null) {
-            mViewCallback.onViewCreated(mFromId, view);
-        }
     }
-
 
     /**
      * 从文件夹中解压插件

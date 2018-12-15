@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.tencent.shadow.core.interface_.API;
+import com.tencent.shadow.core.interface_.EnterCallback;
 import com.tencent.shadow.core.interface_.PluginManager;
-import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.dynamic.host.download.DownloadException;
 import com.tencent.shadow.dynamic.host.download.Downloader;
 import com.tencent.shadow.dynamic.host.download.LengthHashURLConnectionDownloader;
@@ -221,7 +221,7 @@ public class UpgradeablePluginManager {
         return downloader.download(targetDownloadInfo, outputFile, tmpFile);
     }
 
-    public void enter(Context context, long fromId, Bundle bundle, ViewCallback viewCallback) throws Exception {
+    public void enter(Context context, long fromId, Bundle bundle, EnterCallback enterCallback) throws Exception {
         boolean needCheckDownload = !mDevMode && mPMLastModified != 0;//非首次下载需要后台检测更新
         long lastModified = mPluginManagerFile.lastModified();
         if (lastModified != mPMLastModified || mActualPluginManager == null) {//有PM更新或者还没初始化PM时 创建新的PluginManager实例
@@ -235,12 +235,12 @@ public class UpgradeablePluginManager {
                 mActualPluginManager.onDestroy();
             }
             mActualPluginManager = apkClassLoader.getInterface(PluginManager.class, REMOTE_PLUGIN_MANAGER_IMPL_CLASS_NAME,
-                    new Class[]{String.class, Context.class, ViewCallback.class},
-                    new Object[]{appType, pluginManagerContext, viewCallback});
+                    new Class[]{String.class, Context.class},
+                    new Object[]{appType, pluginManagerContext});
             mActualPluginManager.onCreate(saveSate);
             Log.d(TAG, "lastModified:" + lastModified + " mPMLastModified:" + mPMLastModified);
         }
-        mActualPluginManager.enter(context, fromId, bundle);
+        mActualPluginManager.enter(context, fromId, bundle, enterCallback);
         mPMLastModified = lastModified;
         if (needCheckDownload) {
             downloadRemotePluginManager(
