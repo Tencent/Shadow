@@ -55,6 +55,11 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             mPpsController = PpsController.Stub.asInterface(service);
+            try {
+                mPpsController.setInstalledPLCallback(mInstalledPLCallback);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
             mConnectCountDownLatch.countDown();
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("onServiceConnected");
@@ -115,7 +120,6 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 }
             }
         }
-        mPpsController.setInstalledPLCallback(mInstalledPLCallback);
         if (installedPlugin.pluginLoaderFile != null) {
             mPpsController.loadRuntime(installedPlugin.UUID);
         }

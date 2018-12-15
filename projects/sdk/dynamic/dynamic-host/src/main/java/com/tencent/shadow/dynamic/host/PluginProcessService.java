@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -53,9 +52,8 @@ public class PluginProcessService extends Service {
 
     private class PpsControllerImpl extends PpsController.Stub {
 
-        private RemoteCallbackList<InstalledPLCallback> mCallbacks = new RemoteCallbackList<>();
+        private InstalledPLCallback mCallback;
 
-        private InstalledPLCallback mInstalledPLCallback;
         /**
          * 加载{@link #sDynamicPluginLoaderClassName}时
          * 需要从宿主PathClassLoader（含双亲委派）中加载的类
@@ -115,26 +113,14 @@ public class PluginProcessService extends Service {
 
         @Override
         public void setInstalledPLCallback(InstalledPLCallback callback) throws RemoteException {
-            if (mInstalledPLCallback != null && callback != null) {
-                if (!mInstalledPLCallback.asBinder().equals(callback.asBinder())) {
-                    throw new RemoteException("不能反复注册不同的InstalledPLCallback");
-                }
+            if (mCallback != null) {
+                throw new IllegalStateException("不能重复设置");
             }
-            if (mInstalledPLCallback != null && callback == null) {
-                mCallbacks.unregister(mInstalledPLCallback);
-                return;
-            }
-            mCallbacks.register(callback);
+            mCallback = callback;
         }
 
         private InstalledPL getInstalledPL(String uuid,int type) throws RemoteException {
-            int N = mCallbacks.beginBroadcast();
-            if (N == 0) {
-                throw new RuntimeException("客户端必须先调用 setInstalledPLCallback");
-            }
-            InstalledPL installedPL = mCallbacks.getBroadcastItem(0).onReceive(type,uuid);
-            mCallbacks.finishBroadcast();
-            return installedPL;
+            return mCallback.onReceive(type, uuid);
         }
     }
 }
