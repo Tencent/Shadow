@@ -17,6 +17,10 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     public final static String TABLE_NAME_MANAGER = "shadowPluginManager";
 
     /**
+     * 自增主键
+     */
+    public final static String COLUMN_ID = "id";
+    /**
      * 插件的hash
      */
     public final static String COLUMN_HASH = "hash";
@@ -69,6 +73,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME_MANAGER + " ( "
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_HASH + " VARCHAR , "
                 + COLUMN_PATH + " VARCHAR, "
                 + COLUMN_TYPE + " INTEGER, "
@@ -78,8 +83,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 + COLUMN_VERSION + " VARCHAR, "
                 + COLUMN_INSTALL_TIME + " INTEGER ,"
                 + COLUMN_PLUGIN_ODEX + " VARCHAR ,"
-                + COLUMN_PLUGIN_LIB + " VARCHAR ,"
-                + " PRIMARY KEY (" + COLUMN_UUID + "," + COLUMN_PATH + ")"
+                + COLUMN_PLUGIN_LIB + " VARCHAR "
                 + ");";
         db.execSQL(sql);
     }
