@@ -1,6 +1,7 @@
 package com.tencent.shadow.core.pluginmanager.installplugin;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import dalvik.system.DexClassLoader;
@@ -32,6 +33,12 @@ public class ODexBloc {
             oDexDir.mkdirs();
 
             new DexClassLoader(apkFile.getAbsolutePath(), oDexDir.getAbsolutePath(), null, ODexBloc.class.getClassLoader());
+
+            try {
+                copiedTagFile.createNewFile();
+            } catch (IOException e) {
+                throw new InstallPluginException("oDexPlugin完毕 创建tag文件失败：" + copiedTagFile.getAbsolutePath(), e);
+            }
         }
 
         return oDexDir;

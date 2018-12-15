@@ -21,7 +21,7 @@ public class AppCacheFolderManager {
     }
 
     public static File getODexCopiedFile(File oDexDir,String key){
-        return new File(oDexDir, key+ "_copied");
+        return new File(oDexDir, key+ "_oDexed");
     }
 
 
