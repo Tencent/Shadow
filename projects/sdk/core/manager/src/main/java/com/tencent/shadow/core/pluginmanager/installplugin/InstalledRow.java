@@ -35,8 +35,6 @@ public class InstalledRow {
 
     public String version;
 
-    public String appId;
-
     public InstalledRow() {
     }
 
@@ -54,7 +52,6 @@ public class InstalledRow {
 
     public ContentValues toContentValues() {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(InstalledPluginDBHelper.COLUMN_APPID, appId);
         contentValues.put(InstalledPluginDBHelper.COLUMN_HASH, hash);
         contentValues.put(InstalledPluginDBHelper.COLUMN_INSTALL_TIME, installedTime);
         if (partKey != null) {

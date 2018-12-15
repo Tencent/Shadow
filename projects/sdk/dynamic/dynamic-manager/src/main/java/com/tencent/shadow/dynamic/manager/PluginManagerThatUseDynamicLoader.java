@@ -21,14 +21,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
-public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
+public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
     private ILogger mLogger = ShadowLoggerFactory.getLogger("BasePluginManager");
 
     final private File mSoDirRoot;
 
-    public PluginManagerThatUseDynamicLoader(String appId, Context context) {
-        super(appId, context);
+    protected PluginManagerThatUseDynamicLoader(String appId, Context context) {
+        super(context);
         File dir = context.getDir("dynamic-manager", Context.MODE_PRIVATE);
         mSoDirRoot = new File(dir, "SoDirRoot");
     }

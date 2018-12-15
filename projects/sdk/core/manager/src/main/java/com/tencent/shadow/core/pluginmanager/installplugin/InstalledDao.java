@@ -19,11 +19,8 @@ public class InstalledDao {
 
     private InstalledPluginDBHelper mDBHelper;
 
-    private String mAppId;
-
-    public InstalledDao(InstalledPluginDBHelper dbHelper, String appid) {
+    public InstalledDao(InstalledPluginDBHelper dbHelper) {
         mDBHelper = dbHelper;
-        mAppId = appid;
     }
 
     /**
@@ -73,13 +70,12 @@ public class InstalledDao {
     /**
      * 根据uuid和APPID获取对应的插件信息
      *
-     * @param appId 插件业务id
      * @param UUID  插件的发布id
      * @return 插件安装数据
      */
-    public InstalledPlugin getInstalledPluginByUUID(String appId, String UUID) {
+    public InstalledPlugin getInstalledPluginByUUID(String UUID) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from shadowPluginManager where appId = ?  and uuid = ?", new String[]{appId, UUID});
+        Cursor cursor = db.rawQuery("select * from shadowPluginManager where uuid = ?", new String[]{UUID});
         InstalledPlugin installedPlugin = new InstalledPlugin();
         installedPlugin.UUID = UUID;
         while (cursor.moveToNext()) {
@@ -132,13 +128,12 @@ public class InstalledDao {
     /**
      * 获取最近的插件列表数据
      *
-     * @param appId 插件业务id
      * @param limit 获取的数据数量
      * @return 插件列表数据
      */
-    public List<InstalledPlugin> getLastPlugins(String appId, int limit) {
+    public List<InstalledPlugin> getLastPlugins(int limit) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select uuid from shadowPluginManager where appId = ? and type = ?   order by installedTime desc limit " + limit, new String[]{appId, String.valueOf(InstalledRow.TYPE_UUID)});
+        Cursor cursor = db.rawQuery("select uuid from shadowPluginManager where  type = ?   order by installedTime desc limit " + limit, new String[]{String.valueOf(InstalledRow.TYPE_UUID)});
         List<String> uuids = new ArrayList<>();
         while (cursor.moveToNext()) {
             String uuid = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_UUID));
@@ -147,21 +142,21 @@ public class InstalledDao {
         cursor.close();
         List<InstalledPlugin> installedPlugins = new ArrayList<>();
         for (String uuid : uuids) {
-            installedPlugins.add(getInstalledPluginByUUID(appId, uuid));
+            installedPlugins.add(getInstalledPluginByUUID(uuid));
         }
         db.close();
         return installedPlugins;
     }
 
 
-    public boolean updatePlugin(String appId, String UUID, String partKey, ContentValues contentValues) {
+    public boolean updatePlugin(String UUID, String partKey, ContentValues contentValues) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         db.beginTransaction();
         int row = 0;
         try {
             row = db.update(InstalledPluginDBHelper.TABLE_NAME_MANAGER, contentValues,
-                    InstalledPluginDBHelper.COLUMN_UUID + " = ? and " + InstalledPluginDBHelper.COLUMN_APPID + " = ? and " + InstalledPluginDBHelper.COLUMN_PARTKEY + " = ?",
-                    new String[]{UUID, appId, partKey});
+                    InstalledPluginDBHelper.COLUMN_UUID + " = ? and " + InstalledPluginDBHelper.COLUMN_PARTKEY + " = ?",
+                    new String[]{UUID, partKey});
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
@@ -206,7 +201,6 @@ public class InstalledDao {
         installedRows.add(uuidRow);
         List<ContentValues> contentValues = new ArrayList<>();
         for (InstalledRow row : installedRows) {
-            row.appId = mAppId;
             row.installedTime = pluginConfig.storageDir.lastModified();
             row.UUID = pluginConfig.UUID;
             row.version = pluginConfig.UUID_NickName;
