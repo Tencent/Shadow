@@ -52,7 +52,7 @@ public class PluginProcessService extends Service {
 
     private class PpsControllerImpl extends PpsController.Stub {
 
-        private InstalledPLCallback mCallback;
+        private UuidManager mUuidManager;
 
         /**
          * 加载{@link #sDynamicPluginLoaderClassName}时
@@ -112,15 +112,15 @@ public class PluginProcessService extends Service {
         }
 
         @Override
-        public void setInstalledPLCallback(InstalledPLCallback callback) throws RemoteException {
-            if (mCallback != null) {
+        public void setUuidManager(UuidManager uuidManager) throws RemoteException {
+            if (mUuidManager != null) {
                 throw new IllegalStateException("不能重复设置");
             }
-            mCallback = callback;
+            mUuidManager = uuidManager;
         }
 
         private InstalledPL getInstalledPL(String uuid,int type) throws RemoteException {
-            return mCallback.onReceive(type, uuid);
+            return mUuidManager.getInstalledPL(uuid, type);
         }
     }
 }

@@ -1,7 +1,7 @@
 // PpsController.aidl
 package com.tencent.shadow.dynamic.host;
 
-import com.tencent.shadow.dynamic.host.InstalledPLCallback;
+import com.tencent.shadow.dynamic.host.UuidManager;
 //PpsController
 interface PpsController {
 
@@ -9,6 +9,6 @@ interface PpsController {
 
      IBinder loadPluginLoader(String uuid);
 
-     void setInstalledPLCallback(InstalledPLCallback callback);
+     void setUuidManager(UuidManager uuidManager);
 
 }

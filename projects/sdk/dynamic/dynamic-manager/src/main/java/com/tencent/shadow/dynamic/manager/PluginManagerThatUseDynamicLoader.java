@@ -13,8 +13,8 @@ import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.InstalledPL;
-import com.tencent.shadow.dynamic.host.InstalledPLCallback;
 import com.tencent.shadow.dynamic.host.PpsController;
+import com.tencent.shadow.dynamic.host.UuidManager;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 import java.util.concurrent.CountDownLatch;
@@ -56,7 +56,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         public void onServiceConnected(ComponentName name, IBinder service) {
             mPpsController = PpsController.Stub.asInterface(service);
             try {
-                mPpsController.setInstalledPLCallback(mInstalledPLCallback);
+                mPpsController.setUuidManager(mUuidManager);
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -162,9 +162,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         }
     }
 
-    private InstalledPLCallback.Stub mInstalledPLCallback = new InstalledPLCallback.Stub() {
+    private UuidManager.Stub mUuidManager = new UuidManager.Stub() {
         @Override
-        public InstalledPL onReceive(int type, String uuid) throws RemoteException {
+        public InstalledPL getInstalledPL(String uuid, int type) throws RemoteException {
             InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid,type);
             return new InstalledPL(uuid,part.pluginFile.getAbsolutePath(),
                     part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
@@ -176,7 +176,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     public void onDestroy() {
         super.onDestroy();
         try {
-            mPpsController.setInstalledPLCallback(null);
+            mPpsController.setUuidManager(null);
         } catch (RemoteException e) {
             if (mLogger.isErrorEnabled()) {
                 mLogger.error(e);
