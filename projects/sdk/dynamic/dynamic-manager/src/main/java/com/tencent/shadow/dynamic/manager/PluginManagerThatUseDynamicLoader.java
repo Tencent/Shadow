@@ -27,7 +27,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     private ILogger mLogger = ShadowLoggerFactory.getLogger("BasePluginManager");
 
 
-    protected PluginManagerThatUseDynamicLoader(String appId, Context context) {
+    protected PluginManagerThatUseDynamicLoader(Context context) {
         super(context);
     }
 
