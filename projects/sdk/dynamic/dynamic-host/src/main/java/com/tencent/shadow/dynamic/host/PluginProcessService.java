@@ -8,8 +8,6 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.tencent.shadow.core.interface_.InstalledType;
-import com.tencent.shadow.runtime.container.DelegateProvider;
-import com.tencent.shadow.runtime.container.DelegateProviderHolder;
 
 import java.io.File;
 
@@ -93,14 +91,12 @@ public class PluginProcessService extends Service {
                         sInterfaces
                 );
                 try {
-                    IBinder iBinder = pluginLoaderClassLoader.getInterface(
+                    mPluginLoader = pluginLoaderClassLoader.getInterface(
                             IBinder.class,
                             sDynamicPluginLoaderClassName,
                             new Class[]{Context.class},
                             new Object[]{PluginProcessService.this.getApplicationContext()}
                     );
-                    DelegateProviderHolder.setDelegateProvider((DelegateProvider) iBinder);
-                    mPluginLoader = iBinder;
                 } catch (Exception e) {
                     throw new RuntimeException(
                             pluginLoaderClassLoader + " 没有找到：" + sDynamicPluginLoaderClassName,

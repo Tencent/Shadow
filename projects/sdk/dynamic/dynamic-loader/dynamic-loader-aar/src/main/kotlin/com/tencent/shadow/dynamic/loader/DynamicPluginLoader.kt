@@ -11,10 +11,10 @@ import android.os.RemoteException
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.dynamic.host.ApkClassLoader
-import com.tencent.shadow.runtime.container.*
+import com.tencent.shadow.runtime.container.DelegateProviderHolder
 import java.util.concurrent.CountDownLatch
 
-internal class DynamicPluginLoader(hostContext: Context) : PluginLoader.Stub(), DelegateProvider {
+internal class DynamicPluginLoader(hostContext: Context) : PluginLoader.Stub() {
 
     companion object {
 
@@ -37,6 +37,7 @@ internal class DynamicPluginLoader(hostContext: Context) : PluginLoader.Stub(), 
     init {
         try {
             mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL)
+            DelegateProviderHolder.setDelegateProvider(mPluginLoader)
         } catch (e: Exception) {
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
         }
@@ -191,11 +192,4 @@ internal class DynamicPluginLoader(hostContext: Context) : PluginLoader.Stub(), 
         return Looper.myLooper() == Looper.getMainLooper()
     }
 
-    override fun getHostActivityDelegate(delegator: Class<out HostActivityDelegator>): HostActivityDelegate {
-        return mPluginLoader.getHostActivityDelegate(delegator)
-    }
-
-    override fun getHostServiceDelegate(delegator: Class<out HostServiceDelegator>): HostServiceDelegate {
-        return mPluginLoader.getHostServiceDelegate(delegator)
-    }
 }
