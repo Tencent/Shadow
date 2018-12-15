@@ -94,8 +94,8 @@ public class PluginProcessService extends Service {
                     mPluginLoader = pluginLoaderClassLoader.getInterface(
                             IBinder.class,
                             sDynamicPluginLoaderClassName,
-                            new Class[]{Context.class},
-                            new Object[]{PluginProcessService.this.getApplicationContext()}
+                            new Class[]{Context.class, UuidManager.class},
+                            new Object[]{PluginProcessService.this.getApplicationContext(), mUuidManager}
                     );
                 } catch (Exception e) {
                     throw new RuntimeException(

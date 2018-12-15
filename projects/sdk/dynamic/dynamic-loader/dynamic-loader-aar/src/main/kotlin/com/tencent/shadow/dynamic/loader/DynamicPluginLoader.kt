@@ -11,10 +11,11 @@ import android.os.RemoteException
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.dynamic.host.ApkClassLoader
+import com.tencent.shadow.dynamic.host.UuidManager
 import com.tencent.shadow.runtime.container.DelegateProviderHolder
 import java.util.concurrent.CountDownLatch
 
-internal class DynamicPluginLoader(hostContext: Context) : PluginLoader.Stub() {
+internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManager) : PluginLoader.Stub() {
 
     companion object {
 
