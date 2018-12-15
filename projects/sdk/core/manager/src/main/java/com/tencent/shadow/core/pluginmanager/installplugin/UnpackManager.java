@@ -24,19 +24,22 @@ public class UnpackManager {
 
     private final File mPluginUnpackedDir;
 
-    public UnpackManager(File root) {
+    private final String mAppName;
+
+    public UnpackManager(File root, String appName) {
         File parent = new File(root, DEFAULT_STORE_DIR_NAME);
         mPluginUnpackedDir = new File(parent, "UnpackedPlugin");
         mPluginUnpackedDir.mkdirs();
+        mAppName = appName;
     }
 
 
-    File getVersionDir(String appName, String appHash) {
-        return AppCacheFolderManager.getVersionDir(mPluginUnpackedDir, appName, appHash);
+    File getVersionDir(String appHash) {
+        return AppCacheFolderManager.getVersionDir(mPluginUnpackedDir, mAppName, appHash);
     }
 
-    public File getAppDir(String appName) {
-        return AppCacheFolderManager.getAppDir(mPluginUnpackedDir, appName);
+    public File getAppDir() {
+        return AppCacheFolderManager.getAppDir(mPluginUnpackedDir, mAppName);
     }
 
     /**
@@ -45,8 +48,8 @@ public class UnpackManager {
      * @param target Target
      * @return 插件解包的目标目录
      */
-    File getPluginUnpackDir(String appName, String appHash, File target) {
-        return new File(getVersionDir(appName, appHash), target.getName());
+    File getPluginUnpackDir(String appHash, File target) {
+        return new File(getVersionDir(appHash), target.getName());
     }
 
     /**
@@ -55,8 +58,8 @@ public class UnpackManager {
      * @param target Target
      * @return <code>true</code>表示已经解包了,即无需下载。
      */
-    boolean isPluginUnpacked(String appName, String versionHash, File target) {
-        File pluginUnpackDir = getPluginUnpackDir(appName, versionHash, target);
+    boolean isPluginUnpacked(String versionHash, File target) {
+        File pluginUnpackDir = getPluginUnpackDir(versionHash, target);
         return isDirUnpacked(pluginUnpackDir);
     }
 
@@ -74,16 +77,14 @@ public class UnpackManager {
 
     /**
      * 解包一个下载好的插件
-     *
-     * @param appId   插件业务名称
-     * @param zipHash 插件包的hash
+     *  @param zipHash 插件包的hash
      * @param target  插件包
      */
-    public PluginConfig unpackPlugin(String appId, String zipHash, File target) throws IOException, JSONException {
+    public PluginConfig unpackPlugin(String zipHash, File target) throws IOException, JSONException {
         if (zipHash == null) {
             zipHash = MinFileUtils.md5File(target);
         }
-        File pluginUnpackDir = getPluginUnpackDir(appId, zipHash, target);
+        File pluginUnpackDir = getPluginUnpackDir(zipHash, target);
 
         pluginUnpackDir.mkdirs();
         File tag = getUnpackedTag(pluginUnpackDir);

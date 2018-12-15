@@ -8,7 +8,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
 
-import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
@@ -21,12 +20,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
-public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
+public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
     private ILogger mLogger = ShadowLoggerFactory.getLogger("BasePluginManager");
 
-    public PluginManagerThatUseDynamicLoader(String appId, Context context, ViewCallback viewCallback) {
-        super(appId, context, viewCallback);
+
+    protected PluginManagerThatUseDynamicLoader(String appId, Context context) {
+        super(context);
     }
 
     /**

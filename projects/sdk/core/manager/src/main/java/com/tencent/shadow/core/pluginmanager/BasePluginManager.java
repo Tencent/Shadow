@@ -5,10 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
 
+import com.tencent.shadow.core.interface_.EnterCallback;
 import com.tencent.shadow.core.interface_.PluginManager;
-import com.tencent.shadow.core.interface_.ViewCallback;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.installplugin.CopySoBloc;
@@ -38,21 +37,6 @@ public abstract class BasePluginManager implements PluginManager {
     public Context mHostContext;
 
     /**
-     * 用于view对象创建的回调
-     */
-    private ViewCallback mViewCallback;
-
-    /**
-     * 业务类型
-     */
-    protected String mAppID;
-
-    /**
-     * 来源id
-     */
-    protected long mFromId;
-
-    /**
      * 从压缩包中将插件解压出来，解析成InstalledPlugin
      */
     private UnpackManager mUnpackManager;
@@ -73,13 +57,17 @@ public abstract class BasePluginManager implements PluginManager {
     private ConcurrentHashMap<String, InstalledPlugin> mInstallPlugins = new ConcurrentHashMap<>();
 
 
-    public BasePluginManager(String appId, Context context, ViewCallback viewCallback) {
+    public BasePluginManager(Context context) {
         this.mHostContext = context.getApplicationContext();
-        this.mViewCallback = viewCallback;
-        this.mAppID = appId;
-        this.mUnpackManager = new UnpackManager(mHostContext.getFilesDir());
-        this.mInstalledDao = new InstalledDao(InstalledPluginDBHelper.getInstance(mHostContext), mAppID);
+        this.mUnpackManager = new UnpackManager(mHostContext.getFilesDir(), getName());
+        this.mInstalledDao = new InstalledDao(new InstalledPluginDBHelper(mHostContext, getName()));
     }
+
+    /**
+     * PluginManager的名字
+     * 用于和其他PluginManager区分持续化存储的名字
+     */
+    abstract protected String getName();
 
     /**
      * PluginManager对象创建的时候回调
@@ -118,21 +106,9 @@ public abstract class BasePluginManager implements PluginManager {
 
 
     @Override
-    public void enter(Context context, long fromId, Bundle bundle) {
-        mFromId = fromId;
-    }
+    public void enter(Context context, long fromId, Bundle bundle, EnterCallback callback) {
 
-    /**
-     * 将view对象回调给mViewCallback
-     *
-     * @param view
-     */
-    public final void onViewLoaded(View view) {
-        if (mViewCallback != null) {
-            mViewCallback.onViewCreated(mFromId, view);
-        }
     }
-
 
     /**
      * 从文件夹中解压插件
@@ -152,7 +128,7 @@ public abstract class BasePluginManager implements PluginManager {
      * @return InstalledPlugin
      */
     public final InstalledPlugin installPluginFromZip(File zip, String hash) throws IOException, JSONException {
-        PluginConfig pluginConfig = mUnpackManager.unpackPlugin(mAppID, hash, zip);
+        PluginConfig pluginConfig = mUnpackManager.unpackPlugin(hash, zip);
         InstalledPlugin installedPlugin = mInstalledDao.insert(pluginConfig);
 
         mInstallPlugins.put(installedPlugin.UUID, installedPlugin);
@@ -166,14 +142,14 @@ public abstract class BasePluginManager implements PluginManager {
      * @param partKey 要oDex的插件partkey
      */
     public final void oDexPlugin(String uuid, String partKey) throws InstallPluginException {
-        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(mAppID, uuid);
+        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
         InstalledPlugin.Part part = installedPlugin.getPart(partKey);
         try {
-            File oDexDir = ODexBloc.oDexPlugin(mUnpackManager.getAppDir(mAppID), part.pluginFile, uuid, partKey);
+            File oDexDir = ODexBloc.oDexPlugin(mUnpackManager.getAppDir(), part.pluginFile, uuid, partKey);
 
             ContentValues values = new ContentValues();
             values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX, oDexDir.getAbsolutePath());
-            mInstalledDao.updatePlugin(mAppID, uuid, partKey, values);
+            mInstalledDao.updatePlugin(uuid, partKey, values);
         } catch (InstallPluginException e) {
             throw e;
         }
@@ -187,14 +163,14 @@ public abstract class BasePluginManager implements PluginManager {
      * @param partKey 要解压so的插件partkey
      */
     public final void extractSo(String uuid, String partKey) throws InstallPluginException {
-        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(mAppID, uuid);
+        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
         InstalledPlugin.Part part = installedPlugin.getPart(partKey);
         try {
-            File soDir = CopySoBloc.copySo(mUnpackManager.getAppDir(mAppID), part.pluginFile, uuid, partKey, getAbi());
+            File soDir = CopySoBloc.copySo(mUnpackManager.getAppDir(), part.pluginFile, uuid, partKey, getAbi());
 
             ContentValues values = new ContentValues();
             values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soDir.getAbsolutePath());
-            mInstalledDao.updatePlugin(mAppID, uuid, partKey, values);
+            mInstalledDao.updatePlugin(uuid, partKey, values);
         } catch (InstallPluginException e) {
             throw e;
         }
@@ -207,7 +183,7 @@ public abstract class BasePluginManager implements PluginManager {
      * @param limit 最多获取个数
      */
     public final List<InstalledPlugin> getInstalledPlugins(int limit) {
-        return mInstalledDao.getLastPlugins(mAppID, limit);
+        return mInstalledDao.getLastPlugins(limit);
     }
 
     /**
