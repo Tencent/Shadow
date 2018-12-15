@@ -16,7 +16,6 @@ import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
-import java.io.File;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -26,12 +25,8 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
     private ILogger mLogger = ShadowLoggerFactory.getLogger("BasePluginManager");
 
-    final private File mSoDirRoot;
-
     public PluginManagerThatUseDynamicLoader(String appId, Context context, ViewCallback viewCallback) {
         super(appId, context, viewCallback);
-        File dir = context.getDir("dynamic-manager", Context.MODE_PRIVATE);
-        mSoDirRoot = new File(dir, "SoDirRoot");
     }
 
     /**
@@ -130,7 +125,6 @@ public class PluginManagerThatUseDynamicLoader extends BasePluginManager {
             throw new RemoteException("在" + installedPlugin + "中找不到partKey==" + partKey);
         } else {
             com.tencent.shadow.core.loader.infos.InstalledPlugin loaderInstalledPlugin;
-            File soDir = new File(mSoDirRoot, installedPlugin.UUID);
 
             if (installedPlugin.isInterface(partKey)) {
                 InstalledPlugin.PluginPart interfacePart = installedPlugin.getInterface(partKey);
