@@ -14,7 +14,7 @@ import com.tencent.shadow.dynamic.host.ApkClassLoader
 import com.tencent.shadow.runtime.container.*
 import java.util.concurrent.CountDownLatch
 
-open class DynamicPluginLoader(hostContext: Context) : PluginLoader.Stub(), DelegateProvider {
+internal class DynamicPluginLoader(hostContext: Context) : PluginLoader.Stub(), DelegateProvider {
 
     companion object {
 
