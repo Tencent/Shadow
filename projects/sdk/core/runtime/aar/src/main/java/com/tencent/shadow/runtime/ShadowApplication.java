@@ -25,6 +25,8 @@ public abstract class ShadowApplication extends ShadowContext {
 
     private Map<String, List<String>> mBroadcasts;
 
+    public boolean isCallOnCreate;
+
     @Override
     public Context getApplicationContext() {
         return this;
@@ -33,6 +35,9 @@ public abstract class ShadowApplication extends ShadowContext {
     private Map<ShadowActivityLifecycleCallbacks, Application.ActivityLifecycleCallbacks> mActivityLifecycleCallbacksMap = new HashMap<>();
 
     public void onCreate() {
+
+        isCallOnCreate = true;
+
         for (Map.Entry<String, List<String>> entry: mBroadcasts.entrySet()){
             try {
                 Class<?> clazz = mPluginClassLoader.loadClass(entry.getKey());

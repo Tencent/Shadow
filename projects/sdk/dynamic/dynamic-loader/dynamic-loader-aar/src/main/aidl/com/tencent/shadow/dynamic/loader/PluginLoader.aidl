@@ -7,7 +7,9 @@ import com.tencent.shadow.core.loader.infos.InstalledPlugin;
 
 interface PluginLoader {
 
-    void loadPlugin(in InstalledPlugin installedPlugin);
+    void loadPlugin(String partKey);
+
+    Map getLoadedPlugin();
 
     void callApplicationOnCreate(String partKey);
 

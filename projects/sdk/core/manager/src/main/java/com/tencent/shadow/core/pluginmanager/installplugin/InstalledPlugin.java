@@ -76,11 +76,13 @@ public class InstalledPlugin implements Serializable {
     }
 
     static public class Part implements Serializable {
+        final public int pluginType;
         final public File pluginFile;
-        final public File oDexDir;
-        final public File libraryDir;
+        public File oDexDir;
+        public File libraryDir;
 
-        Part(File file, File oDexDir, File libraryDir) {
+        Part(int pluginType, File file, File oDexDir, File libraryDir) {
+            this.pluginType = pluginType;
             this.oDexDir = oDexDir;
             this.libraryDir = libraryDir;
             this.pluginFile = file;
@@ -90,8 +92,8 @@ public class InstalledPlugin implements Serializable {
     static public class PluginPart extends Part {
         final public String[] dependsOn;
 
-        PluginPart(File file, File oDexDir, File libraryDir, String[] dependsOn) {
-            super(file,oDexDir,libraryDir);
+        PluginPart(int pluginType, File file, File oDexDir, File libraryDir, String[] dependsOn) {
+            super(pluginType, file, oDexDir, libraryDir);
             this.dependsOn = dependsOn;
         }
     }

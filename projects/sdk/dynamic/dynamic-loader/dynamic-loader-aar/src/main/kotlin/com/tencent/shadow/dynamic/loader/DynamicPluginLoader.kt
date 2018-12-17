@@ -8,14 +8,17 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.os.RemoteException
+import com.tencent.shadow.core.interface_.InstalledType
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.dynamic.host.ApkClassLoader
+import com.tencent.shadow.dynamic.host.InstalledPart
 import com.tencent.shadow.dynamic.host.UuidManager
 import com.tencent.shadow.runtime.container.DelegateProviderHolder
+import java.io.File
 import java.util.concurrent.CountDownLatch
 
-internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManager) : PluginLoader.Stub() {
+internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManager, uuid: String) : PluginLoader.Stub() {
 
     companion object {
 
@@ -27,6 +30,10 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
     private val mApkClassLoader = DynamicPluginLoader::class.java.classLoader as ApkClassLoader
 
     private var mContext: Context;
+
+    private var mUuidManager: UuidManager;
+
+    private var mUuid: String;
 
     private val mUiHandler = Handler(Looper.getMainLooper())
 
@@ -43,12 +50,32 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
         }
         mContext = hostContext;
+        mUuidManager = uuidManager;
+        mUuid = uuid;
     }
 
     @Throws(RemoteException::class)
-    override fun loadPlugin(installedPlugin: InstalledPlugin) {
+    override fun loadPlugin(partKey: String) {
+        val part = mUuidManager.getInstalledPlugin(mUuid, partKey)
+        val type = if (part.partType == InstalledType.TYPE_PLUGIN) 0 else 1;
+        val pluginVersionForPluginLoaderManage = part.toPluginFileVersion();
+        val installedPlugin = InstalledPlugin(part.filePath, type, partKey, pluginVersionForPluginLoaderManage, part.dependsOn, part.oDexPath, part.libraryPath)
         val future = mPluginLoader.loadPlugin(mContext, installedPlugin)
         future.get()
+    }
+
+    override fun getLoadedPlugin(): MutableMap<String, Boolean> {
+        val plugins  = mPluginLoader.getAllPluginPart()
+        val loadPlugins = hashMapOf<String, Boolean>()
+        for(part in plugins){
+            loadPlugins[part.key] = part.value.application.isCallOnCreate
+        }
+        return loadPlugins
+    }
+
+    fun InstalledPart.toPluginFileVersion(): String {
+        val plugin = File(filePath)
+        return plugin.lastModified().toString()
     }
 
     @Throws(RemoteException::class)

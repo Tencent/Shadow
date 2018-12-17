@@ -8,11 +8,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
 
+import com.tencent.shadow.core.interface_.InstalledType;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
-import com.tencent.shadow.dynamic.host.InstalledPL;
+import com.tencent.shadow.dynamic.host.InstalledPart;
 import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.host.UuidManager;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
@@ -128,47 +129,28 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
         }
 
-        boolean hasPart = installedPlugin.hasPart(partKey);
-        if (!hasPart) {
-            throw new RemoteException("在" + installedPlugin + "中找不到partKey==" + partKey);
-        } else {
-            com.tencent.shadow.core.loader.infos.InstalledPlugin loaderInstalledPlugin;
+        mPluginLoader.loadPlugin(partKey);
+        return new LoadedPlugin(mPluginLoader);
 
-            if (installedPlugin.isInterface(partKey)) {
-                InstalledPlugin.Part interfacePart = installedPlugin.getInterface(partKey);
-                loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
-                        interfacePart.pluginFile,
-                        1,
-                        partKey,
-                        Long.toString(interfacePart.pluginFile.lastModified()),
-                        null,
-                        interfacePart.oDexDir,
-                        interfacePart.libraryDir
-                );
-            } else {
-                InstalledPlugin.PluginPart pluginPart = installedPlugin.getPlugin(partKey);
-                loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
-                        pluginPart.pluginFile,
-                        0,
-                        partKey,
-                        Long.toString(pluginPart.pluginFile.lastModified()),
-                        pluginPart.dependsOn,
-                        pluginPart.oDexDir,
-                        pluginPart.libraryDir
-                );
-            }
-            mPluginLoader.loadPlugin(loaderInstalledPlugin);
-            return new LoadedPlugin(mPluginLoader);
-        }
     }
 
     private UuidManager.Stub mUuidManager = new UuidManager.Stub() {
         @Override
-        public InstalledPL getInstalledPL(String uuid, int type) throws RemoteException {
-            InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid,type);
-            return new InstalledPL(uuid,part.pluginFile.getAbsolutePath(),
+        public InstalledPart getInstalledPL(String uuid, int type) throws RemoteException {
+            InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
+            return new InstalledPart(uuid, null, type, part.pluginFile.getAbsolutePath(),
                     part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
-                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath());
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(), null);
+        }
+
+        @Override
+        public InstalledPart getInstalledPlugin(String uuid, String partKey) throws RemoteException {
+            InstalledPlugin.Part part = getPluginPartByPartKey(uuid, partKey);
+            String[] dependsOn = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).dependsOn : null;
+            int type = part instanceof InstalledPlugin.PluginPart ? InstalledType.TYPE_PLUGIN : InstalledType.TYPE_INTERFACE;
+            return new InstalledPart(uuid, null, type, part.pluginFile.getAbsolutePath(),
+                    part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(), dependsOn);
         }
     };
 

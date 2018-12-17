@@ -209,6 +209,8 @@ public abstract class BasePluginManager implements PluginManager {
             ContentValues values = new ContentValues();
             values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX, oDexPath.getAbsolutePath());
             mInstalledDao.updatePlugin(uuid, partKey, values);
+
+            part.oDexDir = oDexPath;
         } catch (InstallPluginException e) {
             throw e;
         }
@@ -232,6 +234,8 @@ public abstract class BasePluginManager implements PluginManager {
             ContentValues values = new ContentValues();
             values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX, oDexPath.getAbsolutePath());
             mInstalledDao.updatePlugin(uuid, type, values);
+
+            part.oDexDir = oDexPath;
         } catch (InstallPluginException e) {
             throw e;
         }
@@ -256,6 +260,8 @@ public abstract class BasePluginManager implements PluginManager {
             ContentValues values = new ContentValues();
             values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soPath.getAbsolutePath());
             mInstalledDao.updatePlugin( uuid, partKey, values);
+
+            part.libraryDir = soPath;
         } catch (InstallPluginException e) {
             throw e;
         }
@@ -280,6 +286,8 @@ public abstract class BasePluginManager implements PluginManager {
             ContentValues values = new ContentValues();
             values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soPath.getAbsolutePath());
             mInstalledDao.updatePlugin(uuid, type, values);
+
+            part.libraryDir = soPath;
         } catch (InstallPluginException e) {
             throw e;
         }
