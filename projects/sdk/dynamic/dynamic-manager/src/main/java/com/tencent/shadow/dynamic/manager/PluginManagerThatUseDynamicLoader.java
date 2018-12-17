@@ -18,6 +18,7 @@ import com.tencent.shadow.dynamic.host.UuidManager;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.BIND_AUTO_CREATE;
@@ -86,6 +87,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             }
             return;
         }
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("startPluginProcessService "+serviceName);
+        }
         mServiceConnecting.set(true);
         mHandler.post(new Runnable() {
             @Override
@@ -109,10 +113,13 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         }
         if (mPpsController == null) {
             try {
-                long s = System.currentTimeMillis();
-                mConnectCountDownLatch.await();
                 if (mLogger.isInfoEnabled()) {
-                    mLogger.info("wait service connect:" + (System.currentTimeMillis() - s));
+                    mLogger.info("waiting service connect");
+                }
+                long s = System.currentTimeMillis();
+                mConnectCountDownLatch.await(4, TimeUnit.SECONDS);
+                if (mLogger.isInfoEnabled()) {
+                    mLogger.info("service connected " + (System.currentTimeMillis() - s));
                 }
             } catch (InterruptedException e) {
                 if (mLogger.isErrorEnabled()) {
