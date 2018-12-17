@@ -40,7 +40,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     /**
      * 插件加载服务端接口
      */
-    private PluginLoader mPluginLoader;
+    protected PluginLoader mPluginLoader;
 
     /**
      * 防止绑定service重入
@@ -98,13 +98,8 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         });
     }
 
-    /**
-     * 加载插件
-     *
-     * @param partKey         要加载的插件的partkey
-     * @param installedPlugin installedPlugin
-     */
-    public final LoadedPlugin loadPlugin(String partKey, InstalledPlugin installedPlugin) throws RemoteException {
+
+    public final void loadRunTime(String uuid) throws RemoteException{
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("loadPlugin 不能在主线程中调用");
         }
@@ -121,18 +116,20 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 }
             }
         }
+        InstalledPlugin installedPlugin = getInstalledPlugin(uuid);
         if (installedPlugin.pluginLoaderFile != null) {
             mPpsController.loadRuntime(installedPlugin.UUID);
         }
+    }
+
+    public final void loadPluginLoader(String uuid) throws RemoteException{
         if (mPluginLoader == null) {
+            InstalledPlugin installedPlugin = getInstalledPlugin(uuid);
             IBinder iBinder = mPpsController.loadPluginLoader(installedPlugin.UUID);
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
         }
-
-        mPluginLoader.loadPlugin(partKey);
-        return new LoadedPlugin(mPluginLoader);
-
     }
+
 
     private UuidManager.Stub mUuidManager = new UuidManager.Stub() {
         @Override

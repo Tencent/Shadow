@@ -138,7 +138,7 @@ public abstract class BasePluginManager implements PluginManager {
         List<InstalledPlugin> plugins = null;
         if (mInstallPlugins.get(installedPlugin.UUID) == null) {
             plugins = new ArrayList<>();
-        }else {
+        } else {
             plugins = mInstallPlugins.get(installedPlugin.UUID);
         }
         plugins.add(installedPlugin);
@@ -155,10 +155,14 @@ public abstract class BasePluginManager implements PluginManager {
                 }
             }
         } else {
-            InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID( uuid);
+            InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
             return installedPlugin.getPart(partKey);
         }
         throw new RuntimeException("没有找到Part partKey:" + partKey);
+    }
+
+    protected InstalledPlugin getInstalledPlugin(String uuid) {
+        return mInstalledDao.getInstalledPluginByUUID(uuid);
     }
 
     protected InstalledPlugin.Part getLoaderOrRunTimePart(String uuid, int type) {
@@ -259,7 +263,7 @@ public abstract class BasePluginManager implements PluginManager {
 
             ContentValues values = new ContentValues();
             values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soPath.getAbsolutePath());
-            mInstalledDao.updatePlugin( uuid, partKey, values);
+            mInstalledDao.updatePlugin(uuid, partKey, values);
 
             part.libraryDir = soPath;
         } catch (InstallPluginException e) {
@@ -270,7 +274,7 @@ public abstract class BasePluginManager implements PluginManager {
     /**
      * 插件apk的so解压
      *
-     * @param uuid    插件包的uuid
+     * @param uuid 插件包的uuid
      * @param type 要oDex的插件类型 @class IntalledType  loader or runtime
      */
     public final void extractLoaderOrRunTimeSo(String uuid, int type) throws InstallPluginException {
