@@ -25,7 +25,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 
 public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
-    private ILogger mLogger = ShadowLoggerFactory.getLogger("BasePluginManager");
+    private ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::BasePluginManager");
 
 
     protected PluginManagerThatUseDynamicLoader(Context context) {
@@ -103,6 +103,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("loadPlugin 不能在主线程中调用");
         }
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("loadRunTime mPpsController:"+mPpsController);
+        }
         if (mPpsController == null) {
             try {
                 long s = System.currentTimeMillis();
@@ -120,6 +123,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     }
 
     public final void loadPluginLoader(String uuid) throws RemoteException{
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("loadRunTime loadPluginLoader:"+mPluginLoader);
+        }
         if (mPluginLoader == null) {
             IBinder iBinder = mPpsController.loadPluginLoader(uuid);
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
@@ -159,5 +165,6 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 }
             }
         }
+        mPpsController = null;
     }
 }
