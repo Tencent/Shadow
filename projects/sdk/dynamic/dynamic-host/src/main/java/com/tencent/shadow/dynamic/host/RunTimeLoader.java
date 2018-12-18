@@ -17,12 +17,12 @@ public class RunTimeLoader {
      * 加载runtime apk
      *
      */
-    public static void loadRunTime(InstalledPL installedPL) {
+    public static void loadRunTime(InstalledPart installedPart) {
         ClassLoader contextClassLoader = RunTimeLoader.class.getClassLoader();
         ClassLoader parent = contextClassLoader.getParent();
         if (parent instanceof UUIDClassLoader) {
             String currentUUID = ((UUIDClassLoader) parent).UUID;
-            if (TextUtils.equals(currentUUID, installedPL.UUID)) {
+            if (TextUtils.equals(currentUUID, installedPart.UUID)) {
                 //已经加载相同版本的runtime了,不需要加载
                 return;
             } else {
@@ -49,8 +49,8 @@ public class RunTimeLoader {
         }
         //正常处理，将runtime 挂到pathclassLoader之上
         try {
-            UUIDClassLoader pluginContainerClassLoader = new UUIDClassLoader(installedPL.UUID, installedPL.filePath,
-                    installedPL.oDexPath, installedPL.libraryPath, parent);
+            UUIDClassLoader pluginContainerClassLoader = new UUIDClassLoader(installedPart.UUID, installedPart.filePath,
+                    installedPart.oDexPath, installedPart.libraryPath, parent);
             hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
         } catch (Exception e) {
             throw new RuntimeException(e);

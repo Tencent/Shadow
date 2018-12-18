@@ -91,9 +91,9 @@ public class InstalledDao {
                 String libPath = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB));
                 File libDir = libPath == null ? null : new File(libPath);
                 if (type == InstalledType.TYPE_PLUGIN_LOADER) {
-                    installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(pluginFile, oDexDir, libDir);
+                    installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(type, pluginFile, oDexDir, libDir);
                 } else if (type == InstalledType.TYPE_PLUGIN_RUNTIME) {
-                    installedPlugin.runtimeFile = new InstalledPlugin.Part(pluginFile, oDexDir, libDir);
+                    installedPlugin.runtimeFile = new InstalledPlugin.Part(type, pluginFile, oDexDir, libDir);
                 } else {
                     String partKey = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PARTKEY));
 
@@ -115,9 +115,9 @@ public class InstalledDao {
                         } else {
                             dependsOn = null;
                         }
-                        installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(pluginFile, oDexDir, libDir, dependsOn));
+                        installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(type,pluginFile, oDexDir, libDir, dependsOn));
                     } else if (type == InstalledType.TYPE_INTERFACE) {
-                        installedPlugin.interfaces.put(partKey, new InstalledPlugin.Part(pluginFile, oDexDir, libDir));
+                        installedPlugin.interfaces.put(partKey, new InstalledPlugin.Part(type, pluginFile, oDexDir, libDir));
                     } else {
                         throw new RuntimeException("出现不认识的type==" + type);
                     }
@@ -189,11 +189,11 @@ public class InstalledDao {
         List<InstalledRow> installedRows = new ArrayList<>();
         InstalledPlugin installedPlugin = new InstalledPlugin();
         if (pluginConfig.pluginLoader != null) {
-            installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(pluginConfig.pluginLoader.file, null, null);
+            installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(InstalledType.TYPE_PLUGIN_LOADER, pluginConfig.pluginLoader.file, null, null);
             installedRows.add(new InstalledRow(pluginConfig.pluginLoader.hash, null, pluginConfig.pluginLoader.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_LOADER));
         }
         if (pluginConfig.runTime != null) {
-            installedPlugin.runtimeFile = new InstalledPlugin.Part(pluginConfig.runTime.file, null, null);
+            installedPlugin.runtimeFile = new InstalledPlugin.Part(InstalledType.TYPE_PLUGIN_RUNTIME, pluginConfig.runTime.file, null, null);
             installedRows.add(new InstalledRow(pluginConfig.runTime.hash, null, pluginConfig.runTime.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_RUNTIME));
         }
         if (pluginConfig.plugins != null) {
@@ -201,7 +201,7 @@ public class InstalledDao {
             Map<String, InstalledPlugin.PluginPart> map = new HashMap<>();
             for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : plugins) {
                 PluginConfig.PluginFileInfo fileInfo = plugin.getValue();
-                map.put(plugin.getKey(), new InstalledPlugin.PluginPart(fileInfo.file, null, null, fileInfo.dependsOn));
+                map.put(plugin.getKey(), new InstalledPlugin.PluginPart(InstalledType.TYPE_PLUGIN,fileInfo.file, null, null, fileInfo.dependsOn));
                 installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.dependsOn, fileInfo.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN));
             }
             installedPlugin.plugins = map;
@@ -211,7 +211,7 @@ public class InstalledDao {
             Map<String, InstalledPlugin.Part> map = new HashMap<>();
             for (Map.Entry<String, PluginConfig.FileInfo> plugin : plugins) {
                 PluginConfig.FileInfo fileInfo = plugin.getValue();
-                map.put(plugin.getKey(), new InstalledPlugin.Part(fileInfo.file, null, null));
+                map.put(plugin.getKey(), new InstalledPlugin.Part(InstalledType.TYPE_INTERFACE, fileInfo.file, null, null));
                 installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.file.getAbsolutePath(), InstalledType.TYPE_INTERFACE));
             }
             installedPlugin.interfaces = map;

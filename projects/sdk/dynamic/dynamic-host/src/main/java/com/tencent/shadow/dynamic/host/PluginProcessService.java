@@ -61,6 +61,7 @@ public class PluginProcessService extends Service {
                 // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
                 "com.tencent.shadow.runtime.container",
                 "com.tencent.shadow.dynamic.host",
+                "com.tencent.shadow.core.interface_",
                 "com.tencent.shadow.core.interface_.log",
         };
 
@@ -71,22 +72,22 @@ public class PluginProcessService extends Service {
 
         @Override
         public void loadRuntime(String uuid) throws RemoteException {
-            InstalledPL installedPL = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_RUNTIME);
-            RunTimeLoader.loadRunTime(installedPL);
+            InstalledPart installedPart = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_RUNTIME);
+            RunTimeLoader.loadRunTime(installedPart);
         }
 
         @Override
         public IBinder loadPluginLoader(String uuid) throws RemoteException {
             if (mPluginLoader == null) {
-                InstalledPL installedPL = getInstalledPL(uuid,InstalledType.TYPE_PLUGIN_LOADER);
-                File file = new File(installedPL.filePath);
+                InstalledPart installedPart = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_LOADER);
+                File file = new File(installedPart.filePath);
                 if (!file.exists()) {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
                 }
                 ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
-                        installedPL.filePath,
-                        installedPL.oDexPath,
-                        installedPL.libraryPath,
+                        installedPart.filePath,
+                        installedPart.oDexPath,
+                        installedPart.libraryPath,
                         this.getClass().getClassLoader(),
                         sInterfaces
                 );
@@ -94,12 +95,12 @@ public class PluginProcessService extends Service {
                     mPluginLoader = pluginLoaderClassLoader.getInterface(
                             IBinder.class,
                             sDynamicPluginLoaderClassName,
-                            new Class[]{Context.class},
-                            new Object[]{PluginProcessService.this.getApplicationContext()}
+                            new Class[]{Context.class, UuidManager.class, String.class},
+                            new Object[]{PluginProcessService.this.getApplicationContext(), mUuidManager, uuid}
                     );
                 } catch (Exception e) {
                     throw new RuntimeException(
-                            pluginLoaderClassLoader + " 没有找到：" + sDynamicPluginLoaderClassName,
+                            pluginLoaderClassLoader + " : " + sDynamicPluginLoaderClassName + " 创建失败 ",
                             e
                     );
                 }
@@ -115,7 +116,7 @@ public class PluginProcessService extends Service {
             mUuidManager = uuidManager;
         }
 
-        private InstalledPL getInstalledPL(String uuid,int type) throws RemoteException {
+        private InstalledPart getInstalledPL(String uuid, int type) throws RemoteException {
             return mUuidManager.getInstalledPL(uuid, type);
         }
     }

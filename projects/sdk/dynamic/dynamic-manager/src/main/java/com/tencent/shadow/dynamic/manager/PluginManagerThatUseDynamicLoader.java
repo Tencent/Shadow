@@ -8,11 +8,12 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
 
+import com.tencent.shadow.core.interface_.InstalledType;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
-import com.tencent.shadow.dynamic.host.InstalledPL;
+import com.tencent.shadow.dynamic.host.InstalledPart;
 import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.host.UuidManager;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
@@ -40,7 +41,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     /**
      * 插件加载服务端接口
      */
-    private PluginLoader mPluginLoader;
+    protected PluginLoader mPluginLoader;
 
     /**
      * 防止绑定service重入
@@ -101,13 +102,8 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         });
     }
 
-    /**
-     * 加载插件
-     *
-     * @param partKey         要加载的插件的partkey
-     * @param installedPlugin installedPlugin
-     */
-    public final LoadedPlugin loadPlugin(String partKey, InstalledPlugin installedPlugin) throws RemoteException {
+
+    public final void loadRunTime(String uuid) throws RemoteException{
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("loadPlugin 不能在主线程中调用");
         }
@@ -127,55 +123,34 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 }
             }
         }
-        if (installedPlugin.pluginLoaderFile != null) {
-            mPpsController.loadRuntime(installedPlugin.UUID);
-        }
+        mPpsController.loadRuntime(uuid);
+    }
+
+    public final void loadPluginLoader(String uuid) throws RemoteException{
         if (mPluginLoader == null) {
-            IBinder iBinder = mPpsController.loadPluginLoader(installedPlugin.UUID);
+            IBinder iBinder = mPpsController.loadPluginLoader(uuid);
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
-        }
-
-        boolean hasPart = installedPlugin.hasPart(partKey);
-        if (!hasPart) {
-            throw new RemoteException("在" + installedPlugin + "中找不到partKey==" + partKey);
-        } else {
-            com.tencent.shadow.core.loader.infos.InstalledPlugin loaderInstalledPlugin;
-
-            if (installedPlugin.isInterface(partKey)) {
-                InstalledPlugin.Part interfacePart = installedPlugin.getInterface(partKey);
-                loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
-                        interfacePart.pluginFile,
-                        1,
-                        partKey,
-                        Long.toString(interfacePart.pluginFile.lastModified()),
-                        null,
-                        interfacePart.oDexDir,
-                        interfacePart.libraryDir
-                );
-            } else {
-                InstalledPlugin.PluginPart pluginPart = installedPlugin.getPlugin(partKey);
-                loaderInstalledPlugin = new com.tencent.shadow.core.loader.infos.InstalledPlugin(
-                        pluginPart.pluginFile,
-                        0,
-                        partKey,
-                        Long.toString(pluginPart.pluginFile.lastModified()),
-                        pluginPart.dependsOn,
-                        pluginPart.oDexDir,
-                        pluginPart.libraryDir
-                );
-            }
-            mPluginLoader.loadPlugin(loaderInstalledPlugin);
-            return new LoadedPlugin(mPluginLoader);
         }
     }
 
+
     private UuidManager.Stub mUuidManager = new UuidManager.Stub() {
         @Override
-        public InstalledPL getInstalledPL(String uuid, int type) throws RemoteException {
-            InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid,type);
-            return new InstalledPL(uuid,part.pluginFile.getAbsolutePath(),
+        public InstalledPart getInstalledPL(String uuid, int type) throws RemoteException {
+            InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
+            return new InstalledPart(uuid, null, type, part.pluginFile.getAbsolutePath(),
                     part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
-                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath());
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(), null);
+        }
+
+        @Override
+        public InstalledPart getInstalledPlugin(String uuid, String partKey) throws RemoteException {
+            InstalledPlugin.Part part = getPluginPartByPartKey(uuid, partKey);
+            String[] dependsOn = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).dependsOn : null;
+            int type = part instanceof InstalledPlugin.PluginPart ? InstalledType.TYPE_PLUGIN : InstalledType.TYPE_INTERFACE;
+            return new InstalledPart(uuid, null, type, part.pluginFile.getAbsolutePath(),
+                    part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(), dependsOn);
         }
     };
 

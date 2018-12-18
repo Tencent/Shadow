@@ -86,6 +86,12 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
         }
     }
 
+    fun getAllPluginPart() :HashMap<String,PluginParts> {
+        mLock.withLock {
+            return mPluginPartsMap
+        }
+    }
+
     @Throws(LoadPluginException::class)
     fun loadPlugin(
             hostAppContext: Context,
