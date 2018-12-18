@@ -1,4 +1,4 @@
 includeBuild '../coding'
 includeBuild '../core'
-include 'dynamic-manager', 'dynamic-host'
+include 'dynamic-manager', 'dynamic-host', 'dynamic-host:dynamic-host-aar'
 include 'dynamic-loader', 'dynamic-loader:dynamic-loader-aar'
