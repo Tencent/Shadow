@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Build;
 
 import com.tencent.shadow.core.interface_.PluginManager;
+import com.tencent.shadow.core.interface_.log.ILogger;
+import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -11,6 +13,7 @@ import java.lang.reflect.Field;
 import dalvik.system.BaseDexClassLoader;
 
 final class ManagerImplLoader {
+    private ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::ManagerImplLoader");
     private static final String MANAGER_FACTORY_CLASS_NAME = "com.tencent.shadow.dynamic.impl.ManagerFactoryImpl";
     private static final String WHITE_LIST_CLASS_NAME = "com.tencent.shadow.dynamic.impl.WhiteList";
     private static final String WHITE_LIST_FIELD_NAME = "sWhiteList";
@@ -35,7 +38,9 @@ final class ManagerImplLoader {
             odexDir = new File(root, Long.toString(apk.lastModified(), Character.MAX_RADIX));
             odexDir.mkdirs();
         }
-
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("load SDK_INT:" + Build.VERSION.SDK_INT);
+        }
         BaseDexClassLoader dexClassLoader = new BaseDexClassLoader(
                 apk.getAbsolutePath(),
                 odexDir,
