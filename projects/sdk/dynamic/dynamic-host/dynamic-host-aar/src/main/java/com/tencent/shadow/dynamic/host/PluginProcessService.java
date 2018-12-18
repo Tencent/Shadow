@@ -126,9 +126,6 @@ public class PluginProcessService extends Service {
 
         @Override
         public void setUuidManager(UuidManager uuidManager) throws RemoteException {
-            if (mUuidManager != null) {
-                throw new IllegalStateException("不能重复设置");
-            }
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("setUuidManager ");
             }
