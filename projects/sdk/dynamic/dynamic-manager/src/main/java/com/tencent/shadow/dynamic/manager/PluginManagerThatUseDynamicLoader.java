@@ -116,16 +116,12 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 }
             }
         }
-        InstalledPlugin installedPlugin = getInstalledPlugin(uuid);
-        if (installedPlugin.pluginLoaderFile != null) {
-            mPpsController.loadRuntime(installedPlugin.UUID);
-        }
+        mPpsController.loadRuntime(uuid);
     }
 
     public final void loadPluginLoader(String uuid) throws RemoteException{
         if (mPluginLoader == null) {
-            InstalledPlugin installedPlugin = getInstalledPlugin(uuid);
-            IBinder iBinder = mPpsController.loadPluginLoader(installedPlugin.UUID);
+            IBinder iBinder = mPpsController.loadPluginLoader(uuid);
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
         }
     }
