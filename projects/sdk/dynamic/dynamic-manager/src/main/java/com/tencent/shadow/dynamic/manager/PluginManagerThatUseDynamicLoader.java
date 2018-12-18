@@ -150,11 +150,13 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     @Override
     public void onDestroy() {
         super.onDestroy();
-        try {
-            mPpsController.setUuidManager(null);
-        } catch (RemoteException e) {
-            if (mLogger.isErrorEnabled()) {
-                mLogger.error(e);
+        if (mPpsController != null) {
+            try {
+                mPpsController.setUuidManager(null);
+            } catch (RemoteException e) {
+                if (mLogger.isErrorEnabled()) {
+                    mLogger.error(e);
+                }
             }
         }
     }
