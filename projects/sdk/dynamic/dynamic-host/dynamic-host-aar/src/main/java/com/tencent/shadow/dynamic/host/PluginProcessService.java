@@ -22,14 +22,14 @@ public class PluginProcessService extends Service {
     public void onCreate() {
         super.onCreate();
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("onCreate");
+            mLogger.info("onCreate:" + this);
         }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("onBind");
+            mLogger.info("onBind:" + this);
         }
         return mPpsController;
     }
@@ -37,7 +37,7 @@ public class PluginProcessService extends Service {
     @Override
     public boolean onUnbind(Intent intent) {
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("onUnbind");
+            mLogger.info("onUnbind:" + this);
         }
         return super.onUnbind(intent);
     }
@@ -46,7 +46,7 @@ public class PluginProcessService extends Service {
     public void onRebind(Intent intent) {
         super.onRebind(intent);
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("onRebind");
+            mLogger.info("onRebind:" + this);
         }
     }
 
@@ -54,7 +54,7 @@ public class PluginProcessService extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("onDestroy");
+            mLogger.info("onDestroy:" + this);
         }
     }
 
@@ -62,7 +62,7 @@ public class PluginProcessService extends Service {
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("onTaskRemoved");
+            mLogger.info("onTaskRemoved:" + this);
         }
     }
 
@@ -91,16 +91,16 @@ public class PluginProcessService extends Service {
         @Override
         public void loadRuntime(String uuid) throws RemoteException {
             if (mLogger.isInfoEnabled()) {
-                mLogger.info("loadRuntime uuid:"+uuid);
+                mLogger.info("loadRuntime uuid:" + uuid);
             }
             InstalledPart installedPart = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_RUNTIME);
-            RunTimeLoader.loadRunTime(installedPart);
+            RunTimeLoader.loadRunTime(new RunTimeInfo(installedPart.filePath, installedPart.oDexPath, installedPart.libraryPath));
         }
 
         @Override
         public IBinder loadPluginLoader(String uuid) throws RemoteException {
             if (mLogger.isInfoEnabled()) {
-                mLogger.info("loadPluginLoader uuid:"+uuid+" loader:"+mPluginLoader);
+                mLogger.info("loadPluginLoader uuid:" + uuid + " loader:" + mPluginLoader);
             }
             if (mPluginLoader == null) {
                 InstalledPart installedPart = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_LOADER);

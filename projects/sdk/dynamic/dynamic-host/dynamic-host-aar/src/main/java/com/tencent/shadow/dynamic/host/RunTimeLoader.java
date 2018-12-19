@@ -1,41 +1,52 @@
 package com.tencent.shadow.dynamic.host;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 
+import java.io.File;
 import java.lang.reflect.Field;
 
+import dalvik.system.BaseDexClassLoader;
+
 /**
- * 将runTime apk加载到UUIDClassLoader，形成如下结构的classLoader树结构
+ * 将runTime apk加载到DexPathClassLoader，形成如下结构的classLoader树结构
  * ---BootClassLoader
- * ----UUIDClassLoader
+ * ----DexPathClassLoader
  * ------PathClassLoader
  */
 public class RunTimeLoader {
 
     private static ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::RunTimeLoader");
 
+    private static String SP_NAME = "ShadowRunTimeLoader";
+
+    private static String KEY_CONTAINER = "key_RunTimeInfo";
+
     /**
      * 加载runtime apk
-     *
      */
-    public static void loadRunTime(InstalledPart installedPart) {
+    public static void loadRunTime(RunTimeInfo runTimeInfo) {
         ClassLoader contextClassLoader = RunTimeLoader.class.getClassLoader();
         ClassLoader parent = contextClassLoader.getParent();
-        if (parent instanceof UUIDClassLoader) {
-            String currentUUID = ((UUIDClassLoader) parent).UUID;
-            if (TextUtils.equals(currentUUID, installedPart.UUID)) {
+        if (parent instanceof DexPathClassLoader) {
+            String apkPath = ((DexPathClassLoader) parent).apkPath;
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("last apkPath:" + apkPath + " new apkPath:" + runTimeInfo.apkPath);
+            }
+            if (TextUtils.equals(apkPath, runTimeInfo.apkPath)) {
                 //已经加载相同版本的runtime了,不需要加载
-                if(mLogger.isInfoEnabled()){
-                    mLogger.info("已经加载相同UUID版本的runtime了,不需要加载");
+                if (mLogger.isInfoEnabled()) {
+                    mLogger.info("已经加载相同apkPath的runtime了,不需要加载");
                 }
                 return;
             } else {
                 //版本不一样，说明要更新runtime，先恢复正常的classLoader结构
-                if(mLogger.isInfoEnabled()){
-                    mLogger.info("加载不相同UUID版本的runtime了,更新runtime");
+                if (mLogger.isInfoEnabled()) {
+                    mLogger.info("加载不相同apkPath的runtime了,更新runtime");
                 }
                 try {
                     hackParentClassLoader(contextClassLoader, parent.getParent());
@@ -43,27 +54,11 @@ public class RunTimeLoader {
                     throw new RuntimeException(e);
                 }
             }
-        } else { //如果parent不是UUIDClassLoader 那么有2种可能，1是加载了历史版本的runtime，需要卸载更新  2是首次加载runtime
-            try {
-                //DelegateProviderHolder是所有版本的Container都应该有的类
-                Class<?> aClass = contextClassLoader.loadClass("com.tencent.shadow.runtime.container.DelegateProviderHolder");
-                //没有异常，说明加载过其他版本的Container.需要先恢复contextClassLoader
-                try {
-                    if(mLogger.isInfoEnabled()){
-                        mLogger.info("加载过其他版本的Container.需要先恢复classLoader");
-                    }
-                    hackParentClassLoader(contextClassLoader, aClass.getClassLoader().getParent());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            } catch (ClassNotFoundException ignored) {
-                //任何Container都没有加载过
-            }
         }
         //正常处理，将runtime 挂到pathclassLoader之上
         try {
-            UUIDClassLoader pluginContainerClassLoader = new UUIDClassLoader(installedPart.UUID, installedPart.filePath,
-                    installedPart.oDexPath, installedPart.libraryPath, parent);
+            DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(runTimeInfo.apkPath, runTimeInfo.oDexPath,
+                    runTimeInfo.libraryPath, contextClassLoader.getParent());
             hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -111,5 +106,44 @@ public class RunTimeLoader {
             }
         }
         return field;
+    }
+
+    /**
+     * 是否需要重新恢复runtime
+     *
+     * @return true 有可用的runTime进行恢复
+     */
+    public static boolean recoveryRunTime(Context context) {
+        String json = getLastRunTimeInfo(context);
+        if (json != null) {
+            RunTimeInfo runTimeInfo = new RunTimeInfo(json);
+            loadRunTime(runTimeInfo);
+            return true;
+        }
+        return false;
+    }
+
+    public static void saveLastRunTimeInfo(Context context, String runTimeInfo) {
+        SharedPreferences preferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+        preferences.edit().putString(KEY_CONTAINER, runTimeInfo).apply();
+    }
+
+    private static String getLastRunTimeInfo(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+        return preferences.getString(KEY_CONTAINER, null);
+    }
+
+
+    static class DexPathClassLoader extends BaseDexClassLoader {
+        /**
+         * 加载的apk路径
+         */
+        public String apkPath;
+
+
+        public DexPathClassLoader(String dexPath, String optimizedDirectory, String librarySearchPath, ClassLoader parent) {
+            super(dexPath, optimizedDirectory == null ? null : new File(optimizedDirectory), librarySearchPath, parent);
+            this.apkPath = dexPath;
+        }
     }
 }
