@@ -17,7 +17,7 @@ gradlePlugin {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.tools.build:gradle:3.1.2'
+    implementation "com.android.tools.build:gradle:$build_gradle_version"
     implementation project(':transform')
 }
 
