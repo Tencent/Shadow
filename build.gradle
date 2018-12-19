@@ -59,25 +59,3 @@ task clean(type: Delete) {
     dependsOn gradle.includedBuilds*.task(':clean')
 }
 
-static def sdkTasks(task) {
-    return [":shadow-sdk:shadow-loader:$task",
-            ":shadow-sdk:shadow-runtime:$task",
-            ":shadow-sdk:shadow-transform:$task"]
-}
-
-tasks.create('cleanSdk').dependsOn(sdkTasks('clean'))
-
-tasks.create('lintSdk').dependsOn(
-        ":shadow-sdk:shadow-loader:lintRelease",
-        ":shadow-sdk:shadow-runtime:lintRelease"
-)
-
-tasks.create('publishSdkToMaven')
-        .dependsOn(lintSdk)
-        .dependsOn(sdkTasks('publishReleasePublicationToMavenRepository'))
-        .mustRunAfter(cleanSdk)
-
-tasks.create('cleanThenPublishSdkToMaven').dependsOn(
-        cleanSdk,
-        publishSdkToMaven
-)
