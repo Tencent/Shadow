@@ -19,6 +19,8 @@ import com.tencent.shadow.dynamic.host.UuidManager;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.BIND_AUTO_CREATE;
@@ -57,7 +59,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         public void onServiceConnected(ComponentName name, IBinder service) {
             mPpsController = PpsController.Stub.asInterface(service);
             try {
-                mPpsController.setUuidManager(mUuidManager);
+                mPpsController.setUuidManager(new UuidManagerStub());
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -87,6 +89,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             }
             return;
         }
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("startPluginProcessService "+serviceName);
+        }
         mServiceConnecting.set(true);
         mHandler.post(new Runnable() {
             @Override
@@ -108,10 +113,16 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         }
         if (mPpsController == null) {
             try {
-                long s = System.currentTimeMillis();
-                mConnectCountDownLatch.await();
                 if (mLogger.isInfoEnabled()) {
-                    mLogger.info("wait service connect:" + (System.currentTimeMillis() - s));
+                    mLogger.info("waiting service connect");
+                }
+                long s = System.currentTimeMillis();
+                boolean timeout = !mConnectCountDownLatch.await(10, TimeUnit.SECONDS);
+                if (timeout) {
+                    throw new RuntimeException(new TimeoutException("连接Service超时"));
+                }
+                if (mLogger.isInfoEnabled()) {
+                    mLogger.info("service connected " + (System.currentTimeMillis() - s));
                 }
             } catch (InterruptedException e) {
                 if (mLogger.isErrorEnabled()) {
@@ -133,7 +144,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     }
 
 
-    private UuidManager.Stub mUuidManager = new UuidManager.Stub() {
+    private class UuidManagerStub extends UuidManager.Stub {
         @Override
         public InstalledPart getInstalledPL(String uuid, int type) throws RemoteException {
             InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
