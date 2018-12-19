@@ -31,7 +31,6 @@ dependencies {
     implementation 'com.tencent.shadow.coding:lint'
     compileOnly 'com.tencent.shadow.core:interface'
     implementation 'com.tencent.shadow.core:manager'
-    compileOnly 'com.tencent.shadow.core:loader'
     compileOnly project(':dynamic-loader')
     compileOnly project(':dynamic-host')
 }
