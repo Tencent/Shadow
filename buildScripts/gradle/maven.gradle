@@ -1,13 +1,13 @@
 task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:assemble')
     dependsOn gradle.includedBuild('core').task(':interface:interface-aar:jarReleasePackage')
-    dependsOn gradle.includedBuild('core').task(':loader:loader-aar:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':loader:loader-aar:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':runtime:aar:jarReleasePackage')
     dependsOn gradle.includedBuild('core').task(':transform:assemble')
 
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:dynamic-host-aar:jarReleasePackage')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:dynamic-loader-aar:jarReleasePackage')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:dynamic-loader-aar:assembleRelease')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:assembleRelease')
 }
 
@@ -50,6 +50,35 @@ publishing {
                 setScm(scm)
             }
         }
+        interface_(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'interface'
+            version project.ARTIFACT_VERSION
+            artifact("$corePath/interface/interface-aar/build/outputs/jar/interface-aar-release.jar")
+
+            pom.withXml {
+                def root = asNode()
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        coreLoader(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'loader'
+            version project.ARTIFACT_VERSION
+            artifact("$corePath/loader/loader-aar/build/outputs/aar/loader-aar-release.aar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
     }
     repositories {
         maven {
@@ -70,10 +99,22 @@ model {
     tasks.generatePomFileForGradlePluginPublication {
         destination = file("$buildDir/pom/gradlePlugin-pom.xml")
     }
+    tasks.generatePomFileForInterface_Publication {
+        destination = file("$buildDir/pom/interface_-pom.xml")
+    }
+    tasks.generatePomFileForCoreLoaderPublication {
+        destination = file("$buildDir/pom/coreLoader-pom.xml")
+    }
 }
 
 tasks.whenTaskAdded { theTask ->
     if (theTask.name.equals("generatePomFileForGradlePluginPublication")) {
+        theTask.dependsOn(project.getTasksByName("buildSdk", false).first())
+    }
+    if (theTask.name.equals("generatePomFileForInterface_Publication")) {
+        theTask.dependsOn(project.getTasksByName("buildSdk", false).first())
+    }
+    if (theTask.name.equals("generatePomFileForCoreLoaderPublication")) {
         theTask.dependsOn(project.getTasksByName("buildSdk", false).first())
     }
 }
