@@ -18,7 +18,6 @@ import com.tencent.shadow.core.loader.remoteview.ShadowRemoteViewCreatorImp
 import com.tencent.shadow.runtime.container.*
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
-import org.slf4j.LoggerFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
@@ -159,10 +158,6 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
                 delegate.inject(mShadowRemoteViewCreatorProvider)
             }
         }
-    }
-
-    companion object {
-        private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
     }
 
     private inner class ShadowRemoteViewCreatorProviderImpl: ShadowRemoteViewCreatorProvider {
