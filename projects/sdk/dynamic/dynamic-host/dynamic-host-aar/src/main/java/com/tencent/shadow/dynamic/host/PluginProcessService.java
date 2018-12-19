@@ -58,6 +58,14 @@ public class PluginProcessService extends Service {
         }
     }
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onTaskRemoved");
+        }
+    }
+
     private class PpsControllerImpl extends PpsController.Stub {
 
         private UuidManager mUuidManager;
