@@ -2,6 +2,9 @@ package com.tencent.shadow.dynamic.host;
 
 import android.text.TextUtils;
 
+import com.tencent.shadow.core.interface_.log.ILogger;
+import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+
 import java.lang.reflect.Field;
 
 /**
@@ -12,6 +15,7 @@ import java.lang.reflect.Field;
  */
 public class RunTimeLoader {
 
+    private static ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::RunTimeLoader");
 
     /**
      * 加载runtime apk
@@ -24,9 +28,15 @@ public class RunTimeLoader {
             String currentUUID = ((UUIDClassLoader) parent).UUID;
             if (TextUtils.equals(currentUUID, installedPart.UUID)) {
                 //已经加载相同版本的runtime了,不需要加载
+                if(mLogger.isInfoEnabled()){
+                    mLogger.info("已经加载相同UUID版本的runtime了,不需要加载");
+                }
                 return;
             } else {
                 //版本不一样，说明要更新runtime，先恢复正常的classLoader结构
+                if(mLogger.isInfoEnabled()){
+                    mLogger.info("加载不相同UUID版本的runtime了,更新runtime");
+                }
                 try {
                     hackParentClassLoader(contextClassLoader, parent.getParent());
                 } catch (Exception e) {
@@ -39,6 +49,9 @@ public class RunTimeLoader {
                 Class<?> aClass = contextClassLoader.loadClass("com.tencent.shadow.runtime.container.DelegateProviderHolder");
                 //没有异常，说明加载过其他版本的Container.需要先恢复contextClassLoader
                 try {
+                    if(mLogger.isInfoEnabled()){
+                        mLogger.info("加载过其他版本的Container.需要先恢复classLoader");
+                    }
                     hackParentClassLoader(contextClassLoader, aClass.getClassLoader().getParent());
                 } catch (Exception e) {
                     throw new RuntimeException(e);

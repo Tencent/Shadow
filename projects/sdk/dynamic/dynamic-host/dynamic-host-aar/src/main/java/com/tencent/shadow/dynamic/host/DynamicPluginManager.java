@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import com.tencent.shadow.core.interface_.EnterCallback;
 import com.tencent.shadow.core.interface_.PluginManager;
+import com.tencent.shadow.core.interface_.log.ILogger;
+import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 
 import java.io.File;
 
@@ -13,6 +15,7 @@ public final class DynamicPluginManager implements PluginManager {
     final private PluginManagerUpdater mUpdater;
     private PluginManager mManagerImpl;
     private long mLastModified;
+    private ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::DynamicPluginManager");
 
     public DynamicPluginManager(PluginManagerUpdater updater) {
         if (updater.getLatest() == null) {
@@ -24,6 +27,9 @@ public final class DynamicPluginManager implements PluginManager {
 
     @Override
     public void enter(Context context, long fromId, Bundle bundle, EnterCallback callback) {
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("enter fromId:" + fromId + " callback:" + callback);
+        }
         updateManagerImpl(context);
         mManagerImpl.enter(context, fromId, bundle, callback);
         mUpdater.update();
@@ -31,12 +37,16 @@ public final class DynamicPluginManager implements PluginManager {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onCreate savedInstanceState:" + savedInstanceState);
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onSaveInstanceState outState:" + outState);
+        }
     }
 
     @Override
@@ -45,11 +55,17 @@ public final class DynamicPluginManager implements PluginManager {
             mManagerImpl.onDestroy();
             mManagerImpl = null;
         }
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onDestroy");
+        }
     }
 
     private void updateManagerImpl(Context context) {
         File latestManagerImplApk = mUpdater.getLatest();
         long lastModified = latestManagerImplApk.lastModified();
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("mLastModified != lastModified : " + (mLastModified != lastModified));
+        }
         if (mLastModified != lastModified) {
             ManagerImplLoader implLoader = new ManagerImplLoader(context, latestManagerImplApk);
             PluginManager newImpl = implLoader.load();

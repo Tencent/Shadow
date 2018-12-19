@@ -1,15 +1,19 @@
 package com.tencent.shadow.dynamic.host;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.tencent.shadow.core.interface_.PluginManager;
+import com.tencent.shadow.core.interface_.log.ILogger;
+import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
 
-import dalvik.system.DexClassLoader;
+import dalvik.system.BaseDexClassLoader;
 
 final class ManagerImplLoader {
+    private ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::ManagerImplLoader");
     private static final String MANAGER_FACTORY_CLASS_NAME = "com.tencent.shadow.dynamic.impl.ManagerFactoryImpl";
     private static final String WHITE_LIST_CLASS_NAME = "com.tencent.shadow.dynamic.impl.WhiteList";
     private static final String WHITE_LIST_FIELD_NAME = "sWhiteList";
@@ -29,12 +33,17 @@ final class ManagerImplLoader {
 
     PluginManager load() {
         File root = new File(applicationContext.getFilesDir(), "ManagerImplLoader");
-        File odexDir = new File(root, Long.toString(apk.lastModified(), Character.MAX_RADIX));
-        odexDir.mkdirs();
-
-        DexClassLoader dexClassLoader = new DexClassLoader(
+        File odexDir = null;
+        if (Build.VERSION.SDK_INT < 21) { //只有4.4及以下的手机才odex优化
+            odexDir = new File(root, Long.toString(apk.lastModified(), Character.MAX_RADIX));
+            odexDir.mkdirs();
+        }
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("load SDK_INT:" + Build.VERSION.SDK_INT);
+        }
+        BaseDexClassLoader dexClassLoader = new BaseDexClassLoader(
                 apk.getAbsolutePath(),
-                odexDir.getAbsolutePath(),
+                odexDir,
                 null,
                 getClass().getClassLoader()
         );
@@ -61,7 +70,7 @@ final class ManagerImplLoader {
 
         ApkClassLoader apkClassLoader = new ApkClassLoader(
                 apk.getAbsolutePath(),
-                odexDir.getAbsolutePath(),
+                odexDir == null ? null : odexDir.getAbsolutePath(),
                 null,
                 getClass().getClassLoader(),
                 interfaces);

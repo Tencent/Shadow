@@ -5,47 +5,57 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.tencent.shadow.core.interface_.InstalledType;
+import com.tencent.shadow.core.interface_.log.ILogger;
+import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 
 import java.io.File;
 
 
 public class PluginProcessService extends Service {
-
-    private final static String TAG = "PluginProcessService";
+    private ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::PluginProcessService");
 
     private final PpsController.Stub mPpsController = new PpsControllerImpl();
 
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d(TAG, "onCreate");
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onCreate");
+        }
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind");
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onBind");
+        }
         return mPpsController;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d(TAG, "onUnbind");
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onUnbind");
+        }
         return super.onUnbind(intent);
     }
 
     @Override
     public void onRebind(Intent intent) {
         super.onRebind(intent);
-        Log.d(TAG, "onRebind");
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onRebind");
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy");
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onDestroy");
+        }
     }
 
     private class PpsControllerImpl extends PpsController.Stub {
@@ -72,12 +82,18 @@ public class PluginProcessService extends Service {
 
         @Override
         public void loadRuntime(String uuid) throws RemoteException {
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("loadRuntime uuid:"+uuid);
+            }
             InstalledPart installedPart = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_RUNTIME);
             RunTimeLoader.loadRunTime(installedPart);
         }
 
         @Override
         public IBinder loadPluginLoader(String uuid) throws RemoteException {
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("loadPluginLoader uuid:"+uuid+" loader:"+mPluginLoader);
+            }
             if (mPluginLoader == null) {
                 InstalledPart installedPart = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_LOADER);
                 File file = new File(installedPart.filePath);
@@ -110,8 +126,8 @@ public class PluginProcessService extends Service {
 
         @Override
         public void setUuidManager(UuidManager uuidManager) throws RemoteException {
-            if (mUuidManager != null) {
-                throw new IllegalStateException("不能重复设置");
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("setUuidManager ");
             }
             mUuidManager = uuidManager;
         }
@@ -120,4 +136,5 @@ public class PluginProcessService extends Service {
             return mUuidManager.getInstalledPL(uuid, type);
         }
     }
+
 }
