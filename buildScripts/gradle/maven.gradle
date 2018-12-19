@@ -1,0 +1,83 @@
+task buildSdk() {
+    dependsOn gradle.includedBuild('core').task(':gradle-plugin:assemble')
+    dependsOn gradle.includedBuild('core').task(':interface:interface-aar:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':loader:loader-aar:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
+    dependsOn gradle.includedBuild('core').task(':runtime:aar:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':transform:assemble')
+
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:dynamic-host-aar:jarReleasePackage')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:dynamic-loader-aar:jarReleasePackage')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:assembleRelease')
+}
+
+apply from: 'buildScripts/gradle/GitHelper.gradle'
+apply plugin: 'maven-publish'
+
+static def getDependencyNode(scope, groupId, artifactId, version) {
+    Node node = new Node(null, 'dependency')
+    node.appendNode('groupId', groupId)
+    node.appendNode('artifactId', artifactId)
+    node.appendNode('version', version)
+    node.appendNode('scope', scope)
+    return node
+}
+
+def setScm(scm) {
+    scm.appendNode('connection', 'http://git.code.oa.com/now-shadow/shadow.git')
+    scm.appendNode('url', "https://git.code.oa.com/now-shadow/shadow/commit/$project.GIT_SHORT_REV")
+}
+
+def coreGroupId = 'com.tencent.shadow.core'
+def corePath = 'projects/sdk/core'
+
+publishing {
+    publications {
+        gradlePlugin(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'gradle-plugin'
+            version project.ARTIFACT_VERSION
+            artifact("$corePath/gradle-plugin/build/libs/gradle-plugin.jar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', project.ARTIFACT_VERSION))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username "rdm"
+                password "rdm"
+            }
+            if (isPublishRelease()) {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
+            } else {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots"
+            }
+        }
+    }
+}
+
+model {
+    tasks.generatePomFileForGradlePluginPublication {
+        destination = file("$buildDir/pom/gradlePlugin-pom.xml")
+    }
+}
+
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("generatePomFileForGradlePluginPublication")) {
+        theTask.dependsOn(project.getTasksByName("buildSdk", false).first())
+    }
+}
+
+static def isPublishRelease() {
+    return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
+}
