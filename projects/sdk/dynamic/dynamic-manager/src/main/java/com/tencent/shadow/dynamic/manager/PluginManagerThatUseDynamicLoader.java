@@ -20,6 +20,7 @@ import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.BIND_AUTO_CREATE;
@@ -116,7 +117,10 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                     mLogger.info("waiting service connect");
                 }
                 long s = System.currentTimeMillis();
-                mConnectCountDownLatch.await(4, TimeUnit.SECONDS);
+                boolean timeout = !mConnectCountDownLatch.await(10, TimeUnit.SECONDS);
+                if (timeout) {
+                    throw new RuntimeException(new TimeoutException("连接Service超时"));
+                }
                 if (mLogger.isInfoEnabled()) {
                     mLogger.info("service connected " + (System.currentTimeMillis() - s));
                 }
