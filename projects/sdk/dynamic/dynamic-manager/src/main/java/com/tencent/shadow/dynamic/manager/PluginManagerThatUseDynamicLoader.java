@@ -58,7 +58,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         public void onServiceConnected(ComponentName name, IBinder service) {
             mPpsController = PpsController.Stub.asInterface(service);
             try {
-                mPpsController.setUuidManager(mUuidManager);
+                mPpsController.setUuidManager(new UuidManagerStub());
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -140,7 +140,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     }
 
 
-    private UuidManager.Stub mUuidManager = new UuidManager.Stub() {
+    private class UuidManagerStub extends UuidManager.Stub {
         @Override
         public InstalledPart getInstalledPL(String uuid, int type) throws RemoteException {
             InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
