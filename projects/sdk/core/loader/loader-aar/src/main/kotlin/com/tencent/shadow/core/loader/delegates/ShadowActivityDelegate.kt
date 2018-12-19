@@ -6,6 +6,7 @@ import android.app.Fragment
 import android.content.Context
 import android.content.Context.LAYOUT_INFLATER_SERVICE
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -56,6 +57,9 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
     override fun getPluginActivity(): Any = mPluginActivity
 
+    private lateinit var mCurrentConfiguration: Configuration
+    private var mPluginHandleConfigurationChange: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val pluginInitBundle = if (savedInstanceState == null) mHostActivityDelegator.intent.extras else savedInstanceState
 
@@ -71,6 +75,13 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         bundleForPluginLoader.classLoader = this.javaClass.classLoader
         val pluginActivityClassName = bundleForPluginLoader.getString(CM_CLASS_NAME_KEY)
         val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(CM_ACTIVITY_INFO_KEY)
+
+        mCurrentConfiguration = Configuration(resources.configuration)
+        mPluginHandleConfigurationChange =
+                (pluginActivityInfo.activityInfo.configChanges
+                        or ActivityInfo.CONFIG_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
+                        or ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
+                        )
 
         mRawIntentExtraBundle = pluginInitBundle.getBundle(CM_EXTRAS_BUNDLE_KEY)
         mHostActivityDelegator.intent.replaceExtras(mRawIntentExtraBundle)
@@ -151,7 +162,14 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        mPluginActivity.onConfigurationChanged(newConfig)
+        val diff = newConfig.diff(mCurrentConfiguration)
+        if (diff == (diff and mPluginHandleConfigurationChange)) {
+            mPluginActivity.onConfigurationChanged(newConfig)
+            mCurrentConfiguration = Configuration(newConfig)
+        } else {
+            mHostActivityDelegator.superOnConfigurationChanged(newConfig)
+            mHostActivityDelegator.recreate()
+        }
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
