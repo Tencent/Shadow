@@ -57,7 +57,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
         val part = mUuidManager.getInstalledPlugin(mUuid, partKey)
         val type = if (part.partType == 1) 0 else 1 //todo 修复hardcode数字类型
         val pluginVersionForPluginLoaderManage = part.toPluginFileVersion();
-        val installedPlugin = InstalledPlugin(part.filePath, type, partKey, pluginVersionForPluginLoaderManage, part.dependsOn, part.oDexPath, part.libraryPath)
+        val installedPlugin = InstalledPlugin(part.apkFilePath, type, partKey, pluginVersionForPluginLoaderManage, part.dependsOn, part.oDexPath, part.libraryPath)
         val future = mPluginLoader.loadPlugin(mContext, installedPlugin)
         future.get()
     }
@@ -72,7 +72,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
     }
 
     fun InstalledPart.toPluginFileVersion(): String {
-        val plugin = File(filePath)
+        val plugin = File(apkFilePath)
         return plugin.lastModified().toString()
     }
 

@@ -1,33 +1,34 @@
 package com.tencent.shadow.dynamic.host;
 
 import android.os.Parcel;
-import android.os.Parcelable;
+
+import com.tencent.shadow.core.interface_.InstalledApk;
 
 /**
  * 安装完成的apk
  */
-public class InstalledPart implements Parcelable {
+public class InstalledPart extends InstalledApk {
 
-    public String partKey;
+    final public String partKey;
 
-    public int partType;
+    final public int partType;
 
-    public String UUID;
+    final public String UUID;
 
-    public String filePath;
+    final public String[] dependsOn;
 
-    public String oDexPath;
-
-    public String libraryPath;
-
-    public String[] dependsOn;
-
-    public InstalledPart(String UUID, String partKey, int partType, String filePath, String oDexPath, String libraryPath, String[] dependsOn) {
+    public InstalledPart(
+            String UUID,
+            String partKey,
+            int partType,
+            String filePath,
+            String oDexPath,
+            String libraryPath,
+            String[] dependsOn
+    ) {
+        super(filePath, oDexPath, libraryPath);
         this.UUID = UUID;
         this.partKey = partKey;
-        this.filePath = filePath;
-        this.oDexPath = oDexPath;
-        this.libraryPath = libraryPath;
         this.partType = partType;
         this.dependsOn = dependsOn;
     }
@@ -35,27 +36,23 @@ public class InstalledPart implements Parcelable {
 
     @Override
     public int describeContents() {
-        return 0;
+        return super.describeContents();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        super.writeToParcel(dest, flags);
         dest.writeString(this.partKey);
         dest.writeInt(this.partType);
         dest.writeString(this.UUID);
-        dest.writeString(this.filePath);
-        dest.writeString(this.oDexPath);
-        dest.writeString(this.libraryPath);
         dest.writeStringArray(this.dependsOn);
     }
 
     protected InstalledPart(Parcel in) {
+        super(in);
         this.partKey = in.readString();
         this.partType = in.readInt();
         this.UUID = in.readString();
-        this.filePath = in.readString();
-        this.oDexPath = in.readString();
-        this.libraryPath = in.readString();
         this.dependsOn = in.createStringArray();
     }
 

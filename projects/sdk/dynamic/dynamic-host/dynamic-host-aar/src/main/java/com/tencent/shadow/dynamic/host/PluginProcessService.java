@@ -97,7 +97,7 @@ public class PluginProcessService extends Service {
                 mLogger.info("loadRuntime uuid:" + uuid);
             }
             InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_RUNTIME);
-            RunTimeInfo runTimeInfo = new RunTimeInfo(installedPart.filePath, installedPart.oDexPath, installedPart.libraryPath);
+            RunTimeInfo runTimeInfo = new RunTimeInfo(installedPart.apkFilePath, installedPart.oDexPath, installedPart.libraryPath);
             boolean loaded = RunTimeLoader.loadRunTime(runTimeInfo);
             if (loaded) {
                 RunTimeLoader.saveLastRunTimeInfo(PluginProcessService.this, runTimeInfo);
@@ -112,12 +112,12 @@ public class PluginProcessService extends Service {
             }
             if (mPluginLoader == null) {
                 InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_LOADER);
-                File file = new File(installedPart.filePath);
+                File file = new File(installedPart.apkFilePath);
                 if (!file.exists()) {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
                 }
                 ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
-                        installedPart.filePath,
+                        installedPart.apkFilePath,
                         installedPart.oDexPath,
                         installedPart.libraryPath,
                         this.getClass().getClassLoader(),
