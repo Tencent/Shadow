@@ -1,7 +1,5 @@
 package com.tencent.shadow.core.pluginmanager.installplugin;
 
-import com.tencent.commonsdk.zip.QZipInputStream;
-
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
@@ -99,7 +97,7 @@ public class UnpackManager {
         }
         MinFileUtils.cleanDirectory(pluginUnpackDir);
 
-        QZipInputStream zipInputStream = new QZipInputStream(new FileInputStream(target));
+        SafeZipInputStream zipInputStream = new SafeZipInputStream(new FileInputStream(target));
         ZipEntry zipEntry = null;
         try {
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
