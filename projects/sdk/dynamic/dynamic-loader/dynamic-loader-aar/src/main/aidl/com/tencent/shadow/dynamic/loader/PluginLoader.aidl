@@ -3,7 +3,6 @@ package com.tencent.shadow.dynamic.loader;
 
 import android.content.Intent;
 import com.tencent.shadow.dynamic.loader.IServiceConnection;
-import com.tencent.shadow.core.loader.infos.InstalledPlugin;
 
 interface PluginLoader {
 

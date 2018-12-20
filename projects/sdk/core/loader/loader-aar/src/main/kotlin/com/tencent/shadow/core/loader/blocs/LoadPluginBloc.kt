@@ -31,8 +31,8 @@ object LoadPluginBloc {
             parentClassLoader: ClassLoader,
             remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): Future<*> {
-        if (installedPlugin.pluginFile == null) {
-            throw LoadPluginException("pluginFile==null")
+        if (installedPlugin.apkFile == null) {
+            throw LoadPluginException("apkFile==null")
         } else {
             val buildClassLoader = executorService.submit(Callable {
                 lock.withLock {
@@ -46,7 +46,7 @@ object LoadPluginBloc {
             })
 
             val buildResources = executorService.submit(Callable {
-                CreateResourceBloc.create(installedPlugin.pluginFile.absolutePath, hostAppContext)
+                CreateResourceBloc.create(installedPlugin.apkFile.absolutePath, hostAppContext)
             })
 
             val buildApplication = executorService.submit(Callable {
@@ -68,8 +68,8 @@ object LoadPluginBloc {
             })
 
             val buildRunningPlugin = executorService.submit {
-                if (installedPlugin.pluginFile.exists().not()) {
-                    throw LoadPluginException("插件文件不存在.pluginFile==" + installedPlugin.pluginFile.absolutePath)
+                if (installedPlugin.apkFile.exists().not()) {
+                    throw LoadPluginException("插件文件不存在.pluginFile==" + installedPlugin.apkFile.absolutePath)
                 }
                 val pluginPackageManager = buildPackageManager.get()
                 val pluginClassLoader = buildClassLoader.get()
@@ -98,7 +98,7 @@ object LoadPluginBloc {
             comInterface: InterfaceClassLoader,
             installedPlugin: InstalledPlugin
     ): Future<*> {
-        if (installedPlugin.pluginFile == null) {
+        if (installedPlugin.apkFile == null) {
             throw LoadPluginException("pluginFile==null")
         } else {
 

@@ -22,7 +22,7 @@ object LoadApkBloc {
      */
     @Throws(LoadApkException::class)
     fun loadInterface(hostAppContext: Context, installedPlugin: InstalledPlugin, parentClassLoader: ClassLoader): PluginClassLoader {
-        val apk = installedPlugin.pluginFile
+        val apk = installedPlugin.apkFile
         val odexDir = installedPlugin.oDexDir
         var libraryPath : String ? = null;
         if(installedPlugin.libraryDir != null){
@@ -46,7 +46,7 @@ object LoadApkBloc {
      */
     @Throws(LoadApkException::class)
     fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin, parentClassLoader: ClassLoader, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
-        val apk = installedPlugin.pluginFile
+        val apk = installedPlugin.apkFile
         val odexDir = installedPlugin.oDexDir
 //        prepareDirs(odexDir, installedPlugin.libraryDir)
 
@@ -56,7 +56,7 @@ object LoadApkBloc {
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
-                    installedPlugin.libraryDir.absolutePath,
+                    installedPlugin.libraryDir?.absolutePath,
                     parentClassLoader
             )
         } else if (dependsOn.size == 1) {
@@ -69,7 +69,7 @@ object LoadApkBloc {
                         hostAppContext,
                         apk.absolutePath,
                         odexDir,
-                        installedPlugin.libraryDir.absolutePath,
+                        installedPlugin.libraryDir?.absolutePath,
                         pluginParts.classLoader
                 )
             }
@@ -87,7 +87,7 @@ object LoadApkBloc {
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
-                    installedPlugin.libraryDir.absolutePath,
+                    installedPlugin.libraryDir?.absolutePath,
                     combineClassLoader
             )
         }

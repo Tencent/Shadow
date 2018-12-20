@@ -23,7 +23,7 @@ object ParsePluginApkBloc {
      */
     @Throws(ParsePluginApkException::class)
     fun parse(installedPlugin: InstalledPlugin, hostAppContext: Context): PluginInfo {
-        val archiveFilePath = installedPlugin.pluginFile.absolutePath
+        val archiveFilePath = installedPlugin.apkFile.absolutePath
         val packageManager = hostAppContext.packageManager
         val packageArchiveInfo = packageManager.getPackageArchiveInfo(
                 archiveFilePath,

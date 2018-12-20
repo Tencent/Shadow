@@ -13,7 +13,7 @@ import java.io.File
  * @author cubershi
  */
 class PluginClassLoader(
-        hostAppContext: Context, dexPath: String, optimizedDirectory: File, private val librarySearchPath: String?, parent: ClassLoader
+        hostAppContext: Context, dexPath: String, optimizedDirectory: File?, private val librarySearchPath: String?, parent: ClassLoader
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
     init {
