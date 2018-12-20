@@ -16,6 +16,24 @@ public interface PluginManagerUpdater {
     boolean wasUpdating();
 
     /**
+     * 保存正在更新的状态
+     */
+    void setUpdatingState(boolean updatingState);
+
+    /**
+     * 获取正在更新的状态
+     * @return true 正在更新
+     */
+    boolean getUpdatingState();
+
+    /**
+     * 下载
+     *
+     * @return 下载到的文件
+     */
+    Future<File> download();
+
+    /**
      * 更新
      *
      * @return 当前最新的PluginManager，可能是之前已经返回过的文件，但它是最新的了。

@@ -30,6 +30,7 @@ public final class DynamicPluginManager implements PluginManager {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("enter fromId:" + fromId + " callback:" + callback);
         }
+        mUpdater.setUpdatingState(true);
         updateManagerImpl(context);
         mManagerImpl.enter(context, fromId, bundle, callback);
         mUpdater.update();
