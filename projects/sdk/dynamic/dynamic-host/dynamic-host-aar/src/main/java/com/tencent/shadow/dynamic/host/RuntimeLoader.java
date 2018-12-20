@@ -13,32 +13,32 @@ import java.lang.reflect.Field;
 import dalvik.system.BaseDexClassLoader;
 
 /**
- * 将runTime apk加载到DexPathClassLoader，形成如下结构的classLoader树结构
+ * 将runtime apk加载到DexPathClassLoader，形成如下结构的classLoader树结构
  * ---BootClassLoader
  * ----DexPathClassLoader
  * ------PathClassLoader
  */
-public class RunTimeLoader {
+public class RuntimeLoader {
 
-    private static ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::RunTimeLoader");
+    private static ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::RuntimeLoader");
 
-    private static String SP_NAME = "ShadowRunTimeLoader";
+    private static String SP_NAME = "ShadowRuntimeLoader";
 
-    private static String KEY_CONTAINER = "key_RunTimeInfo";
+    private static String KEY_CONTAINER = "key_RuntimeInfo";
 
     /**
      * 加载runtime apk
-     * @return true 加载了新的runTime
+     * @return true 加载了新的runtime
      */
-    public static boolean loadRunTime(RunTimeInfo runTimeInfo) {
-        ClassLoader contextClassLoader = RunTimeLoader.class.getClassLoader();
+    public static boolean loadRuntime(RuntimeInfo runtimeInfo) {
+        ClassLoader contextClassLoader = RuntimeLoader.class.getClassLoader();
         ClassLoader parent = contextClassLoader.getParent();
         if (parent instanceof DexPathClassLoader) {
             String apkPath = ((DexPathClassLoader) parent).apkPath;
             if (mLogger.isInfoEnabled()) {
-                mLogger.info("last apkPath:" + apkPath + " new apkPath:" + runTimeInfo.apkPath);
+                mLogger.info("last apkPath:" + apkPath + " new apkPath:" + runtimeInfo.apkPath);
             }
-            if (TextUtils.equals(apkPath, runTimeInfo.apkPath)) {
+            if (TextUtils.equals(apkPath, runtimeInfo.apkPath)) {
                 //已经加载相同版本的runtime了,不需要加载
                 if (mLogger.isInfoEnabled()) {
                     mLogger.info("已经加载相同apkPath的runtime了,不需要加载");
@@ -58,8 +58,8 @@ public class RunTimeLoader {
         }
         //正常处理，将runtime 挂到pathclassLoader之上
         try {
-            DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(runTimeInfo.apkPath, runTimeInfo.oDexPath,
-                    runTimeInfo.libraryPath, contextClassLoader.getParent());
+            DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(runtimeInfo.apkPath, runtimeInfo.oDexPath,
+                    runtimeInfo.libraryPath, contextClassLoader.getParent());
             hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -93,7 +93,7 @@ public class RunTimeLoader {
      * @return ClassLoader类的parent域.或不能通过反射访问该域时返回null.
      */
     private static Field getParentField() {
-        ClassLoader classLoader = RunTimeLoader.class.getClassLoader();
+        ClassLoader classLoader = RuntimeLoader.class.getClassLoader();
         ClassLoader parent = classLoader.getParent();
         Field field = null;
         for (Field f : ClassLoader.class.getDeclaredFields()) {
@@ -115,25 +115,25 @@ public class RunTimeLoader {
     /**
      * 重新恢复runtime
      *
-     * @return true 进行了runTime恢复
+     * @return true 进行了runtime恢复
      */
-    public static boolean recoveryRunTime(Context context) {
-        String json = getLastRunTimeInfo(context);
+    public static boolean recoveryRuntime(Context context) {
+        String json = getLastRuntimeInfo(context);
         if (json != null) {
-            RunTimeInfo runTimeInfo = new RunTimeInfo(json);
-            new DexPathClassLoader(runTimeInfo.apkPath, runTimeInfo.oDexPath,
-                    runTimeInfo.libraryPath, RunTimeLoader.class.getClassLoader().getParent());
+            RuntimeInfo runtimeInfo = new RuntimeInfo(json);
+            new DexPathClassLoader(runtimeInfo.apkPath, runtimeInfo.oDexPath,
+                    runtimeInfo.libraryPath, RuntimeLoader.class.getClassLoader().getParent());
             return true;
         }
         return false;
     }
 
-    public static void saveLastRunTimeInfo(Context context, RunTimeInfo runTimeInfo) {
+    public static void saveLastRuntimeInfo(Context context, RuntimeInfo runtimeInfo) {
         SharedPreferences preferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        preferences.edit().putString(KEY_CONTAINER, runTimeInfo.toJson().toString()).apply();
+        preferences.edit().putString(KEY_CONTAINER, runtimeInfo.toJson().toString()).apply();
     }
 
-    private static String getLastRunTimeInfo(Context context) {
+    private static String getLastRuntimeInfo(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
         return preferences.getString(KEY_CONTAINER, null);
     }

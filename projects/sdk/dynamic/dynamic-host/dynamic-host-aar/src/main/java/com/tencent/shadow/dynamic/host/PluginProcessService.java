@@ -97,10 +97,10 @@ public class PluginProcessService extends Service {
                 mLogger.info("loadRuntime uuid:" + uuid);
             }
             InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_RUNTIME);
-            RunTimeInfo runTimeInfo = new RunTimeInfo(installedPart.apkFilePath, installedPart.oDexPath, installedPart.libraryPath);
-            boolean loaded = RunTimeLoader.loadRunTime(runTimeInfo);
+            RuntimeInfo runtimeInfo = new RuntimeInfo(installedPart.apkFilePath, installedPart.oDexPath, installedPart.libraryPath);
+            boolean loaded = RuntimeLoader.loadRuntime(runtimeInfo);
             if (loaded) {
-                RunTimeLoader.saveLastRunTimeInfo(PluginProcessService.this, runTimeInfo);
+                RuntimeLoader.saveLastRuntimeInfo(PluginProcessService.this, runtimeInfo);
             }
 
         }
