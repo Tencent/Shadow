@@ -28,8 +28,9 @@ public class RunTimeLoader {
 
     /**
      * 加载runtime apk
+     * @return true 加载了新的runTime
      */
-    public static void loadRunTime(RunTimeInfo runTimeInfo) {
+    public static boolean loadRunTime(RunTimeInfo runTimeInfo) {
         ClassLoader contextClassLoader = RunTimeLoader.class.getClassLoader();
         ClassLoader parent = contextClassLoader.getParent();
         if (parent instanceof DexPathClassLoader) {
@@ -42,7 +43,7 @@ public class RunTimeLoader {
                 if (mLogger.isInfoEnabled()) {
                     mLogger.info("已经加载相同apkPath的runtime了,不需要加载");
                 }
-                return;
+                return false;
             } else {
                 //版本不一样，说明要更新runtime，先恢复正常的classLoader结构
                 if (mLogger.isInfoEnabled()) {
@@ -63,7 +64,10 @@ public class RunTimeLoader {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return true;
     }
+
+
 
 
     /**
@@ -109,23 +113,24 @@ public class RunTimeLoader {
     }
 
     /**
-     * 是否需要重新恢复runtime
+     * 重新恢复runtime
      *
-     * @return true 有可用的runTime进行恢复
+     * @return true 进行了runTime恢复
      */
     public static boolean recoveryRunTime(Context context) {
         String json = getLastRunTimeInfo(context);
         if (json != null) {
             RunTimeInfo runTimeInfo = new RunTimeInfo(json);
-            loadRunTime(runTimeInfo);
+            new DexPathClassLoader(runTimeInfo.apkPath, runTimeInfo.oDexPath,
+                    runTimeInfo.libraryPath, RunTimeLoader.class.getClassLoader().getParent());
             return true;
         }
         return false;
     }
 
-    public static void saveLastRunTimeInfo(Context context, String runTimeInfo) {
+    public static void saveLastRunTimeInfo(Context context, RunTimeInfo runTimeInfo) {
         SharedPreferences preferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        preferences.edit().putString(KEY_CONTAINER, runTimeInfo).apply();
+        preferences.edit().putString(KEY_CONTAINER, runTimeInfo.toJson().toString()).apply();
     }
 
     private static String getLastRunTimeInfo(Context context) {
