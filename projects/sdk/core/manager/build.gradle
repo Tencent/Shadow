@@ -31,5 +31,6 @@ dependencies {
 
     implementation 'com.tencent.shadow.coding:lint'
     compileOnly project(':interface')
+    compileOnly files('libs/qzip.jar')
 }
 

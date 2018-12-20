@@ -3,6 +3,8 @@ package com.tencent.shadow.core.pluginmanager.installplugin;
 
 import android.text.TextUtils;
 
+import com.tencent.commonsdk.zip.QZipInputStream;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -40,9 +42,9 @@ public class CopySoBloc {
             soDir.mkdirs();
 
             ZipEntry zipEntry = null;
-            SafeZipInputStream zipInputStream = null;
+            QZipInputStream zipInputStream = null;
             try {
-                zipInputStream = new SafeZipInputStream(new FileInputStream(apkFile));
+                zipInputStream = new QZipInputStream(new FileInputStream(apkFile));
                 while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                     if (zipEntry.getName().startsWith(filter)) {
                         BufferedOutputStream output = null;
