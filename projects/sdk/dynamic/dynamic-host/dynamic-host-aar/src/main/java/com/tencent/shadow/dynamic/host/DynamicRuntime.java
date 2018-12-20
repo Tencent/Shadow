@@ -21,7 +21,7 @@ import dalvik.system.BaseDexClassLoader;
  */
 public class DynamicRuntime {
 
-    private static final ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::RuntimeLoader");
+    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(DynamicRuntime.class);
 
     private static final String SP_NAME = "ShadowRuntimeLoader";
 

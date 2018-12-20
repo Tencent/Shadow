@@ -15,7 +15,7 @@ public final class DynamicPluginManager implements PluginManager {
     final private PluginManagerUpdater mUpdater;
     private PluginManager mManagerImpl;
     private long mLastModified;
-    private ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::DynamicPluginManager");
+    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(DynamicPluginManager.class);
 
     public DynamicPluginManager(PluginManagerUpdater updater) {
         if (updater.getLatest() == null) {

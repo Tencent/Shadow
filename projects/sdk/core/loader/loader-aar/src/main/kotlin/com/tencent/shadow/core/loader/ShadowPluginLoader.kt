@@ -70,7 +70,9 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
     private val  mShadowRemoteViewCreatorProvider: ShadowRemoteViewCreatorProvider = ShadowRemoteViewCreatorProviderImpl()
 
 
-    private val mLogger = ShadowLoggerFactory.getLogger("ShadowPluginLoader")
+    companion object {
+        private val mLogger = ShadowLoggerFactory.getLogger(ShadowPluginLoader::class.java)
+    }
 
     fun getPluginServiceManager(): PluginServiceManager {
         mPluginServiceManagerLock.withLock {

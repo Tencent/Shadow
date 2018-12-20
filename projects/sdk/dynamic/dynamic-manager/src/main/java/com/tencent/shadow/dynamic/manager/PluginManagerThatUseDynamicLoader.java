@@ -27,7 +27,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 
 public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
-    private ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::BasePluginManager");
+    private ILogger mLogger = ShadowLoggerFactory.getLogger(PluginManagerThatUseDynamicLoader.class);
 
 
     protected PluginManagerThatUseDynamicLoader(Context context) {

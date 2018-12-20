@@ -14,7 +14,7 @@ import java.io.File;
 
 
 public class PluginProcessService extends Service {
-    private ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::PluginProcessService");
+    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(PluginProcessService.class);
 
     private final PpsController.Stub mPpsController = new PpsControllerImpl();
 

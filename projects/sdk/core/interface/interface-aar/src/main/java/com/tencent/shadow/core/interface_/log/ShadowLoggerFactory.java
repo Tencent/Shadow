@@ -2,15 +2,18 @@ package com.tencent.shadow.core.interface_.log;
 
 public final class ShadowLoggerFactory {
 
-    private static ILoggerFactory sILoggerFactory;
+    volatile private static ILoggerFactory sILoggerFactory;
 
     public static void setILoggerFactory(ILoggerFactory loggerFactory) {
+        if (sILoggerFactory != null) {
+            throw new RuntimeException("不能重复初始化");
+        }
         sILoggerFactory = loggerFactory;
     }
 
-    public static ILogger getLogger(String name) {
+    public static ILogger getLogger(Class<?> clazz) {
         ILoggerFactory iLoggerFactory = getILoggerFactory();
-        return iLoggerFactory.getLogger(name);
+        return iLoggerFactory.getLogger(clazz.getName());
     }
 
     public static ILoggerFactory getILoggerFactory() {
