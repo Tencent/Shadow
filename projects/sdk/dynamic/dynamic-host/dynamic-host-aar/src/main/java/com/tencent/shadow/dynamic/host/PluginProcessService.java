@@ -121,7 +121,8 @@ public class PluginProcessService extends Service {
                         installedPart.oDexPath,
                         installedPart.libraryPath,
                         this.getClass().getClassLoader(),
-                        sInterfaces
+                        sInterfaces,
+                        1
                 );
                 try {
                     mPluginLoader = pluginLoaderClassLoader.getInterface(

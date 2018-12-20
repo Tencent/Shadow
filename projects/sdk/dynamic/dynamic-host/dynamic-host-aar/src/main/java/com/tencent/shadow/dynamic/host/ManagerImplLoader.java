@@ -64,7 +64,9 @@ final class ManagerImplLoader {
                 odexDir.getAbsolutePath(),
                 null,
                 getClass().getClassLoader(),
-                interfaces);
+                interfaces,
+                1
+        );
 
         Context pluginManagerContext = new ChangeApkContextWrapper(
                 applicationContext,

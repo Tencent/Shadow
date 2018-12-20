@@ -2,12 +2,9 @@ package com.tencent.shadow.dynamic.host;
 
 import android.os.Build;
 
-import com.tencent.shadow.core.interface_.API;
-
-import java.io.File;
 import java.lang.reflect.Constructor;
 
-import dalvik.system.BaseDexClassLoader;
+import dalvik.system.DexClassLoader;
 
 /**
  * Apk插件加载专用ClassLoader
@@ -20,20 +17,13 @@ import dalvik.system.BaseDexClassLoader;
  *
  * @author cubershi
  */
-@API
-public class ApkClassLoader extends BaseDexClassLoader {
+class ApkClassLoader extends DexClassLoader {
     private ClassLoader mGrandParent;
     private final String[] mInterfacePackageNames;
 
-
-    public ApkClassLoader(String dexPath, String optimizedDirectory, String libraryPath,
-                          ClassLoader parent, String[] mInterfacePackageNames) {
-        this(dexPath, optimizedDirectory, libraryPath, parent, mInterfacePackageNames, 1);
-    }
-
-    public ApkClassLoader(String dexPath, String optimizedDirectory, String libraryPath,
-                          ClassLoader parent, String[] mInterfacePackageNames, int grandTimes) {
-        super(dexPath, optimizedDirectory == null ? null : new File(optimizedDirectory), libraryPath, parent);
+    ApkClassLoader(String dexPath, String optimizedDirectory, String libraryPath,
+                   ClassLoader parent, String[] mInterfacePackageNames, int grandTimes) {
+        super(dexPath, optimizedDirectory, libraryPath, parent);
         ClassLoader grand = parent;
         for (int i = 0; i < grandTimes; i++) {
             grand = grand.getParent();
@@ -98,7 +88,7 @@ public class ApkClassLoader extends BaseDexClassLoader {
      * @return 所需接口
      * @throws Exception
      */
-    public <T> T getInterface(Class<T> clazz, String className) throws Exception {
+    <T> T getInterface(Class<T> clazz, String className) throws Exception {
         try {
             Class<?> interfaceImplementClass = loadClass(className);
             Object interfaceImplement = interfaceImplementClass.newInstance();
@@ -118,7 +108,7 @@ public class ApkClassLoader extends BaseDexClassLoader {
      * @return 所需接口
      * @throws Exception
      */
-    public <T> T getInterface(Class<T> clazz, String className, Class<?>[] parameterTypes, Object[] parameters) throws Exception {
+    <T> T getInterface(Class<T> clazz, String className, Class<?>[] parameterTypes, Object[] parameters) throws Exception {
         try {
             Class<?> interfaceImplementClass = loadClass(className);
             Constructor<?> constructor = interfaceImplementClass.getConstructor(parameterTypes);
