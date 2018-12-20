@@ -64,9 +64,11 @@ final class ManagerImplLoader {
                 odexDir.getAbsolutePath(),
                 null,
                 getClass().getClassLoader(),
-                interfaces);
+                interfaces,
+                1
+        );
 
-        Context pluginManagerContext = new PluginManagerContext(
+        Context pluginManagerContext = new ChangeApkContextWrapper(
                 applicationContext,
                 apk.getAbsolutePath(),
                 apkClassLoader
@@ -83,7 +85,7 @@ final class ManagerImplLoader {
         }
     }
 
-    public static String[] concatenate(String[] a, String[] b) {
+    private static String[] concatenate(String[] a, String[] b) {
         int aLen = a.length;
         int bLen = b.length;
         String[] c = new String[aLen + bLen];

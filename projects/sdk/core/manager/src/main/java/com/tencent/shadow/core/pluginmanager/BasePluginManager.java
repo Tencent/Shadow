@@ -30,10 +30,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BasePluginManager implements PluginManager {
-
-    public final static String TAG = "BasePluginManager";
-
-    private ILogger mLogger = ShadowLoggerFactory.getLogger(TAG);
+    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(BasePluginManager.class);
     /*
      * 宿主的context对象
      */

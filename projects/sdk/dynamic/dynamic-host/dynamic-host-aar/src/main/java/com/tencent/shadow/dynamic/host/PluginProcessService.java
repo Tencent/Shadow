@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import com.tencent.shadow.core.interface_.InstalledApk;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 
@@ -13,7 +14,7 @@ import java.io.File;
 
 
 public class PluginProcessService extends Service {
-    private ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::PluginProcessService");
+    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(PluginProcessService.class);
 
     private final PpsController.Stub mPpsController = new PpsControllerImpl();
 
@@ -97,10 +98,10 @@ public class PluginProcessService extends Service {
                 mLogger.info("loadRuntime uuid:" + uuid);
             }
             InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_RUNTIME);
-            RunTimeInfo runTimeInfo = new RunTimeInfo(installedPart.filePath, installedPart.oDexPath, installedPart.libraryPath);
-            boolean loaded = RunTimeLoader.loadRunTime(runTimeInfo);
+            InstalledApk installedRuntimeApk = new InstalledApk(installedPart.apkFilePath, installedPart.oDexPath, installedPart.libraryPath);
+            boolean loaded = DynamicRuntime.loadRuntime(installedRuntimeApk);
             if (loaded) {
-                RunTimeLoader.saveLastRunTimeInfo(PluginProcessService.this, runTimeInfo);
+                DynamicRuntime.saveLastRuntimeInfo(PluginProcessService.this, installedRuntimeApk);
             }
 
         }
@@ -112,16 +113,17 @@ public class PluginProcessService extends Service {
             }
             if (mPluginLoader == null) {
                 InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_LOADER);
-                File file = new File(installedPart.filePath);
+                File file = new File(installedPart.apkFilePath);
                 if (!file.exists()) {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
                 }
                 ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
-                        installedPart.filePath,
+                        installedPart.apkFilePath,
                         installedPart.oDexPath,
                         installedPart.libraryPath,
                         this.getClass().getClassLoader(),
-                        sInterfaces
+                        sInterfaces,
+                        1
                 );
                 try {
                     mPluginLoader = pluginLoaderClassLoader.getInterface(

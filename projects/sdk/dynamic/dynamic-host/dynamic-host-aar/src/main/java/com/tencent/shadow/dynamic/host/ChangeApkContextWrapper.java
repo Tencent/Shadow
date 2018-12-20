@@ -11,9 +11,9 @@ import android.view.LayoutInflater;
 import static android.content.pm.PackageManager.GET_META_DATA;
 
 /**
- * 当前PluginManager apk的context，可以用于查找当前apk的资源
+ * 修改Context的apk路径的Wrapper。可将原Context的Resource和ClassLoader重新修改为新的Apk。
  */
-class PluginManagerContext extends ContextWrapper {
+class ChangeApkContextWrapper extends ContextWrapper {
 
     private Resources mResources;
 
@@ -21,7 +21,7 @@ class PluginManagerContext extends ContextWrapper {
 
     final private ClassLoader mClassloader;
 
-    PluginManagerContext(Context base, String apkPath, ClassLoader mClassloader) {
+    ChangeApkContextWrapper(Context base, String apkPath, ClassLoader mClassloader) {
         super(base);
         this.mClassloader = mClassloader;
         mResources = createResources(apkPath, base);

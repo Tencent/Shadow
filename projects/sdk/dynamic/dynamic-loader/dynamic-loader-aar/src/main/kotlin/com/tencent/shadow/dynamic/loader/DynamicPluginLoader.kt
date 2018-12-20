@@ -10,7 +10,6 @@ import android.os.Looper
 import android.os.RemoteException
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.infos.InstalledPlugin
-import com.tencent.shadow.dynamic.host.ApkClassLoader
 import com.tencent.shadow.dynamic.host.InstalledPart
 import com.tencent.shadow.dynamic.host.UuidManager
 import com.tencent.shadow.runtime.container.DelegateProviderHolder
@@ -26,7 +25,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
 
     private val mPluginLoader: ShadowPluginLoader
 
-    private val mApkClassLoader = DynamicPluginLoader::class.java.classLoader as ApkClassLoader
+    private val mApkClassLoader = DynamicPluginLoader::class.java.classLoader
 
     private var mContext: Context;
 
@@ -58,7 +57,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
         val part = mUuidManager.getInstalledPlugin(mUuid, partKey)
         val type = if (part.partType == 1) 0 else 1 //todo 修复hardcode数字类型
         val pluginVersionForPluginLoaderManage = part.toPluginFileVersion();
-        val installedPlugin = InstalledPlugin(part.filePath, type, partKey, pluginVersionForPluginLoaderManage, part.dependsOn, part.oDexPath, part.libraryPath)
+        val installedPlugin = InstalledPlugin(part.apkFilePath, type, partKey, pluginVersionForPluginLoaderManage, part.dependsOn, part.oDexPath, part.libraryPath)
         val future = mPluginLoader.loadPlugin(mContext, installedPlugin)
         future.get()
     }
@@ -73,7 +72,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
     }
 
     fun InstalledPart.toPluginFileVersion(): String {
-        val plugin = File(filePath)
+        val plugin = File(apkFilePath)
         return plugin.lastModified().toString()
     }
 
@@ -217,6 +216,32 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
     private fun isUiThread(): Boolean {
 
         return Looper.myLooper() == Looper.getMainLooper()
+    }
+
+    /**
+     * 从apk中读取接口的实现
+     *
+     * @param clazz     接口类
+     * @param className 实现类的类名
+     * @param <T>       接口类型
+     * @return 所需接口
+     * @throws Exception
+    </T> */
+    @Throws(Exception::class)
+    fun <T> ClassLoader.getInterface(clazz: Class<T>, className: String): T {
+        try {
+            val interfaceImplementClass = loadClass(className)
+            val interfaceImplement = interfaceImplementClass.newInstance()
+            return clazz.cast(interfaceImplement)
+        } catch (e: ClassNotFoundException) {
+            throw Exception(e)
+        } catch (e: InstantiationException) {
+            throw Exception(e)
+        } catch (e: ClassCastException) {
+            throw Exception(e)
+        } catch (e: IllegalAccessException) {
+            throw Exception(e)
+        }
     }
 
 }
