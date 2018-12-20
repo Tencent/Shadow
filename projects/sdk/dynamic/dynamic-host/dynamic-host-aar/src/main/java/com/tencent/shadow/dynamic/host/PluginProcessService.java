@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
+import com.tencent.shadow.core.interface_.InstalledApk;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 
@@ -97,10 +98,10 @@ public class PluginProcessService extends Service {
                 mLogger.info("loadRuntime uuid:" + uuid);
             }
             InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_RUNTIME);
-            RuntimeInfo runtimeInfo = new RuntimeInfo(installedPart.apkFilePath, installedPart.oDexPath, installedPart.libraryPath);
-            boolean loaded = RuntimeLoader.loadRuntime(runtimeInfo);
+            InstalledApk installedRuntimeApk = new InstalledApk(installedPart.apkFilePath, installedPart.oDexPath, installedPart.libraryPath);
+            boolean loaded = DynamicRuntime.loadRuntime(installedRuntimeApk);
             if (loaded) {
-                RuntimeLoader.saveLastRuntimeInfo(PluginProcessService.this, runtimeInfo);
+                DynamicRuntime.saveLastRuntimeInfo(PluginProcessService.this, installedRuntimeApk);
             }
 
         }

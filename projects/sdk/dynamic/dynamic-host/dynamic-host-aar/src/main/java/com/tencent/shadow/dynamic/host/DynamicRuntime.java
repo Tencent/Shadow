@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
+import com.tencent.shadow.core.interface_.InstalledApk;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 
@@ -18,27 +19,29 @@ import dalvik.system.BaseDexClassLoader;
  * ----DexPathClassLoader
  * ------PathClassLoader
  */
-public class RuntimeLoader {
+public class DynamicRuntime {
 
-    private static ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::RuntimeLoader");
+    private static final ILogger mLogger = ShadowLoggerFactory.getLogger("shadow::RuntimeLoader");
 
-    private static String SP_NAME = "ShadowRuntimeLoader";
+    private static final String SP_NAME = "ShadowRuntimeLoader";
 
-    private static String KEY_CONTAINER = "key_RuntimeInfo";
+    private static final String KEY_RUNTIME_APK = "KEY_RUNTIME_APK";
+    private static final String KEY_RUNTIME_ODEX = "KEY_RUNTIME_ODEX";
+    private static final String KEY_RUNTIME_LIB = "KEY_RUNTIME_LIB";
 
     /**
      * 加载runtime apk
      * @return true 加载了新的runtime
      */
-    public static boolean loadRuntime(RuntimeInfo runtimeInfo) {
-        ClassLoader contextClassLoader = RuntimeLoader.class.getClassLoader();
+    public static boolean loadRuntime(InstalledApk installedRuntimeApk) {
+        ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
         ClassLoader parent = contextClassLoader.getParent();
         if (parent instanceof DexPathClassLoader) {
             String apkPath = ((DexPathClassLoader) parent).apkPath;
             if (mLogger.isInfoEnabled()) {
-                mLogger.info("last apkPath:" + apkPath + " new apkPath:" + runtimeInfo.apkPath);
+                mLogger.info("last apkPath:" + apkPath + " new apkPath:" + installedRuntimeApk.apkFilePath);
             }
-            if (TextUtils.equals(apkPath, runtimeInfo.apkPath)) {
+            if (TextUtils.equals(apkPath, installedRuntimeApk.apkFilePath)) {
                 //已经加载相同版本的runtime了,不需要加载
                 if (mLogger.isInfoEnabled()) {
                     mLogger.info("已经加载相同apkPath的runtime了,不需要加载");
@@ -58,8 +61,8 @@ public class RuntimeLoader {
         }
         //正常处理，将runtime 挂到pathclassLoader之上
         try {
-            DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(runtimeInfo.apkPath, runtimeInfo.oDexPath,
-                    runtimeInfo.libraryPath, contextClassLoader.getParent());
+            DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
+                    installedRuntimeApk.libraryPath, contextClassLoader.getParent());
             hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -93,7 +96,7 @@ public class RuntimeLoader {
      * @return ClassLoader类的parent域.或不能通过反射访问该域时返回null.
      */
     private static Field getParentField() {
-        ClassLoader classLoader = RuntimeLoader.class.getClassLoader();
+        ClassLoader classLoader = DynamicRuntime.class.getClassLoader();
         ClassLoader parent = classLoader.getParent();
         Field field = null;
         for (Field f : ClassLoader.class.getDeclaredFields()) {
@@ -118,24 +121,35 @@ public class RuntimeLoader {
      * @return true 进行了runtime恢复
      */
     public static boolean recoveryRuntime(Context context) {
-        String json = getLastRuntimeInfo(context);
-        if (json != null) {
-            RuntimeInfo runtimeInfo = new RuntimeInfo(json);
-            new DexPathClassLoader(runtimeInfo.apkPath, runtimeInfo.oDexPath,
-                    runtimeInfo.libraryPath, RuntimeLoader.class.getClassLoader().getParent());
+        InstalledApk installedApk = getLastRuntimeInfo(context);
+        if (installedApk != null) {
+            new DexPathClassLoader(installedApk.apkFilePath, installedApk.oDexPath,
+                    installedApk.libraryPath, DynamicRuntime.class.getClassLoader().getParent());
             return true;
         }
         return false;
     }
 
-    public static void saveLastRuntimeInfo(Context context, RuntimeInfo runtimeInfo) {
+    public static void saveLastRuntimeInfo(Context context, InstalledApk installedRuntimeApk) {
         SharedPreferences preferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        preferences.edit().putString(KEY_CONTAINER, runtimeInfo.toJson().toString()).apply();
+        preferences.edit()
+                .putString(KEY_RUNTIME_APK, installedRuntimeApk.apkFilePath)
+                .putString(KEY_RUNTIME_ODEX, installedRuntimeApk.oDexPath)
+                .putString(KEY_RUNTIME_LIB, installedRuntimeApk.libraryPath)
+                .apply();
     }
 
-    private static String getLastRuntimeInfo(Context context) {
+    private static InstalledApk getLastRuntimeInfo(Context context) {
         SharedPreferences preferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
-        return preferences.getString(KEY_CONTAINER, null);
+        String apkFilePath = preferences.getString(KEY_RUNTIME_APK, null);
+        String oDexPath = preferences.getString(KEY_RUNTIME_ODEX, null);
+        String libraryPath = preferences.getString(KEY_RUNTIME_LIB, null);
+
+        if (apkFilePath == null) {
+            return null;
+        } else {
+            return new InstalledApk(apkFilePath, oDexPath, libraryPath);
+        }
     }
 
 
