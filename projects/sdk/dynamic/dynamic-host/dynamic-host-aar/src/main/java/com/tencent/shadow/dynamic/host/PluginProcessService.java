@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.tencent.shadow.core.interface_.InstalledType;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 
@@ -86,6 +85,10 @@ public class PluginProcessService extends Service {
         private final static String sDynamicPluginLoaderClassName
                 = "com.tencent.shadow.dynamic.loader.DynamicPluginLoader";
 
+        private final static int TYPE_PLUGIN_LOADER = 3;//todo 删除临时重复定义枚举
+
+        private final static int TYPE_PLUGIN_RUNTIME = 4;//todo 删除临时重复定义枚举
+
         private IBinder mPluginLoader;
 
         @Override
@@ -93,7 +96,7 @@ public class PluginProcessService extends Service {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("loadRuntime uuid:" + uuid);
             }
-            InstalledPart installedPart = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_RUNTIME);
+            InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_RUNTIME);
             RunTimeInfo runTimeInfo = new RunTimeInfo(installedPart.filePath, installedPart.oDexPath, installedPart.libraryPath);
             boolean loaded = RunTimeLoader.loadRunTime(runTimeInfo);
             if (loaded) {
@@ -108,7 +111,7 @@ public class PluginProcessService extends Service {
                 mLogger.info("loadPluginLoader uuid:" + uuid + " loader:" + mPluginLoader);
             }
             if (mPluginLoader == null) {
-                InstalledPart installedPart = getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_LOADER);
+                InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_LOADER);
                 File file = new File(installedPart.filePath);
                 if (!file.exists()) {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");

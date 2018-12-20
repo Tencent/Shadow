@@ -8,7 +8,6 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.os.RemoteException
-import com.tencent.shadow.core.interface_.InstalledType
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.dynamic.host.ApkClassLoader
@@ -57,7 +56,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
     @Throws(RemoteException::class)
     override fun loadPlugin(partKey: String) {
         val part = mUuidManager.getInstalledPlugin(mUuid, partKey)
-        val type = if (part.partType == InstalledType.TYPE_PLUGIN) 0 else 1;
+        val type = if (part.partType == 1) 0 else 1 //todo 修复hardcode数字类型
         val pluginVersionForPluginLoaderManage = part.toPluginFileVersion();
         val installedPlugin = InstalledPlugin(part.filePath, type, partKey, pluginVersionForPluginLoaderManage, part.dependsOn, part.oDexPath, part.libraryPath)
         val future = mPluginLoader.loadPlugin(mContext, installedPlugin)

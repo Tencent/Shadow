@@ -6,7 +6,7 @@ import android.os.Bundle;
 /**
  * 提供给接入
  */
-public interface PluginManager extends ILifecycle {
+public interface PluginManager {
 
     /**
      * @param context context
@@ -16,4 +16,9 @@ public interface PluginManager extends ILifecycle {
      */
     void enter(Context context, long formId, Bundle bundle, EnterCallback callback);
 
+    void onCreate(Bundle bundle);
+
+    void onSaveInstanceState(Bundle outState);
+
+    void onDestroy();
 }

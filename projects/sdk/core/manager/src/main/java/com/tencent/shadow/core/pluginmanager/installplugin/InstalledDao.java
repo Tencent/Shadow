@@ -5,8 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Pair;
 
-import com.tencent.shadow.core.interface_.InstalledType;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 

@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.tencent.shadow.core.interface_.EnterCallback;
-import com.tencent.shadow.core.interface_.InstalledType;
 import com.tencent.shadow.core.interface_.PluginManager;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
@@ -17,6 +16,7 @@ import com.tencent.shadow.core.pluginmanager.installplugin.InstallPluginExceptio
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledDao;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPluginDBHelper;
+import com.tencent.shadow.core.pluginmanager.installplugin.InstalledType;
 import com.tencent.shadow.core.pluginmanager.installplugin.ODexBloc;
 import com.tencent.shadow.core.pluginmanager.installplugin.PluginConfig;
 import com.tencent.shadow.core.pluginmanager.installplugin.UnpackManager;

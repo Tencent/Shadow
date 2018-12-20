@@ -1,7 +1,5 @@
 package com.tencent.shadow.core.pluginmanager.installplugin;
 
-import com.tencent.shadow.core.interface_.MinFileUtils;
-
 import org.json.JSONException;
 
 import java.io.BufferedInputStream;
