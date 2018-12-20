@@ -83,7 +83,7 @@ final class ManagerImplLoader {
         }
     }
 
-    public static String[] concatenate(String[] a, String[] b) {
+    private static String[] concatenate(String[] a, String[] b) {
         int aLen = a.length;
         int bLen = b.length;
         String[] c = new String[aLen + bLen];
