@@ -96,6 +96,21 @@ publishing {
                 setScm(scm)
             }
         }
+        coreManager(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'manager'
+            version project.ARTIFACT_VERSION
+            artifact("$corePath/manager/build/outputs/aar/manager-release.aar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
     }
     repositories {
         maven {
@@ -115,3 +130,4 @@ publishing {
 setGeneratePomFileAndDepends('gradlePlugin')
 setGeneratePomFileAndDepends('interface_')
 setGeneratePomFileAndDepends('coreLoader')
+setGeneratePomFileAndDepends('coreManager')
