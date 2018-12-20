@@ -66,7 +66,7 @@ final class ManagerImplLoader {
                 getClass().getClassLoader(),
                 interfaces);
 
-        Context pluginManagerContext = new PluginManagerContext(
+        Context pluginManagerContext = new ChangeApkContextWrapper(
                 applicationContext,
                 apk.getAbsolutePath(),
                 apkClassLoader
