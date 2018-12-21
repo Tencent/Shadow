@@ -97,7 +97,7 @@ public class PluginProcessService extends Service {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("loadRuntime uuid:" + uuid);
             }
-            InstalledApk installedApk = getInstalledPL(uuid, TYPE_PLUGIN_RUNTIME);
+            InstalledApk installedApk = mUuidManager.getRuntime(uuid);
             InstalledApk installedRuntimeApk = new InstalledApk(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath);
             boolean loaded = DynamicRuntime.loadRuntime(installedRuntimeApk);
             if (loaded) {
@@ -112,7 +112,7 @@ public class PluginProcessService extends Service {
                 mLogger.info("loadPluginLoader uuid:" + uuid + " loader:" + mPluginLoader);
             }
             if (mPluginLoader == null) {
-                InstalledApk installedApk = getInstalledPL(uuid, TYPE_PLUGIN_LOADER);
+                InstalledApk installedApk = mUuidManager.getPluginLoader(uuid);
                 File file = new File(installedApk.apkFilePath);
                 if (!file.exists()) {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
@@ -150,9 +150,6 @@ public class PluginProcessService extends Service {
             mUuidManager = uuidManager;
         }
 
-        private InstalledApk getInstalledPL(String uuid, int type) throws RemoteException {
-            return mUuidManager.getInstalledPL(uuid, type);
-        }
     }
 
 }

@@ -51,7 +51,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
 
     @Throws(RemoteException::class)
     override fun loadPlugin(partKey: String) {
-        val installedApk = mUuidManager.getInstalledPlugin(mUuid, partKey)
+        val installedApk = mUuidManager.getPlugin(mUuid, partKey)
         val future = mPluginLoader.loadPlugin(mContext, installedApk)
         future.get()
     }

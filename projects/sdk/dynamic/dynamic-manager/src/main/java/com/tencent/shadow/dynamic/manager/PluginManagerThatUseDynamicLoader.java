@@ -148,15 +148,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
 
     private class UuidManagerStub extends UuidManager.Stub {
         @Override
-        public InstalledApk getInstalledPL(String uuid, int type) throws RemoteException {
-            InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
-            return new InstalledApk(part.pluginFile.getAbsolutePath(),
-                    part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
-                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath());
-        }
-
-        @Override
-        public InstalledApk getInstalledPlugin(String uuid, String partKey) throws RemoteException {
+        public InstalledApk getPlugin(String uuid, String partKey) throws RemoteException {
             InstalledPlugin.Part part = getPluginPartByPartKey(uuid, partKey);
             String[] dependsOn = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).dependsOn : null;
             int type = part instanceof InstalledPlugin.PluginPart ? InstalledType.TYPE_PLUGIN : InstalledType.TYPE_INTERFACE;
@@ -174,6 +166,23 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                     part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(),
                     parcelExtras.marshall()
             );
+        }
+
+        InstalledApk getInstalledPL(String uuid, int type) throws RemoteException {
+            InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
+            return new InstalledApk(part.pluginFile.getAbsolutePath(),
+                    part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath());
+        }
+
+        @Override
+        public InstalledApk getPluginLoader(String uuid) throws RemoteException {
+            return getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_LOADER);
+        }
+
+        @Override
+        public InstalledApk getRuntime(String uuid) throws RemoteException {
+            return getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_RUNTIME);
         }
     };
 
