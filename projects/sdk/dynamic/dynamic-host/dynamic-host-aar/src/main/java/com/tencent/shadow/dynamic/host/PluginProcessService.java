@@ -97,8 +97,8 @@ public class PluginProcessService extends Service {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("loadRuntime uuid:" + uuid);
             }
-            InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_RUNTIME);
-            InstalledApk installedRuntimeApk = new InstalledApk(installedPart.apkFilePath, installedPart.oDexPath, installedPart.libraryPath);
+            InstalledApk installedApk = getInstalledPL(uuid, TYPE_PLUGIN_RUNTIME);
+            InstalledApk installedRuntimeApk = new InstalledApk(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath);
             boolean loaded = DynamicRuntime.loadRuntime(installedRuntimeApk);
             if (loaded) {
                 DynamicRuntime.saveLastRuntimeInfo(PluginProcessService.this, installedRuntimeApk);
@@ -112,15 +112,15 @@ public class PluginProcessService extends Service {
                 mLogger.info("loadPluginLoader uuid:" + uuid + " loader:" + mPluginLoader);
             }
             if (mPluginLoader == null) {
-                InstalledPart installedPart = getInstalledPL(uuid, TYPE_PLUGIN_LOADER);
-                File file = new File(installedPart.apkFilePath);
+                InstalledApk installedApk = getInstalledPL(uuid, TYPE_PLUGIN_LOADER);
+                File file = new File(installedApk.apkFilePath);
                 if (!file.exists()) {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
                 }
                 ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
-                        installedPart.apkFilePath,
-                        installedPart.oDexPath,
-                        installedPart.libraryPath,
+                        installedApk.apkFilePath,
+                        installedApk.oDexPath,
+                        installedApk.libraryPath,
                         this.getClass().getClassLoader(),
                         sInterfaces,
                         1
@@ -150,7 +150,7 @@ public class PluginProcessService extends Service {
             mUuidManager = uuidManager;
         }
 
-        private InstalledPart getInstalledPL(String uuid, int type) throws RemoteException {
+        private InstalledApk getInstalledPL(String uuid, int type) throws RemoteException {
             return mUuidManager.getInstalledPL(uuid, type);
         }
     }

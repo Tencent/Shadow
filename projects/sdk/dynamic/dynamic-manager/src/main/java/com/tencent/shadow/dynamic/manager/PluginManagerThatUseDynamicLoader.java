@@ -8,6 +8,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.RemoteException;
 
+import com.tencent.shadow.core.interface_.InstalledApk;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
@@ -146,11 +147,11 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
 
     private class UuidManagerStub extends UuidManager.Stub {
         @Override
-        public InstalledPart getInstalledPL(String uuid, int type) throws RemoteException {
+        public InstalledApk getInstalledPL(String uuid, int type) throws RemoteException {
             InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
-            return new InstalledPart(uuid, null, type, part.pluginFile.getAbsolutePath(),
+            return new InstalledApk(part.pluginFile.getAbsolutePath(),
                     part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
-                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(), null);
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath());
         }
 
         @Override
