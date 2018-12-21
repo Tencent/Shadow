@@ -11,6 +11,17 @@ task buildSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:assembleRelease')
 }
 
+task lintSdk() {
+    dependsOn gradle.includedBuild('core').task(':interface:interface-aar:lint')
+    dependsOn gradle.includedBuild('core').task(':loader:loader-aar:lint')
+    dependsOn gradle.includedBuild('core').task(':manager:lint')
+    dependsOn gradle.includedBuild('core').task(':runtime:aar:lint')
+
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:dynamic-host-aar:lint')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:dynamic-loader-aar:lint')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:lint')
+}
+
 apply from: 'buildScripts/gradle/GitHelper.gradle'
 apply plugin: 'maven-publish'
 
