@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BasePluginManager implements PluginManager {
@@ -303,6 +304,39 @@ public abstract class BasePluginManager implements PluginManager {
     public final List<InstalledPlugin> getInstalledPlugins(int limit) {
         return mInstalledDao.getLastPlugins(limit);
     }
+
+
+    public boolean deleteInstalledPlugin(String uuid) {
+        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
+        boolean suc;
+        if (installedPlugin.runtimeFile != null) {
+            suc = deletePart(installedPlugin.runtimeFile);
+        }
+        if (installedPlugin.pluginLoaderFile != null) {
+            suc = deletePart(installedPlugin.pluginLoaderFile);
+        }
+        for (Map.Entry<String, InstalledPlugin.PluginPart> plugin : installedPlugin.plugins.entrySet()) {
+            suc = deletePart(plugin.getValue());
+        }
+        for (Map.Entry<String, InstalledPlugin.Part> interfacePlugin : installedPlugin.interfaces.entrySet()) {
+            suc = deletePart(interfacePlugin.getValue());
+        }
+        suc = mInstalledDao.deleteByUUID(uuid) > 0;
+        return suc;
+    }
+
+    private boolean deletePart(InstalledPlugin.Part part) {
+        boolean suc;
+        suc = part.pluginFile.delete();
+        if (part.oDexDir != null) {
+            suc = part.oDexDir.delete();
+        }
+        if (part.libraryDir != null) {
+            suc = part.libraryDir.delete();
+        }
+        return suc;
+    }
+
 
     /**
      * 业务插件的abi
