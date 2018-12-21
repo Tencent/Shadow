@@ -306,33 +306,55 @@ public abstract class BasePluginManager implements PluginManager {
     }
 
 
+    /**
+     * 删除指定uuid的插件
+     *
+     * @param uuid 插件包的uuid
+     * @return 是否全部执行成功
+     */
     public boolean deleteInstalledPlugin(String uuid) {
         InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
-        boolean suc;
+        boolean suc = true;
         if (installedPlugin.runtimeFile != null) {
-            suc = deletePart(installedPlugin.runtimeFile);
+            if (!deletePart(installedPlugin.runtimeFile)) {
+                suc = false;
+            }
         }
         if (installedPlugin.pluginLoaderFile != null) {
-            suc = deletePart(installedPlugin.pluginLoaderFile);
+            if (!deletePart(installedPlugin.pluginLoaderFile)) {
+                suc = false;
+            }
         }
         for (Map.Entry<String, InstalledPlugin.PluginPart> plugin : installedPlugin.plugins.entrySet()) {
-            suc = deletePart(plugin.getValue());
+            if (!deletePart(plugin.getValue())) {
+                suc = false;
+            }
         }
         for (Map.Entry<String, InstalledPlugin.Part> interfacePlugin : installedPlugin.interfaces.entrySet()) {
-            suc = deletePart(interfacePlugin.getValue());
+            if (!deletePart(interfacePlugin.getValue())) {
+                suc = false;
+            }
         }
-        suc = mInstalledDao.deleteByUUID(uuid) > 0;
+        if (mInstalledDao.deleteByUUID(uuid) <= 0) {
+            suc = false;
+        }
         return suc;
     }
 
     private boolean deletePart(InstalledPlugin.Part part) {
-        boolean suc;
-        suc = part.pluginFile.delete();
+        boolean suc = true;
+        if (!part.pluginFile.delete()) {
+            suc = false;
+        }
         if (part.oDexDir != null) {
-            suc = part.oDexDir.delete();
+            if (!part.oDexDir.delete()) {
+                suc = false;
+            }
         }
         if (part.libraryDir != null) {
-            suc = part.libraryDir.delete();
+            if (!part.libraryDir.delete()) {
+                suc = false;
+            }
         }
         return suc;
     }
