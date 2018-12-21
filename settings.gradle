@@ -19,3 +19,6 @@ include ':projects:now:manager'
 include ':projects:now:qqinterface'
 include ':projects:now:qqplugin'
 include ':projects:now:util'
+
+include ':projects:qq:reuse-plugin-process'
+include ':projects:qq:iv-shadow-for-qq'
