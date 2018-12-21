@@ -1,7 +1,6 @@
 // UuidManager.aidl
 package com.tencent.shadow.dynamic.host;
 // Declare any non-default types here with import statements
-import com.tencent.shadow.dynamic.host.InstalledPart;
 import com.tencent.shadow.core.interface_.InstalledApk;
 
 interface UuidManager {
@@ -11,5 +10,5 @@ interface UuidManager {
      */
     InstalledApk getInstalledPL(String uuid,int type);
 
-    InstalledPart getInstalledPlugin(String uuid,String partKey);
+    InstalledApk getInstalledPlugin(String uuid,String partKey);
 }

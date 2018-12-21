@@ -9,10 +9,8 @@ import android.os.IBinder
 import android.os.Looper
 import android.os.RemoteException
 import com.tencent.shadow.core.loader.ShadowPluginLoader
-import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.dynamic.host.UuidManager
 import com.tencent.shadow.runtime.container.DelegateProviderHolder
-import java.io.File
 import java.util.concurrent.CountDownLatch
 
 internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManager, uuid: String) : PluginLoader.Stub() {
@@ -53,17 +51,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
 
     @Throws(RemoteException::class)
     override fun loadPlugin(partKey: String) {
-        val part = mUuidManager.getInstalledPlugin(mUuid, partKey)
-        val type = if (part.partType == 1) 0 else 1 //todo 修复hardcode数字类型
-        val installedPlugin = InstalledPlugin(
-                type,
-                partKey,
-                part.dependsOn,
-                File(part.apkFilePath),
-                if (part.oDexPath != null) File(part.oDexPath) else null,
-                if (part.libraryPath != null) File(part.libraryPath) else null
-        )
-        val future = mPluginLoader.loadPlugin(mContext, installedPlugin)
+        val installedApk = mUuidManager.getInstalledPlugin(mUuid, partKey)
+        val future = mPluginLoader.loadPlugin(mContext, installedApk)
         future.get()
     }
 

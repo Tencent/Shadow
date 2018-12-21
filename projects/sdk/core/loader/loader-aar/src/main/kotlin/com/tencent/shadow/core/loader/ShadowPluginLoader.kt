@@ -1,6 +1,8 @@
 package com.tencent.shadow.core.loader
 
 import android.content.Context
+import android.os.Parcel
+import com.tencent.shadow.core.interface_.InstalledApk
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
@@ -9,7 +11,6 @@ import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.core.loader.delegates.ShadowActivityDelegate
 import com.tencent.shadow.core.loader.delegates.ShadowDelegate
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
-import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
@@ -96,8 +97,9 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
     @Throws(LoadPluginException::class)
     fun loadPlugin(
             hostAppContext: Context,
-            installedPlugin: InstalledPlugin): Future<*> {
-
+            installedApk: InstalledApk
+    ): Future<*> {
+        val loadParameters = installedApk.getLoadParameters()
         if (mLogger.isInfoEnabled) {
             mLogger.info("start loadPlugin")
         }
@@ -111,14 +113,14 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
             mComponentManager.setPluginServiceManager(mPluginServiceManager)
         }
 
-        if (installedPlugin.pluginFileType == 1) { // 是接口apk
+        if (loadParameters.pluginFileType == 1) { // 是接口apk
 
             return LoadPluginBloc.loadInterface(
                     mExecutorService,
                     mAbi,
                     hostAppContext,
                     mInterfaceClassLoader,
-                    installedPlugin
+                    installedApk
                     )
         } else {
             return LoadPluginBloc.loadPlugin(
@@ -130,7 +132,8 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
                     mLock,
                     mPluginPartsMap,
                     hostAppContext,
-                    installedPlugin,
+                    installedApk,
+                    loadParameters,
                     mInterfaceClassLoader,
                     mShadowRemoteViewCreatorProvider
             )
@@ -167,5 +170,11 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
             return ShadowRemoteViewCreatorImp(context, this@ShadowPluginLoader)
         }
 
+    }
+
+    private fun InstalledApk.getLoadParameters(): LoadParameters {
+        val parcel = Parcel.obtain()
+        parcel.unmarshall(parcelExtras, 0, parcelExtras.size)
+        return LoadParameters(parcel)
     }
 }

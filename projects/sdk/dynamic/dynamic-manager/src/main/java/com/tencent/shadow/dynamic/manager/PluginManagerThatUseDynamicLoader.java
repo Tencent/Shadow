@@ -6,15 +6,16 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.Parcel;
 import android.os.RemoteException;
 
 import com.tencent.shadow.core.interface_.InstalledApk;
 import com.tencent.shadow.core.interface_.log.ILogger;
 import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+import com.tencent.shadow.core.loader.LoadParametersInManager;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledType;
-import com.tencent.shadow.dynamic.host.InstalledPart;
 import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.host.UuidManager;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
@@ -155,13 +156,24 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         }
 
         @Override
-        public InstalledPart getInstalledPlugin(String uuid, String partKey) throws RemoteException {
+        public InstalledApk getInstalledPlugin(String uuid, String partKey) throws RemoteException {
             InstalledPlugin.Part part = getPluginPartByPartKey(uuid, partKey);
             String[] dependsOn = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).dependsOn : null;
             int type = part instanceof InstalledPlugin.PluginPart ? InstalledType.TYPE_PLUGIN : InstalledType.TYPE_INTERFACE;
-            return new InstalledPart(uuid, null, type, part.pluginFile.getAbsolutePath(),
+
+            int loaderType = type == 1 ? 0 : 1;
+            LoadParametersInManager loadParameters
+                    = new LoadParametersInManager(partKey, loaderType, dependsOn);
+
+            Parcel parcelExtras = Parcel.obtain();
+            loadParameters.writeToParcel(parcelExtras, 0);
+
+            return new InstalledApk(
+                    part.pluginFile.getAbsolutePath(),
                     part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
-                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(), dependsOn);
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(),
+                    parcelExtras.marshall()
+            );
         }
     };
 

@@ -1,10 +1,11 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
+import com.tencent.shadow.core.interface_.InstalledApk
+import com.tencent.shadow.core.loader.LoadParameters
 import com.tencent.shadow.core.loader.classloaders.CombineClassLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadApkException
-import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.core.loader.infos.PluginParts
 import java.io.File
 
@@ -21,19 +22,13 @@ object LoadApkBloc {
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadInterface(hostAppContext: Context, installedPlugin: InstalledPlugin, parentClassLoader: ClassLoader): PluginClassLoader {
-        val apk = installedPlugin.apkFile
-        val odexDir = installedPlugin.oDexDir
-        var libraryPath : String ? = null;
-        if(installedPlugin.libraryDir != null){
-            libraryPath = installedPlugin.libraryDir.absolutePath
-        }
-//        prepareDirs(odexDir, installedPlugin.libraryDir)
+    fun loadInterface(hostAppContext: Context, installedApk: InstalledApk, parentClassLoader: ClassLoader): PluginClassLoader {
+        val odexDir = installedApk.oDexPath
         return PluginClassLoader(
                 hostAppContext,
-                apk.absolutePath,
-                odexDir,
-                libraryPath,
+                installedApk.apkFilePath,
+                if (odexDir == null) null else File(odexDir),
+                installedApk.libraryPath,
                 parentClassLoader
         )
     }
@@ -45,31 +40,29 @@ object LoadApkBloc {
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadPlugin(hostAppContext: Context, installedPlugin: InstalledPlugin, parentClassLoader: ClassLoader, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
-        val apk = installedPlugin.apkFile
-        val odexDir = installedPlugin.oDexDir
-//        prepareDirs(odexDir, installedPlugin.libraryDir)
-
-        val dependsOn = installedPlugin.dependsOn
+    fun loadPlugin(hostAppContext: Context, installedApk: InstalledApk, loadParameters: LoadParameters, parentClassLoader: ClassLoader, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
+        val apk = File(installedApk.apkFilePath)
+        val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
+        val dependsOn = loadParameters.dependsOn
         if (dependsOn == null) {
             return PluginClassLoader(
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
-                    installedPlugin.libraryDir?.absolutePath,
+                    installedApk.libraryPath,
                     parentClassLoader
             )
         } else if (dependsOn.size == 1) {
             val partKey = dependsOn[0]
             val pluginParts = pluginPartsMap[partKey]
             if (pluginParts == null) {
-                throw LoadApkException("加载" + installedPlugin.partKey + "时它的依赖" + partKey + "还没有加载")
+                throw LoadApkException("加载" + loadParameters.partKey + "时它的依赖" + partKey + "还没有加载")
             } else {
                 return PluginClassLoader(
                         hostAppContext,
                         apk.absolutePath,
                         odexDir,
-                        installedPlugin.libraryDir?.absolutePath,
+                        installedApk.libraryPath,
                         pluginParts.classLoader
                 )
             }
@@ -77,7 +70,7 @@ object LoadApkBloc {
             val dependsOnClassLoaders = dependsOn.map {
                 val pluginParts = pluginPartsMap[it]
                 if (pluginParts == null) {
-                    throw LoadApkException("加载" + installedPlugin.partKey + "时它的依赖" + it + "还没有加载")
+                    throw LoadApkException("加载" + loadParameters.partKey + "时它的依赖" + it + "还没有加载")
                 } else {
                     pluginParts.classLoader
                 }
@@ -87,30 +80,9 @@ object LoadApkBloc {
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
-                    installedPlugin.libraryDir?.absolutePath,
+                    installedApk.libraryPath,
                     combineClassLoader
             )
-        }
-    }
-
-    @Throws(LoadApkException::class)
-    private fun prepareDirs(odexDir: File, libDir: File) {
-        if (odexDir.exists() && !odexDir.isDirectory) {
-            throw LoadApkException("odexDir目标路径" + odexDir.absolutePath
-                    + "已被其他文件占用")
-        } else if (!odexDir.exists()) {
-            val success = odexDir.mkdir()
-            if (!success) {
-                throw LoadApkException("odexDir目标路径" + odexDir.absolutePath
-                        + "创建目录失败")
-            }
-        }
-
-        if (!libDir.exists()) {
-            if (!libDir.mkdirs()) {
-                throw LoadApkException("libDir目标路径" + libDir.absolutePath
-                        + "创建目录失败")
-            }
         }
     }
 }

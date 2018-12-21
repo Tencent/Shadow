@@ -1,15 +1,17 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
+import com.tencent.shadow.core.interface_.InstalledApk
+import com.tencent.shadow.core.loader.LoadParameters
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
-import com.tencent.shadow.core.loader.infos.InstalledPlugin
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
+import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
@@ -27,26 +29,27 @@ object LoadPluginBloc {
             lock: ReentrantLock,
             pluginPartsMap: MutableMap<String, PluginParts>,
             hostAppContext: Context,
-            installedPlugin: InstalledPlugin,
+            installedApk: InstalledApk,
+            loadParameters: LoadParameters,
             parentClassLoader: ClassLoader,
             remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): Future<*> {
-        if (installedPlugin.apkFile == null) {
-            throw LoadPluginException("apkFile==null")
+        if (installedApk.apkFilePath == null) {
+            throw LoadPluginException("apkFilePath==null")
         } else {
             val buildClassLoader = executorService.submit(Callable {
                 lock.withLock {
-                    LoadApkBloc.loadPlugin(hostAppContext, installedPlugin, parentClassLoader, pluginPartsMap)
+                    LoadApkBloc.loadPlugin(hostAppContext, installedApk, loadParameters, parentClassLoader, pluginPartsMap)
                 }
             })
 
             val buildPackageManager = executorService.submit(Callable {
-                val pluginInfo = ParsePluginApkBloc.parse(installedPlugin, hostAppContext)
+                val pluginInfo = ParsePluginApkBloc.parse(installedApk, loadParameters, hostAppContext)
                 PluginPackageManager(commonPluginPackageManager, pluginInfo)
             })
 
             val buildResources = executorService.submit(Callable {
-                CreateResourceBloc.create(installedPlugin.apkFile.absolutePath, hostAppContext)
+                CreateResourceBloc.create(installedApk.apkFilePath, hostAppContext)
             })
 
             val buildApplication = executorService.submit(Callable {
@@ -68,8 +71,8 @@ object LoadPluginBloc {
             })
 
             val buildRunningPlugin = executorService.submit {
-                if (installedPlugin.apkFile.exists().not()) {
-                    throw LoadPluginException("插件文件不存在.pluginFile==" + installedPlugin.apkFile.absolutePath)
+                if (File(installedApk.apkFilePath).exists().not()) {
+                    throw LoadPluginException("插件文件不存在.pluginFile==" + installedApk.apkFilePath)
                 }
                 val pluginPackageManager = buildPackageManager.get()
                 val pluginClassLoader = buildClassLoader.get()
@@ -96,16 +99,16 @@ object LoadPluginBloc {
             abi: String,
             hostAppContext: Context,
             comInterface: InterfaceClassLoader,
-            installedPlugin: InstalledPlugin
+            installedApk: InstalledApk
     ): Future<*> {
-        if (installedPlugin.apkFile == null) {
-            throw LoadPluginException("pluginFile==null")
+        if (installedApk.apkFilePath == null) {
+            throw LoadPluginException("apkFilePath==null")
         } else {
 
             return executorService.submit {
                 val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
                 val hostAppParentClassLoader = pluginLoaderClassLoader.parent.parent
-                val pluginClassLoader = LoadApkBloc.loadInterface(hostAppContext, installedPlugin, hostAppParentClassLoader)
+                val pluginClassLoader = LoadApkBloc.loadInterface(hostAppContext, installedApk, hostAppParentClassLoader)
 
                 comInterface.addInterfaceClassLoader(pluginClassLoader)
             }
