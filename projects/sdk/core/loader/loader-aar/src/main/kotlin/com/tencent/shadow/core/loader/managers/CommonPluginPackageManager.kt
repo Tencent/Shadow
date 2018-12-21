@@ -9,6 +9,7 @@ import android.content.res.XmlResourceParser
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.UserHandle
+import com.tencent.shadow.core.loader.ImplementLater
 import com.tencent.shadow.core.loader.infos.PluginInfo
 
 /**
@@ -36,374 +37,374 @@ class CommonPluginPackageManager : PackageManager() {
     }
 
     override fun canonicalToCurrentPackageNames(names: Array<out String>?): Array<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getLaunchIntentForPackage(packageName: String?): Intent {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getResourcesForApplication(app: ApplicationInfo?): Resources {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getResourcesForApplication(appPackageName: String?): Resources {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getProviderInfo(component: ComponentName?, flags: Int): ProviderInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getReceiverInfo(component: ComponentName?, flags: Int): ActivityInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun queryIntentActivityOptions(caller: ComponentName?, specifics: Array<out Intent>?, intent: Intent?, flags: Int): MutableList<ResolveInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun clearPackagePreferredActivities(packageName: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPackageInstaller(): PackageInstaller {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun resolveService(intent: Intent?, flags: Int): ResolveInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun verifyPendingInstall(id: Int, verificationCode: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getInstantAppCookie(): ByteArray {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getApplicationIcon(info: ApplicationInfo?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getApplicationIcon(packageName: String?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun extendVerificationTimeout(id: Int, verificationCodeAtTimeout: Int, millisecondsToDelay: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getText(packageName: String?, resid: Int, appInfo: ApplicationInfo?): CharSequence {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun resolveContentProvider(name: String?, flags: Int): ProviderInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getApplicationEnabledSetting(packageName: String?): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun queryIntentServices(intent: Intent?, flags: Int): MutableList<ResolveInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun hasSystemFeature(name: String?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun hasSystemFeature(name: String?, version: Int): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getInstrumentationInfo(className: ComponentName?, flags: Int): InstrumentationInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getInstalledApplications(flags: Int): MutableList<ApplicationInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun isPermissionRevokedByPolicy(permName: String?, pkgName: String?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getUserBadgedDrawableForDensity(drawable: Drawable?, user: UserHandle?, badgeLocation: Rect?, badgeDensity: Int): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun checkPermission(permName: String?, pkgName: String?): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getInstantAppCookieMaxBytes(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getDefaultActivityIcon(): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPreferredPackages(flags: Int): MutableList<PackageInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun checkSignatures(pkg1: String?, pkg2: String?): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun checkSignatures(uid1: Int, uid2: Int): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun addPreferredActivity(filter: IntentFilter?, match: Int, set: Array<out ComponentName>?, activity: ComponentName?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun removePackageFromPreferred(packageName: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getSharedLibraries(flags: Int): MutableList<SharedLibraryInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun queryIntentActivities(intent: Intent?, flags: Int): MutableList<ResolveInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun addPermission(info: PermissionInfo?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getActivityBanner(activityName: ComponentName?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getActivityBanner(intent: Intent?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getDrawable(packageName: String?, resid: Int, appInfo: ApplicationInfo?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun setComponentEnabledSetting(componentName: ComponentName?, newState: Int, flags: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getChangedPackages(sequenceNumber: Int): ChangedPackages {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun resolveActivity(intent: Intent?, flags: Int): ResolveInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun queryBroadcastReceivers(intent: Intent?, flags: Int): MutableList<ResolveInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getXml(packageName: String?, resid: Int, appInfo: ApplicationInfo?): XmlResourceParser {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPackageInfo(packageName: String?, flags: Int): PackageInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPackageInfo(versionedPackage: VersionedPackage?, flags: Int): PackageInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPackagesHoldingPermissions(permissions: Array<out String>?, flags: Int): MutableList<PackageInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun addPermissionAsync(info: PermissionInfo?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getSystemAvailableFeatures(): Array<FeatureInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getActivityLogo(activityName: ComponentName?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getActivityLogo(intent: Intent?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getSystemSharedLibraryNames(): Array<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun queryPermissionsByGroup(group: String?, flags: Int): MutableList<PermissionInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun queryIntentContentProviders(intent: Intent?, flags: Int): MutableList<ResolveInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getApplicationBanner(info: ApplicationInfo?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getApplicationBanner(packageName: String?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun queryContentProviders(processName: String?, uid: Int, flags: Int): MutableList<ProviderInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPackageGids(packageName: String?): IntArray {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPackageGids(packageName: String?, flags: Int): IntArray {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getResourcesForActivity(activityName: ComponentName?): Resources {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPackagesForUid(uid: Int): Array<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPermissionGroupInfo(name: String?, flags: Int): PermissionGroupInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPermissionInfo(name: String?, flags: Int): PermissionInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun removePermission(name: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun queryInstrumentation(targetPackage: String?, flags: Int): MutableList<InstrumentationInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun clearInstantAppCookie() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun addPackageToPreferred(packageName: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun currentToCanonicalPackageNames(names: Array<out String>?): Array<String> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPackageUid(packageName: String?, flags: Int): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getComponentEnabledSetting(componentName: ComponentName?): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getLeanbackLaunchIntentForPackage(packageName: String?): Intent {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getInstalledPackages(flags: Int): MutableList<PackageInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getUserBadgedIcon(icon: Drawable?, user: UserHandle?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getAllPermissionGroups(flags: Int): MutableList<PermissionGroupInfo> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getNameForUid(uid: Int): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun updateInstantAppCookie(cookie: ByteArray?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getApplicationLogo(info: ApplicationInfo?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getApplicationLogo(packageName: String?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getApplicationLabel(info: ApplicationInfo?): CharSequence {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getPreferredActivities(outFilters: MutableList<IntentFilter>?, outActivities: MutableList<ComponentName>?, packageName: String?): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun setApplicationCategoryHint(packageName: String?, categoryHint: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun isSafeMode(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun setInstallerPackageName(targetPackage: String?, installerPackageName: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getUserBadgedLabel(label: CharSequence?, user: UserHandle?): CharSequence {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getInstallerPackageName(packageName: String?): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun setApplicationEnabledSetting(packageName: String?, newState: Int, flags: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun canRequestPackageInstalls(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getServiceInfo(component: ComponentName?, flags: Int): ServiceInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun isInstantApp(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun isInstantApp(packageName: String?): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getActivityIcon(activityName: ComponentName?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 
     override fun getActivityIcon(intent: Intent?): Drawable {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        ImplementLater() 
     }
 }

@@ -86,10 +86,6 @@ public class PluginProcessService extends Service {
         private final static String sDynamicPluginLoaderClassName
                 = "com.tencent.shadow.dynamic.loader.DynamicPluginLoader";
 
-        private final static int TYPE_PLUGIN_LOADER = 3;//todo 删除临时重复定义枚举
-
-        private final static int TYPE_PLUGIN_RUNTIME = 4;//todo 删除临时重复定义枚举
-
         private IBinder mPluginLoader;
 
         @Override

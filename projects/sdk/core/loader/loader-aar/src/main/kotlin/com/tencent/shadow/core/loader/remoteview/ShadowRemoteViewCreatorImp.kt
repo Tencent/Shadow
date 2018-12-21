@@ -48,7 +48,6 @@ internal class ShadowRemoteViewCreatorImp(private val context: Context, private 
 
 
     override fun createView(partKey: String, viewClass: String, callback: ShadowRemoteViewCreateCallback?) {
-        // TODO("not implemented")
         if (callback != null) {
             callback.onViewCreateFailed(java.lang.Exception("创建View失败，createView(String apkKey, String viewClass, ShadowRemoteViewCreateCallback callback)暂未实现！"))
         }
