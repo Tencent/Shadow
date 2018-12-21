@@ -41,3 +41,12 @@ task clean(type: Delete) {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:dynamic-loader-aar:clean')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:clean')
 }
+
+task buildQQJar(type: Copy) {
+    dependsOn ':projects:qq:iv-shadow-for-qq:assembleRelease'
+    from('projects/qq/iv-shadow-for-qq/build/intermediates/transforms/proguard/release') {
+        include '0.jar'
+        rename '0.jar', 'iv-shadow-for-qq.jar'
+    }
+    into 'build'
+}
