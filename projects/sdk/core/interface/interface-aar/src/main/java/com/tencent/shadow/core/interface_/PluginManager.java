@@ -6,6 +6,7 @@ import android.os.Bundle;
 /**
  * 提供给接入
  */
+//todo PluginManager，EnterCallback接口应该移到dynamic中去，和loader保持一致。
 public interface PluginManager {
 
     /**
