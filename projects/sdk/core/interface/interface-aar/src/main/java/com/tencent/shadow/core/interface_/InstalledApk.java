@@ -37,7 +37,9 @@ public class InstalledApk implements Parcelable {
         } else {
             parcelExtras = null;
         }
-        in.readByteArray(parcelExtras);
+        if (parcelExtras != null) {
+            in.readByteArray(parcelExtras);
+        }
     }
 
     @Override
@@ -46,7 +48,9 @@ public class InstalledApk implements Parcelable {
         dest.writeString(oDexPath);
         dest.writeString(libraryPath);
         dest.writeInt(parcelExtras == null ? 0 : parcelExtras.length);
-        dest.writeByteArray(parcelExtras);
+        if (parcelExtras != null) {
+            dest.writeByteArray(parcelExtras);
+        }
     }
 
     @Override
