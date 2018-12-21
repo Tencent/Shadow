@@ -16,6 +16,7 @@
 
 package com.tencent.shadow.core.loader.classloaders.multidex;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -188,6 +189,7 @@ public final class MultiDex {
         return isMultidexCapable;
     }
 
+    @SuppressLint("ObsoleteSdkInt")
     private static void installSecondaryDexes(ClassLoader loader, File dexDir, List<File> files)
             throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException,
             InvocationTargetException, NoSuchMethodException, IOException {

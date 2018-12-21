@@ -160,12 +160,14 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
 
             Parcel parcelExtras = Parcel.obtain();
             loadParameters.writeToParcel(parcelExtras, 0);
+            byte[] parcelBytes = parcelExtras.marshall();
+            parcelExtras.recycle();
 
             return new InstalledApk(
                     part.pluginFile.getAbsolutePath(),
                     part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
                     part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(),
-                    parcelExtras.marshall()
+                    parcelBytes
             );
         }
 

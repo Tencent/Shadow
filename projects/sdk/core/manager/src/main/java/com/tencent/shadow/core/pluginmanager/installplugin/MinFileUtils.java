@@ -1,5 +1,8 @@
 package com.tencent.shadow.core.pluginmanager.installplugin;
 
+import com.tencent.shadow.core.interface_.log.ILogger;
+import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,6 +20,8 @@ import java.security.MessageDigest;
  * 没有使用完整的commons-io是因为要控制方法数
  */
 public class MinFileUtils {
+
+    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(MinFileUtils.class);
     /**
      * 保证文件的父目录存在，如果不存在，则从不存在的祖先目录开始创建完成路径
      *
@@ -47,13 +52,12 @@ public class MinFileUtils {
             BigInteger bi = new BigInteger(1, md5.digest());
             value = bi.toString(16);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             if (null != in) {
                 try {
                     in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (IOException ignored) {
                 }
             }
         }

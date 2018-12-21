@@ -16,6 +16,7 @@
 
 package com.tencent.shadow.core.loader.classloaders.multidex;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -273,6 +274,7 @@ final class MultiDexExtractor {
      * Save {@link SharedPreferences}. Should be called only while owning the lock on
      * {@link #LOCK_FILENAME}.
      */
+    @SuppressLint("ApplySharedPref")
     private static void putStoredApkInfo(SharedPreferences prefs, long timeStamp, long crc,
                                          int totalDexNumber) {
         SharedPreferences.Editor edit = prefs.edit();
@@ -289,6 +291,7 @@ final class MultiDexExtractor {
      * Get the MuliDex {@link SharedPreferences} for the current application. Should be called only
      * while owning the lock on {@link #LOCK_FILENAME}.
      */
+    @SuppressLint("ObsoleteSdkInt")
     private static SharedPreferences getMultiDexPreferences(Context context) {
         return context.getSharedPreferences(PREFS_FILE,
                 Build.VERSION.SDK_INT < 11 /* Build.VERSION_CODES.HONEYCOMB */

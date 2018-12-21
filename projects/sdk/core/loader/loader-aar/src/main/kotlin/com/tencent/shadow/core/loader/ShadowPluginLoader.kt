@@ -176,6 +176,8 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
         val parcel = Parcel.obtain()
         parcel.unmarshall(parcelExtras, 0, parcelExtras.size)
         parcel.setDataPosition(0)
-        return LoadParameters(parcel)
+        val loadParameters = LoadParameters(parcel)
+        parcel.recycle()
+        return loadParameters
     }
 }
