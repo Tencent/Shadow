@@ -53,7 +53,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     /**
      * 等待service绑定完成的计数器
      */
-    private CountDownLatch mConnectCountDownLatch = new CountDownLatch(1);
+    private CountDownLatch mConnectCountDownLatch ;
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -94,6 +94,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         if (mLogger.isInfoEnabled()) {
             mLogger.info("startPluginProcessService "+serviceName);
         }
+        mConnectCountDownLatch = new CountDownLatch(1);
         mServiceConnecting.set(true);
         mHandler.post(new Runnable() {
             @Override
