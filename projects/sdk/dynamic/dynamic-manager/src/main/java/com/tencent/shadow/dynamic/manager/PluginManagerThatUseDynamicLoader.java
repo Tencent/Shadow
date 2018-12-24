@@ -9,9 +9,9 @@ import android.os.Looper;
 import android.os.Parcel;
 import android.os.RemoteException;
 
-import com.tencent.shadow.core.interface_.InstalledApk;
-import com.tencent.shadow.core.interface_.log.ILogger;
-import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.ILogger;
+import com.tencent.shadow.core.common.InstalledApk;
+import com.tencent.shadow.core.common.ShadowLoggerFactory;
 import com.tencent.shadow.core.loader.LoadParametersInManager;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;

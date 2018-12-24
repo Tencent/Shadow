@@ -28,7 +28,7 @@ dependencies {
     })
     testImplementation 'junit:junit:4.12'
     implementation 'com.tencent.shadow.coding:lint'
-    compileOnly 'com.tencent.shadow.core:interface'
+    compileOnly 'com.tencent.shadow.core:common'
     implementation 'com.tencent.shadow.core:manager'
     compileOnly project(':dynamic-loader')
     compileOnly project(':dynamic-host')

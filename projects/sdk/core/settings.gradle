@@ -1,2 +1,2 @@
 includeBuild '../coding'
-include 'loader', 'loader:loader-aar', 'runtime', 'runtime:aar', 'transform', 'gradle-plugin', 'interface', 'interface:interface-aar', 'manager'
+include 'loader', 'loader:loader-aar', 'runtime', 'runtime:aar', 'transform', 'gradle-plugin', 'common', 'common:common-aar', 'manager'

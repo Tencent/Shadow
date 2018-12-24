@@ -3,8 +3,8 @@ package com.tencent.shadow.core.pluginmanager.installplugin;
 
 import android.text.TextUtils;
 
-import com.tencent.shadow.core.interface_.log.ILogger;
-import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.ILogger;
+import com.tencent.shadow.core.common.ShadowLoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

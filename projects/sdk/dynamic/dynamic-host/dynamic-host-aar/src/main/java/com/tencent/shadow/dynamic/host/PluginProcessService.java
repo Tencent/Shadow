@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.tencent.shadow.core.interface_.InstalledApk;
-import com.tencent.shadow.core.interface_.log.ILogger;
-import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.ILogger;
+import com.tencent.shadow.core.common.InstalledApk;
+import com.tencent.shadow.core.common.ShadowLoggerFactory;
 
 import java.io.File;
 
@@ -79,8 +79,8 @@ public class PluginProcessService extends Service {
                 // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
                 "com.tencent.shadow.runtime.container",
                 "com.tencent.shadow.dynamic.host",
-                "com.tencent.shadow.core.interface_",
-                "com.tencent.shadow.core.interface_.log",
+                "com.tencent.shadow.core.common",
+                "com.tencent.shadow.core.common",
         };
 
         private final static String sDynamicPluginLoaderClassName

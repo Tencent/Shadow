@@ -30,6 +30,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation 'com.tencent.shadow.coding:lint'
-    compileOnly project(':interface')
+    compileOnly project(':common')
 }
 

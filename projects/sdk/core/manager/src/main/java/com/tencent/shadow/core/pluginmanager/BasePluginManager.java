@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.tencent.shadow.core.interface_.EnterCallback;
-import com.tencent.shadow.core.interface_.PluginManager;
-import com.tencent.shadow.core.interface_.log.ILogger;
-import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.EnterCallback;
+import com.tencent.shadow.core.common.ILogger;
+import com.tencent.shadow.core.common.PluginManager;
+import com.tencent.shadow.core.common.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.installplugin.AppCacheFolderManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.CopySoBloc;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstallPluginException;

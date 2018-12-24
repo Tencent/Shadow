@@ -1,4 +1,4 @@
 // InstalledApk.aidl
-package com.tencent.shadow.core.interface_;
+package com.tencent.shadow.core.common;
 
 parcelable InstalledApk;

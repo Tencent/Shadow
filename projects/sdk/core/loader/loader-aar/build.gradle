@@ -45,7 +45,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     compileOnly project(':runtime')
-    compileOnly project(':interface')
+    compileOnly project(':common')
     implementation 'com.tencent.shadow.coding:lint'
 }
 

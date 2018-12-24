@@ -2,7 +2,7 @@ package com.tencent.shadow.dynamic.host;
 
 import android.content.Context;
 
-import com.tencent.shadow.core.interface_.PluginManager;
+import com.tencent.shadow.core.common.PluginManager;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -15,8 +15,8 @@ final class ManagerImplLoader {
     private static final String WHITE_LIST_FIELD_NAME = "sWhiteList";
     private static final String[] REMOTE_PLUGIN_MANAGER_INTERFACES = new String[]
             {
-                    "com.tencent.shadow.core.interface_",
-                    "com.tencent.shadow.core.interface_.log",
+                    "com.tencent.shadow.core.common",
+                    "com.tencent.shadow.core.common",
                     "com.tencent.shadow.dynamic.host",
             };
     final private File apk;

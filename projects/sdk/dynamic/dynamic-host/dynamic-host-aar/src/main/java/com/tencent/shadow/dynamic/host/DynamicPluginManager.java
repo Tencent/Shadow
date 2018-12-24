@@ -3,10 +3,10 @@ package com.tencent.shadow.dynamic.host;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.tencent.shadow.core.interface_.EnterCallback;
-import com.tencent.shadow.core.interface_.PluginManager;
-import com.tencent.shadow.core.interface_.log.ILogger;
-import com.tencent.shadow.core.interface_.log.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.EnterCallback;
+import com.tencent.shadow.core.common.ILogger;
+import com.tencent.shadow.core.common.PluginManager;
+import com.tencent.shadow.core.common.ShadowLoggerFactory;
 
 import java.io.File;
 

@@ -1,6 +1,6 @@
 task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:assemble')
-    dependsOn gradle.includedBuild('core').task(':interface:interface-aar:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':common:common-aar:jarReleasePackage')
     dependsOn gradle.includedBuild('core').task(':loader:loader-aar:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':runtime:aar:jarReleasePackage')
@@ -12,7 +12,7 @@ task buildSdk() {
 }
 
 task lintSdk() {
-    dependsOn gradle.includedBuild('core').task(':interface:interface-aar:lint')
+    dependsOn gradle.includedBuild('core').task(':common:common-aar:lint')
     dependsOn gradle.includedBuild('core').task(':loader:loader-aar:lint')
     dependsOn gradle.includedBuild('core').task(':manager:lint')
     dependsOn gradle.includedBuild('core').task(':runtime:aar:lint')
@@ -77,11 +77,11 @@ publishing {
                 setScm(scm)
             }
         }
-        interface_(MavenPublication) {
+        common(MavenPublication) {
             groupId coreGroupId
-            artifactId 'interface'
+            artifactId 'common'
             version publicationVersion
-            artifact("$corePath/interface/interface-aar/build/outputs/jar/interface-aar-release.jar")
+            artifact("$corePath/common/common-aar/build/outputs/jar/common-aar-release.jar")
 
             pom.withXml {
                 def root = asNode()
@@ -100,7 +100,7 @@ publishing {
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -115,7 +115,7 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -161,7 +161,7 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -179,7 +179,7 @@ publishing {
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', publicationVersion))
                 dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
 
                 def scm = root.appendNode('scm')
@@ -196,7 +196,7 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'manager', publicationVersion))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
 
                 def scm = root.appendNode('scm')
@@ -220,7 +220,7 @@ publishing {
 }
 
 setGeneratePomFileAndDepends('gradlePlugin')
-setGeneratePomFileAndDepends('interface_')
+setGeneratePomFileAndDepends('common')
 setGeneratePomFileAndDepends('coreLoader')
 setGeneratePomFileAndDepends('coreManager')
 setGeneratePomFileAndDepends('runtime')
