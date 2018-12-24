@@ -143,7 +143,7 @@ public class PluginProcessService extends Service {
                     if (mLogger.isErrorEnabled()) {
                         mLogger.error(pluginLoaderClassLoader + " : " + sDynamicPluginLoaderClassName + " 创建失败 ", e);
                     }
-                    throw new RemoteException(
+                    throw new IllegalStateException(
                             pluginLoaderClassLoader + " : " + sDynamicPluginLoaderClassName + " 创建失败 "
                     );
                 }
