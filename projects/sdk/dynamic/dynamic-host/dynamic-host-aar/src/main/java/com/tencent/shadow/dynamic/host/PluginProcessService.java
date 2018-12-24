@@ -1,8 +1,11 @@
 package com.tencent.shadow.dynamic.host;
 
+import android.app.Activity;
+import android.app.Application;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 
@@ -11,12 +14,20 @@ import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class PluginProcessService extends Service {
     private static final Logger mLogger = LoggerFactory.getLogger(PluginProcessService.class);
 
     private final PpsController.Stub mPpsController = new PpsControllerImpl();
+
+    private static final ActivityHolder sActivityHolder = new ActivityHolder();
+
+    public static Application.ActivityLifecycleCallbacks getActivityHolder() {
+        return sActivityHolder;
+    }
 
     @Override
     public void onCreate() {
@@ -151,7 +162,7 @@ public class PluginProcessService extends Service {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("exit ");
             }
-            PluginActivityManager.getInstance().finishAll();
+            sActivityHolder.finishAll();
             System.exit(0);
             try {
                 wait();
@@ -160,4 +171,51 @@ public class PluginProcessService extends Service {
         }
     }
 
+    private static class ActivityHolder implements Application.ActivityLifecycleCallbacks {
+
+        private List<Activity> mActivities = new LinkedList<>();
+
+        void finishAll() {
+            for (Activity activity : mActivities) {
+                activity.finish();
+            }
+        }
+
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            mActivities.add(activity);
+        }
+
+        @Override
+        public void onActivityDestroyed(Activity activity) {
+            mActivities.remove(activity);
+        }
+
+        @Override
+        public void onActivityStarted(Activity activity) {
+
+        }
+
+        @Override
+        public void onActivityResumed(Activity activity) {
+
+        }
+
+        @Override
+        public void onActivityPaused(Activity activity) {
+
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+        }
+
+
+    }
 }
