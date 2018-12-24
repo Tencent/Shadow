@@ -43,11 +43,7 @@ def setGeneratePomFileAndDepends(publicationName) {
     model {
         tasks."generatePomFileFor${publicationName.capitalize()}Publication" {
             destination = file("$buildDir/pom/$publicationName-pom.xml")
-        }
-    }
-    tasks.whenTaskAdded { theTask ->
-        if (theTask.name.equals("generatePomFileFor${publicationName.capitalize()}Publication")) {
-            theTask.dependsOn(project.getTasksByName("buildSdk", false).first())
+            dependsOn(buildSdk)
         }
     }
 }
