@@ -12,4 +12,4 @@
 }
 #kotlin一般性配置 END
 
--keep class com.tencent.shadow.loader.**{*;}
+-keep class com.tencent.shadow.dynamic.loader.**{*;}
