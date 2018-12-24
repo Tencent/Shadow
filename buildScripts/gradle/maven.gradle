@@ -170,6 +170,25 @@ publishing {
                 setScm(scm)
             }
         }
+        dynamicLoader(MavenPublication) {
+            groupId dynamicGroupId
+            artifactId 'loader'
+            version project.ARTIFACT_VERSION
+            artifact("$corePath/dynamic-loader/dynamic-loader-aar/build/outputs/aar/dynamic-loader-aar-release.aar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', project.ARTIFACT_VERSION))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
     }
     repositories {
         maven {
@@ -193,3 +212,4 @@ setGeneratePomFileAndDepends('coreManager')
 setGeneratePomFileAndDepends('runtime')
 setGeneratePomFileAndDepends('transform')
 setGeneratePomFileAndDepends('dynamicHost')
+setGeneratePomFileAndDepends('dynamicLoader')
