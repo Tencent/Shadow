@@ -146,6 +146,18 @@ public class PluginProcessService extends Service {
             mUuidManager = uuidManager;
         }
 
+        @Override
+        public void exit() throws RemoteException {
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("exit ");
+            }
+            PluginActivityManager.getInstance().finishAll();
+            System.exit(0);
+            try {
+                wait();
+            } catch (InterruptedException ignored) {
+            }
+        }
     }
 
 }

@@ -11,4 +11,6 @@ interface PpsController {
 
      void setUuidManager(UuidManager uuidManager);
 
+     void exit();
+
 }
