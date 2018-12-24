@@ -25,10 +25,8 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BasePluginManager implements PluginManager {
     private static final ILogger mLogger = ShadowLoggerFactory.getLogger(BasePluginManager.class);
@@ -51,11 +49,6 @@ public abstract class BasePluginManager implements PluginManager {
      * UI线程的handler
      */
     protected Handler mHandler = new Handler(Looper.getMainLooper());
-
-    /**
-     * 记录安装过的插件
-     */
-    private ConcurrentHashMap<String, List<InstalledPlugin>> mInstallPlugins = new ConcurrentHashMap<>();
 
 
     public BasePluginManager(Context context) {
@@ -103,7 +96,6 @@ public abstract class BasePluginManager implements PluginManager {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("onDestroy:");
         }
-        mInstallPlugins.clear();
     }
 
 
@@ -133,27 +125,12 @@ public abstract class BasePluginManager implements PluginManager {
         PluginConfig pluginConfig = mUnpackManager.unpackPlugin(hash, zip);
         InstalledPlugin installedPlugin = mInstalledDao.insert(pluginConfig);
 
-        List<InstalledPlugin> plugins = null;
-        if (mInstallPlugins.get(installedPlugin.UUID) == null) {
-            plugins = new ArrayList<>();
-        } else {
-            plugins = mInstallPlugins.get(installedPlugin.UUID);
-        }
-        plugins.add(installedPlugin);
-        mInstallPlugins.put(installedPlugin.UUID, plugins);
         return installedPlugin;
     }
 
     protected InstalledPlugin.Part getPluginPartByPartKey(String uuid, String partKey) {
-        if (mInstallPlugins.get(uuid) != null) {
-            List<InstalledPlugin> plugins = mInstallPlugins.get(uuid);
-            for (InstalledPlugin installedPlugin : plugins) {
-                if (installedPlugin.getPart(partKey) != null) {
-                    return installedPlugin.getPart(partKey);
-                }
-            }
-        } else {
-            InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
+        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
+        if (installedPlugin != null) {
             return installedPlugin.getPart(partKey);
         }
         throw new RuntimeException("没有找到Part partKey:" + partKey);
@@ -167,29 +144,14 @@ public abstract class BasePluginManager implements PluginManager {
         if (type != InstalledType.TYPE_PLUGIN_LOADER && type != InstalledType.TYPE_PLUGIN_RUNTIME) {
             throw new RuntimeException("不支持的type:" + type);
         }
-        if (mInstallPlugins.get(uuid) != null) {
-            List<InstalledPlugin> plugins = mInstallPlugins.get(uuid);
-            for (InstalledPlugin installedPlugin : plugins) {
-                if (type == InstalledType.TYPE_PLUGIN_RUNTIME) {
-                    if (installedPlugin.runtimeFile != null) {
-                        return installedPlugin.runtimeFile;
-                    }
-                } else if (type == InstalledType.TYPE_PLUGIN_LOADER) {
-                    if (installedPlugin.pluginLoaderFile != null) {
-                        return installedPlugin.pluginLoaderFile;
-                    }
-                }
+        InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
+        if (type == InstalledType.TYPE_PLUGIN_RUNTIME) {
+            if (installedPlugin.runtimeFile != null) {
+                return installedPlugin.runtimeFile;
             }
-        } else {
-            InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
-            if (type == InstalledType.TYPE_PLUGIN_RUNTIME) {
-                if (installedPlugin.runtimeFile != null) {
-                    return installedPlugin.runtimeFile;
-                }
-            } else if (type == InstalledType.TYPE_PLUGIN_LOADER) {
-                if (installedPlugin.pluginLoaderFile != null) {
-                    return installedPlugin.pluginLoaderFile;
-                }
+        } else if (type == InstalledType.TYPE_PLUGIN_LOADER) {
+            if (installedPlugin.pluginLoaderFile != null) {
+                return installedPlugin.pluginLoaderFile;
             }
         }
         throw new RuntimeException("没有找到Part type :" + type);
