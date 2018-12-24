@@ -140,9 +140,11 @@ public class PluginProcessService extends Service {
                             new Object[]{PluginProcessService.this.getApplicationContext(), mUuidManager, uuid}
                     );
                 } catch (Exception e) {
-                    throw new RuntimeException(
-                            pluginLoaderClassLoader + " : " + sDynamicPluginLoaderClassName + " 创建失败 ",
-                            e
+                    if (mLogger.isErrorEnabled()) {
+                        mLogger.error(pluginLoaderClassLoader + " : " + sDynamicPluginLoaderClassName + " 创建失败 ", e);
+                    }
+                    throw new RemoteException(
+                            pluginLoaderClassLoader + " : " + sDynamicPluginLoaderClassName + " 创建失败 "
                     );
                 }
             }
