@@ -56,6 +56,7 @@ static def isPublishRelease() {
     return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
 }
 
+def publicationVersion = project.ARTIFACT_VERSION
 def coreGroupId = 'com.tencent.shadow.core'
 def corePath = 'projects/sdk/core'
 def dynamicGroupId = 'com.tencent.shadow.dynamic'
@@ -66,7 +67,7 @@ publishing {
         gradlePlugin(MavenPublication) {
             groupId coreGroupId
             artifactId 'gradle-plugin'
-            version project.ARTIFACT_VERSION
+            version publicationVersion
             artifact("$corePath/gradle-plugin/build/libs/gradle-plugin.jar")
 
             pom.withXml {
@@ -74,7 +75,7 @@ publishing {
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
-                dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -83,7 +84,7 @@ publishing {
         interface_(MavenPublication) {
             groupId coreGroupId
             artifactId 'interface'
-            version project.ARTIFACT_VERSION
+            version publicationVersion
             artifact("$corePath/interface/interface-aar/build/outputs/jar/interface-aar-release.jar")
 
             pom.withXml {
@@ -95,15 +96,15 @@ publishing {
         coreLoader(MavenPublication) {
             groupId coreGroupId
             artifactId 'loader'
-            version project.ARTIFACT_VERSION
+            version publicationVersion
             artifact("$corePath/loader/loader-aar/build/outputs/aar/loader-aar-release.aar")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
-                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', project.ARTIFACT_VERSION))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -112,13 +113,13 @@ publishing {
         coreManager(MavenPublication) {
             groupId coreGroupId
             artifactId 'manager'
-            version project.ARTIFACT_VERSION
+            version publicationVersion
             artifact("$corePath/manager/build/outputs/aar/manager-release.aar")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -127,7 +128,7 @@ publishing {
         runtime(MavenPublication) {
             groupId coreGroupId
             artifactId 'runtime'
-            version project.ARTIFACT_VERSION
+            version publicationVersion
             artifact("$corePath/runtime/aar/build/outputs/jar/aar-release.jar")
 
             pom.withXml {
@@ -140,7 +141,7 @@ publishing {
         transform(MavenPublication) {
             groupId coreGroupId
             artifactId 'transform'
-            version project.ARTIFACT_VERSION
+            version publicationVersion
             artifact("$corePath/transform/build/libs/transform.jar")
 
             pom.withXml {
@@ -157,14 +158,14 @@ publishing {
         dynamicHost(MavenPublication) {
             groupId dynamicGroupId
             artifactId 'host'
-            version project.ARTIFACT_VERSION
+            version publicationVersion
             artifact("$dynamicPath/dynamic-host/dynamic-host-aar/build/outputs/jar/dynamic-host-aar-release.jar")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', project.ARTIFACT_VERSION))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -173,17 +174,17 @@ publishing {
         dynamicLoader(MavenPublication) {
             groupId dynamicGroupId
             artifactId 'loader'
-            version project.ARTIFACT_VERSION
+            version publicationVersion
             artifact("$dynamicPath/dynamic-loader/dynamic-loader-aar/build/outputs/aar/dynamic-loader-aar-release.aar")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
-                dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', project.ARTIFACT_VERSION))
-                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', project.ARTIFACT_VERSION))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
-                dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', publicationVersion))
+                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
+                dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -192,15 +193,15 @@ publishing {
         dynamicManager(MavenPublication) {
             groupId dynamicGroupId
             artifactId 'manager'
-            version project.ARTIFACT_VERSION
+            version publicationVersion
             artifact("$dynamicPath/dynamic-manager/build/outputs/aar/dynamic-manager-release.aar")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('compile', coreGroupId, 'manager', project.ARTIFACT_VERSION))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
-                dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'manager', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', publicationVersion))
+                dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
