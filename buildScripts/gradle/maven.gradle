@@ -135,6 +135,23 @@ publishing {
                 setScm(scm)
             }
         }
+        transform(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'transform'
+            version project.ARTIFACT_VERSION
+            artifact("$corePath/transform/build/libs/transform.jar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
+                dependencies.append(getDependencyNode('compile', 'org.javassist', 'javassist', '3.22.0-GA'))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
     }
     repositories {
         maven {
@@ -156,3 +173,4 @@ setGeneratePomFileAndDepends('interface_')
 setGeneratePomFileAndDepends('coreLoader')
 setGeneratePomFileAndDepends('coreManager')
 setGeneratePomFileAndDepends('runtime')
+setGeneratePomFileAndDepends('transform')
