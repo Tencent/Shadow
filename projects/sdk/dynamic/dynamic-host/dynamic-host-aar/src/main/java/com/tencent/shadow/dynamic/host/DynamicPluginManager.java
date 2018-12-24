@@ -66,4 +66,8 @@ public final class DynamicPluginManager implements PluginManager {
             mLastModified = lastModified;
         }
     }
+
+    public PluginManager getManagerImpl() {
+        return mManagerImpl;
+    }
 }
