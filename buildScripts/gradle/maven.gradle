@@ -122,6 +122,19 @@ publishing {
                 setScm(scm)
             }
         }
+        runtime(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'runtime'
+            version project.ARTIFACT_VERSION
+            artifact("$corePath/runtime/aar/build/outputs/jar/aar-release.jar")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
     }
     repositories {
         maven {
@@ -142,3 +155,4 @@ setGeneratePomFileAndDepends('gradlePlugin')
 setGeneratePomFileAndDepends('interface_')
 setGeneratePomFileAndDepends('coreLoader')
 setGeneratePomFileAndDepends('coreManager')
+setGeneratePomFileAndDepends('runtime')
