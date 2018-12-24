@@ -158,7 +158,7 @@ publishing {
             groupId dynamicGroupId
             artifactId 'host'
             version project.ARTIFACT_VERSION
-            artifact("$corePath/dynamic-host/dynamic-host-aar/build/outputs/jar/dynamic-host-aar-release.jar")
+            artifact("$dynamicPath/dynamic-host/dynamic-host-aar/build/outputs/jar/dynamic-host-aar-release.jar")
 
             pom.withXml {
                 def root = asNode()
@@ -174,7 +174,7 @@ publishing {
             groupId dynamicGroupId
             artifactId 'loader'
             version project.ARTIFACT_VERSION
-            artifact("$corePath/dynamic-loader/dynamic-loader-aar/build/outputs/aar/dynamic-loader-aar-release.aar")
+            artifact("$dynamicPath/dynamic-loader/dynamic-loader-aar/build/outputs/aar/dynamic-loader-aar-release.aar")
 
             pom.withXml {
                 def root = asNode()
@@ -182,6 +182,23 @@ publishing {
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', project.ARTIFACT_VERSION))
                 dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', project.ARTIFACT_VERSION))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        dynamicManager(MavenPublication) {
+            groupId dynamicGroupId
+            artifactId 'manager'
+            version project.ARTIFACT_VERSION
+            artifact("$dynamicPath/dynamic-manager/build/outputs/aar/dynamic-manager-release.aar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'manager', project.ARTIFACT_VERSION))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', project.ARTIFACT_VERSION))
 
@@ -213,3 +230,4 @@ setGeneratePomFileAndDepends('runtime')
 setGeneratePomFileAndDepends('transform')
 setGeneratePomFileAndDepends('dynamicHost')
 setGeneratePomFileAndDepends('dynamicLoader')
+setGeneratePomFileAndDepends('dynamicManager')
