@@ -220,7 +220,6 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         if (mLogger.isInfoEnabled()) {
             mLogger.info("onDestroy:");
         }
-        mInstallPlugins.clear();
 
         if (mPpsController != null) {
             try {
