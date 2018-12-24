@@ -61,6 +61,10 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("onServiceConnected");
+            }
+            mServiceConnecting.set(false);
             mPpsController = PpsController.Stub.asInterface(service);
             try {
                 mPpsController.setUuidManager(new UuidManagerStub());
@@ -68,9 +72,6 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 throw new RuntimeException(e);
             }
             mConnectCountDownLatch.countDown();
-            if (mLogger.isInfoEnabled()) {
-                mLogger.info("onServiceConnected");
-            }
         }
 
         @Override
