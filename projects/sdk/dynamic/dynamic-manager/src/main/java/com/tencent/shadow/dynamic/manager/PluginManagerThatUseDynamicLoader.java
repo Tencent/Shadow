@@ -76,6 +76,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("onServiceDisconnected");
+            }
             mServiceConnecting.set(false);
             mPpsController = null;
             mPluginLoader = null;
