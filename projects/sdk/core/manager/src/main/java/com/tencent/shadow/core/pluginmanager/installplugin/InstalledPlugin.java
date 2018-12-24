@@ -1,8 +1,6 @@
 package com.tencent.shadow.core.pluginmanager.installplugin;
 
 
-import com.tencent.shadow.core.interface_.API;
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -16,7 +14,6 @@ import java.util.Map;
  *
  * @author owenguo
  */
-@API
 public class InstalledPlugin implements Serializable {
 
     /**
