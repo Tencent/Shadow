@@ -45,6 +45,5 @@ def isCleanWorkspace() {
 ext {
     GIT_BRANCH = gitBranch()
     GIT_SHORT_REV = gitShortRev()
-    GIT_DESCRIBE = gitDescribe()
     GIT_IS_CLEAN_WORKSPACE = isCleanWorkspace()
 }
