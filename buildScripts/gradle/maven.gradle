@@ -58,6 +58,8 @@ static def isPublishRelease() {
 
 def coreGroupId = 'com.tencent.shadow.core'
 def corePath = 'projects/sdk/core'
+def dynamicGroupId = 'com.tencent.shadow.dynamic'
+def dynamicPath = 'projects/sdk/dynamic'
 
 publishing {
     publications {
@@ -152,6 +154,22 @@ publishing {
                 setScm(scm)
             }
         }
+        dynamicHost(MavenPublication) {
+            groupId dynamicGroupId
+            artifactId 'host'
+            version project.ARTIFACT_VERSION
+            artifact("$corePath/dynamic-host/dynamic-host-aar/build/outputs/jar/dynamic-host-aar-release.jar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', project.ARTIFACT_VERSION))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'interface', project.ARTIFACT_VERSION))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
     }
     repositories {
         maven {
@@ -174,3 +192,4 @@ setGeneratePomFileAndDepends('coreLoader')
 setGeneratePomFileAndDepends('coreManager')
 setGeneratePomFileAndDepends('runtime')
 setGeneratePomFileAndDepends('transform')
+setGeneratePomFileAndDepends('dynamicHost')
