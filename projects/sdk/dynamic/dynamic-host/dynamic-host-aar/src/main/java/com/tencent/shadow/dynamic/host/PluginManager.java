@@ -1,12 +1,13 @@
-package com.tencent.shadow.core.common;
+package com.tencent.shadow.dynamic.host;
 
 import android.content.Context;
 import android.os.Bundle;
 
 /**
- * 提供给接入
+ * 使用方持有的接口
+ *
+ * @author cubershi
  */
-//todo PluginManager，EnterCallback接口应该移到dynamic中去，和loader保持一致。
 public interface PluginManager {
 
     /**
@@ -16,10 +17,4 @@ public interface PluginManager {
      * @param callback 用于从PluginManager实现中返回View
      */
     void enter(Context context, long formId, Bundle bundle, EnterCallback callback);
-
-    void onCreate(Bundle bundle);
-
-    void onSaveInstanceState(Bundle outState);
-
-    void onDestroy();
 }

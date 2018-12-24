@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.common;
+package com.tencent.shadow.dynamic.host;
 
 import android.view.View;
 

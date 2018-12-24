@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Parcel;
@@ -16,6 +17,7 @@ import com.tencent.shadow.core.loader.LoadParametersInManager;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledType;
+import com.tencent.shadow.dynamic.host.PluginManagerImpl;
 import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.host.UuidManager;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
@@ -27,7 +29,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
-public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManager {
+public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManager implements PluginManagerImpl {
 
     private static final Logger mLogger = LoggerFactory.getLogger(PluginManagerThatUseDynamicLoader.class);
 
@@ -187,9 +189,38 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         }
     };
 
-    @Override
+    /**
+     * PluginManager对象创建的时候回调
+     *
+     * @param bundle 当PluginManager有更新时会回调老的PluginManager对象onSaveInstanceState存储数据，bundle不为null说明发生了更新
+     *               为null说明是首次创建
+     */
+    public void onCreate(Bundle bundle) {
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onCreate bundle:" + bundle);
+        }
+    }
+
+    /**
+     * 当PluginManager有更新时会先回调老的PluginManager对象 onSaveInstanceState存储数据
+     *
+     * @param bundle 要存储的数据
+     */
+    public void onSaveInstanceState(Bundle bundle) {
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onSaveInstanceState:" + bundle);
+        }
+    }
+
+    /**
+     * 当PluginManager有更新时先会销毁老的PluginManager对象，回调对应的onDestroy
+     */
     public void onDestroy() {
-        super.onDestroy();
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("onDestroy:");
+        }
+        mInstallPlugins.clear();
+
         if (mPpsController != null) {
             try {
                 mPpsController.setUuidManager(null);
@@ -201,4 +232,5 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         }
         mPpsController = null;
     }
+
 }

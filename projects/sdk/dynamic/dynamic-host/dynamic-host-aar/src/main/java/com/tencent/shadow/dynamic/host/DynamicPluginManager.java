@@ -3,17 +3,15 @@ package com.tencent.shadow.dynamic.host;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.tencent.shadow.core.common.EnterCallback;
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
-import com.tencent.shadow.core.common.PluginManager;
 
 import java.io.File;
 
 public final class DynamicPluginManager implements PluginManager {
 
     final private PluginManagerUpdater mUpdater;
-    private PluginManager mManagerImpl;
+    private PluginManagerImpl mManagerImpl;
     private long mLastModified;
     private static final Logger mLogger = LoggerFactory.getLogger(DynamicPluginManager.class);
 
@@ -36,28 +34,13 @@ public final class DynamicPluginManager implements PluginManager {
         mUpdater.update();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void release() {
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("onCreate savedInstanceState:" + savedInstanceState);
+            mLogger.info("release");
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        if (mLogger.isInfoEnabled()) {
-            mLogger.info("onSaveInstanceState outState:" + outState);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
         if (mManagerImpl != null) {
             mManagerImpl.onDestroy();
             mManagerImpl = null;
-        }
-        if (mLogger.isInfoEnabled()) {
-            mLogger.info("onDestroy");
         }
     }
 
@@ -69,7 +52,7 @@ public final class DynamicPluginManager implements PluginManager {
         }
         if (mLastModified != lastModified) {
             ManagerImplLoader implLoader = new ManagerImplLoader(context, latestManagerImplApk);
-            PluginManager newImpl = implLoader.load();
+            PluginManagerImpl newImpl = implLoader.load();
             Bundle state;
             if (mManagerImpl != null) {
                 state = new Bundle();

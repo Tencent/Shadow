@@ -2,14 +2,11 @@ package com.tencent.shadow.core.pluginmanager;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.tencent.shadow.core.common.EnterCallback;
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
-import com.tencent.shadow.core.common.PluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.AppCacheFolderManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.CopySoBloc;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstallPluginException;
@@ -30,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class BasePluginManager implements PluginManager {
+public abstract class BasePluginManager {
     private static final Logger mLogger = LoggerFactory.getLogger(BasePluginManager.class);
     /*
      * 宿主的context对象
@@ -55,7 +52,7 @@ public abstract class BasePluginManager implements PluginManager {
     /**
      * 记录安装过的插件
      */
-    private ConcurrentHashMap<String, List<InstalledPlugin>> mInstallPlugins = new ConcurrentHashMap<>();
+    protected ConcurrentHashMap<String, List<InstalledPlugin>> mInstallPlugins = new ConcurrentHashMap<>();
 
 
     public BasePluginManager(Context context) {
@@ -69,48 +66,6 @@ public abstract class BasePluginManager implements PluginManager {
      * 用于和其他PluginManager区分持续化存储的名字
      */
     abstract protected String getName();
-
-    /**
-     * PluginManager对象创建的时候回调
-     *
-     * @param bundle 当PluginManager有更新时会回调老的PluginManager对象onSaveInstanceState存储数据，bundle不为null说明发生了更新
-     *               为null说明是首次创建
-     */
-    @Override
-    public void onCreate(Bundle bundle) {
-        if (mLogger.isInfoEnabled()) {
-            mLogger.info("onCreate bundle:" + bundle);
-        }
-    }
-
-    /**
-     * 当PluginManager有更新时会先回调老的PluginManager对象 onSaveInstanceState存储数据
-     *
-     * @param bundle 要存储的数据
-     */
-    @Override
-    public void onSaveInstanceState(Bundle bundle) {
-        if (mLogger.isInfoEnabled()) {
-            mLogger.info("onSaveInstanceState:" + bundle);
-        }
-    }
-
-    /**
-     * 当PluginManager有更新时先会销毁老的PluginManager对象，回调对应的onDestroy
-     */
-    @Override
-    public void onDestroy() {
-        if (mLogger.isInfoEnabled()) {
-            mLogger.info("onDestroy:");
-        }
-        mInstallPlugins.clear();
-    }
-
-
-    @Override
-    public void enter(Context context, long fromId, Bundle bundle, EnterCallback callback) {
-
-    }
 
     /**
      * 从文件夹中解压插件

@@ -2,8 +2,6 @@ package com.tencent.shadow.dynamic.host;
 
 import android.content.Context;
 
-import com.tencent.shadow.core.common.PluginManager;
-
 import java.io.File;
 import java.lang.reflect.Field;
 
@@ -27,7 +25,7 @@ final class ManagerImplLoader {
         this.apk = apk;
     }
 
-    PluginManager load() {
+    PluginManagerImpl load() {
         File root = new File(applicationContext.getFilesDir(), "ManagerImplLoader");
         File odexDir = new File(root, Long.toString(apk.lastModified(), Character.MAX_RADIX));
         odexDir.mkdirs();
