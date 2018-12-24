@@ -6,15 +6,15 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-import com.tencent.shadow.core.common.ILogger;
 import com.tencent.shadow.core.common.InstalledApk;
-import com.tencent.shadow.core.common.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.Logger;
+import com.tencent.shadow.core.common.LoggerFactory;
 
 import java.io.File;
 
 
 public class PluginProcessService extends Service {
-    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(PluginProcessService.class);
+    private static final Logger mLogger = LoggerFactory.getLogger(PluginProcessService.class);
 
     private final PpsController.Stub mPpsController = new PpsControllerImpl();
 

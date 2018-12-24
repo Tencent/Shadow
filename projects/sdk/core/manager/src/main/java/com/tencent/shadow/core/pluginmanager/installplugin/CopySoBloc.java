@@ -3,8 +3,8 @@ package com.tencent.shadow.core.pluginmanager.installplugin;
 
 import android.text.TextUtils;
 
-import com.tencent.shadow.core.common.ILogger;
-import com.tencent.shadow.core.common.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.Logger;
+import com.tencent.shadow.core.common.LoggerFactory;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -18,7 +18,7 @@ import java.util.zip.ZipEntry;
 
 public class CopySoBloc {
 
-    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(CopySoBloc.class);
+    private static final Logger mLogger = LoggerFactory.getLogger(CopySoBloc.class);
 
     private static ConcurrentHashMap<String, Object> sLocks = new ConcurrentHashMap<>();
 

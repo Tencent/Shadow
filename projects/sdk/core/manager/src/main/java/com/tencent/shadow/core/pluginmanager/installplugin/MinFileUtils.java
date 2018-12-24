@@ -1,7 +1,7 @@
 package com.tencent.shadow.core.pluginmanager.installplugin;
 
-import com.tencent.shadow.core.common.ILogger;
-import com.tencent.shadow.core.common.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.Logger;
+import com.tencent.shadow.core.common.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +21,7 @@ import java.security.MessageDigest;
  */
 public class MinFileUtils {
 
-    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(MinFileUtils.class);
+    private static final Logger mLogger = LoggerFactory.getLogger(MinFileUtils.class);
     /**
      * 保证文件的父目录存在，如果不存在，则从不存在的祖先目录开始创建完成路径
      *

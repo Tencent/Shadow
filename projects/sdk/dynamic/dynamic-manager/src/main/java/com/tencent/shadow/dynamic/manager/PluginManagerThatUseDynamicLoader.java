@@ -9,9 +9,9 @@ import android.os.Looper;
 import android.os.Parcel;
 import android.os.RemoteException;
 
-import com.tencent.shadow.core.common.ILogger;
 import com.tencent.shadow.core.common.InstalledApk;
-import com.tencent.shadow.core.common.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.Logger;
+import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.core.loader.LoadParametersInManager;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
@@ -29,7 +29,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 
 public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManager {
 
-    private ILogger mLogger = ShadowLoggerFactory.getLogger(PluginManagerThatUseDynamicLoader.class);
+    private static final Logger mLogger = LoggerFactory.getLogger(PluginManagerThatUseDynamicLoader.class);
 
 
     protected PluginManagerThatUseDynamicLoader(Context context) {
@@ -128,9 +128,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                     mLogger.info("service connected " + (System.currentTimeMillis() - s));
                 }
             } catch (InterruptedException e) {
-                if (mLogger.isErrorEnabled()) {
-                    mLogger.error(e);
-                }
+                throw new RuntimeException(e);
             }
         }
         mPpsController.loadRuntime(uuid);
@@ -197,7 +195,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 mPpsController.setUuidManager(null);
             } catch (RemoteException e) {
                 if (mLogger.isErrorEnabled()) {
-                    mLogger.error(e);
+                    mLogger.error("清空UuidManager出错", e);
                 }
             }
         }

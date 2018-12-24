@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.tencent.shadow.core.common.EnterCallback;
-import com.tencent.shadow.core.common.ILogger;
+import com.tencent.shadow.core.common.Logger;
+import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.core.common.PluginManager;
-import com.tencent.shadow.core.common.ShadowLoggerFactory;
 
 import java.io.File;
 
@@ -15,7 +15,7 @@ public final class DynamicPluginManager implements PluginManager {
     final private PluginManagerUpdater mUpdater;
     private PluginManager mManagerImpl;
     private long mLastModified;
-    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(DynamicPluginManager.class);
+    private static final Logger mLogger = LoggerFactory.getLogger(DynamicPluginManager.class);
 
     public DynamicPluginManager(PluginManagerUpdater updater) {
         if (updater.getLatest() == null) {

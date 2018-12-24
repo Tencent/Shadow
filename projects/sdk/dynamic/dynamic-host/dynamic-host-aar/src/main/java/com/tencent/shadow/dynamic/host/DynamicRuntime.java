@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 
-import com.tencent.shadow.core.common.ILogger;
 import com.tencent.shadow.core.common.InstalledApk;
-import com.tencent.shadow.core.common.ShadowLoggerFactory;
+import com.tencent.shadow.core.common.Logger;
+import com.tencent.shadow.core.common.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -21,7 +21,7 @@ import dalvik.system.BaseDexClassLoader;
  */
 public class DynamicRuntime {
 
-    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(DynamicRuntime.class);
+    private static final Logger mLogger = LoggerFactory.getLogger(DynamicRuntime.class);
 
     private static final String SP_NAME = "ShadowRuntimeLoader";
 

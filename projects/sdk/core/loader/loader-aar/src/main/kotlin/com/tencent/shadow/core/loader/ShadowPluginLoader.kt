@@ -3,7 +3,7 @@ package com.tencent.shadow.core.loader
 import android.content.Context
 import android.os.Parcel
 import com.tencent.shadow.core.common.InstalledApk
-import com.tencent.shadow.core.common.ShadowLoggerFactory
+import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.core.loader.delegates.DI
@@ -72,7 +72,7 @@ abstract class ShadowPluginLoader : DelegateProvider, DI {
 
 
     companion object {
-        private val mLogger = ShadowLoggerFactory.getLogger(ShadowPluginLoader::class.java)
+        private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
     }
 
     fun getPluginServiceManager(): PluginServiceManager {

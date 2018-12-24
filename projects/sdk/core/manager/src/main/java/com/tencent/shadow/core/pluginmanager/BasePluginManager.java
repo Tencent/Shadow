@@ -7,9 +7,9 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.tencent.shadow.core.common.EnterCallback;
-import com.tencent.shadow.core.common.ILogger;
+import com.tencent.shadow.core.common.Logger;
+import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.core.common.PluginManager;
-import com.tencent.shadow.core.common.ShadowLoggerFactory;
 import com.tencent.shadow.core.pluginmanager.installplugin.AppCacheFolderManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.CopySoBloc;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstallPluginException;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BasePluginManager implements PluginManager {
-    private static final ILogger mLogger = ShadowLoggerFactory.getLogger(BasePluginManager.class);
+    private static final Logger mLogger = LoggerFactory.getLogger(BasePluginManager.class);
     /*
      * 宿主的context对象
      */

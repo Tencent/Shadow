@@ -1,6 +1,6 @@
 package com.tencent.shadow.core.common;
 
-public final class ShadowLoggerFactory {
+public final class LoggerFactory {
 
     volatile private static ILoggerFactory sILoggerFactory;
 
@@ -11,7 +11,7 @@ public final class ShadowLoggerFactory {
         sILoggerFactory = loggerFactory;
     }
 
-    public static ILogger getLogger(Class<?> clazz) {
+    final public static Logger getLogger(Class<?> clazz) {
         ILoggerFactory iLoggerFactory = getILoggerFactory();
         return iLoggerFactory.getLogger(clazz.getName());
     }
