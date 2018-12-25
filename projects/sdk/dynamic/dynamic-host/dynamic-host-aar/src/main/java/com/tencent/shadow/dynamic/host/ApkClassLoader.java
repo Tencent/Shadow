@@ -108,15 +108,14 @@ class ApkClassLoader extends DexClassLoader {
      * @return 所需接口
      * @throws Exception
      */
-    <T> T getInterface(Class<T> clazz, String className, Class<?>[] parameterTypes, Object[] parameters) throws Exception {
+    <T> T getInterface(Class<T> clazz, String className, Class<?>[] parameterTypes, Object[] parameters) {
         try {
             Class<?> interfaceImplementClass = loadClass(className);
             Constructor<?> constructor = interfaceImplementClass.getConstructor(parameterTypes);
             Object interfaceImplement = constructor.newInstance(parameters);
             return clazz.cast(interfaceImplement);
-        } catch (ClassNotFoundException | InstantiationException
-                | ClassCastException | IllegalAccessException e) {
-            throw new Exception(e);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

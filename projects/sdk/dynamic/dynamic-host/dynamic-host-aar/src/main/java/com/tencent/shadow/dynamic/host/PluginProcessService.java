@@ -17,16 +17,22 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_FILE_NOT_FOUND_EXCEPTION;
+
 
 public class PluginProcessService extends Service {
     private static final Logger mLogger = LoggerFactory.getLogger(PluginProcessService.class);
 
-    private final PpsController.Stub mPpsController = new PpsControllerImpl();
+    private final PpsBinder mPpsControllerBinder = new PpsBinder(this);
 
-    private static final ActivityHolder sActivityHolder = new ActivityHolder();
+    static final ActivityHolder sActivityHolder = new ActivityHolder();
 
     public static Application.ActivityLifecycleCallbacks getActivityHolder() {
         return sActivityHolder;
+    }
+
+    public static PpsController wrapBinder(IBinder ppsBinder) {
+        return new PpsController(ppsBinder);
     }
 
     @Override
@@ -42,7 +48,7 @@ public class PluginProcessService extends Service {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("onBind:" + this);
         }
-        return mPpsController;
+        return mPpsControllerBinder;
     }
 
     @Override
@@ -77,49 +83,68 @@ public class PluginProcessService extends Service {
         }
     }
 
-    private class PpsControllerImpl extends PpsController.Stub {
+    private UuidManager mRpcUuidManager;
 
-        private UuidManager mUuidManager;
+    /**
+     * 加载{@link #sDynamicPluginLoaderClassName}时
+     * 需要从宿主PathClassLoader（含双亲委派）中加载的类
+     */
+    private final String[] sInterfaces = new String[]{
+            //当runtime是动态加载的时候，runtime的ClassLoader是PathClassLoader的parent，
+            // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
+            "com.tencent.shadow.runtime.container",
+            "com.tencent.shadow.dynamic.host",
+            "com.tencent.shadow.core.common",
+            "com.tencent.shadow.core.common",
+    };
 
-        /**
-         * 加载{@link #sDynamicPluginLoaderClassName}时
-         * 需要从宿主PathClassLoader（含双亲委派）中加载的类
-         */
-        private final String[] sInterfaces = new String[]{
-                //当runtime是动态加载的时候，runtime的ClassLoader是PathClassLoader的parent，
-                // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
-                "com.tencent.shadow.runtime.container",
-                "com.tencent.shadow.dynamic.host",
-                "com.tencent.shadow.core.common",
-                "com.tencent.shadow.core.common",
-        };
+    private final static String sDynamicPluginLoaderClassName
+            = "com.tencent.shadow.dynamic.loader.DynamicPluginLoader";
 
-        private final static String sDynamicPluginLoaderClassName
-                = "com.tencent.shadow.dynamic.loader.DynamicPluginLoader";
+    private IBinder mPluginLoader;
 
-        private IBinder mPluginLoader;
-
-        @Override
-        public void loadRuntime(String uuid) throws RemoteException {
+    void loadRuntime(String uuid) throws FailedException {
+        try {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("loadRuntime uuid:" + uuid);
             }
-            InstalledApk installedApk = mUuidManager.getRuntime(uuid);
+            InstalledApk installedApk;
+            try {
+                installedApk = mRpcUuidManager.getRuntime(uuid);
+            } catch (RemoteException e) {
+                throw new FailedException(e);
+            } catch (NotFoundException e) {
+                throw new FailedException(ERROR_CODE_FILE_NOT_FOUND_EXCEPTION, "uuid==" + uuid + "的Runtime没有找到。cause:" + e.getMessage());
+            }
+
             InstalledApk installedRuntimeApk = new InstalledApk(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath);
             boolean loaded = DynamicRuntime.loadRuntime(installedRuntimeApk);
             if (loaded) {
-                DynamicRuntime.saveLastRuntimeInfo(PluginProcessService.this, installedRuntimeApk);
+                DynamicRuntime.saveLastRuntimeInfo(this, installedRuntimeApk);
             }
-
+        } catch (RuntimeException e) {
+            if (mLogger.isErrorEnabled()) {
+                mLogger.error("loadRuntime发生RuntimeException", e);
+            }
+            throw new FailedException(e);
         }
+    }
 
-        @Override
-        public IBinder loadPluginLoader(String uuid) throws RemoteException {
+    IBinder loadPluginLoader(String uuid) throws FailedException {
+        //todo 检测重复加载，不能忽略这种错误
+        try {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("loadPluginLoader uuid:" + uuid + " loader:" + mPluginLoader);
             }
             if (mPluginLoader == null) {
-                InstalledApk installedApk = mUuidManager.getPluginLoader(uuid);
+                InstalledApk installedApk;
+                try {
+                    installedApk = mRpcUuidManager.getPluginLoader(uuid);
+                } catch (RemoteException e) {
+                    throw new FailedException(e);
+                } catch (NotFoundException e) {
+                    throw new FailedException(ERROR_CODE_FILE_NOT_FOUND_EXCEPTION, "uuid==" + uuid + "的PluginLoader没有找到。cause:" + e.getMessage());
+                }
                 File file = new File(installedApk.apkFilePath);
                 if (!file.exists()) {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
@@ -132,48 +157,42 @@ public class PluginProcessService extends Service {
                         sInterfaces,
                         1
                 );
-                try {
-                    mPluginLoader = pluginLoaderClassLoader.getInterface(
-                            IBinder.class,
-                            sDynamicPluginLoaderClassName,
-                            new Class[]{Context.class, UuidManager.class, String.class},
-                            new Object[]{PluginProcessService.this.getApplicationContext(), mUuidManager, uuid}
-                    );
-                } catch (Exception e) {
-                    if (mLogger.isErrorEnabled()) {
-                        mLogger.error(pluginLoaderClassLoader + " : " + sDynamicPluginLoaderClassName + " 创建失败 ", e);
-                    }
-                    throw new IllegalStateException(
-                            pluginLoaderClassLoader + " : " + sDynamicPluginLoaderClassName + " 创建失败 "
-                    );
-                }
+                mPluginLoader = pluginLoaderClassLoader.getInterface(
+                        IBinder.class,
+                        sDynamicPluginLoaderClassName,
+                        new Class[]{Context.class, UuidManager.class, String.class},
+                        new Object[]{getApplicationContext(), mRpcUuidManager, uuid}
+                );
             }
             return mPluginLoader;
-        }
-
-        @Override
-        public void setUuidManager(UuidManager uuidManager) throws RemoteException {
-            if (mLogger.isInfoEnabled()) {
-                mLogger.info("setUuidManager ");
+        } catch (RuntimeException e) {
+            if (mLogger.isErrorEnabled()) {
+                mLogger.error("loadPluginLoader发生RuntimeException", e);
             }
-            mUuidManager = uuidManager;
-        }
-
-        @Override
-        public void exit() throws RemoteException {
-            if (mLogger.isInfoEnabled()) {
-                mLogger.info("exit ");
-            }
-            sActivityHolder.finishAll();
-            System.exit(0);
-            try {
-                wait();
-            } catch (InterruptedException ignored) {
-            }
+            throw new FailedException(e);
         }
     }
 
-    private static class ActivityHolder implements Application.ActivityLifecycleCallbacks {
+    void setRpcUuidManager(UuidManager rpcUuidManager) {
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("setRpcUuidManager ");
+        }
+        mRpcUuidManager = rpcUuidManager;
+    }
+
+    void exit() {
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("exit ");
+        }
+        PluginProcessService.sActivityHolder.finishAll();
+        System.exit(0);
+        try {
+            wait();
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    static class ActivityHolder implements Application.ActivityLifecycleCallbacks {
 
         private List<Activity> mActivities = new LinkedList<>();
 

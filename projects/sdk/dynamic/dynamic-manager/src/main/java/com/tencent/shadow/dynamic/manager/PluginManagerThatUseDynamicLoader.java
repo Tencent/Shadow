@@ -17,9 +17,11 @@ import com.tencent.shadow.core.loader.LoadParametersInManager;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledType;
+import com.tencent.shadow.dynamic.host.FailedException;
+import com.tencent.shadow.dynamic.host.NotFoundException;
 import com.tencent.shadow.dynamic.host.PluginManagerImpl;
+import com.tencent.shadow.dynamic.host.PluginProcessService;
 import com.tencent.shadow.dynamic.host.PpsController;
-import com.tencent.shadow.dynamic.host.UuidManager;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 import java.util.concurrent.CountDownLatch;
@@ -65,9 +67,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 mLogger.info("onServiceConnected");
             }
             mServiceConnecting.set(false);
-            mPpsController = PpsController.Stub.asInterface(service);
+            mPpsController = PluginProcessService.wrapBinder(service);
             try {
-                mPpsController.setUuidManager(new UuidManagerStub());
+                mPpsController.setUuidManager(new UuidManagerBinder(PluginManagerThatUseDynamicLoader.this));
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -118,7 +120,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             throw new RuntimeException("loadPlugin 不能在主线程中调用");
         }
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("loadRunTime mPpsController:"+mPpsController);
+            mLogger.info("loadRunTime mPpsController:" + mPpsController);
         }
         if (mPpsController == null) {
             try {
@@ -137,7 +139,11 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 throw new RuntimeException(e);
             }
         }
-        mPpsController.loadRuntime(uuid);
+        try {
+            mPpsController.loadRuntime(uuid);
+        } catch (FailedException e) {
+            throw new RuntimeException("TODO", e);
+        }
     }
 
     public final void loadPluginLoader(String uuid) throws RemoteException{
@@ -145,53 +151,16 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             mLogger.info("loadRunTime loadPluginLoader:"+mPluginLoader);
         }
         if (mPluginLoader == null) {
-            IBinder iBinder = mPpsController.loadPluginLoader(uuid);
+            IBinder iBinder = null;
+            try {
+                iBinder = mPpsController.loadPluginLoader(uuid);
+            } catch (FailedException e) {
+                throw new RuntimeException("TODO", e);
+            }
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
         }
     }
 
-
-    private class UuidManagerStub extends UuidManager.Stub {
-        @Override
-        public InstalledApk getPlugin(String uuid, String partKey) throws RemoteException {
-            InstalledPlugin.Part part = getPluginPartByPartKey(uuid, partKey);
-            String[] dependsOn = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).dependsOn : null;
-            int type = part instanceof InstalledPlugin.PluginPart ? InstalledType.TYPE_PLUGIN : InstalledType.TYPE_INTERFACE;
-
-            int loaderType = type == 1 ? 0 : 1;
-            LoadParametersInManager loadParameters
-                    = new LoadParametersInManager(partKey, loaderType, dependsOn);
-
-            Parcel parcelExtras = Parcel.obtain();
-            loadParameters.writeToParcel(parcelExtras, 0);
-            byte[] parcelBytes = parcelExtras.marshall();
-            parcelExtras.recycle();
-
-            return new InstalledApk(
-                    part.pluginFile.getAbsolutePath(),
-                    part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
-                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(),
-                    parcelBytes
-            );
-        }
-
-        InstalledApk getInstalledPL(String uuid, int type) throws RemoteException {
-            InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
-            return new InstalledApk(part.pluginFile.getAbsolutePath(),
-                    part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
-                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath());
-        }
-
-        @Override
-        public InstalledApk getPluginLoader(String uuid) throws RemoteException {
-            return getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_LOADER);
-        }
-
-        @Override
-        public InstalledApk getRuntime(String uuid) throws RemoteException {
-            return getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_RUNTIME);
-        }
-    };
 
     /**
      * PluginManager对象创建的时候回调
@@ -236,4 +205,58 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         mPpsController = null;
     }
 
+    public InstalledApk getPlugin(String uuid, String partKey) throws FailedException, NotFoundException {
+        try {
+            InstalledPlugin.Part part;
+            try {
+                part = getPluginPartByPartKey(uuid, partKey);
+            } catch (RuntimeException e) {
+                throw new NotFoundException("uuid==" + uuid + "partKey==" + partKey + "的Plugin找不到");
+            }
+            String[] dependsOn = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).dependsOn : null;
+            int type = part instanceof InstalledPlugin.PluginPart ? InstalledType.TYPE_PLUGIN : InstalledType.TYPE_INTERFACE;
+
+            int loaderType = type == 1 ? 0 : 1;
+            LoadParametersInManager loadParameters
+                    = new LoadParametersInManager(partKey, loaderType, dependsOn);
+
+            Parcel parcelExtras = Parcel.obtain();
+            loadParameters.writeToParcel(parcelExtras, 0);
+            byte[] parcelBytes = parcelExtras.marshall();
+            parcelExtras.recycle();
+
+            return new InstalledApk(
+                    part.pluginFile.getAbsolutePath(),
+                    part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath(),
+                    parcelBytes
+            );
+        } catch (RuntimeException e) {
+            throw new FailedException(e);
+        }
+    }
+
+    InstalledApk getInstalledPL(String uuid, int type) throws FailedException, NotFoundException {
+        try {
+            InstalledPlugin.Part part;
+            try {
+                part = getLoaderOrRunTimePart(uuid, type);
+            } catch (RuntimeException e) {
+                throw new NotFoundException("uuid==" + uuid + " type==" + type + "没找到。cause：" + e.getMessage());
+            }
+            return new InstalledApk(part.pluginFile.getAbsolutePath(),
+                    part.oDexDir == null ? null : part.oDexDir.getAbsolutePath(),
+                    part.libraryDir == null ? null : part.libraryDir.getAbsolutePath());
+        } catch (RuntimeException e) {
+            throw new FailedException(e);
+        }
+    }
+
+    public InstalledApk getPluginLoader(String uuid) throws FailedException, NotFoundException {
+        return getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_LOADER);
+    }
+
+    public InstalledApk getRuntime(String uuid) throws FailedException, NotFoundException {
+        return getInstalledPL(uuid, InstalledType.TYPE_PLUGIN_RUNTIME);
+    }
 }
