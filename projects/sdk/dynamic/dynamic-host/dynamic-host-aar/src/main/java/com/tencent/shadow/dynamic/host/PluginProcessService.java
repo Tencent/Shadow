@@ -118,13 +118,19 @@ public class PluginProcessService extends Service {
         //todo 检测重复加载，不能忽略这种错误
         try {
             if (mLogger.isInfoEnabled()) {
-                mLogger.info("loadPluginLoader uuid:" + uuid + " loader:" + mPluginLoader);
+                mLogger.info("loadPluginLoader uuid:" + uuid + " mPluginLoader:" + mPluginLoader);
             }
             if (mPluginLoader == null) {
                 InstalledApk installedApk;
                 try {
                     installedApk = mUuidManager.getPluginLoader(uuid);
+                    if (mLogger.isInfoEnabled()) {
+                        mLogger.info("取出uuid==" + uuid + "的Loader apk:" + installedApk.apkFilePath);
+                    }
                 } catch (RemoteException e) {
+                    if (mLogger.isErrorEnabled()) {
+                        mLogger.error("获取Loader Apk失败", e);
+                    }
                     throw new FailedException(e);
                 } catch (NotFoundException e) {
                     throw new FailedException(ERROR_CODE_FILE_NOT_FOUND_EXCEPTION, "uuid==" + uuid + "的PluginLoader没有找到。cause:" + e.getMessage());
