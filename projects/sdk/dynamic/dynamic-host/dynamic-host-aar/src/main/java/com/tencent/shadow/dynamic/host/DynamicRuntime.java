@@ -122,7 +122,10 @@ public class DynamicRuntime {
      */
     public static boolean recoveryRuntime(Context context) {
         InstalledApk installedApk = getLastRuntimeInfo(context);
-        if (installedApk != null) {
+        if (installedApk != null && new File(installedApk.apkFilePath).exists()) {
+            if (installedApk.oDexPath != null && !new File(installedApk.oDexPath).exists()) {
+                return false;
+            }
             new DexPathClassLoader(installedApk.apkFilePath, installedApk.oDexPath,
                     installedApk.libraryPath, DynamicRuntime.class.getClassLoader().getParent());
             return true;
