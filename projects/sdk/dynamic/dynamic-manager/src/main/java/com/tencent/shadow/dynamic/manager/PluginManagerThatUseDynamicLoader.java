@@ -142,7 +142,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         try {
             mPpsController.loadRuntime(uuid);
         } catch (FailedException e) {
-            throw new RuntimeException("TODO", e);
+            throw new RuntimeException("TODO cause:" + e.errorMessage, e);
         }
     }
 
@@ -155,7 +155,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             try {
                 iBinder = mPpsController.loadPluginLoader(uuid);
             } catch (FailedException e) {
-                throw new RuntimeException("TODO", e);
+                throw new RuntimeException("TODO cause:" + e.errorMessage, e);
             }
             mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
         }
