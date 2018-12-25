@@ -2,7 +2,7 @@ package com.tencent.shadow.dynamic.host;
 
 import android.os.Build;
 
-import java.lang.reflect.Constructor;
+import com.tencent.shadow.core.common.InstalledApk;
 
 import dalvik.system.DexClassLoader;
 
@@ -21,9 +21,9 @@ class ApkClassLoader extends DexClassLoader {
     private ClassLoader mGrandParent;
     private final String[] mInterfacePackageNames;
 
-    ApkClassLoader(String dexPath, String optimizedDirectory, String libraryPath,
+    ApkClassLoader(InstalledApk installedApk,
                    ClassLoader parent, String[] mInterfacePackageNames, int grandTimes) {
-        super(dexPath, optimizedDirectory, libraryPath, parent);
+        super(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath, parent);
         ClassLoader grand = parent;
         for (int i = 0; i < grandTimes; i++) {
             grand = grand.getParent();
@@ -99,24 +99,5 @@ class ApkClassLoader extends DexClassLoader {
         }
     }
 
-    /**
-     * 从apk中读取接口的实现
-     *
-     * @param clazz     接口类
-     * @param className 实现类的类名
-     * @param <T>       接口类型
-     * @return 所需接口
-     * @throws Exception
-     */
-    <T> T getInterface(Class<T> clazz, String className, Class<?>[] parameterTypes, Object[] parameters) {
-        try {
-            Class<?> interfaceImplementClass = loadClass(className);
-            Constructor<?> constructor = interfaceImplementClass.getConstructor(parameterTypes);
-            Object interfaceImplement = constructor.newInstance(parameters);
-            return clazz.cast(interfaceImplement);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
 

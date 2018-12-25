@@ -3,7 +3,6 @@ package com.tencent.shadow.dynamic.host;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -18,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_FILE_NOT_FOUND_EXCEPTION;
+import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RUNTIME_EXCEPTION;
 
 
 public class PluginProcessService extends Service {
@@ -83,23 +83,7 @@ public class PluginProcessService extends Service {
         }
     }
 
-    private UuidManager mRpcUuidManager;
-
-    /**
-     * 加载{@link #sDynamicPluginLoaderClassName}时
-     * 需要从宿主PathClassLoader（含双亲委派）中加载的类
-     */
-    private final String[] sInterfaces = new String[]{
-            //当runtime是动态加载的时候，runtime的ClassLoader是PathClassLoader的parent，
-            // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
-            "com.tencent.shadow.runtime.container",
-            "com.tencent.shadow.dynamic.host",
-            "com.tencent.shadow.core.common",
-            "com.tencent.shadow.core.common",
-    };
-
-    private final static String sDynamicPluginLoaderClassName
-            = "com.tencent.shadow.dynamic.loader.DynamicPluginLoader";
+    private UuidManager mUuidManager;
 
     private IBinder mPluginLoader;
 
@@ -110,7 +94,7 @@ public class PluginProcessService extends Service {
             }
             InstalledApk installedApk;
             try {
-                installedApk = mRpcUuidManager.getRuntime(uuid);
+                installedApk = mUuidManager.getRuntime(uuid);
             } catch (RemoteException e) {
                 throw new FailedException(e);
             } catch (NotFoundException e) {
@@ -139,7 +123,7 @@ public class PluginProcessService extends Service {
             if (mPluginLoader == null) {
                 InstalledApk installedApk;
                 try {
-                    installedApk = mRpcUuidManager.getPluginLoader(uuid);
+                    installedApk = mUuidManager.getPluginLoader(uuid);
                 } catch (RemoteException e) {
                     throw new FailedException(e);
                 } catch (NotFoundException e) {
@@ -149,20 +133,8 @@ public class PluginProcessService extends Service {
                 if (!file.exists()) {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
                 }
-                ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
-                        installedApk.apkFilePath,
-                        installedApk.oDexPath,
-                        installedApk.libraryPath,
-                        this.getClass().getClassLoader(),
-                        sInterfaces,
-                        1
-                );
-                mPluginLoader = pluginLoaderClassLoader.getInterface(
-                        IBinder.class,
-                        sDynamicPluginLoaderClassName,
-                        new Class[]{Context.class, UuidManager.class, String.class},
-                        new Object[]{getApplicationContext(), mRpcUuidManager, uuid}
-                );
+
+                mPluginLoader = new LoaderImplLoader().load(installedApk, uuid, mUuidManager, getApplicationContext());
             }
             return mPluginLoader;
         } catch (RuntimeException e) {
@@ -170,6 +142,8 @@ public class PluginProcessService extends Service {
                 mLogger.error("loadPluginLoader发生RuntimeException", e);
             }
             throw new FailedException(e);
+        } catch (Exception e) {
+            throw new FailedException(ERROR_CODE_RUNTIME_EXCEPTION, "加载动态实现失败 cause：" + e.getCause().getMessage());
         }
     }
 
@@ -177,7 +151,7 @@ public class PluginProcessService extends Service {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("setRpcUuidManager ");
         }
-        mRpcUuidManager = rpcUuidManager;
+        mUuidManager = rpcUuidManager;
     }
 
     void exit() {

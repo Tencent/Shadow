@@ -2,73 +2,39 @@ package com.tencent.shadow.dynamic.host;
 
 import android.content.Context;
 
+import com.tencent.shadow.core.common.InstalledApk;
+
 import java.io.File;
-import java.lang.reflect.Field;
 
-import dalvik.system.DexClassLoader;
-
-final class ManagerImplLoader {
+final class ManagerImplLoader extends ImplLoader {
     private static final String MANAGER_FACTORY_CLASS_NAME = "com.tencent.shadow.dynamic.impl.ManagerFactoryImpl";
-    private static final String WHITE_LIST_CLASS_NAME = "com.tencent.shadow.dynamic.impl.WhiteList";
-    private static final String WHITE_LIST_FIELD_NAME = "sWhiteList";
     private static final String[] REMOTE_PLUGIN_MANAGER_INTERFACES = new String[]
             {
                     "com.tencent.shadow.core.common",
-                    "com.tencent.shadow.core.common",
-                    "com.tencent.shadow.dynamic.host",
+                    "com.tencent.shadow.dynamic.host"
             };
-    final private File apk;
     final private Context applicationContext;
+    final private InstalledApk installedApk;
 
     ManagerImplLoader(Context context, File apk) {
         applicationContext = context.getApplicationContext();
-        this.apk = apk;
-    }
-
-    PluginManagerImpl load() {
         File root = new File(applicationContext.getFilesDir(), "ManagerImplLoader");
         File odexDir = new File(root, Long.toString(apk.lastModified(), Character.MAX_RADIX));
         odexDir.mkdirs();
+        installedApk = new InstalledApk(apk.getAbsolutePath(), odexDir.getAbsolutePath(), null);
+    }
 
-        DexClassLoader dexClassLoader = new DexClassLoader(
-                apk.getAbsolutePath(),
-                odexDir.getAbsolutePath(),
-                null,
-                getClass().getClassLoader()
-        );
-
-        String[] whiteList = null;
-        try {
-            Class<?> whiteListClass = dexClassLoader.loadClass(WHITE_LIST_CLASS_NAME);
-            Field whiteListField = whiteListClass.getDeclaredField(WHITE_LIST_FIELD_NAME);
-            Object o = whiteListField.get(null);
-            whiteList = (String[]) o;
-        } catch (ClassNotFoundException ignored) {
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-
-        String[] interfaces;
-        if (whiteList != null) {
-            interfaces = concatenate(REMOTE_PLUGIN_MANAGER_INTERFACES, whiteList);
-        } else {
-            interfaces = REMOTE_PLUGIN_MANAGER_INTERFACES;
-        }
-
+    PluginManagerImpl load() {
         ApkClassLoader apkClassLoader = new ApkClassLoader(
-                apk.getAbsolutePath(),
-                odexDir.getAbsolutePath(),
-                null,
+                installedApk,
                 getClass().getClassLoader(),
-                interfaces,
+                loadWhiteList(installedApk),
                 1
         );
 
         Context pluginManagerContext = new ChangeApkContextWrapper(
                 applicationContext,
-                apk.getAbsolutePath(),
+                installedApk.apkFilePath,
                 apkClassLoader
         );
 
@@ -83,12 +49,9 @@ final class ManagerImplLoader {
         }
     }
 
-    private static String[] concatenate(String[] a, String[] b) {
-        int aLen = a.length;
-        int bLen = b.length;
-        String[] c = new String[aLen + bLen];
-        System.arraycopy(a, 0, c, 0, aLen);
-        System.arraycopy(b, 0, c, aLen, bLen);
-        return c;
+
+    @Override
+    String[] getCustomWhiteList() {
+        return REMOTE_PLUGIN_MANAGER_INTERFACES;
     }
 }
