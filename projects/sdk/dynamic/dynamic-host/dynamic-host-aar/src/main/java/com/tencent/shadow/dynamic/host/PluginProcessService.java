@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_FILE_NOT_FOUND_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RUNTIME_EXCEPTION;
+import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_DEAD_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION;
 
 
@@ -104,7 +105,7 @@ public class PluginProcessService extends Service {
             try {
                 installedApk = mUuidManager.getRuntime(uuid);
             } catch (RemoteException e) {
-                throw new FailedException(e);
+                throw new FailedException(ERROR_CODE_UUID_MANAGER_DEAD_EXCEPTION, e.getMessage());
             } catch (NotFoundException e) {
                 throw new FailedException(ERROR_CODE_FILE_NOT_FOUND_EXCEPTION, "uuid==" + uuid + "的Runtime没有找到。cause:" + e.getMessage());
             }
@@ -140,7 +141,7 @@ public class PluginProcessService extends Service {
                     if (mLogger.isErrorEnabled()) {
                         mLogger.error("获取Loader Apk失败", e);
                     }
-                    throw new FailedException(e);
+                    throw new FailedException(ERROR_CODE_UUID_MANAGER_DEAD_EXCEPTION, e.getMessage());
                 } catch (NotFoundException e) {
                     throw new FailedException(ERROR_CODE_FILE_NOT_FOUND_EXCEPTION, "uuid==" + uuid + "的PluginLoader没有找到。cause:" + e.getMessage());
                 }
