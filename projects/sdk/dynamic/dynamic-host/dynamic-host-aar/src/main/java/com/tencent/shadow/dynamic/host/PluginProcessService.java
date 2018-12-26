@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_FILE_NOT_FOUND_EXCEPTION;
+import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RELOAD_RUNTIME_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RESET_UUID_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RUNTIME_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_DEAD_EXCEPTION;
@@ -114,6 +115,10 @@ public class PluginProcessService extends Service {
     void loadRuntime(String uuid) throws FailedException {
         checkUuidManagerNotNull();
         setUuid(uuid);
+        if (mRuntimeLoaded) {
+            throw new FailedException(ERROR_CODE_RELOAD_RUNTIME_EXCEPTION
+                    , "重复调用loadRuntime");
+        }
         try {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("loadRuntime uuid:" + uuid);
