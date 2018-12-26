@@ -58,7 +58,7 @@ class PpsBinder extends android.os.Binder {
                 data.enforceInterface(DESCRIPTOR);
                 IBinder iBinder = data.readStrongBinder();
                 UuidManager rpcUuidManager = iBinder != null ? new BinderUuidManager(iBinder) : null;
-                mPps.setRpcUuidManager(rpcUuidManager);
+                mPps.setUuidManager(rpcUuidManager);
                 reply.writeNoException();
                 return true;
             }

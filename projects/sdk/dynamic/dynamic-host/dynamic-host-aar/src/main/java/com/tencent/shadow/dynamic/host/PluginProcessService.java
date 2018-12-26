@@ -153,11 +153,11 @@ public class PluginProcessService extends Service {
         }
     }
 
-    void setRpcUuidManager(UuidManager rpcUuidManager) {
+    void setUuidManager(UuidManager uuidManager) {
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("setRpcUuidManager ");
+            mLogger.info("setUuidManager uuidManager==" + uuidManager);
         }
-        mUuidManager = rpcUuidManager;
+        mUuidManager = uuidManager;
     }
 
     void exit() {
