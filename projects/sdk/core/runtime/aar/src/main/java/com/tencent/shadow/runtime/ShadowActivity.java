@@ -225,4 +225,8 @@ public abstract class ShadowActivity extends PluginActivity {
     public ComponentName getComponentName() {
         return mHostActivityDelegator.getComponentName();
     }
+
+    public boolean shouldShowRequestPermissionRationale(String permission) {
+        return mHostActivityDelegator.shouldShowRequestPermissionRationale(permission);
+    }
 }
