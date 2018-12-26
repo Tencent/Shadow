@@ -18,6 +18,7 @@ import java.util.List;
 
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_FILE_NOT_FOUND_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RUNTIME_EXCEPTION;
+import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION;
 
 
 public class PluginProcessService extends Service {
@@ -87,7 +88,14 @@ public class PluginProcessService extends Service {
 
     private IBinder mPluginLoader;
 
+    private void checkUuidManagerNotNull() throws FailedException {
+        if (mUuidManager == null) {
+            throw new FailedException(ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION, "mUuidManager == null");
+        }
+    }
+
     void loadRuntime(String uuid) throws FailedException {
+        checkUuidManagerNotNull();
         try {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("loadRuntime uuid:" + uuid);
@@ -115,6 +123,7 @@ public class PluginProcessService extends Service {
     }
 
     IBinder loadPluginLoader(String uuid) throws FailedException {
+        checkUuidManagerNotNull();
         //todo 检测重复加载，不能忽略这种错误
         try {
             if (mLogger.isInfoEnabled()) {
