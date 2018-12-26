@@ -9,11 +9,17 @@ import android.os.IBinder
 import android.os.Looper
 import android.os.RemoteException
 import com.tencent.shadow.core.loader.ShadowPluginLoader
+import com.tencent.shadow.dynamic.host.PluginLoaderImpl
 import com.tencent.shadow.dynamic.host.UuidManager
 import com.tencent.shadow.runtime.container.DelegateProviderHolder
 import java.util.concurrent.CountDownLatch
 
-internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManager, uuid: String) : PluginLoader.Stub() {
+internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginLoader.Stub(), PluginLoaderImpl {
+    override fun setUuidManager(p0: UuidManager?) {
+        if (p0 != null)
+            mUuidManager = p0
+        //todo 兼容mUuidManager为null时的逻辑
+    }
 
     companion object {
 
@@ -26,7 +32,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
 
     private var mContext: Context;
 
-    private var mUuidManager: UuidManager;
+    private lateinit var mUuidManager: UuidManager;
 
     private var mUuid: String;
 
@@ -45,7 +51,6 @@ internal class DynamicPluginLoader(hostContext: Context, uuidManager: UuidManage
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
         }
         mContext = hostContext;
-        mUuidManager = uuidManager;
         mUuid = uuid;
     }
 

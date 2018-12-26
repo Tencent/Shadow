@@ -57,8 +57,8 @@ class PpsBinder extends android.os.Binder {
             case TRANSACTION_setUuidManager: {
                 data.enforceInterface(DESCRIPTOR);
                 IBinder iBinder = data.readStrongBinder();
-                UuidManager rpcUuidManager = iBinder != null ? new BinderUuidManager(iBinder) : null;
-                mPps.setUuidManager(rpcUuidManager);
+                UuidManager uuidManager = iBinder != null ? new BinderUuidManager(iBinder) : null;
+                mPps.setUuidManager(uuidManager);
                 reply.writeNoException();
                 return true;
             }

@@ -87,7 +87,7 @@ public class PluginProcessService extends Service {
 
     private UuidManager mUuidManager;
 
-    private IBinder mPluginLoader;
+    private PluginLoaderImpl mPluginLoader;
 
     private void checkUuidManagerNotNull() throws FailedException {
         if (mUuidManager == null) {
@@ -150,7 +150,9 @@ public class PluginProcessService extends Service {
                     throw new RuntimeException(file.getAbsolutePath() + "文件不存在");
                 }
 
-                mPluginLoader = new LoaderImplLoader().load(installedApk, uuid, mUuidManager, getApplicationContext());
+                PluginLoaderImpl pluginLoader = new LoaderImplLoader().load(installedApk, uuid, getApplicationContext());
+                pluginLoader.setUuidManager(mUuidManager);
+                mPluginLoader = pluginLoader;
             }
             return mPluginLoader;
         } catch (RuntimeException e) {
@@ -168,6 +170,12 @@ public class PluginProcessService extends Service {
             mLogger.info("setUuidManager uuidManager==" + uuidManager);
         }
         mUuidManager = uuidManager;
+        if (mPluginLoader != null) {
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("更新mPluginLoader的uuidManager");
+            }
+            mPluginLoader.setUuidManager(uuidManager);
+        }
     }
 
     void exit() {

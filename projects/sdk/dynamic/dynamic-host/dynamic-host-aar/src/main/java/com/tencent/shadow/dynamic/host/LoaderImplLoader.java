@@ -1,7 +1,6 @@
 package com.tencent.shadow.dynamic.host;
 
 import android.content.Context;
-import android.os.IBinder;
 
 import com.tencent.shadow.core.common.InstalledApk;
 
@@ -21,7 +20,7 @@ final class LoaderImplLoader extends ImplLoader {
     private final static String sLoaderFactoryImplClassName
             = "com.tencent.shadow.dynamic.impl.LoaderFactoryImpl";
 
-    IBinder load(InstalledApk installedApk, String uuid, UuidManager uuidManager, Context appContext) throws Exception {
+    PluginLoaderImpl load(InstalledApk installedApk, String uuid, Context appContext) throws Exception {
         ApkClassLoader pluginLoaderClassLoader = new ApkClassLoader(
                 installedApk,
                 LoaderImplLoader.class.getClassLoader(),
@@ -33,7 +32,7 @@ final class LoaderImplLoader extends ImplLoader {
                 sLoaderFactoryImplClassName
         );
 
-        return loaderFactory.buildLoader(uuid, uuidManager, appContext);
+        return loaderFactory.buildLoader(uuid, appContext);
     }
 
     @Override
