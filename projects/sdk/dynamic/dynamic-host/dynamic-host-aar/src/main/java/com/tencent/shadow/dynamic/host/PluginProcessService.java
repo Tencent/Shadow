@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_FILE_NOT_FOUND_EXCEPTION;
+import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RESET_UUID_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_RUNTIME_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_DEAD_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION;
@@ -89,6 +90,19 @@ public class PluginProcessService extends Service {
 
     private PluginLoaderImpl mPluginLoader;
 
+    /**
+     * 当前的Uuid。一旦设置不可修改。
+     */
+    private String mUuid = "";
+
+    private void setUuid(String uuid) throws FailedException {
+        if (mUuid.isEmpty()) {
+            mUuid = uuid;
+        } else if (!mUuid.equals(uuid)) {
+            throw new FailedException(ERROR_CODE_RESET_UUID_EXCEPTION, "已设置过uuid==" + mUuid + "试图设置uuid==" + uuid);
+        }
+    }
+
     private void checkUuidManagerNotNull() throws FailedException {
         if (mUuidManager == null) {
             throw new FailedException(ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION, "mUuidManager == null");
@@ -97,6 +111,7 @@ public class PluginProcessService extends Service {
 
     void loadRuntime(String uuid) throws FailedException {
         checkUuidManagerNotNull();
+        setUuid(uuid);
         try {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("loadRuntime uuid:" + uuid);
@@ -125,6 +140,7 @@ public class PluginProcessService extends Service {
 
     IBinder loadPluginLoader(String uuid) throws FailedException {
         checkUuidManagerNotNull();
+        setUuid(uuid);
         //todo 检测重复加载，不能忽略这种错误
         try {
             if (mLogger.isInfoEnabled()) {
