@@ -22,6 +22,7 @@ import com.tencent.shadow.dynamic.host.NotFoundException;
 import com.tencent.shadow.dynamic.host.PluginManagerImpl;
 import com.tencent.shadow.dynamic.host.PluginProcessService;
 import com.tencent.shadow.dynamic.host.PpsController;
+import com.tencent.shadow.dynamic.host.PpsStatus;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
 import java.util.concurrent.CountDownLatch;
@@ -140,7 +141,10 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             }
         }
         try {
-            mPpsController.loadRuntime(uuid);
+            PpsStatus ppsStatus = mPpsController.getPpsStatus();
+            if (!ppsStatus.runtimeLoaded) {
+                mPpsController.loadRuntime(uuid);
+            }
         } catch (FailedException e) {
             throw new RuntimeException("TODO cause:" + e.errorMessage, e);
         }
@@ -153,7 +157,10 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         if (mPluginLoader == null) {
             IBinder iBinder = null;
             try {
-                mPpsController.loadPluginLoader(uuid);
+                PpsStatus ppsStatus = mPpsController.getPpsStatus();
+                if (!ppsStatus.loaderLoaded) {
+                    mPpsController.loadPluginLoader(uuid);
+                }
                 iBinder = mPpsController.getPluginLoader();
             } catch (FailedException e) {
                 throw new RuntimeException("TODO cause:" + e.errorMessage, e);
