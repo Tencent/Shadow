@@ -2,6 +2,7 @@ package com.tencent.shadow.dynamic.host;
 
 import android.os.IBinder;
 import android.os.Parcel;
+import android.os.RemoteException;
 
 import static com.tencent.shadow.dynamic.host.PpsBinder.TRANSACTION_CODE_FAILED_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.PpsBinder.TRANSACTION_CODE_NO_EXCEPTION;
@@ -13,7 +14,7 @@ public class PpsController {
         mRemote = remote;
     }
 
-    public void loadRuntime(String uuid) throws android.os.RemoteException, FailedException {
+    public void loadRuntime(String uuid) throws RemoteException, FailedException {
         Parcel _data = Parcel.obtain();
         Parcel _reply = Parcel.obtain();
         try {
@@ -32,7 +33,7 @@ public class PpsController {
         }
     }
 
-    public IBinder loadPluginLoader(String uuid) throws android.os.RemoteException, FailedException {
+    public IBinder loadPluginLoader(String uuid) throws RemoteException, FailedException {
         Parcel _data = Parcel.obtain();
         Parcel _reply = Parcel.obtain();
         IBinder _result;
@@ -55,7 +56,7 @@ public class PpsController {
         return _result;
     }
 
-    public void setUuidManager(IBinder uuidManagerBinder) throws android.os.RemoteException {
+    public void setUuidManager(IBinder uuidManagerBinder) throws RemoteException {
         Parcel _data = Parcel.obtain();
         Parcel _reply = Parcel.obtain();
         try {
@@ -69,7 +70,7 @@ public class PpsController {
         }
     }
 
-    public void exit() throws android.os.RemoteException {
+    public void exit() throws RemoteException {
         Parcel _data = Parcel.obtain();
         Parcel _reply = Parcel.obtain();
         try {
@@ -80,5 +81,21 @@ public class PpsController {
             _reply.recycle();
             _data.recycle();
         }
+    }
+
+    public PpsStatus getPpsStatus() throws RemoteException {
+        Parcel _data = Parcel.obtain();
+        Parcel _reply = Parcel.obtain();
+        PpsStatus _result;
+        try {
+            _data.writeInterfaceToken(PpsBinder.DESCRIPTOR);
+            mRemote.transact(PpsBinder.TRANSACTION_getPpsStatus, _data, _reply, 0);
+            _reply.readException();
+            _result = new PpsStatus(_reply);
+        } finally {
+            _reply.recycle();
+            _data.recycle();
+        }
+        return _result;
     }
 }

@@ -90,6 +90,8 @@ public class PluginProcessService extends Service {
 
     private PluginLoaderImpl mPluginLoader;
 
+    private boolean mRuntimeLoaded = false;
+
     /**
      * 当前的Uuid。一旦设置不可修改。
      */
@@ -130,6 +132,7 @@ public class PluginProcessService extends Service {
             if (loaded) {
                 DynamicRuntime.saveLastRuntimeInfo(this, installedRuntimeApk);
             }
+            mRuntimeLoaded = true;
         } catch (RuntimeException e) {
             if (mLogger.isErrorEnabled()) {
                 mLogger.error("loadRuntime发生RuntimeException", e);
@@ -204,6 +207,10 @@ public class PluginProcessService extends Service {
             wait();
         } catch (InterruptedException ignored) {
         }
+    }
+
+    PpsStatus getPpsStatus() {
+        return new PpsStatus(mUuid, mRuntimeLoaded, mPluginLoader != null, mUuidManager != null);
     }
 
     static class ActivityHolder implements Application.ActivityLifecycleCallbacks {

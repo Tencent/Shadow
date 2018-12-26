@@ -3,6 +3,8 @@ package com.tencent.shadow.dynamic.host;
 import android.os.IBinder;
 import android.os.Parcel;
 
+import static android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE;
+
 class PpsBinder extends android.os.Binder {
     static final String DESCRIPTOR = PpsBinder.class.getName();
 
@@ -13,6 +15,7 @@ class PpsBinder extends android.os.Binder {
     static final int TRANSACTION_loadPluginLoader = (FIRST_CALL_TRANSACTION + 1);
     static final int TRANSACTION_setUuidManager = (FIRST_CALL_TRANSACTION + 2);
     static final int TRANSACTION_exit = (FIRST_CALL_TRANSACTION + 3);
+    static final int TRANSACTION_getPpsStatus = (FIRST_CALL_TRANSACTION + 4);
 
     private final PluginProcessService mPps;
 
@@ -66,6 +69,13 @@ class PpsBinder extends android.os.Binder {
                 data.enforceInterface(DESCRIPTOR);
                 mPps.exit();
                 reply.writeNoException();
+                return true;
+            }
+            case TRANSACTION_getPpsStatus: {
+                data.enforceInterface(DESCRIPTOR);
+                PpsStatus ppsStatus = mPps.getPpsStatus();
+                reply.writeNoException();
+                ppsStatus.writeToParcel(reply, PARCELABLE_WRITE_RETURN_VALUE);
                 return true;
             }
             default:
