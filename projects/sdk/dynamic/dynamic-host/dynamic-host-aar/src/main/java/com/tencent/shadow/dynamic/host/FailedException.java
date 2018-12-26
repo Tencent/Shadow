@@ -12,6 +12,7 @@ public class FailedException extends Exception implements Parcelable {
     public static final int ERROR_CODE_UUID_MANAGER_DEAD_EXCEPTION = 5;
     public static final int ERROR_CODE_RESET_UUID_EXCEPTION = 6;
     public static final int ERROR_CODE_RELOAD_RUNTIME_EXCEPTION = 7;
+    public static final int ERROR_CODE_RELOAD_LOADER_EXCEPTION = 8;
 
     public final int errorCode;
     public final String errorMessage;

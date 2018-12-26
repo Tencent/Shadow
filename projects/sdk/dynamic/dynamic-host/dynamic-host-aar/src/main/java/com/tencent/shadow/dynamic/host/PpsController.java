@@ -33,10 +33,9 @@ public class PpsController {
         }
     }
 
-    public IBinder loadPluginLoader(String uuid) throws RemoteException, FailedException {
+    public void loadPluginLoader(String uuid) throws RemoteException, FailedException {
         Parcel _data = Parcel.obtain();
         Parcel _reply = Parcel.obtain();
-        IBinder _result;
         try {
             _data.writeInterfaceToken(PpsBinder.DESCRIPTOR);
             _data.writeString(uuid);
@@ -46,14 +45,11 @@ public class PpsController {
                 throw new FailedException(_reply);
             } else if (i != TRANSACTION_CODE_NO_EXCEPTION) {
                 throw new RuntimeException("不认识的Code==" + i);
-            } else {
-                _result = _reply.readStrongBinder();
             }
         } finally {
             _reply.recycle();
             _data.recycle();
         }
-        return _result;
     }
 
     public void setUuidManager(IBinder uuidManagerBinder) throws RemoteException {
@@ -92,6 +88,22 @@ public class PpsController {
             mRemote.transact(PpsBinder.TRANSACTION_getPpsStatus, _data, _reply, 0);
             _reply.readException();
             _result = new PpsStatus(_reply);
+        } finally {
+            _reply.recycle();
+            _data.recycle();
+        }
+        return _result;
+    }
+
+    public IBinder getPluginLoader() throws RemoteException {
+        Parcel _data = Parcel.obtain();
+        Parcel _reply = Parcel.obtain();
+        IBinder _result;
+        try {
+            _data.writeInterfaceToken(PpsBinder.DESCRIPTOR);
+            mRemote.transact(PpsBinder.TRANSACTION_getPluginLoader, _data, _reply, 0);
+            _reply.readException();
+            _result = _reply.readStrongBinder();
         } finally {
             _reply.recycle();
             _data.recycle();

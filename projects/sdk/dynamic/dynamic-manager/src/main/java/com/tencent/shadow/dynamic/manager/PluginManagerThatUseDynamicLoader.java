@@ -153,7 +153,8 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         if (mPluginLoader == null) {
             IBinder iBinder = null;
             try {
-                iBinder = mPpsController.loadPluginLoader(uuid);
+                mPpsController.loadPluginLoader(uuid);
+                iBinder = mPpsController.getPluginLoader();
             } catch (FailedException e) {
                 throw new RuntimeException("TODO cause:" + e.errorMessage, e);
             }

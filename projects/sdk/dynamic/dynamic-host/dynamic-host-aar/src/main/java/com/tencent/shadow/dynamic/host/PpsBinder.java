@@ -16,6 +16,7 @@ class PpsBinder extends android.os.Binder {
     static final int TRANSACTION_setUuidManager = (FIRST_CALL_TRANSACTION + 2);
     static final int TRANSACTION_exit = (FIRST_CALL_TRANSACTION + 3);
     static final int TRANSACTION_getPpsStatus = (FIRST_CALL_TRANSACTION + 4);
+    static final int TRANSACTION_getPluginLoader = (FIRST_CALL_TRANSACTION + 5);
 
     private final PluginProcessService mPps;
 
@@ -48,9 +49,8 @@ class PpsBinder extends android.os.Binder {
                 String _arg0;
                 _arg0 = data.readString();
                 try {
-                    IBinder _result = mPps.loadPluginLoader(_arg0);
+                    mPps.loadPluginLoader(_arg0);
                     reply.writeInt(TRANSACTION_CODE_NO_EXCEPTION);
-                    reply.writeStrongBinder(_result);
                 } catch (FailedException e) {
                     reply.writeInt(TRANSACTION_CODE_FAILED_EXCEPTION);
                     e.writeToParcel(reply, 0);
@@ -76,6 +76,13 @@ class PpsBinder extends android.os.Binder {
                 PpsStatus ppsStatus = mPps.getPpsStatus();
                 reply.writeNoException();
                 ppsStatus.writeToParcel(reply, PARCELABLE_WRITE_RETURN_VALUE);
+                return true;
+            }
+            case TRANSACTION_getPluginLoader: {
+                data.enforceInterface(DESCRIPTOR);
+                IBinder pluginLoader = mPps.getPluginLoader();
+                reply.writeNoException();
+                reply.writeStrongBinder(pluginLoader);
                 return true;
             }
             default:
