@@ -60,34 +60,6 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
      */
     private CountDownLatch mConnectCountDownLatch ;
 
-    private ServiceConnection mServiceConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            if (mLogger.isInfoEnabled()) {
-                mLogger.info("onServiceConnected");
-            }
-            mServiceConnecting.set(false);
-            mPpsController = PluginProcessService.wrapBinder(service);
-            try {
-                mPpsController.setUuidManager(new UuidManagerBinder(PluginManagerThatUseDynamicLoader.this));
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
-            mConnectCountDownLatch.countDown();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            if (mLogger.isInfoEnabled()) {
-                mLogger.info("onServiceDisconnected");
-            }
-            mServiceConnecting.set(false);
-            mPpsController = null;
-            mPluginLoader = null;
-        }
-    };
-
     /**
      * 启动PluginProcessService
      *
@@ -110,7 +82,32 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             public void run() {
                 Intent intent = new Intent();
                 intent.setComponent(new ComponentName(mHostContext, serviceName));
-                mHostContext.bindService(intent, mServiceConnection, BIND_AUTO_CREATE);
+                mHostContext.bindService(intent, new ServiceConnection() {
+                    @Override
+                    public void onServiceConnected(ComponentName name, IBinder service) {
+                        if (mLogger.isInfoEnabled()) {
+                            mLogger.info("onServiceConnected");
+                        }
+                        mServiceConnecting.set(false);
+                        mPpsController = PluginProcessService.wrapBinder(service);
+                        try {
+                            mPpsController.setUuidManager(new UuidManagerBinder(PluginManagerThatUseDynamicLoader.this));
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                        mConnectCountDownLatch.countDown();
+                    }
+
+                    @Override
+                    public void onServiceDisconnected(ComponentName name) {
+                        if (mLogger.isInfoEnabled()) {
+                            mLogger.info("onServiceDisconnected");
+                        }
+                        mServiceConnecting.set(false);
+                        mPpsController = null;
+                        mPluginLoader = null;
+                    }
+                }, BIND_AUTO_CREATE);
             }
         });
     }
@@ -200,17 +197,6 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         if (mLogger.isInfoEnabled()) {
             mLogger.info("onDestroy:");
         }
-
-        if (mPpsController != null) {
-            try {
-                mPpsController.setUuidManager(null);
-            } catch (RemoteException e) {
-                if (mLogger.isErrorEnabled()) {
-                    mLogger.error("清空UuidManager出错", e);
-                }
-            }
-        }
-        mPpsController = null;
     }
 
     public InstalledApk getPlugin(String uuid, String partKey) throws FailedException, NotFoundException {
