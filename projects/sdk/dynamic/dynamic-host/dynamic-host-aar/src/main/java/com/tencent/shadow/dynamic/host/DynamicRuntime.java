@@ -36,6 +36,7 @@ public class DynamicRuntime {
     public static boolean loadRuntime(InstalledApk installedRuntimeApk) {
         ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
         ClassLoader parent = contextClassLoader.getParent();
+        // TODO cubershi: 2018-12-27 这里不应该默认contextClassLoader.getParent()就是我们的ClassLoader，别人也有可能改。
         if (parent instanceof DexPathClassLoader) {
             String apkPath = ((DexPathClassLoader) parent).apkPath;
             if (mLogger.isInfoEnabled()) {
