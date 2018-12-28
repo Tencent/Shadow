@@ -132,6 +132,9 @@ public abstract class BasePluginManager {
 
             part.oDexDir = oDexPath;
         } catch (InstallPluginException e) {
+            if (mLogger.isErrorEnabled()) {
+                mLogger.error("oDexPlugin exception:", e);
+            }
             throw e;
         }
     }
@@ -157,6 +160,9 @@ public abstract class BasePluginManager {
 
             part.oDexDir = oDexPath;
         } catch (InstallPluginException e) {
+            if (mLogger.isErrorEnabled()) {
+                mLogger.error("oDexPluginLoaderOrRunTime exception:", e);
+            }
             throw e;
         }
     }
@@ -183,6 +189,9 @@ public abstract class BasePluginManager {
 
             part.libraryDir = soPath;
         } catch (InstallPluginException e) {
+            if (mLogger.isErrorEnabled()) {
+                mLogger.error("extractSo exception:", e);
+            }
             throw e;
         }
     }
@@ -209,6 +218,9 @@ public abstract class BasePluginManager {
 
             part.libraryDir = soPath;
         } catch (InstallPluginException e) {
+            if (mLogger.isErrorEnabled()) {
+                mLogger.error("extractLoaderOrRunTimeSo exception:", e);
+            }
             throw e;
         }
     }

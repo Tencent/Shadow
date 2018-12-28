@@ -59,7 +59,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     /**
      * 等待service绑定完成的计数器
      */
-    private AtomicReference<CountDownLatch> mConnectCountDownLatch =new AtomicReference<>();
+    private AtomicReference<CountDownLatch> mConnectCountDownLatch = new AtomicReference<>();
 
     /**
      * 启动PluginProcessService
@@ -237,6 +237,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                     parcelBytes
             );
         } catch (RuntimeException e) {
+            if (mLogger.isErrorEnabled()) {
+                mLogger.error("getPlugin exception:", e);
+            }
             throw new FailedException(e);
         }
     }
@@ -247,6 +250,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             try {
                 part = getLoaderOrRunTimePart(uuid, type);
             } catch (RuntimeException e) {
+                if (mLogger.isErrorEnabled()) {
+                    mLogger.error("getInstalledPL exception:", e);
+                }
                 throw new NotFoundException("uuid==" + uuid + " type==" + type + "没找到。cause：" + e.getMessage());
             }
             return new InstalledApk(part.pluginFile.getAbsolutePath(),
