@@ -165,7 +165,6 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginL
             val connWrapper = mConnectionMap[connBinder]!!
             return mPluginLoader.getPluginServiceManager().bindPluginService(pluginServiceIntent, connWrapper, flags)
         }
-        // TODO: 2018/12/25  bindService不一定要在主线程中调用，回调也不应该在主线程
         // 确保在ui线程调用
         var stop: Boolean = false
         if (isUiThread()) {
