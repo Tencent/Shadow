@@ -56,7 +56,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
      */
     private AtomicBoolean mServiceConnecting = new AtomicBoolean(false);
     /**
-     * 等待service绑定完成的计数器
+     * lock by this  等待service绑定完成的计数器
      */
     private CountDownLatch mConnectCountDownLatch ;
 
@@ -75,7 +75,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         if (mLogger.isInfoEnabled()) {
             mLogger.info("startPluginProcessService "+serviceName);
         }
-        mConnectCountDownLatch = new CountDownLatch(1);
+        synchronized (PluginManagerThatUseDynamicLoader.this){
+            mConnectCountDownLatch = new CountDownLatch(1);
+        }
         mServiceConnecting.set(true);
         mHandler.post(new Runnable() {
             @Override
@@ -95,7 +97,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                         } catch (RemoteException e) {
                             throw new RuntimeException(e);
                         }
-                        mConnectCountDownLatch.countDown();
+                        synchronized (PluginManagerThatUseDynamicLoader.this){
+                            mConnectCountDownLatch.countDown();
+                        }
                     }
 
                     @Override
@@ -126,9 +130,11 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                     mLogger.info("waiting service connect");
                 }
                 long s = System.currentTimeMillis();
-                boolean timeout = !mConnectCountDownLatch.await(10, TimeUnit.SECONDS);
-                if (timeout) {
-                    throw new RuntimeException(new TimeoutException("连接Service超时"));
+                synchronized (PluginManagerThatUseDynamicLoader.this){
+                    boolean timeout = !mConnectCountDownLatch.await(10, TimeUnit.SECONDS);
+                    if (timeout) {
+                        throw new RuntimeException(new TimeoutException("连接Service超时"));
+                    }
                 }
                 if (mLogger.isInfoEnabled()) {
                     mLogger.info("service connected " + (System.currentTimeMillis() - s));
