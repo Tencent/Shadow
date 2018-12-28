@@ -29,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
@@ -47,7 +48,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     protected PpsController mPpsController;
 
     /**
-     * 插件加载服务端接口
+     * 插件加载服务端接口6
      */
     protected PluginLoader mPluginLoader;
 
@@ -56,9 +57,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
      */
     private AtomicBoolean mServiceConnecting = new AtomicBoolean(false);
     /**
-     * lock by this  等待service绑定完成的计数器
+     * 等待service绑定完成的计数器
      */
-    private CountDownLatch mConnectCountDownLatch ;
+    private AtomicReference<CountDownLatch> mConnectCountDownLatch =new AtomicReference<>();
 
     /**
      * 启动PluginProcessService
@@ -73,11 +74,11 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             return;
         }
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("startPluginProcessService "+serviceName);
+            mLogger.info("startPluginProcessService " + serviceName);
         }
-        synchronized (PluginManagerThatUseDynamicLoader.this){
-            mConnectCountDownLatch = new CountDownLatch(1);
-        }
+
+        mConnectCountDownLatch.set(new CountDownLatch(1));
+
         mServiceConnecting.set(true);
         mHandler.post(new Runnable() {
             @Override
@@ -88,17 +89,23 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                     @Override
                     public void onServiceConnected(ComponentName name, IBinder service) {
                         if (mLogger.isInfoEnabled()) {
-                            mLogger.info("onServiceConnected");
+                            mLogger.info("onServiceConnected connectCountDownLatch:" + mConnectCountDownLatch);
                         }
                         mServiceConnecting.set(false);
                         mPpsController = PluginProcessService.wrapBinder(service);
                         try {
                             mPpsController.setUuidManager(new UuidManagerBinder(PluginManagerThatUseDynamicLoader.this));
                         } catch (RemoteException e) {
+                            if (mLogger.isErrorEnabled()) {
+                                mLogger.error("onServiceConnected RemoteException:" + e);
+                            }
                             throw new RuntimeException(e);
                         }
-                        synchronized (PluginManagerThatUseDynamicLoader.this){
-                            mConnectCountDownLatch.countDown();
+
+                        mConnectCountDownLatch.get().countDown();
+
+                        if (mLogger.isInfoEnabled()) {
+                            mLogger.info("onServiceConnected countDown:" + mConnectCountDownLatch);
                         }
                     }
 
@@ -117,7 +124,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     }
 
 
-    public final void loadRunTime(String uuid) throws RemoteException{
+    public final void loadRunTime(String uuid) throws RemoteException {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("loadPlugin 不能在主线程中调用");
         }
@@ -127,14 +134,12 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         if (mPpsController == null) {
             try {
                 if (mLogger.isInfoEnabled()) {
-                    mLogger.info("waiting service connect");
+                    mLogger.info("waiting service connect connectCountDownLatch:" + mConnectCountDownLatch);
                 }
                 long s = System.currentTimeMillis();
-                synchronized (PluginManagerThatUseDynamicLoader.this){
-                    boolean timeout = !mConnectCountDownLatch.await(10, TimeUnit.SECONDS);
-                    if (timeout) {
-                        throw new RuntimeException(new TimeoutException("连接Service超时"));
-                    }
+                boolean timeout = !mConnectCountDownLatch.get().await(10, TimeUnit.SECONDS);
+                if (timeout) {
+                    throw new RuntimeException(new TimeoutException("连接Service超时"));
                 }
                 if (mLogger.isInfoEnabled()) {
                     mLogger.info("service connected " + (System.currentTimeMillis() - s));
@@ -153,9 +158,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         }
     }
 
-    public final void loadPluginLoader(String uuid) throws RemoteException{
+    public final void loadPluginLoader(String uuid) throws RemoteException {
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("loadRunTime loadPluginLoader:"+mPluginLoader);
+            mLogger.info("loadRunTime loadPluginLoader:" + mPluginLoader);
         }
         if (mPluginLoader == null) {
             IBinder iBinder = null;
