@@ -66,7 +66,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
      *
      * @param serviceName 注册在宿主中的插件进程管理service完整名字
      */
-    public final void startPluginProcessService(final String serviceName) {
+    public final void bindPluginProcessService(final String serviceName) {
         if (mServiceConnecting.get()) {
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("pps service connecting");
@@ -74,7 +74,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             return;
         }
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("startPluginProcessService " + serviceName);
+            mLogger.info("bindPluginProcessService " + serviceName);
         }
 
         mConnectCountDownLatch.set(new CountDownLatch(1));
