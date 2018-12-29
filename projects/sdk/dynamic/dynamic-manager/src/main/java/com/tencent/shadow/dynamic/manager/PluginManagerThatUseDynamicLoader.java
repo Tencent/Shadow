@@ -123,13 +123,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         });
     }
 
-
-    public final void loadRunTime(String uuid) throws RemoteException {
+    public final void waitServiceConnected(int timeout, TimeUnit timeUnit) throws TimeoutException {
         if (Looper.myLooper() == Looper.getMainLooper()) {
-            throw new RuntimeException("loadPlugin 不能在主线程中调用");
-        }
-        if (mLogger.isInfoEnabled()) {
-            mLogger.info("loadRunTime mPpsController:" + mPpsController);
+            throw new RuntimeException("waitServiceConnected 不能在主线程中调用");
         }
         if (mPpsController == null) {
             try {
@@ -137,9 +133,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                     mLogger.info("waiting service connect connectCountDownLatch:" + mConnectCountDownLatch);
                 }
                 long s = System.currentTimeMillis();
-                boolean timeout = !mConnectCountDownLatch.get().await(10, TimeUnit.SECONDS);
-                if (timeout) {
-                    throw new RuntimeException(new TimeoutException("连接Service超时"));
+                boolean isTimeout = !mConnectCountDownLatch.get().await(timeout, timeUnit);
+                if (isTimeout) {
+                    throw new TimeoutException("连接Service超时 ,等待了："+(System.currentTimeMillis() - s));
                 }
                 if (mLogger.isInfoEnabled()) {
                     mLogger.info("service connected " + (System.currentTimeMillis() - s));
@@ -147,6 +143,13 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+
+    public final void loadRunTime(String uuid) throws RemoteException {
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("loadRunTime mPpsController:" + mPpsController);
         }
         try {
             PpsStatus ppsStatus = mPpsController.getPpsStatus();
@@ -244,7 +247,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         }
     }
 
-    InstalledApk getInstalledPL(String uuid, int type) throws FailedException, NotFoundException {
+    private InstalledApk getInstalledPL(String uuid, int type) throws FailedException, NotFoundException {
         try {
             InstalledPlugin.Part part;
             try {
