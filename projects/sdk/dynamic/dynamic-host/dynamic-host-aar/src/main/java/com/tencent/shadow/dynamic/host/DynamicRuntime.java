@@ -12,6 +12,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 
 import dalvik.system.BaseDexClassLoader;
+import dalvik.system.DexClassLoader;
 
 /**
  * 将runtime apk加载到DexPathClassLoader，形成如下结构的classLoader树结构
@@ -127,8 +128,14 @@ public class DynamicRuntime {
             if (installedApk.oDexPath != null && !new File(installedApk.oDexPath).exists()) {
                 return false;
             }
-            new DexPathClassLoader(installedApk.apkFilePath, installedApk.oDexPath,
-                    installedApk.libraryPath, DynamicRuntime.class.getClassLoader().getParent());
+            ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
+            try {
+                DexClassLoader pluginContainerClassLoader = new DexClassLoader(installedApk.apkFilePath, installedApk.oDexPath,
+                        installedApk.libraryPath, contextClassLoader.getParent());
+                hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             return true;
         }
         return false;
