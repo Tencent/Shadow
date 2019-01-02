@@ -12,7 +12,6 @@ import java.io.File;
 import java.lang.reflect.Field;
 
 import dalvik.system.BaseDexClassLoader;
-import dalvik.system.DexClassLoader;
 
 /**
  * 将runtime apk加载到DexPathClassLoader，形成如下结构的classLoader树结构
@@ -32,6 +31,7 @@ public class DynamicRuntime {
 
     /**
      * 加载runtime apk
+     *
      * @return true 加载了新的runtime
      */
     public static boolean loadRuntime(InstalledApk installedRuntimeApk) {
@@ -63,16 +63,22 @@ public class DynamicRuntime {
         }
         //正常处理，将runtime 挂到pathclassLoader之上
         try {
-            DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
-                    installedRuntimeApk.libraryPath, contextClassLoader.getParent());
-            hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
+            hackParentToRunTime(installedRuntimeApk, contextClassLoader);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return true;
     }
 
-
+    private static void hackParentToRunTime(InstalledApk installedRuntimeApk, ClassLoader contextClassLoader) throws Exception {
+        try {
+            DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
+                    installedRuntimeApk.libraryPath, contextClassLoader.getParent());
+            hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
 
 
     /**
@@ -128,15 +134,14 @@ public class DynamicRuntime {
             if (installedApk.oDexPath != null && !new File(installedApk.oDexPath).exists()) {
                 return false;
             }
-            ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
             try {
-                DexClassLoader pluginContainerClassLoader = new DexClassLoader(installedApk.apkFilePath, installedApk.oDexPath,
-                        installedApk.libraryPath, contextClassLoader.getParent());
-                hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
+                hackParentToRunTime(installedApk, DynamicRuntime.class.getClassLoader());
+                return true;
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                if (mLogger.isErrorEnabled()) {
+                    mLogger.error("recoveryRuntime 错误", e);
+                }
             }
-            return true;
         }
         return false;
     }
