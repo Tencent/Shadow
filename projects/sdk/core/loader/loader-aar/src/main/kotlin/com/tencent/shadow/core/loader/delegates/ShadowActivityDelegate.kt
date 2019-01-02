@@ -14,6 +14,7 @@ import android.graphics.Canvas
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.*
+import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.loader.infos.PluginActivityInfo
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_ACTIVITY_INFO_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CLASS_NAME_KEY
@@ -35,6 +36,7 @@ import com.tencent.shadow.runtime.container.HostActivityDelegator
 class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, ShadowDelegate() {
     companion object {
         const val PLUGIN_OUT_STATE_KEY = "PLUGIN_OUT_STATE_KEY"
+        val mLogger = LoggerFactory.getLogger(ShadowActivityDelegate::class.java)
     }
 
     private lateinit var mHostActivityDelegator: HostActivityDelegator
@@ -82,6 +84,9 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
                         or ActivityInfo.CONFIG_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
                         or ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
                         )
+        if (mLogger.isDebugEnabled) {
+            mLogger.debug("{} mPluginHandleConfigurationChange=={}", mPluginActivity.javaClass.canonicalName, mPluginHandleConfigurationChange)
+        }
 
         mRawIntentExtraBundle = pluginInitBundle.getBundle(CM_EXTRAS_BUNDLE_KEY)
         mHostActivityDelegator.intent.replaceExtras(mRawIntentExtraBundle)
@@ -163,6 +168,9 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         val diff = newConfig.diff(mCurrentConfiguration)
+        if (mLogger.isDebugEnabled) {
+            mLogger.debug("{} onConfigurationChanged diff=={}", mPluginActivity.javaClass.canonicalName, diff)
+        }
         if (diff == (diff and mPluginHandleConfigurationChange)) {
             mPluginActivity.onConfigurationChanged(newConfig)
             mCurrentConfiguration = Configuration(newConfig)
