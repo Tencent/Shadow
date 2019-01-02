@@ -71,13 +71,9 @@ public class DynamicRuntime {
     }
 
     private static void hackParentToRunTime(InstalledApk installedRuntimeApk, ClassLoader contextClassLoader) throws Exception {
-        try {
-            DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
-                    installedRuntimeApk.libraryPath, contextClassLoader.getParent());
-            hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
-        } catch (Exception e) {
-            throw e;
-        }
+        DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
+                installedRuntimeApk.libraryPath, contextClassLoader.getParent());
+        hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
     }
 
 
@@ -141,6 +137,7 @@ public class DynamicRuntime {
                 if (mLogger.isErrorEnabled()) {
                     mLogger.error("recoveryRuntime 错误", e);
                 }
+                removeLastRuntimeInfo(context);
             }
         }
         return false;
@@ -168,15 +165,24 @@ public class DynamicRuntime {
         }
     }
 
+    private static void removeLastRuntimeInfo(Context context) {
+        SharedPreferences preferences = context.getSharedPreferences(SP_NAME, Context.MODE_PRIVATE);
+        preferences.edit()
+                .remove(KEY_RUNTIME_APK)
+                .remove(KEY_RUNTIME_ODEX)
+                .remove(KEY_RUNTIME_LIB)
+                .apply();
+    }
+
 
     static class DexPathClassLoader extends BaseDexClassLoader {
         /**
          * 加载的apk路径
          */
-        public String apkPath;
+        private String apkPath;
 
 
-        public DexPathClassLoader(String dexPath, String optimizedDirectory, String librarySearchPath, ClassLoader parent) {
+        DexPathClassLoader(String dexPath, String optimizedDirectory, String librarySearchPath, ClassLoader parent) {
             super(dexPath, optimizedDirectory == null ? null : new File(optimizedDirectory), librarySearchPath, parent);
             this.apkPath = dexPath;
         }
