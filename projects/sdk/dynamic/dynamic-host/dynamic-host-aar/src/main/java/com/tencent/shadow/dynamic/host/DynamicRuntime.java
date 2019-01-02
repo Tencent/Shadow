@@ -63,14 +63,14 @@ public class DynamicRuntime {
         }
         //正常处理，将runtime 挂到pathclassLoader之上
         try {
-            hackParentToRunTime(installedRuntimeApk, contextClassLoader);
+            hackParentToRuntime(installedRuntimeApk, contextClassLoader);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return true;
     }
 
-    private static void hackParentToRunTime(InstalledApk installedRuntimeApk, ClassLoader contextClassLoader) throws Exception {
+    private static void hackParentToRuntime(InstalledApk installedRuntimeApk, ClassLoader contextClassLoader) throws Exception {
         DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
                 installedRuntimeApk.libraryPath, contextClassLoader.getParent());
         hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
@@ -131,7 +131,7 @@ public class DynamicRuntime {
                 return false;
             }
             try {
-                hackParentToRunTime(installedApk, DynamicRuntime.class.getClassLoader());
+                hackParentToRuntime(installedApk, DynamicRuntime.class.getClassLoader());
                 return true;
             } catch (Exception e) {
                 if (mLogger.isErrorEnabled()) {
