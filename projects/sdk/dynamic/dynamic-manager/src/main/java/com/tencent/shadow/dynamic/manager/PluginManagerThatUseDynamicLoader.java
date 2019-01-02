@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.DeadObjectException;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Parcel;
@@ -95,10 +96,11 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                         mPpsController = PluginProcessService.wrapBinder(service);
                         try {
                             mPpsController.setUuidManager(new UuidManagerBinder(PluginManagerThatUseDynamicLoader.this));
-                        } catch (RemoteException e) {
+                        } catch (DeadObjectException e) {
                             if (mLogger.isErrorEnabled()) {
                                 mLogger.error("onServiceConnected RemoteException:" + e);
                             }
+                        }catch (RemoteException e){
                             throw new RuntimeException(e);
                         }
 
@@ -127,22 +129,20 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
         if (Looper.myLooper() == Looper.getMainLooper()) {
             throw new RuntimeException("waitServiceConnected 不能在主线程中调用");
         }
-        if (mPpsController == null) {
-            try {
-                if (mLogger.isInfoEnabled()) {
-                    mLogger.info("waiting service connect connectCountDownLatch:" + mConnectCountDownLatch);
-                }
-                long s = System.currentTimeMillis();
-                boolean isTimeout = !mConnectCountDownLatch.get().await(timeout, timeUnit);
-                if (isTimeout) {
-                    throw new TimeoutException("连接Service超时 ,等待了："+(System.currentTimeMillis() - s));
-                }
-                if (mLogger.isInfoEnabled()) {
-                    mLogger.info("service connected " + (System.currentTimeMillis() - s));
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        try {
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("waiting service connect connectCountDownLatch:" + mConnectCountDownLatch);
             }
+            long s = System.currentTimeMillis();
+            boolean isTimeout = !mConnectCountDownLatch.get().await(timeout, timeUnit);
+            if (isTimeout) {
+                throw new TimeoutException("连接Service超时 ,等待了："+(System.currentTimeMillis() - s));
+            }
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("service connected " + (System.currentTimeMillis() - s));
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
