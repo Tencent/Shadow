@@ -17,7 +17,7 @@ import dalvik.system.BaseDexClassLoader;
 /**
  * 将runtime apk加载到DexPathClassLoader，形成如下结构的classLoader树结构
  * ---BootClassLoader
- * ----DexPathClassLoader
+ * ----RuntimeClassLoader
  * ------PathClassLoader
  */
 public class DynamicRuntime {
@@ -37,7 +37,7 @@ public class DynamicRuntime {
      */
     public static boolean loadRuntime(InstalledApk installedRuntimeApk) {
         ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
-        DexPathClassLoader runtimeClassLoader = getRuntimeClassLoader();
+        RuntimeClassLoader runtimeClassLoader = getRuntimeClassLoader();
         if (runtimeClassLoader != null) {
             String apkPath = runtimeClassLoader.apkPath;
             if (mLogger.isInfoEnabled()) {
@@ -76,7 +76,7 @@ public class DynamicRuntime {
         ClassLoader child = contextClassLoader;
         ClassLoader tmpClassLoader = contextClassLoader.getParent();
         while (tmpClassLoader != null) {
-            if (tmpClassLoader instanceof DexPathClassLoader) {
+            if (tmpClassLoader instanceof RuntimeClassLoader) {
                 hackParentClassLoader(child, tmpClassLoader.getParent());
                 return;
             }
@@ -86,13 +86,12 @@ public class DynamicRuntime {
     }
 
 
-    private static DexPathClassLoader getRuntimeClassLoader() {
-        //DelegateProviderHolder是所有版本的Container都应该有的类
+    private static RuntimeClassLoader getRuntimeClassLoader() {
         ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
         ClassLoader tmpClassLoader = contextClassLoader.getParent();
         while (tmpClassLoader != null) {
-            if (tmpClassLoader instanceof DexPathClassLoader) {
-                return (DexPathClassLoader) tmpClassLoader;
+            if (tmpClassLoader instanceof RuntimeClassLoader) {
+                return (RuntimeClassLoader) tmpClassLoader;
             }
             tmpClassLoader = tmpClassLoader.getParent();
         }
@@ -101,7 +100,7 @@ public class DynamicRuntime {
 
 
     private static void hackParentToRuntime(InstalledApk installedRuntimeApk, ClassLoader contextClassLoader) throws Exception {
-        DexPathClassLoader runtimeClassLoader = new DexPathClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
+        RuntimeClassLoader runtimeClassLoader = new RuntimeClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
                 installedRuntimeApk.libraryPath, contextClassLoader.getParent());
         hackParentClassLoader(contextClassLoader, runtimeClassLoader);
     }
@@ -207,14 +206,14 @@ public class DynamicRuntime {
     }
 
 
-    static class DexPathClassLoader extends BaseDexClassLoader {
+    static class RuntimeClassLoader extends BaseDexClassLoader {
         /**
          * 加载的apk路径
          */
         private String apkPath;
 
 
-        DexPathClassLoader(String dexPath, String optimizedDirectory, String librarySearchPath, ClassLoader parent) {
+        RuntimeClassLoader(String dexPath, String optimizedDirectory, String librarySearchPath, ClassLoader parent) {
             super(dexPath, optimizedDirectory == null ? null : new File(optimizedDirectory), librarySearchPath, parent);
             this.apkPath = dexPath;
         }
