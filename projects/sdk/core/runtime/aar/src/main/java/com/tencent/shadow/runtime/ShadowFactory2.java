@@ -19,12 +19,12 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
 
     private String mPartKey;
 
-    final Object[] mConstructorArgs = new Object[2];
+    private final Object[] mConstructorArgs = new Object[2];
 
-    static final Class<?>[] mConstructorSignature = new Class[]{
+    private final Class<?>[] mConstructorSignature = new Class[]{
             Context.class, AttributeSet.class};
 
-    private static final HashMap<String, Constructor<? extends View>> sConstructorMap =
+    private final HashMap<String, Constructor<? extends View>> sConstructorMap =
             new HashMap<String, Constructor<? extends View>>();
 
 
