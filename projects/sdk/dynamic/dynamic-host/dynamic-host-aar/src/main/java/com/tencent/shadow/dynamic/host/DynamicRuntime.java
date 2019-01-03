@@ -36,28 +36,34 @@ public class DynamicRuntime {
      */
     public static boolean loadRuntime(InstalledApk installedRuntimeApk) {
         ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
-        ClassLoader parent = contextClassLoader.getParent();
-        // TODO cubershi: 2018-12-27 这里不应该默认contextClassLoader.getParent()就是我们的ClassLoader，别人也有可能改。
-        if (parent instanceof DexPathClassLoader) {
-            String apkPath = ((DexPathClassLoader) parent).apkPath;
-            if (mLogger.isInfoEnabled()) {
-                mLogger.info("last apkPath:" + apkPath + " new apkPath:" + installedRuntimeApk.apkFilePath);
-            }
-            if (TextUtils.equals(apkPath, installedRuntimeApk.apkFilePath)) {
-                //已经加载相同版本的runtime了,不需要加载
+        ClassLoader runtimeClassLoader = getRuntimeClassLoader();
+        if (runtimeClassLoader != null) {
+            ClassLoader runtimeParent = runtimeClassLoader.getParent();
+            if (runtimeClassLoader instanceof DexPathClassLoader) {
+                String apkPath = ((DexPathClassLoader) runtimeClassLoader).apkPath;
                 if (mLogger.isInfoEnabled()) {
-                    mLogger.info("已经加载相同apkPath的runtime了,不需要加载");
+                    mLogger.info("last apkPath:" + apkPath + " new apkPath:" + installedRuntimeApk.apkFilePath);
                 }
-                return false;
+                if (TextUtils.equals(apkPath, installedRuntimeApk.apkFilePath)) {
+                    //已经加载相同版本的runtime了,不需要加载
+                    if (mLogger.isInfoEnabled()) {
+                        mLogger.info("已经加载相同apkPath的runtime了,不需要加载");
+                    }
+                    return false;
+                } else {
+                    //版本不一样，说明要更新runtime，先恢复正常的classLoader结构
+                    if (mLogger.isInfoEnabled()) {
+                        mLogger.info("加载不相同apkPath的runtime了,更新runtime");
+                    }
+                    try {
+                        hackParentClassLoader(contextClassLoader, runtimeParent);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             } else {
-                //版本不一样，说明要更新runtime，先恢复正常的classLoader结构
-                if (mLogger.isInfoEnabled()) {
-                    mLogger.info("加载不相同apkPath的runtime了,更新runtime");
-                }
-                try {
-                    hackParentClassLoader(contextClassLoader, parent.getParent());
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                if (mLogger.isErrorEnabled()) {
+                    mLogger.error("runtimeClassLoader 不是 DexPathClassLoader ："+runtimeClassLoader);
                 }
             }
         }
@@ -70,10 +76,26 @@ public class DynamicRuntime {
         return true;
     }
 
+
+    public static ClassLoader getRuntimeClassLoader() {
+        //DelegateProviderHolder是所有版本的Container都应该有的类
+        ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
+        try {
+            Class<?> bClass = contextClassLoader.loadClass("com.tencent.shadow.runtime.container.DelegateProviderHolder");
+            return bClass.getClassLoader();
+        } catch (ClassNotFoundException ignored) {
+            if (contextClassLoader.getParent() instanceof DexPathClassLoader) {
+                return contextClassLoader.getParent();
+            }
+        }
+        return null;
+    }
+
+
     private static void hackParentToRuntime(InstalledApk installedRuntimeApk, ClassLoader contextClassLoader) throws Exception {
-        DexPathClassLoader pluginContainerClassLoader = new DexPathClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
+        DexPathClassLoader runtimeClassLoader = new DexPathClassLoader(installedRuntimeApk.apkFilePath, installedRuntimeApk.oDexPath,
                 installedRuntimeApk.libraryPath, contextClassLoader.getParent());
-        hackParentClassLoader(contextClassLoader, pluginContainerClassLoader);
+        hackParentClassLoader(contextClassLoader, runtimeClassLoader);
     }
 
 
