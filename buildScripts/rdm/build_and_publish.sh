@@ -1,6 +1,6 @@
 export ANDROID_HOME=$ANDROID_SDK
 export JAVA_HOME=$JDK8
-export PATH=$JDK8/bin:$GRADLE_HOME/bin:$PATH
+export PATH=$JDK8/bin:$PATH
 
 function checkError()
 {
@@ -13,7 +13,7 @@ fi
 
 rm bin/*.*
 
-sh gradlew --daemon cleanThenPublishSdkToMaven
+sh gradlew --daemon publish
 checkError
 
 cd $WORKSPACE/bin
