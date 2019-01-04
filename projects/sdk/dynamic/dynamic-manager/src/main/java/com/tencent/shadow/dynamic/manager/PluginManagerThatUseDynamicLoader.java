@@ -176,7 +176,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             } catch (FailedException e) {
                 throw new RuntimeException("TODO cause:" + e.errorMessage, e);
             }
-            mPluginLoader = PluginLoader.Stub.asInterface(iBinder);
+            mPluginLoader = new BinderPluginLoader(iBinder);
         }
     }
 

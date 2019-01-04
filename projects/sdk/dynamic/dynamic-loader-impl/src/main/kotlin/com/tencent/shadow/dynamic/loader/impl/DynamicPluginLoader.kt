@@ -1,4 +1,4 @@
-package com.tencent.shadow.dynamic.loader
+package com.tencent.shadow.dynamic.loader.impl
 
 import android.content.ComponentName
 import android.content.Context
@@ -7,15 +7,13 @@ import android.content.ServiceConnection
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.os.RemoteException
 import com.tencent.shadow.core.loader.ShadowPluginLoader
-import com.tencent.shadow.dynamic.host.PluginLoaderImpl
 import com.tencent.shadow.dynamic.host.UuidManager
 import com.tencent.shadow.runtime.container.DelegateProviderHolder
 import java.util.concurrent.CountDownLatch
 
-internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginLoader.Stub(), PluginLoaderImpl {
-    override fun setUuidManager(p0: UuidManager?) {
+internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
+    fun setUuidManager(p0: UuidManager?) {
         if (p0 != null)
             mUuidManager = p0
         //todo 兼容mUuidManager为null时的逻辑
@@ -54,14 +52,13 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginL
         mUuid = uuid;
     }
 
-    @Throws(RemoteException::class)
-    override fun loadPlugin(partKey: String) {
+    fun loadPlugin(partKey: String) {
         val installedApk = mUuidManager.getPlugin(mUuid, partKey)
         val future = mPluginLoader.loadPlugin(mContext, installedApk)
         future.get()
     }
 
-    override fun getLoadedPlugin(): MutableMap<String, Boolean> {
+    fun getLoadedPlugin(): MutableMap<String, Boolean> {
         val plugins  = mPluginLoader.getAllPluginPart()
         val loadPlugins = hashMapOf<String, Boolean>()
         for(part in plugins){
@@ -70,9 +67,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginL
         return loadPlugins
     }
 
-    @Throws(RemoteException::class)
-    @Synchronized
-    override fun callApplicationOnCreate(partKey: String) {
+    @Synchronized//todo cubershi: 确认这个注解的工作效果
+    fun callApplicationOnCreate(partKey: String) {
 
         fun realAction() {
             val pluginParts = mPluginLoader.getPluginParts(partKey)
@@ -96,14 +92,12 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginL
         }
     }
 
-    @Throws(RemoteException::class)
-    override fun convertActivityIntent(pluginActivityIntent: Intent): Intent? {
+    fun convertActivityIntent(pluginActivityIntent: Intent): Intent? {
         return mPluginLoader.mComponentManager.convertPluginActivityIntent(pluginActivityIntent)
     }
 
-    @Throws(RemoteException::class)
     @Synchronized
-    override fun startPluginService(pluginServiceIntent: Intent): ComponentName? {
+    fun startPluginService(pluginServiceIntent: Intent): ComponentName? {
 
         fun realAction(): ComponentName? {
             return mPluginLoader.getPluginServiceManager().startPluginService(pluginServiceIntent)
@@ -126,9 +120,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginL
         return componentName
     }
 
-    @Throws(RemoteException::class)
     @Synchronized
-    override fun stopPluginService(pluginServiceIntent: Intent): Boolean {
+    fun stopPluginService(pluginServiceIntent: Intent): Boolean {
 
         fun realAction(): Boolean {
             return mPluginLoader.getPluginServiceManager().stopPluginService(pluginServiceIntent)
@@ -149,20 +142,15 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginL
         return stopped
     }
 
-    @Throws(RemoteException::class)
     @Synchronized
-    override fun bindPluginService(pluginServiceIntent: Intent, connection: IServiceConnection, flags: Int): Boolean {
+    fun bindPluginService(pluginServiceIntent: Intent, binderPsc: BinderPluginServiceConnection, flags: Int): Boolean {
 
         fun realAction(): Boolean {
-            // client端同一个IServiceConnection对象，通过IPC传过来不会对应服务端这边的同一个IServiceConnection
-            // 但是asBinder返回是同一个对象
-            val connBinder = connection.asBinder()
-
-            if (mConnectionMap[connBinder] == null) {
-                mConnectionMap[connBinder] = ServiceConnectionWrapper(connection)
+            if (mConnectionMap[binderPsc.mRemote] == null) {
+                mConnectionMap[binderPsc.mRemote] = ServiceConnectionWrapper(binderPsc)
             }
 
-            val connWrapper = mConnectionMap[connBinder]!!
+            val connWrapper = mConnectionMap[binderPsc.mRemote]!!
             return mPluginLoader.getPluginServiceManager().bindPluginService(pluginServiceIntent, connWrapper, flags)
         }
         // 确保在ui线程调用
@@ -182,11 +170,9 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginL
 
     }
 
-    @Throws(RemoteException::class)
     @Synchronized
-    override fun unbindService(conn: IServiceConnection) {
+    fun unbindService(connBinder: IBinder) {
         mUiHandler.post {
-            val connBinder = conn.asBinder()
             mConnectionMap[connBinder]?.let {
                 mConnectionMap.remove(connBinder)
                 mPluginLoader.getPluginServiceManager().unbindPluginService(it)
@@ -194,7 +180,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) : PluginL
         }
     }
 
-    private class ServiceConnectionWrapper(private val mConnection: IServiceConnection) : ServiceConnection {
+    private class ServiceConnectionWrapper(private val mConnection: BinderPluginServiceConnection) : ServiceConnection {
 
         override fun onServiceDisconnected(name: ComponentName) {
             mConnection.onServiceDisconnected(name)

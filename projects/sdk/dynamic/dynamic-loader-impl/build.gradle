@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 
 apply from: "${rootDir.parentFile.parentFile.parentFile}/buildScripts/gradle/GitHelper.gradle"
 
-group 'com.tencent.shadow.core'
+group 'com.tencent.shadow.dynamic'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -49,6 +49,7 @@ dependencies {
     implementation 'com.tencent.shadow.coding:lint'
     compileOnly 'com.tencent.shadow.core:common'
     compileOnly project(':dynamic-host')
+    compileOnly project(':dynamic-loader')
 }
 
 def jarPackage(buildType) {
