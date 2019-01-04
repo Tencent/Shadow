@@ -177,7 +177,7 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
-                dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'loader', publicationVersion))
                 dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
