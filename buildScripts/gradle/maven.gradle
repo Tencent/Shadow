@@ -35,8 +35,8 @@ static def getDependencyNode(scope, groupId, artifactId, version) {
 }
 
 def setScm(scm) {
-    scm.appendNode('connection', 'http://git.code.oa.com/now-shadow/shadow.git')
-    scm.appendNode('url', "https://git.code.oa.com/now-shadow/shadow/commit/$project.GIT_SHORT_REV")
+    scm.appendNode('connection', 'http://git.code.oa.com/shadow/shadow.git')
+    scm.appendNode('url', "https://git.code.oa.com/shadow/shadow/commit/$project.GIT_SHORT_REV")
 }
 
 def setGeneratePomFileAndDepends(publicationName) {
