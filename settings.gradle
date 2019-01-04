@@ -3,22 +3,3 @@ rootProject.name = 'shadow'
 includeBuild 'projects/sdk/coding'
 includeBuild 'projects/sdk/core'
 includeBuild 'projects/sdk/dynamic'
-
-include ':projects:debug:host-app:host-apk'
-include ':projects:debug:host-app:slf4j-logback'
-include ':projects:debug:host-app:slf4j-logcat'
-
-include ':projects:debug:plugin-app:demo-install'
-include ':projects:debug:plugin-app:demo-main'
-include ':projects:debug:plugin-app:demo-plugin'
-include ':projects:debug:plugin-app:plugin-loader-apk'
-include ':projects:debug:plugin-app:shadow-runtime-apk'
-
-include ':projects:now:channel'
-include ':projects:now:manager'
-include ':projects:now:qqinterface'
-include ':projects:now:qqplugin'
-include ':projects:now:util'
-
-include ':projects:qq:reuse-plugin-process'
-include ':projects:qq:iv-shadow-for-qq'
