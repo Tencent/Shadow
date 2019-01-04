@@ -84,10 +84,6 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
                         or ActivityInfo.CONFIG_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
                         or ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
                         )
-        if (mLogger.isDebugEnabled) {
-            mLogger.debug("{} mPluginHandleConfigurationChange=={}", mPluginActivity.javaClass.canonicalName, mPluginHandleConfigurationChange)
-        }
-
         mRawIntentExtraBundle = pluginInitBundle.getBundle(CM_EXTRAS_BUNDLE_KEY)
         mHostActivityDelegator.intent.replaceExtras(mRawIntentExtraBundle)
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
@@ -98,6 +94,10 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
             val pluginActivity = PluginActivity::class.java.cast(aClass.newInstance())
             initPluginActivity(pluginActivity)
             mPluginActivity = pluginActivity
+
+            if (mLogger.isDebugEnabled) {
+                mLogger.debug("{} mPluginHandleConfigurationChange=={}", mPluginActivity.javaClass.canonicalName, mPluginHandleConfigurationChange)
+            }
 
             //使PluginActivity替代ContainerActivity接收Window的Callback
             mHostActivityDelegator.window.callback = pluginActivity
