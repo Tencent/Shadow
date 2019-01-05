@@ -45,6 +45,7 @@ def setGeneratePomFileAndDepends(publicationName) {
         tasks."generatePomFileFor${publicationName.capitalize()}Publication" {
             destination = file("$buildDir/pom/$publicationName-pom.xml")
             dependsOn(buildSdk)
+            dependsOn(lintSdk)
         }
     }
 }
