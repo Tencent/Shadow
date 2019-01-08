@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.os.TransactionTooLargeException;
 
 import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.core.common.Logger;
@@ -100,6 +101,10 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                             if (mLogger.isErrorEnabled()) {
                                 mLogger.error("onServiceConnected RemoteException:" + e);
                             }
+                        }catch (TransactionTooLargeException e){
+                            if (mLogger.isErrorEnabled()) {
+                                mLogger.error("onServiceConnected TransactionTooLargeException:" + e);
+                            }
                         }catch (RemoteException e){
                             throw new RuntimeException(e);
                         }
@@ -147,7 +152,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     }
 
 
-    public final void loadRunTime(String uuid) throws RemoteException {
+    public final void loadRunTime(String uuid) throws RemoteException, UuidManagerNullException {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadRunTime mPpsController:" + mPpsController);
         }
@@ -157,11 +162,14 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 mPpsController.loadRuntime(uuid);
             }
         } catch (FailedException e) {
+            if (e.errorCode == FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION) {
+                throw new UuidManagerNullException("UuidManagerNull ", e);
+            }
             throw new RuntimeException("TODO cause:" + e.errorMessage, e);
         }
     }
 
-    public final void loadPluginLoader(String uuid) throws RemoteException {
+    public final void loadPluginLoader(String uuid) throws RemoteException, UuidManagerNullException {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadRunTime loadPluginLoader:" + mPluginLoader);
         }
@@ -174,6 +182,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                 }
                 iBinder = mPpsController.getPluginLoader();
             } catch (FailedException e) {
+                if (e.errorCode == FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION) {
+                    throw new UuidManagerNullException("UuidManagerNull ", e);
+                }
                 throw new RuntimeException("TODO cause:" + e.errorMessage, e);
             }
             mPluginLoader = new BinderPluginLoader(iBinder);
