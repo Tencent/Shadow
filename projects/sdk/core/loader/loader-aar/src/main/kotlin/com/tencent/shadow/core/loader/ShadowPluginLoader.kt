@@ -24,7 +24,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-abstract class ShadowPluginLoader : DelegateProvider, DI {
+abstract class ShadowPluginLoader(context: Context) : DelegateProvider, DI {
 
     private val mExecutorService = Executors.newCachedThreadPool()
 

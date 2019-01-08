@@ -43,7 +43,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     init {
         try {
-            mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL)
+            mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL, arrayOf(Context::class.java), arrayOf(hostContext))
             DelegateProviderHolder.setDelegateProvider(mPluginLoader)
         } catch (e: Exception) {
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
@@ -221,6 +221,34 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
         } catch (e: IllegalAccessException) {
             throw Exception(e)
         }
+    }
+
+    /**
+     * 从apk中读取接口的实现
+     *
+     * @param clazz     接口类
+     * @param className 实现类的类名
+     * @param <T>       接口类型
+     * @return 所需接口
+     * @throws Exception
+    </T> */
+    @Throws(Exception::class)
+    fun <T> ClassLoader.getInterface(clazz: Class<T>, className: String, parameterTypes: Array<Class<*>>, parameters: Array<Any>): T {
+        try {
+            val interfaceImplementClass = loadClass(className)
+            val constructor = interfaceImplementClass.getConstructor(*parameterTypes)
+            val interfaceImplement = constructor.newInstance(*parameters)
+            return clazz.cast(interfaceImplement)
+        } catch (e: ClassNotFoundException) {
+            throw Exception(e)
+        } catch (e: InstantiationException) {
+            throw Exception(e)
+        } catch (e: ClassCastException) {
+            throw Exception(e)
+        } catch (e: IllegalAccessException) {
+            throw Exception(e)
+        }
+
     }
 
 }
