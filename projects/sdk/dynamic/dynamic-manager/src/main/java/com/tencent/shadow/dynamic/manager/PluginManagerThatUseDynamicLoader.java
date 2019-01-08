@@ -109,6 +109,17 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                             throw new RuntimeException(e);
                         }
 
+                        try {
+                            IBinder iBinder = mPpsController.getPluginLoader();
+                            if (iBinder != null) {
+                                mPluginLoader = new BinderPluginLoader(iBinder);
+                            }
+                        } catch (RemoteException ignored) {
+                            if (mLogger.isErrorEnabled()) {
+                                mLogger.error("onServiceConnected mPpsController getPluginLoader:", ignored);
+                            }
+                        }
+
                         mConnectCountDownLatch.get().countDown();
 
                         if (mLogger.isInfoEnabled()) {
