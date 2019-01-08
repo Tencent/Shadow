@@ -54,7 +54,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     fun loadPlugin(partKey: String) {
         val installedApk = mUuidManager.getPlugin(mUuid, partKey)
-        val future = mPluginLoader.loadPlugin(mContext, installedApk)
+        val future = mPluginLoader.loadPlugin(installedApk)
         future.get()
     }
 

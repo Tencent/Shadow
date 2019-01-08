@@ -24,7 +24,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-abstract class ShadowPluginLoader(context: Context) : DelegateProvider, DI {
+abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, DI {
 
     private val mExecutorService = Executors.newCachedThreadPool()
 
@@ -70,6 +70,7 @@ abstract class ShadowPluginLoader(context: Context) : DelegateProvider, DI {
 
     private val  mShadowRemoteViewCreatorProvider: ShadowRemoteViewCreatorProvider = ShadowRemoteViewCreatorProviderImpl()
 
+    private var mHostAppContext: Context = hostAppContext;
 
     companion object {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
@@ -96,7 +97,6 @@ abstract class ShadowPluginLoader(context: Context) : DelegateProvider, DI {
 
     @Throws(LoadPluginException::class)
     fun loadPlugin(
-            hostAppContext: Context,
             installedApk: InstalledApk
     ): Future<*> {
         val loadParameters = installedApk.getLoadParameters()
@@ -107,7 +107,7 @@ abstract class ShadowPluginLoader(context: Context) : DelegateProvider, DI {
         // 在这里初始化PluginServiceManager
         mPluginServiceManagerLock.withLock {
             if (!::mPluginServiceManager.isInitialized) {
-                mPluginServiceManager = PluginServiceManager(this, hostAppContext)
+                mPluginServiceManager = PluginServiceManager(this, mHostAppContext)
             }
 
             mComponentManager.setPluginServiceManager(mPluginServiceManager)
@@ -118,7 +118,7 @@ abstract class ShadowPluginLoader(context: Context) : DelegateProvider, DI {
             return LoadPluginBloc.loadInterface(
                     mExecutorService,
                     mAbi,
-                    hostAppContext,
+                    mHostAppContext,
                     mInterfaceClassLoader,
                     installedApk
                     )
@@ -128,10 +128,10 @@ abstract class ShadowPluginLoader(context: Context) : DelegateProvider, DI {
                     mAbi,
                     mCommonPluginPackageManager,
                     mComponentManager,
-                    getBusinessPluginReceiverManager(hostAppContext),
+                    getBusinessPluginReceiverManager(mHostAppContext),
                     mLock,
                     mPluginPartsMap,
-                    hostAppContext,
+                    mHostAppContext,
                     installedApk,
                     loadParameters,
                     mInterfaceClassLoader,
