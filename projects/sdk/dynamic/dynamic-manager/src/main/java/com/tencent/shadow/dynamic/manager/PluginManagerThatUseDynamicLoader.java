@@ -163,41 +163,26 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     }
 
 
-    public final void loadRunTime(String uuid) throws RemoteException, UuidManagerNullException {
+    public final void loadRunTime(String uuid) throws RemoteException, FailedException {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadRunTime mPpsController:" + mPpsController);
         }
-        try {
-            PpsStatus ppsStatus = mPpsController.getPpsStatus();
-            if (!ppsStatus.runtimeLoaded) {
-                mPpsController.loadRuntime(uuid);
-            }
-        } catch (FailedException e) {
-            if (e.errorCode == FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION) {
-                throw new UuidManagerNullException("UuidManagerNull ", e);
-            }
-            throw new RuntimeException("TODO cause:" + e.errorMessage, e);
+        PpsStatus ppsStatus = mPpsController.getPpsStatus();
+        if (!ppsStatus.runtimeLoaded) {
+            mPpsController.loadRuntime(uuid);
         }
     }
 
-    public final void loadPluginLoader(String uuid) throws RemoteException, UuidManagerNullException {
+    public final void loadPluginLoader(String uuid) throws RemoteException, FailedException {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadRunTime loadPluginLoader:" + mPluginLoader);
         }
         if (mPluginLoader == null) {
-            IBinder iBinder = null;
-            try {
-                PpsStatus ppsStatus = mPpsController.getPpsStatus();
-                if (!ppsStatus.loaderLoaded) {
-                    mPpsController.loadPluginLoader(uuid);
-                }
-                iBinder = mPpsController.getPluginLoader();
-            } catch (FailedException e) {
-                if (e.errorCode == FailedException.ERROR_CODE_UUID_MANAGER_NULL_EXCEPTION) {
-                    throw new UuidManagerNullException("UuidManagerNull ", e);
-                }
-                throw new RuntimeException("TODO cause:" + e.errorMessage, e);
+            PpsStatus ppsStatus = mPpsController.getPpsStatus();
+            if (!ppsStatus.loaderLoaded) {
+                mPpsController.loadPluginLoader(uuid);
             }
+            IBinder iBinder = mPpsController.getPluginLoader();
             mPluginLoader = new BinderPluginLoader(iBinder);
         }
     }
