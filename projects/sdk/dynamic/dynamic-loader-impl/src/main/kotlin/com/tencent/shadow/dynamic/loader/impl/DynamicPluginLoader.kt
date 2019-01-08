@@ -43,7 +43,9 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     init {
         try {
-            mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL, arrayOf(Context::class.java), arrayOf(hostContext))
+            val parameterTypes: Array<Class<*>> = arrayOf(Context::class.java)
+            val parameters: Array<Any> = arrayOf(hostContext)
+            mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL, parameterTypes, parameters)
             DelegateProviderHolder.setDelegateProvider(mPluginLoader)
         } catch (e: Exception) {
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
