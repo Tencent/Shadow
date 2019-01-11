@@ -103,7 +103,7 @@ public abstract class ShadowApplication extends ShadowContext {
 
     public void registerActivityLifecycleCallbacks(ShadowActivityLifecycleCallbacks callback) {
         final ShadowActivityLifecycleCallbacks.Wrapper wrapper
-                = new ShadowActivityLifecycleCallbacks.Wrapper(callback);
+                = new ShadowActivityLifecycleCallbacks.Wrapper(callback, this);
         mActivityLifecycleCallbacksMap.put(callback, wrapper);
         mHostApplication.registerActivityLifecycleCallbacks(wrapper);
     }
