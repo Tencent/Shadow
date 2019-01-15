@@ -1,0 +1,14 @@
+<com.jeremyfeinstein.slidingmenu.lib.SlidingMenu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sliding="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/slidingmenu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    sliding:viewAbove="@layout/layout_main_above"
+    sliding:mode="right"
+    sliding:fadeEnabled="false"
+    sliding:viewBehind="@layout/layout_main_behind"
+    sliding:touchModeAbove="fullscreen"
+    sliding:behindOffset="@dimen/behindOffset"
+    >
+
+</com.jeremyfeinstein.slidingmenu.lib.SlidingMenu>

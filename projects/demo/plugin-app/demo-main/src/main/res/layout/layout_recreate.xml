@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+
+
+    <FrameLayout
+        android:id="@+id/fragement"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="reCreate"
+        android:text="reCreate()"
+        android:layout_gravity="top"
+       />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginTop="8dp"
+        android:onClick="pop"
+        android:text="Pop"
+        android:layout_gravity="top"
+        />
+
+
+
+
+</FrameLayout>

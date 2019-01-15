@@ -1,0 +1,37 @@
+<com.tencent.shadow.demo.ryg.expandable.ui.StickyLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sticky_layout"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_marginTop="0dp"
+    android:layout_weight="1"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/sticky_header"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:gravity="center"
+        android:visibility="gone"
+        android:orientation="vertical"/>
+
+    <LinearLayout
+        android:id="@+id/sticky_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.tencent.shadow.demo.ryg.expandable.ui.PinnedHeaderExpandableListView
+            android:id="@+id/expandablelist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:cacheColorHint="@null"
+            android:childDivider="@drawable/child_bg"
+            android:childIndicatorLeft="0dp"
+            android:divider="@android:color/darker_gray"
+            android:dividerHeight="1dp"
+            android:groupIndicator="@null"
+            android:scrollbarAlwaysDrawHorizontalTrack="false" />
+    </LinearLayout>
+
+</com.tencent.shadow.demo.ryg.expandable.ui.StickyLayout>
