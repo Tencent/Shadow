@@ -60,7 +60,7 @@ abstract class ShadowPluginLoader(context: Context) : DelegateProvider, DI {
 
     private val mPluginServiceManagerLock = ReentrantLock()
 
-    private val mInterfaceClassLoader = InterfaceClassLoader(ShadowPluginLoader::class.java.classLoader.parent)
+    private val mInterfaceClassLoader = InterfaceClassLoader(ShadowPluginLoader::class.java.classLoader)//todo cubershi ：这个东西的父类不能固定成.parent。否则core层就不能单独使用。
 
     /**
      * 插件将要使用的so的ABI，Loader会将其从apk中解压出来。
