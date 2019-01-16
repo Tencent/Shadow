@@ -1,14 +1,14 @@
 package com.tencent.shadow.demo.recreate;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.tencent.shadow.demo.main.R;
 
-public class TestReCreateActivity extends FragmentActivity {
+public class TestReCreateActivity extends Activity {
 
     private int type = 0;
 
