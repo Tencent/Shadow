@@ -25,9 +25,11 @@ public interface ShadowActivityLifecycleCallbacks {
     class Wrapper implements Application.ActivityLifecycleCallbacks {
 
         final ShadowActivityLifecycleCallbacks shadowActivityLifecycleCallbacks;
+        final ShadowApplication shadowApplication;
 
-        public Wrapper(ShadowActivityLifecycleCallbacks shadowActivityLifecycleCallbacks) {
+        public Wrapper(ShadowActivityLifecycleCallbacks shadowActivityLifecycleCallbacks, ShadowApplication shadowApplication) {
             this.shadowActivityLifecycleCallbacks = shadowActivityLifecycleCallbacks;
+            this.shadowApplication = shadowApplication;
         }
 
         private ShadowActivity getPluginActivity(Activity activity) {
@@ -41,7 +43,7 @@ public interface ShadowActivityLifecycleCallbacks {
         @Override
         public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
             final ShadowActivity pluginActivity = getPluginActivity(activity);
-            if (pluginActivity != null) {
+            if (checkOwnerActivity(pluginActivity) ) {
                 shadowActivityLifecycleCallbacks.onActivityCreated(pluginActivity, savedInstanceState);
             }
         }
@@ -49,7 +51,7 @@ public interface ShadowActivityLifecycleCallbacks {
         @Override
         public void onActivityStarted(Activity activity) {
             final ShadowActivity pluginActivity = getPluginActivity(activity);
-            if (pluginActivity != null) {
+            if (checkOwnerActivity(pluginActivity) ) {
                 shadowActivityLifecycleCallbacks.onActivityStarted(pluginActivity);
             }
         }
@@ -57,7 +59,7 @@ public interface ShadowActivityLifecycleCallbacks {
         @Override
         public void onActivityResumed(Activity activity) {
             final ShadowActivity pluginActivity = getPluginActivity(activity);
-            if (pluginActivity != null) {
+            if (checkOwnerActivity(pluginActivity) ) {
                 shadowActivityLifecycleCallbacks.onActivityResumed(pluginActivity);
             }
         }
@@ -65,7 +67,7 @@ public interface ShadowActivityLifecycleCallbacks {
         @Override
         public void onActivityPaused(Activity activity) {
             final ShadowActivity pluginActivity = getPluginActivity(activity);
-            if (pluginActivity != null) {
+            if (checkOwnerActivity(pluginActivity) ) {
                 shadowActivityLifecycleCallbacks.onActivityPaused(pluginActivity);
             }
         }
@@ -73,7 +75,7 @@ public interface ShadowActivityLifecycleCallbacks {
         @Override
         public void onActivityStopped(Activity activity) {
             final ShadowActivity pluginActivity = getPluginActivity(activity);
-            if (pluginActivity != null) {
+            if (checkOwnerActivity(pluginActivity) ) {
                 shadowActivityLifecycleCallbacks.onActivityStopped(pluginActivity);
             }
         }
@@ -81,7 +83,7 @@ public interface ShadowActivityLifecycleCallbacks {
         @Override
         public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
             final ShadowActivity pluginActivity = getPluginActivity(activity);
-            if (pluginActivity != null) {
+            if (checkOwnerActivity(pluginActivity) ) {
                 shadowActivityLifecycleCallbacks.onActivitySaveInstanceState(pluginActivity, outState);
             }
         }
@@ -89,9 +91,19 @@ public interface ShadowActivityLifecycleCallbacks {
         @Override
         public void onActivityDestroyed(Activity activity) {
             final ShadowActivity pluginActivity = getPluginActivity(activity);
-            if (pluginActivity != null) {
+            if (checkOwnerActivity(pluginActivity) ) {
                 shadowActivityLifecycleCallbacks.onActivityDestroyed(pluginActivity);
             }
+        }
+
+        /**
+         * 检测Activity是否属于当前Application所在的插件
+         *
+         * @param activity 插件Activity
+         * @return 是否属于当前Application所在的插件 true属于
+         */
+        private boolean checkOwnerActivity(PluginActivity activity) {
+            return activity != null && activity.mPluginApplication == shadowApplication;
         }
     }
 }
