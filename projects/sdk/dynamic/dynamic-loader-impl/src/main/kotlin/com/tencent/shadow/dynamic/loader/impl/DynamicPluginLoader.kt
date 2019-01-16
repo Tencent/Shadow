@@ -21,7 +21,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     companion object {
 
-        private val CLASSS_PLUGIN_LOADER_IMPL = "com.tencent.shadow.sdk.pluginloader.PluginLoaderImpl"
+        private val CLASSS_PLUGIN_LOADER_IMPL = "com.tencent.shadow.sdk.pluginloader.PluginLoaderImpl"//todo cubershi:这个类名的包名不规范
     }
 
     private val mPluginLoader: ShadowPluginLoader
@@ -43,7 +43,9 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     init {
         try {
-            mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL, arrayOf(Context::class.java), arrayOf(hostContext))
+            val parameterTypes: Array<Class<*>> = arrayOf(Context::class.java)
+            val parameters: Array<Any> = arrayOf(hostContext)
+            mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL, parameterTypes, parameters)
             DelegateProviderHolder.setDelegateProvider(mPluginLoader)
         } catch (e: Exception) {
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
@@ -54,7 +56,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     fun loadPlugin(partKey: String) {
         val installedApk = mUuidManager.getPlugin(mUuid, partKey)
-        val future = mPluginLoader.loadPlugin(mContext, installedApk)
+        val future = mPluginLoader.loadPlugin(installedApk)
         future.get()
     }
 

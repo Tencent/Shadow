@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.os.TransactionTooLargeException;
 
 import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.core.common.Logger;
@@ -100,8 +101,23 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                             if (mLogger.isErrorEnabled()) {
                                 mLogger.error("onServiceConnected RemoteException:" + e);
                             }
+                        }catch (TransactionTooLargeException e){
+                            if (mLogger.isErrorEnabled()) {
+                                mLogger.error("onServiceConnected TransactionTooLargeException:" + e);
+                            }
                         }catch (RemoteException e){
                             throw new RuntimeException(e);
+                        }
+
+                        try {
+                            IBinder iBinder = mPpsController.getPluginLoader();
+                            if (iBinder != null) {
+                                mPluginLoader = new BinderPluginLoader(iBinder);
+                            }
+                        } catch (RemoteException ignored) {
+                            if (mLogger.isErrorEnabled()) {
+                                mLogger.error("onServiceConnected mPpsController getPluginLoader:", ignored);
+                            }
                         }
 
                         mConnectCountDownLatch.get().countDown();
@@ -147,35 +163,26 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
     }
 
 
-    public final void loadRunTime(String uuid) throws RemoteException {
+    public final void loadRunTime(String uuid) throws RemoteException, FailedException {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadRunTime mPpsController:" + mPpsController);
         }
-        try {
-            PpsStatus ppsStatus = mPpsController.getPpsStatus();
-            if (!ppsStatus.runtimeLoaded) {
-                mPpsController.loadRuntime(uuid);
-            }
-        } catch (FailedException e) {
-            throw new RuntimeException("TODO cause:" + e.errorMessage, e);
+        PpsStatus ppsStatus = mPpsController.getPpsStatus();
+        if (!ppsStatus.runtimeLoaded) {
+            mPpsController.loadRuntime(uuid);
         }
     }
 
-    public final void loadPluginLoader(String uuid) throws RemoteException {
+    public final void loadPluginLoader(String uuid) throws RemoteException, FailedException {
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadRunTime loadPluginLoader:" + mPluginLoader);
         }
         if (mPluginLoader == null) {
-            IBinder iBinder = null;
-            try {
-                PpsStatus ppsStatus = mPpsController.getPpsStatus();
-                if (!ppsStatus.loaderLoaded) {
-                    mPpsController.loadPluginLoader(uuid);
-                }
-                iBinder = mPpsController.getPluginLoader();
-            } catch (FailedException e) {
-                throw new RuntimeException("TODO cause:" + e.errorMessage, e);
+            PpsStatus ppsStatus = mPpsController.getPpsStatus();
+            if (!ppsStatus.loaderLoaded) {
+                mPpsController.loadPluginLoader(uuid);
             }
+            IBinder iBinder = mPpsController.getPluginLoader();
             mPluginLoader = new BinderPluginLoader(iBinder);
         }
     }
