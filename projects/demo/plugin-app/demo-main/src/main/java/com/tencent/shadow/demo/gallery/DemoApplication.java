@@ -1,8 +1,8 @@
-package com.tencent.shadow.demo.main;
+package com.tencent.shadow.demo.gallery;
 
 import android.app.Application;
 
-import com.tencent.shadow.demo.main.cases.TestCaseManager;
+import com.tencent.shadow.demo.gallery.cases.UseCaseManager;
 
 public class DemoApplication extends Application {
 
@@ -10,6 +10,6 @@ public class DemoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        TestCaseManager.initCase();
+        UseCaseManager.initCase();
     }
 }

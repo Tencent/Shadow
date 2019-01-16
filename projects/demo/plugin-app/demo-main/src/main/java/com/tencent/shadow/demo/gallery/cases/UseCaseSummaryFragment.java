@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.main.cases;
+package com.tencent.shadow.demo.gallery.cases;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.tencent.shadow.demo.main.R;
-import com.tencent.shadow.demo.main.cases.entity.TestCase;
-import com.tencent.shadow.demo.util.PluginChecker;
+import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
+import com.tencent.shadow.demo.gallery.util.PluginChecker;
 
-public class CaseSummaryFragment extends Fragment {
+public class UseCaseSummaryFragment extends Fragment {
 
     private TextView mCaseName;
     private Button mStartCase;
@@ -31,15 +31,15 @@ public class CaseSummaryFragment extends Fragment {
     }
 
 
-    public void setCase(final TestCase testCase){
-        mCaseName.setText(testCase.name);
-        mCaseSummary.setText(testCase.summary);
+    public void setCase(final UseCase useCase) {
+        mCaseName.setText(useCase.name);
+        mCaseSummary.setText(useCase.summary);
         mStartCase.setVisibility(View.VISIBLE);
 
         mStartCase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(),testCase.pageClass));
+                startActivity(new Intent(getActivity(), useCase.pageClass));
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.receiver;
+package com.tencent.shadow.demo.usecases.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

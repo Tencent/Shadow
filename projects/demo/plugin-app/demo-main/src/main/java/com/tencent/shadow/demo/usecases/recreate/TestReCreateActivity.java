@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.recreate;
+package com.tencent.shadow.demo.usecases.recreate;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
 
-import com.tencent.shadow.demo.main.R;
+import com.tencent.shadow.demo.gallery.R;
 
 public class TestReCreateActivity extends Activity {
 

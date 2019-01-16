@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.util;
+package com.tencent.shadow.demo.gallery.util;
 
 
 public class PluginChecker {

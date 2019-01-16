@@ -1,6 +1,6 @@
-package com.tencent.shadow.demo.main.cases.entity;
+package com.tencent.shadow.demo.gallery.cases.entity;
 
-public class TestCase {
+public class UseCase {
 
     public int id;
 
@@ -10,7 +10,7 @@ public class TestCase {
 
     public Class pageClass;
 
-    public TestCase(int id, String name, String summary, Class pageClass) {
+    public UseCase(int id, String name, String summary, Class pageClass) {
         this.id = id;
         this.name = name;
         this.summary = summary;

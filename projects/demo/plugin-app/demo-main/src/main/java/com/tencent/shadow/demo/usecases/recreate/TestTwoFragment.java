@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.recreate;
+package com.tencent.shadow.demo.usecases.recreate;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-public class TestOneFragment extends Fragment {
+public class TestTwoFragment extends Fragment {
 
     private Context context;
 
@@ -21,13 +21,12 @@ public class TestOneFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        Log.e("TestOneFragment","onCreateView");
-
+        Log.e("TestTwoFragment","onCreateView");
         context = getActivity();
         FrameLayout frameLayout = new FrameLayout(context);
         frameLayout.setLayoutParams(new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         TextView textView = new TextView(context);
-        textView.setText("Good");
+        textView.setText("Good  Two");
         textView.setTextColor(Color.WHITE);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER;

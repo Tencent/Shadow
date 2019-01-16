@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.service;
+package com.tencent.shadow.demo.usecases.service;
 
 import android.app.Service;
 import android.content.Intent;

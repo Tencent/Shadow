@@ -1,15 +1,15 @@
-package com.tencent.shadow.demo.main.splash;
+package com.tencent.shadow.demo.gallery.splash;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.tencent.shadow.demo.main.MainActivity;
-import com.tencent.shadow.demo.main.R;
-import com.tencent.shadow.demo.main.cases.TestCaseManager;
-import com.tencent.shadow.demo.main.cases.entity.TestCase;
-import com.tencent.shadow.demo.util.ToastUtil;
+import com.tencent.shadow.demo.gallery.MainActivity;
+import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.UseCaseManager;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
+import com.tencent.shadow.demo.gallery.util.ToastUtil;
 
 public class SplashActivity extends Activity {
 
@@ -34,9 +34,9 @@ public class SplashActivity extends Activity {
                 finish();
 
                 if(caseId != -1){
-                    TestCase testCase = TestCaseManager.findTestCaseById(caseId);
-                    if(testCase != null){
-                        startActivity(new Intent(SplashActivity.this,testCase.pageClass));
+                    UseCase useCase = UseCaseManager.findTestCaseById(caseId);
+                    if (useCase != null) {
+                        startActivity(new Intent(SplashActivity.this, useCase.pageClass));
                         return;
                     }else {
                         ToastUtil.showToast(SplashActivity.this,"没有找到对应的测试用例，请检测是否在TestCaseManager 中正确注册了");

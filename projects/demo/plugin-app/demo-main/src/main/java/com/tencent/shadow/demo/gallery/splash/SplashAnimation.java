@@ -1,9 +1,9 @@
-package com.tencent.shadow.demo.main.splash;
+package com.tencent.shadow.demo.gallery.splash;
 
 import android.content.Context;
 import android.os.Handler;
 
-import com.tencent.shadow.demo.util.ToastUtil;
+import com.tencent.shadow.demo.gallery.util.ToastUtil;
 
 public class SplashAnimation implements ISplashAnimation{
 

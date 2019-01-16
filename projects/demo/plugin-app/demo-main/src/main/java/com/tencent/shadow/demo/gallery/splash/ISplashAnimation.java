@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.main.splash;
+package com.tencent.shadow.demo.gallery.splash;
 
 public interface ISplashAnimation {
 

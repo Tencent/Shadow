@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.main;
+package com.tencent.shadow.demo.gallery;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -1,12 +1,12 @@
-package com.tencent.shadow.demo.activity;
+package com.tencent.shadow.demo.usecases.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
-import com.tencent.shadow.demo.util.ToastUtil;
+import com.tencent.shadow.demo.gallery.util.ToastUtil;
 
-public class TestActivityOnCreate extends Activity {
+public class TestActivityReCreate extends Activity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

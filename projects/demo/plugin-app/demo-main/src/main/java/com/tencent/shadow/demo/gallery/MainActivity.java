@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.main;
+package com.tencent.shadow.demo.gallery;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
@@ -19,10 +19,10 @@ import com.ryg.expandable.ui.PinnedHeaderExpandableListView;
 import com.ryg.expandable.ui.PinnedHeaderExpandableListView.OnHeaderUpdateListener;
 import com.ryg.expandable.ui.StickyLayout;
 import com.ryg.expandable.ui.StickyLayout.OnGiveUpTouchEventListener;
-import com.tencent.shadow.demo.main.cases.CaseSummaryFragment;
-import com.tencent.shadow.demo.main.cases.TestCaseManager;
-import com.tencent.shadow.demo.main.cases.entity.TestCase;
-import com.tencent.shadow.demo.main.cases.entity.TestCategory;
+import com.tencent.shadow.demo.gallery.cases.UseCaseManager;
+import com.tencent.shadow.demo.gallery.cases.UseCaseSummaryFragment;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
 
 import java.util.List;
 
@@ -33,12 +33,12 @@ public class MainActivity extends Activity implements
 
     private PinnedHeaderExpandableListView expandableListView;
     private StickyLayout stickyLayout;
-    private List<TestCategory> categoryList;
+    private List<UseCaseCategory> categoryList;
     private SparseBooleanArray expandStatus;
     private SlidingMenu slidingMenu;
 
     private ExpandableListAdapter adapter;
-    private CaseSummaryFragment caseSummaryFragment;
+    private UseCaseSummaryFragment caseSummaryFragment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,12 +48,12 @@ public class MainActivity extends Activity implements
         stickyLayout = findViewById(R.id.sticky_layout);
         slidingMenu = findViewById(R.id.slidingmenu);
 
-        caseSummaryFragment = new CaseSummaryFragment();
+        caseSummaryFragment = new UseCaseSummaryFragment();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, caseSummaryFragment, "CaseSummaryFragment");
         fragmentTransaction.commitAllowingStateLoss();
 
-        categoryList = TestCaseManager.testCases;
+        categoryList = UseCaseManager.useCases;
         expandStatus = new SparseBooleanArray();
 
         adapter = new ExpandableListAdapter(this);
@@ -129,7 +129,7 @@ public class MainActivity extends Activity implements
                 groupHolder = (CaseCategoryHolder) convertView.getTag();
             }
             expandStatus.put(groupPosition, isExpanded);
-            String title = ((TestCategory) getGroup(groupPosition)).title;
+            String title = ((UseCaseCategory) getGroup(groupPosition)).title;
             groupHolder.textCategory.setText(isExpanded ? title + " - " : title + " + ");
             return convertView;
         }
@@ -149,7 +149,7 @@ public class MainActivity extends Activity implements
                 childHolder = (CaseItemHolder) convertView.getTag();
             }
 
-            childHolder.textName.setText(((TestCase) getChild(groupPosition,
+            childHolder.textName.setText(((UseCase) getChild(groupPosition,
                     childPosition)).name);
             return convertView;
         }
@@ -169,8 +169,8 @@ public class MainActivity extends Activity implements
     @Override
     public boolean onChildClick(ExpandableListView parent, View v,
                                 int groupPosition, int childPosition, long id) {
-        TestCase testCase = categoryList.get(groupPosition).caseList.get(childPosition);
-        caseSummaryFragment.setCase(testCase);
+        UseCase useCase = categoryList.get(groupPosition).caseList.get(childPosition);
+        caseSummaryFragment.setCase(useCase);
 
         slidingMenu.showMenu();
         return false;
@@ -195,7 +195,7 @@ public class MainActivity extends Activity implements
 
     @Override
     public void updatePinnedHeader(View headerView, int firstVisibleGroupPos) {
-        TestCategory firstVisibleGroup = (TestCategory) adapter.getGroup(firstVisibleGroupPos);
+        UseCaseCategory firstVisibleGroup = (UseCaseCategory) adapter.getGroup(firstVisibleGroupPos);
         TextView textView =  headerView.findViewById(R.id.tv_category);
         String title = firstVisibleGroup.title;
         textView.setText(expandStatus.get(firstVisibleGroupPos) ? title + " - " : title + " + ");
