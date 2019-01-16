@@ -19,19 +19,10 @@ android {
             signingConfig.initWith(buildTypes.debug.signingConfig)
         }
     }
-
-    sourceSets {
-        main {
-            assets {
-                srcDirs = ['assets']
-            }
-        }
-    }
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.12'
     implementation project(":projects:demo:plugin-app:slidingmenu")
-    implementation('com.tencent.sealsplatformteam:seals-jni-sdk:0.9.11')
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation project(":projects:demo:plugin-app:pinnedheaderexpandablelistview")
+    implementation 'com.android.support:support-annotations:28.0.0'
 }
