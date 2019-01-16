@@ -1,7 +1,3 @@
-/*
- * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /Users/shifujun/Codes/Android/now-shadow/projects/sdk/dynamic/dynamic-host/dynamic-host-aar/src/layout_main_above/aidl/com/tencent/shadow/dynamic/host/UuidManager.aidl
- */
 package com.tencent.shadow.dynamic.host;
 
 import android.os.RemoteException;
