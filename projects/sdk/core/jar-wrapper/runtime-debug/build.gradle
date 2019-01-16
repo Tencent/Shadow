@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.core'
+
+dependencies {
+    api files("${project(":runtime").getBuildDir()}/outputs/jar/runtime-debug.jar")
+}
+
+compileJava.dependsOn(":runtime:jarDebugPackage")

@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
         DelegateProviderHolder.setDelegateProvider(pluginLoader);
 
         try {
-            Future<?> future = pluginLoader.loadPlugin(getApplicationContext(), plugin);
+            Future<?> future = pluginLoader.loadPlugin(plugin);
 
             future.get(10, TimeUnit.SECONDS);
 

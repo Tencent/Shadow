@@ -1,9 +1,104 @@
-apply plugin: 'java-library'
+/**
+ * shadow-runtime是运行时Shadow App所依赖的类。
+ *
+ * 这里面的类混淆意义不大，对体积缩减需求也不强。
+ * shadow-loader的Debug版依赖这个模块的Debug版
+ * shadow-loader的Release版依赖这个模块的Release版
+ * shadow-transform依赖这个模块的Release版
+ * 因此暂定这个模块不混淆，保持Debug版和Release版无差别。
+ */
+
+apply plugin: 'com.android.library'
+
+apply from: "${rootDir.parentFile.parentFile.parentFile}/buildScripts/gradle/GitHelper.gradle"
 
 group 'com.tencent.shadow.core'
 
-dependencies {
-    api files("${project(":runtime:aar").getBuildDir()}/outputs/jar/aar-release.jar")
+android {
+    compileSdkVersion project.COMPILE_SDK_VERSION
+
+    defaultConfig {
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        versionCode project.VERSION_CODE
+        versionName project.VERSION_NAME
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
 }
 
-compileJava.dependsOn(":runtime:aar:jarReleasePackage")
+dependencies{
+    implementation 'com.tencent.shadow.coding:lint'
+}
+
+def jarPackage(buildType) {
+    return tasks.create("jar${buildType.capitalize()}Package", Copy) {
+        def aarFile = file(project.buildDir.path + "/outputs/aar/${project.name}-${buildType}.aar")
+        def outputDir = file(project.buildDir.path + "/outputs/jar")
+
+        from zipTree(aarFile)
+        into outputDir
+        include 'classes.jar'
+        rename 'classes.jar', "${project.name}-${buildType}.jar"
+        group = 'build'
+        description = '生成jar包'
+    }.dependsOn(project.getTasksByName("assemble${buildType.capitalize()}", false).first())
+}
+
+afterEvaluate {
+    android {
+        buildTypes.findAll().each { buildType ->
+            def buildTypeName = buildType.getName()
+            jarPackage(buildTypeName)
+        }
+    }
+}
+
+apply plugin: 'maven-publish'
+
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId 'com.tencent.shadow'
+            artifactId "${project.name}"
+            version project.ARTIFACT_VERSION
+            artifact("build/outputs/jar/${project.name}-release.jar")
+            pom.withXml {
+                def root = asNode()
+                def scm = root.appendNode('scm')
+                scm.appendNode('connection', 'http://git.code.oa.com/plugin-framework/shadow.git')
+                scm.appendNode('url', "http://git.code.oa.com/plugin-framework/shadow/commit/$project.GIT_SHORT_REV")
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username "rdm"
+                password "rdm"
+            }
+            if (isPublishRelease()) {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
+            } else {
+                url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots"
+            }
+        }
+    }
+}
+
+model {
+    tasks.generatePomFileForReleasePublication {
+        destination = file("$buildDir/release-pom.xml")
+    }
+}
+
+tasks.whenTaskAdded { theTask ->
+    if (theTask.name.equals("generatePomFileForReleasePublication")) {
+        theTask.dependsOn(project.getTasksByName("jarReleasePackage", false).first())
+    }
+}
+
+static def isPublishRelease() {
+    return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
+}

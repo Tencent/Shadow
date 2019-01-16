@@ -21,7 +21,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     companion object {
 
-        private val CLASSS_PLUGIN_LOADER_IMPL = "com.tencent.shadow.sdk.pluginloader.PluginLoaderImpl"
+        private val CLASSS_PLUGIN_LOADER_IMPL = "com.tencent.shadow.sdk.pluginloader.PluginLoaderImpl"//todo cubershi:这个类名的包名不规范
     }
 
     private val mPluginLoader: ShadowPluginLoader

@@ -1,9 +1,9 @@
 task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:assemble')
-    dependsOn gradle.includedBuild('core').task(':common:common-aar:jarReleasePackage')
-    dependsOn gradle.includedBuild('core').task(':loader:loader-aar:assembleRelease')
+    dependsOn gradle.includedBuild('core').task(':common:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':loader:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
-    dependsOn gradle.includedBuild('core').task(':runtime:aar:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':runtime:jarReleasePackage')
     dependsOn gradle.includedBuild('core').task(':transform:assemble')
 
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:jarReleasePackage')
@@ -13,10 +13,10 @@ task buildSdk() {
 }
 
 task lintSdk() {
-    dependsOn gradle.includedBuild('core').task(':common:common-aar:lint')
-    dependsOn gradle.includedBuild('core').task(':loader:loader-aar:lint')
+    dependsOn gradle.includedBuild('core').task(':common:lint')
+    dependsOn gradle.includedBuild('core').task(':loader:lint')
     dependsOn gradle.includedBuild('core').task(':manager:lint')
-    dependsOn gradle.includedBuild('core').task(':runtime:aar:lint')
+    dependsOn gradle.includedBuild('core').task(':runtime:lint')
 
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:lint')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:lint')
@@ -83,7 +83,7 @@ publishing {
             groupId coreGroupId
             artifactId 'common'
             version publicationVersion
-            artifact("$corePath/common/common-aar/build/outputs/jar/common-aar-release.jar")
+            artifact("$corePath/common/build/outputs/jar/common-release.jar")
 
             pom.withXml {
                 def root = asNode()
@@ -95,7 +95,7 @@ publishing {
             groupId coreGroupId
             artifactId 'loader'
             version publicationVersion
-            artifact("$corePath/loader/loader-aar/build/outputs/aar/loader-aar-release.aar")
+            artifact("$corePath/loader/build/outputs/aar/loader-release.aar")
 
             pom.withXml {
                 def root = asNode()
@@ -127,7 +127,7 @@ publishing {
             groupId coreGroupId
             artifactId 'runtime'
             version publicationVersion
-            artifact("$corePath/runtime/aar/build/outputs/jar/aar-release.jar")
+            artifact("$corePath/runtime/build/outputs/jar/runtime-release.jar")
 
             pom.withXml {
                 def root = asNode()
