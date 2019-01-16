@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
             application.onCreate();
 
             Intent pluginIntent = new Intent();
-            pluginIntent.setClassName("com.tencent.shadow.demo_host", "com.example.android.basicglsurfaceview.BasicGLSurfaceViewActivity");
+            pluginIntent.setClassName("com.tencent.shadow.demo_host", "com.tencent.shadow.demo.main.splash.SplashActivity");
 
             Intent intent = pluginLoader.getMComponentManager().convertPluginActivityIntent(pluginIntent);
             startActivity(intent);
