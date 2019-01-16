@@ -24,9 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package com.tencent.shadow.demo.ryg.expandable.ui;
-
-import java.util.NoSuchElementException;
+package com.ryg.expandable.ui;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -38,13 +36,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.LinearLayout;
 
-/**
- * The MIT License (MIT)
- *
- * Copyright (c) 2014 singwhatiwanna
- * https://github.com/singwhatiwanna
- * http://blog.csdn.net/singwhatiwanna
- */
+import java.util.NoSuchElementException;
+
 
 public class StickyLayout extends LinearLayout {
     private static final String TAG = "StickyLayout";

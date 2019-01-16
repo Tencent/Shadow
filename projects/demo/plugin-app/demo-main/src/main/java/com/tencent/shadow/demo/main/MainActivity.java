@@ -1,17 +1,5 @@
 package com.tencent.shadow.demo.main;
 
-import java.util.List;
-
-import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.tencent.shadow.demo.main.cases.CaseSummaryFragment;
-import com.tencent.shadow.demo.main.cases.TestCaseManager;
-import com.tencent.shadow.demo.main.cases.entity.TestCase;
-import com.tencent.shadow.demo.main.cases.entity.TestCategory;
-import com.tencent.shadow.demo.ryg.expandable.ui.PinnedHeaderExpandableListView;
-import com.tencent.shadow.demo.ryg.expandable.ui.StickyLayout;
-import com.tencent.shadow.demo.ryg.expandable.ui.PinnedHeaderExpandableListView.OnHeaderUpdateListener;
-import com.tencent.shadow.demo.ryg.expandable.ui.StickyLayout.OnGiveUpTouchEventListener;
-
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -25,6 +13,18 @@ import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
+
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
+import com.ryg.expandable.ui.PinnedHeaderExpandableListView;
+import com.ryg.expandable.ui.PinnedHeaderExpandableListView.OnHeaderUpdateListener;
+import com.ryg.expandable.ui.StickyLayout;
+import com.ryg.expandable.ui.StickyLayout.OnGiveUpTouchEventListener;
+import com.tencent.shadow.demo.main.cases.CaseSummaryFragment;
+import com.tencent.shadow.demo.main.cases.TestCaseManager;
+import com.tencent.shadow.demo.main.cases.entity.TestCase;
+import com.tencent.shadow.demo.main.cases.entity.TestCategory;
+
+import java.util.List;
 
 public class MainActivity extends Activity implements
         ExpandableListView.OnChildClickListener,

@@ -7,6 +7,7 @@ includeBuild 'projects/sdk/dynamic'
 
 include ':projects:demo:host-apk'
 include ':projects:demo:plugin-app:slidingmenu'
+include ':projects:demo:plugin-app:pinnedheaderexpandablelistview'
 include ':projects:demo:plugin-app:demo-main'
 include ':projects:demo:plugin-app:demo-install'
 include ':projects:demo:plugin-app:demo-plugin'

@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-package com.tencent.shadow.demo.ryg.expandable.ui;
+package com.ryg.expandable.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -35,16 +35,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ExpandableListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.ExpandableListView;
 
-/**
- * The MIT License (MIT)
- *
- * Copyright (c) 2014 singwhatiwanna
- * https://github.com/singwhatiwanna
- * http://blog.csdn.net/singwhatiwanna
- */
 public class PinnedHeaderExpandableListView extends ExpandableListView implements OnScrollListener {
     private static final String TAG = "PinnedHeaderExpandableListView";
     private static final boolean DEBUG = true;
