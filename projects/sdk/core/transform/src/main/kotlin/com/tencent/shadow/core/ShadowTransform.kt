@@ -8,6 +8,7 @@ import com.tencent.shadow.core.transformkit.JavassistTransform
 import javassist.*
 import org.gradle.api.Project
 import java.io.File
+import java.util.*
 
 class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val useHostContext: () -> Array<String>) : JavassistTransform(project, classPoolBuilder) {
 
@@ -19,7 +20,9 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         const val AndroidWebViewClassname = "android.webkit.WebView"
         const val ShadowWebViewClassname = "com.tencent.shadow.runtime.ShadowWebView"
         const val AndroidPendingIntentClassname = "android.app.PendingIntent"
+        const val ContentResolverClassname = "android.content.ContentResolver"
         const val ShadowPendingIntentClassname = "com.tencent.shadow.runtime.ShadowPendingIntent"
+        const val ShadowUriClassname = "com.tencent.shadow.runtime.ShadowUri"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.shadow.runtime.ShadowApplication"
@@ -81,7 +84,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step4_redirectDialogMethod()
         step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()
-        step7_keepHostContext()
+        step7_redirectContentResolverMethod()
+        step8_keepHostContext()
     }
 
 
@@ -271,7 +275,31 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
     }
 
-    private fun step7_keepHostContext() {
+    private fun step7_redirectContentResolverMethod(){
+        val contentResolverMethod = classPool[ContentResolverClassname].methods!!
+        val needRedirectMethod: Array<String> = arrayOf("query", "insert", "update", "delete", "bulkInsert", "call")
+        val methods = contentResolverMethod.filter { it.name in needRedirectMethod }
+        val subRedirectMethod: Array<String> = arrayOf("query_", "insert_", "update_", "delete_", "bulkInsert_", "call_")
+        val subMethods = contentResolverMethod.filter { it.name in subRedirectMethod }
+        val codeConverter = CodeConverter()
+        for (ctShadowMedthod in methods) {
+            for (subMethod in subMethods) {
+                if(ctShadowMedthod.methodInfo.name+"_" == subMethod.methodInfo.name && ctShadowMedthod.methodInfo.descriptor == subMethod.methodInfo.descriptor){
+                    codeConverter.redirectMethodCall(ctShadowMedthod, subMethod)
+                }
+            }
+        }
+        forEachCanRecompileAppClass(listOf(ContentResolverClassname)) { appCtClass ->
+            try {
+                appCtClass.instrument(codeConverter)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
+        }
+    }
+
+    private fun step8_keepHostContext() {
         val ShadowContextClassName = "com.tencent.shadow.runtime.ShadowContext"
 
         data class Rule(
