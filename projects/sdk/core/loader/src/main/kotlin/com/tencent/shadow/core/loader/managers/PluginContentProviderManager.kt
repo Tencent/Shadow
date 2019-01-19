@@ -33,12 +33,10 @@ class PluginContentProviderManager() : UriParseDelegate {
         if (uriString.startsWith(CONTENT_PREFIX)) {
             val uriContent = uriString.substring(CONTENT_PREFIX.length)
             val index = uriContent.indexOf("/")
-            if (index != -1) {
-                val originalAuthority = uriContent.substring(0, index)
-                val containerAuthority = getContainerProviderAuthority(originalAuthority)
-                if (containerAuthority != null) {
-                    return Uri.parse("$CONTENT_PREFIX$containerAuthority/$uriContent")
-                }
+            val originalAuthority = if (index != -1) uriContent.substring(0, index) else uriContent
+            val containerAuthority = getContainerProviderAuthority(originalAuthority)
+            if (containerAuthority != null) {
+                return Uri.parse("$CONTENT_PREFIX$containerAuthority/$uriContent")
             }
         }
         return Uri.parse(uriString)
