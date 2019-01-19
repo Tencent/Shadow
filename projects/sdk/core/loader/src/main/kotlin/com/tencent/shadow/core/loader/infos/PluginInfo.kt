@@ -14,10 +14,13 @@ class PluginInfo(
 ) {
     private val _mActivities: MutableSet<PluginActivityInfo> = HashSet()
     private val _mServices: MutableSet<PluginServiceInfo> = HashSet()
+    private val _mProviders: MutableSet<PluginProviderInfo> = HashSet()
     internal val mActivities: Set<PluginActivityInfo>
         get() = _mActivities
     internal val mServices: Set<PluginServiceInfo>
         get() = _mServices
+    internal val mProviders: Set<PluginProviderInfo>
+        get() = _mProviders
 
 
     fun putActivityInfo(pluginActivityInfo: PluginActivityInfo) {
@@ -28,4 +31,7 @@ class PluginInfo(
         _mServices.add(pluginServiceInfo)
     }
 
+    fun putPluginProviderInfo(pluginProviderInfo: PluginProviderInfo) {
+        _mProviders.add(pluginProviderInfo)
+    }
 }

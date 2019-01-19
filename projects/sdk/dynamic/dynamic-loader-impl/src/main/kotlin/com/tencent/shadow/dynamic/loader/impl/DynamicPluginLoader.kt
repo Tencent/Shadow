@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.os.Looper
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.dynamic.host.UuidManager
+import com.tencent.shadow.runtime.container.ContentProviderDelegateProviderHolder
 import com.tencent.shadow.runtime.container.DelegateProviderHolder
 import java.util.concurrent.CountDownLatch
 
@@ -47,6 +48,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
             val parameters: Array<Any> = arrayOf(hostContext)
             mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL, parameterTypes, parameters)
             DelegateProviderHolder.setDelegateProvider(mPluginLoader)
+            ContentProviderDelegateProviderHolder.setContentProviderDelegateProvider(mPluginLoader)
+            mPluginLoader.onCreate()
         } catch (e: Exception) {
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
         }
@@ -73,11 +76,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     fun callApplicationOnCreate(partKey: String) {
 
         fun realAction() {
-            val pluginParts = mPluginLoader.getPluginParts(partKey)
-
-            pluginParts?.let {
-                pluginParts.application.onCreate()
-            }
+           mPluginLoader.callApplicationOnCreate(partKey)
         }
 
 

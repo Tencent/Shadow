@@ -86,6 +86,9 @@
         <activity android:name=".DefaultContainerActivity"></activity>
 
 
+        <provider
+            android:authorities="com.tencent.shadow.contentprovider.authority"
+            android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"/>
     </application>
 
 </manifest>

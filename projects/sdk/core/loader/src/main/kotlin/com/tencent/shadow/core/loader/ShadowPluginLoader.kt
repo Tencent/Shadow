@@ -6,16 +6,15 @@ import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
-import com.tencent.shadow.core.loader.delegates.DI
-import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate
-import com.tencent.shadow.core.loader.delegates.ShadowActivityDelegate
-import com.tencent.shadow.core.loader.delegates.ShadowDelegate
+import com.tencent.shadow.core.loader.delegates.*
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
+import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.core.loader.remoteview.ShadowRemoteViewCreatorImp
+import com.tencent.shadow.runtime.UriParseDelegate
 import com.tencent.shadow.runtime.container.*
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
@@ -24,7 +23,7 @@ import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, DI {
+abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, DI ,ContentProviderDelegateProvider {
 
     private val mExecutorService = Executors.newCachedThreadPool()
 
@@ -42,10 +41,13 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
      */
     private val mPluginPartsMap = hashMapOf<String, PluginParts>()
 
+
+    lateinit var mComponentManager: ComponentManager
+
     /**
      * @GuardedBy("mLock")
      */
-    abstract val mComponentManager: ComponentManager
+    abstract fun getComponentManager():ComponentManager
 
     /**
      * @GuardedBy("mLock")
@@ -57,6 +59,8 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
     private val mCommonPluginPackageManager = CommonPluginPackageManager()
 
     private lateinit var mPluginServiceManager: PluginServiceManager
+
+    private var mPluginContentProviderManager: PluginContentProviderManager = PluginContentProviderManager()
 
     private val mPluginServiceManagerLock = ReentrantLock()
 
@@ -95,6 +99,19 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         }
     }
 
+    fun onCreate(){
+        mComponentManager = getComponentManager()
+        mComponentManager.setPluginContentProviderManager(mPluginContentProviderManager)
+    }
+
+    fun callApplicationOnCreate(partKey: String){
+        val pluginParts = getPluginParts(partKey)
+        mPluginContentProviderManager.createContentProviderAndCallOnCreate(mHostAppContext,partKey,pluginParts)
+        pluginParts?.let {
+            pluginParts.application.onCreate()
+        }
+    }
+
     @Throws(LoadPluginException::class)
     fun loadPlugin(
             installedApk: InstalledApk
@@ -103,7 +120,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         if (mLogger.isInfoEnabled) {
             mLogger.info("start loadPlugin")
         }
-
         // 在这里初始化PluginServiceManager
         mPluginServiceManagerLock.withLock {
             if (!::mPluginServiceManager.isInitialized) {
@@ -146,6 +162,14 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate {
         return ServiceContainerReuseDelegate(this)
+    }
+
+    override fun getHostContentProviderDelegate(delegator: Class<out HostContentProviderDelegator>?): HostContentProviderDelegate {
+        return ShadowContentProviderDelegate(mPluginContentProviderManager)
+    }
+
+    override fun getUriParseDelegate(): UriParseDelegate {
+        return mPluginContentProviderManager
     }
 
     override fun inject(delegate: ShadowDelegate, partKey: String) {

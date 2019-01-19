@@ -26,7 +26,7 @@ public class DemoPluginLoader extends ShadowPluginLoader {
     }
 
     @Override
-    public ComponentManager getMComponentManager() {
+    public ComponentManager getComponentManager() {
         return mCM;
     }
 

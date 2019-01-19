@@ -9,6 +9,7 @@ import com.tencent.shadow.core.loader.BuildConfig
 import com.tencent.shadow.core.loader.PluginServiceManager
 import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate
 import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate.Companion.Operate
+import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginComponentInfo
 import com.tencent.shadow.core.loader.infos.PluginInfo
 import com.tencent.shadow.runtime.ShadowContext
@@ -37,8 +38,6 @@ abstract class ComponentManager : PluginComponentLauncher {
 
     abstract fun getLauncherActivity(partKey: String): ComponentName
 
-    abstract fun getInitActivity(partKey: String): ComponentName
-
     /**
      * @param pluginActivity 插件Activity
      * @return 容器Activity
@@ -46,6 +45,8 @@ abstract class ComponentManager : PluginComponentLauncher {
     abstract fun onBindContainerActivity(pluginActivity: ComponentName): ComponentName
 
     abstract fun onBindContainerService(shadowService: ComponentName): ComponentName
+
+    abstract fun onBindContainerContentProvider(pluginContentProvider: ComponentName): ContainerProviderInfo
 
     override fun startActivity(shadowContext: ShadowContext, pluginIntent: Intent): Boolean {
         return if (pluginIntent.isPluginComponent()) {
@@ -194,6 +195,11 @@ abstract class ComponentManager : PluginComponentLauncher {
         pluginInfo.mServices.forEach {
             common(it, ::onBindContainerService)
         }
+
+        pluginInfo.mProviders.forEach {
+            val componentName = ComponentName(pluginInfo.packageName, it.className)
+            mPluginContentProviderManager!!.addContentProviderInfo(pluginInfo.partKey,it,onBindContainerContentProvider(componentName))
+        }
     }
 
     fun getComponentPartKey(componentName: ComponentName) : String? {
@@ -203,6 +209,11 @@ abstract class ComponentManager : PluginComponentLauncher {
     private var mPluginServiceManager : PluginServiceManager? = null
     fun setPluginServiceManager(pluginServiceManager : PluginServiceManager) {
         mPluginServiceManager = pluginServiceManager
+    }
+
+    private var mPluginContentProviderManager : PluginContentProviderManager? = null
+    fun setPluginContentProviderManager(pluginContentProviderManager : PluginContentProviderManager) {
+        mPluginContentProviderManager = pluginContentProviderManager
     }
 
     private fun Intent.isPluginComponent(): Boolean {
