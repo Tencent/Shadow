@@ -4,6 +4,7 @@ import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
+import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.MyReceiver;
 import com.tencent.shadow.demo.usecases.service.MyLocalService;
 
@@ -46,50 +47,11 @@ public class UseCaseManager {
                 "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
 
 
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
-        serviceCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
+
+        UseCaseCategory providerCategory = new UseCaseCategory(Case_Provider.CATEGORY_ID, "ContentProvider测试用例");
+        useCases.add(providerCategory);
+        providerCategory.caseList.add(new UseCase(Case_Provider.CASE_DB,
+                "ContentProvider DB相关测试", "测试通过ContentProvider来操作数据库", TestDBContentProviderActivity.class));
 
 
     }
@@ -126,5 +88,10 @@ public class UseCaseManager {
         public final static int CASE_RECEIVE = 30000;
     }
 
+    private static class Case_Provider {
+        public final static int CATEGORY_ID = 4;
+
+        public final static int CASE_DB = 40000;
+    }
 
 }
