@@ -63,7 +63,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     private lateinit var mPluginServiceManager: PluginServiceManager
 
-    private var mPluginContentProviderManager: PluginContentProviderManager = PluginContentProviderManager()
+    private val mPluginContentProviderManager: PluginContentProviderManager = PluginContentProviderManager()
 
     private val mPluginServiceManagerLock = ReentrantLock()
 
@@ -77,7 +77,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     private val  mShadowRemoteViewCreatorProvider: ShadowRemoteViewCreatorProvider = ShadowRemoteViewCreatorProviderImpl()
 
-    private var mHostAppContext: Context = hostAppContext;
+    private val mHostAppContext: Context = hostAppContext
 
     private val mUiHandler = Handler(Looper.getMainLooper())
 
