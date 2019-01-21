@@ -1,14 +1,13 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.GET_META_DATA
 import android.content.res.Resources
 
 object CreateResourceBloc {
-    fun create(archiveFilePath: String, hostAppContext: Context): Resources {
+    fun create(packageArchiveInfo: PackageInfo, archiveFilePath: String, hostAppContext: Context): Resources {
         val packageManager = hostAppContext.packageManager
-        val packageArchiveInfo = packageManager.getPackageArchiveInfo(archiveFilePath, GET_META_DATA)
         packageArchiveInfo.applicationInfo.publicSourceDir = archiveFilePath
         try {
             return packageManager.getResourcesForApplication(packageArchiveInfo.applicationInfo)
