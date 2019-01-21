@@ -48,3 +48,14 @@ Shadow（Shadow框架分为Core和Dynamic两部分）
 
 ## 编译失败遇到`Failed to find byte code for com/tencent/shadow/runtime/....`
 请关闭Android Studio的Instant Run功能。
+
+## 代码结构
+项目的代码都在`projects`子目录中，根目录中的其余文件都是Gradle相关的构建脚本。
+
+Shadow SDK的代码都位于`projects/sdk`中。Demo代码位于`projects/demo`中。整个项目是一个复合构建。Demo代码以源码依赖方式依赖了SDK。
+
+`projects/demo/host-apk`是一个宿主App程序。`projects/demo/plugin-app/demo-main`是插件App的主要代码，它是一个Android Library。`projects/demo/plugin-app/demo-install`是一个Android Application壳子模块，它将`projects/demo/plugin-app/demo-main`打包成可以独立安装的Apk，用于验证插件App在正常安装情况下的表现。而`projects/demo/plugin-app/demo-plugin`则是将其打包成Shadow插件的壳子模块。
+
+`projects/demo/host-apk`在构建过程中会将`projects/demo/plugin-app/demo-plugin`自动构建出并打包在自己的assets中，因此它可以直接运行并将插件App以免安装方式运行起来。
+
+**注意：** `projects/demo/plugin-app/demo-plugin`是不能正常安装运行的，运行时会出现类找不到的Crash。
