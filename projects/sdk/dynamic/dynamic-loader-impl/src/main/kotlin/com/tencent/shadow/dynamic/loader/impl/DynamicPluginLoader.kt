@@ -74,23 +74,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     @Synchronized//todo cubershi: 确认这个注解的工作效果
     fun callApplicationOnCreate(partKey: String) {
-
-        fun realAction() {
-           mPluginLoader.callApplicationOnCreate(partKey)
-        }
-
-
-        // 确保在ui线程调用
-        if (isUiThread()) {
-            realAction()
-        } else {
-            val waitUiLock = CountDownLatch(1)
-            mUiHandler.post {
-                realAction()
-                waitUiLock.countDown()
-            }
-            waitUiLock.await();
-        }
+        mPluginLoader.callApplicationOnCreate(partKey)
     }
 
     fun convertActivityIntent(pluginActivityIntent: Intent): Intent? {

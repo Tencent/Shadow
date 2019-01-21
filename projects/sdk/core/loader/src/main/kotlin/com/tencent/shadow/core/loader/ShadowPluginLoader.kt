@@ -1,6 +1,8 @@
 package com.tencent.shadow.core.loader
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcel
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.LoggerFactory
@@ -18,6 +20,7 @@ import com.tencent.shadow.runtime.UriParseDelegate
 import com.tencent.shadow.runtime.container.*
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
@@ -76,6 +79,8 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     private var mHostAppContext: Context = hostAppContext;
 
+    private val mUiHandler = Handler(Looper.getMainLooper())
+
     companion object {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
     }
@@ -104,11 +109,23 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         mComponentManager.setPluginContentProviderManager(mPluginContentProviderManager)
     }
 
-    fun callApplicationOnCreate(partKey: String){
-        val pluginParts = getPluginParts(partKey)
-        mPluginContentProviderManager.createContentProviderAndCallOnCreate(mHostAppContext,partKey,pluginParts)
-        pluginParts?.let {
-            pluginParts.application.onCreate()
+    fun callApplicationOnCreate(partKey: String) {
+        fun realAction() {
+            val pluginParts = getPluginParts(partKey)
+            mPluginContentProviderManager.createContentProviderAndCallOnCreate(mHostAppContext, partKey, pluginParts)
+            pluginParts?.let {
+                pluginParts.application.onCreate()
+            }
+        }
+        if (isUiThread()) {
+            realAction()
+        } else {
+            val waitUiLock = CountDownLatch(1)
+            mUiHandler.post {
+                realAction()
+                waitUiLock.countDown()
+            }
+            waitUiLock.await();
         }
     }
 
@@ -203,5 +220,9 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         val loadParameters = LoadParameters(parcel)
         parcel.recycle()
         return loadParameters
+    }
+
+    private fun isUiThread(): Boolean {
+        return Looper.myLooper() == Looper.getMainLooper()
     }
 }
