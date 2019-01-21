@@ -22,7 +22,6 @@ public class TestProvider extends ContentProvider{
     }
 
 
-
     @Nullable
     @Override
     public String getType(Uri uri) {
@@ -53,8 +52,10 @@ public class TestProvider extends ContentProvider{
         switch ( buildUriMatcher().match(uri)) {
             case TEST:
                 _id = db.insert(TestProviderInfo.TestEntry.TABLE_NAME, null, values);
-                if ( _id > 0 )
+                if ( _id > 0 ) {
                     returnUri = TestProviderInfo.TestEntry.buildUri(_id);
+                    getContext().getContentResolver().notifyChange(uri, null);
+                }
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
@@ -66,12 +67,22 @@ public class TestProvider extends ContentProvider{
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        return 0;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int result = db.delete(TestProviderInfo.TestEntry.TABLE_NAME, selection, selectionArgs);
+        if (result > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return result;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
+        int result = db.update(TestProviderInfo.TestEntry.TABLE_NAME, values, selection, selectionArgs);
+        if (result > 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        return result;
     }
 
     private final static int TEST = 100;
