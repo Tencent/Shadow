@@ -7,6 +7,7 @@ import com.tencent.shadow.core.loader.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.ParsePluginApkException
 import com.tencent.shadow.core.loader.infos.PluginActivityInfo
 import com.tencent.shadow.core.loader.infos.PluginInfo
+import com.tencent.shadow.core.loader.infos.PluginProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginServiceInfo
 
 /**
@@ -28,7 +29,7 @@ object ParsePluginApkBloc {
         val packageManager = hostAppContext.packageManager
         val packageArchiveInfo = packageManager.getPackageArchiveInfo(
                 archiveFilePath,
-                GET_ACTIVITIES or GET_META_DATA or GET_SERVICES or GET_SIGNATURES
+                GET_ACTIVITIES or GET_META_DATA or GET_SERVICES or GET_PROVIDERS or  GET_SIGNATURES
         )
 
         if (packageArchiveInfo.applicationInfo.packageName != hostAppContext.packageName) {
@@ -70,6 +71,9 @@ object ParsePluginApkBloc {
             pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource, it))
         }
         packageArchiveInfo.services?.forEach { pluginInfo.putServiceInfo(PluginServiceInfo(it.name)) }
+        packageArchiveInfo.providers?.forEach {
+            pluginInfo.putPluginProviderInfo(PluginProviderInfo(it.name, it.authority, it))
+        }
         return pluginInfo
     }
 }

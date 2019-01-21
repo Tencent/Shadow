@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.os.Looper
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.dynamic.host.UuidManager
+import com.tencent.shadow.runtime.container.ContentProviderDelegateProviderHolder
 import com.tencent.shadow.runtime.container.DelegateProviderHolder
 import java.util.concurrent.CountDownLatch
 
@@ -47,6 +48,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
             val parameters: Array<Any> = arrayOf(hostContext)
             mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL, parameterTypes, parameters)
             DelegateProviderHolder.setDelegateProvider(mPluginLoader)
+            ContentProviderDelegateProviderHolder.setContentProviderDelegateProvider(mPluginLoader)
+            mPluginLoader.onCreate()
         } catch (e: Exception) {
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
         }
@@ -71,27 +74,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     @Synchronized//todo cubershi: 确认这个注解的工作效果
     fun callApplicationOnCreate(partKey: String) {
-
-        fun realAction() {
-            val pluginParts = mPluginLoader.getPluginParts(partKey)
-
-            pluginParts?.let {
-                pluginParts.application.onCreate()
-            }
-        }
-
-
-        // 确保在ui线程调用
-        if (isUiThread()) {
-            realAction()
-        } else {
-            val waitUiLock = CountDownLatch(1)
-            mUiHandler.post {
-                realAction()
-                waitUiLock.countDown()
-            }
-            waitUiLock.await();
-        }
+        mPluginLoader.callApplicationOnCreate(partKey)
     }
 
     fun convertActivityIntent(pluginActivityIntent: Intent): Intent? {

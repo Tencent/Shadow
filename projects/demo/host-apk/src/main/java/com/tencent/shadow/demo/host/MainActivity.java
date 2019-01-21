@@ -12,6 +12,7 @@ import android.view.View;
 import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.core.loader.LoadParameters;
 import com.tencent.shadow.runtime.ShadowApplication;
+import com.tencent.shadow.runtime.container.ContentProviderDelegateProviderHolder;
 import com.tencent.shadow.runtime.container.DelegateProviderHolder;
 
 import java.util.concurrent.Future;
@@ -61,15 +62,16 @@ public class MainActivity extends Activity {
         parcel.recycle();
 
         DemoPluginLoader pluginLoader = new DemoPluginLoader(getApplicationContext());
+        pluginLoader.onCreate();
         DelegateProviderHolder.setDelegateProvider(pluginLoader);
+        ContentProviderDelegateProviderHolder.setContentProviderDelegateProvider(pluginLoader);
 
         try {
             Future<?> future = pluginLoader.loadPlugin(plugin);
 
             future.get(10, TimeUnit.SECONDS);
 
-            ShadowApplication application = pluginLoader.getPluginParts("partMain").getApplication();
-            application.onCreate();
+            pluginLoader.callApplicationOnCreate("partMain");
 
             Intent pluginIntent = new Intent();
             pluginIntent.setClassName("com.tencent.shadow.demo_host", "com.tencent.shadow.demo.gallery.splash.SplashActivity");

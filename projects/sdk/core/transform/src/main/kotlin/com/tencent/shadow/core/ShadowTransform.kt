@@ -20,6 +20,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         const val ShadowWebViewClassname = "com.tencent.shadow.runtime.ShadowWebView"
         const val AndroidPendingIntentClassname = "android.app.PendingIntent"
         const val ShadowPendingIntentClassname = "com.tencent.shadow.runtime.ShadowPendingIntent"
+        const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
+        const val AndroidUriClassname = "android.net.Uri"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.shadow.runtime.ShadowApplication"
@@ -81,7 +83,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step4_redirectDialogMethod()
         step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()
-        step7_keepHostContext()
+        step7_redirectUriMethod()
+        step8_keepHostContext()
     }
 
 
@@ -271,7 +274,34 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
     }
 
-    private fun step7_keepHostContext() {
+    private fun step7_redirectUriMethod(){
+        val uriMethod = classPool[AndroidUriClassname].methods!!
+        val shadowUriMethod = classPool[ShadowUriClassname].methods!!
+
+        val method_parse = uriMethod.filter { it.name == "parse"  }
+        val shadow_method_parse = shadowUriMethod.filter { it.name == "parse"}!!
+        val codeConverter = CodeConverter()
+
+        for( ctAndroidMethod in method_parse) {
+            for (ctShadowMedthod in shadow_method_parse) {
+                if( ctAndroidMethod.methodInfo.descriptor == ctShadowMedthod.methodInfo.descriptor){
+                    codeConverter.redirectMethodCall(ctAndroidMethod, ctShadowMedthod)
+                }
+            }
+        }
+
+        forEachCanRecompileAppClass(listOf(AndroidUriClassname)) { appCtClass ->
+            try {
+                appCtClass.instrument(codeConverter)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
+        }
+
+    }
+
+    private fun step8_keepHostContext() {
         val ShadowContextClassName = "com.tencent.shadow.runtime.ShadowContext"
 
         data class Rule(

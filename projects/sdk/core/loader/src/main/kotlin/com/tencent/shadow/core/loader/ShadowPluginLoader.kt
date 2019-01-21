@@ -1,30 +1,32 @@
 package com.tencent.shadow.core.loader
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcel
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
-import com.tencent.shadow.core.loader.delegates.DI
-import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate
-import com.tencent.shadow.core.loader.delegates.ShadowActivityDelegate
-import com.tencent.shadow.core.loader.delegates.ShadowDelegate
+import com.tencent.shadow.core.loader.delegates.*
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
+import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.core.loader.remoteview.ShadowRemoteViewCreatorImp
+import com.tencent.shadow.runtime.UriParseDelegate
 import com.tencent.shadow.runtime.container.*
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, DI {
+abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, DI ,ContentProviderDelegateProvider {
 
     private val mExecutorService = Executors.newCachedThreadPool()
 
@@ -42,10 +44,13 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
      */
     private val mPluginPartsMap = hashMapOf<String, PluginParts>()
 
+
+    lateinit var mComponentManager: ComponentManager
+
     /**
      * @GuardedBy("mLock")
      */
-    abstract val mComponentManager: ComponentManager
+    abstract fun getComponentManager():ComponentManager
 
     /**
      * @GuardedBy("mLock")
@@ -57,6 +62,8 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
     private val mCommonPluginPackageManager = CommonPluginPackageManager()
 
     private lateinit var mPluginServiceManager: PluginServiceManager
+
+    private val mPluginContentProviderManager: PluginContentProviderManager = PluginContentProviderManager()
 
     private val mPluginServiceManagerLock = ReentrantLock()
 
@@ -70,7 +77,9 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     private val  mShadowRemoteViewCreatorProvider: ShadowRemoteViewCreatorProvider = ShadowRemoteViewCreatorProviderImpl()
 
-    private var mHostAppContext: Context = hostAppContext;
+    private val mHostAppContext: Context = hostAppContext
+
+    private val mUiHandler = Handler(Looper.getMainLooper())
 
     companion object {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
@@ -95,6 +104,31 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         }
     }
 
+    fun onCreate(){
+        mComponentManager = getComponentManager()
+        mComponentManager.setPluginContentProviderManager(mPluginContentProviderManager)
+    }
+
+    fun callApplicationOnCreate(partKey: String) {
+        fun realAction() {
+            val pluginParts = getPluginParts(partKey)
+            mPluginContentProviderManager.createContentProviderAndCallOnCreate(mHostAppContext, partKey, pluginParts)
+            pluginParts?.let {
+                pluginParts.application.onCreate()
+            }
+        }
+        if (isUiThread()) {
+            realAction()
+        } else {
+            val waitUiLock = CountDownLatch(1)
+            mUiHandler.post {
+                realAction()
+                waitUiLock.countDown()
+            }
+            waitUiLock.await();
+        }
+    }
+
     @Throws(LoadPluginException::class)
     fun loadPlugin(
             installedApk: InstalledApk
@@ -103,7 +137,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         if (mLogger.isInfoEnabled) {
             mLogger.info("start loadPlugin")
         }
-
         // 在这里初始化PluginServiceManager
         mPluginServiceManagerLock.withLock {
             if (!::mPluginServiceManager.isInitialized) {
@@ -148,6 +181,14 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         return ServiceContainerReuseDelegate(this)
     }
 
+    override fun getHostContentProviderDelegate(): HostContentProviderDelegate {
+        return ShadowContentProviderDelegate(mPluginContentProviderManager)
+    }
+
+    override fun getUriParseDelegate(): UriParseDelegate {
+        return mPluginContentProviderManager
+    }
+
     override fun inject(delegate: ShadowDelegate, partKey: String) {
         mLock.withLock {
             val pluginParts = mPluginPartsMap[partKey]
@@ -179,5 +220,9 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         val loadParameters = LoadParameters(parcel)
         parcel.recycle()
         return loadParameters
+    }
+
+    private fun isUiThread(): Boolean {
+        return Looper.myLooper() == Looper.getMainLooper()
     }
 }
