@@ -1,0 +1,32 @@
+apply from: "../demo-install/build.gradle"
+
+android {
+    defaultConfig {
+        applicationId "com.tencent.shadow.demo_host"
+    }
+}
+
+buildscript {
+    repositories {
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/jcenter"
+        }
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
+        }
+    }
+
+    dependencies {
+        classpath 'com.tencent.shadow.core:runtime-debug'
+        classpath 'com.tencent.shadow.core:gradle-plugin'
+        classpath 'org.javassist:javassist:3.22.0-GA'
+    }
+}
+
+apply plugin: 'com.tencent.shadow.plugin'
+
+shadow {
+    transform {
+//        useHostContext = ['abc']
+    }
+}

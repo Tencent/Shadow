@@ -1,0 +1,30 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion project.COMPILE_SDK_VERSION
+
+
+    defaultConfig {
+        //noinspection MinSdkTooLow
+        minSdkVersion 5
+        //noinspection ExpiredTargetSdkVersion
+        targetSdkVersion 17
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies{
+    implementation 'com.android.support:support-fragment:27.0.2'
+}
