@@ -1,5 +1,5 @@
 # Shadow--零反射实现的插件框架
-"零反射"显然是一个Shadow最值得强调的特点，没错，Shadow在实现将App免安装运行这件事上没有使用任何反射调用。可以说Shadow是一个完全按照Android系统说明书实现的插件框架，在这个实现中不包含任何Android官方文档上找不到的东西。因此Shadow可以稳定运行在任何版本的Android系统上，包括严格限制非公开SDK接口访问的Android9.0。再换一种说法，Shadow不会触发任何Android 9.0的浅灰名单API。
+"零反射"显然是一个Shadow最值得强调的特点，没错，Shadow在实现将App免安装运行这件事上没有使用任何反射调用。可以说Shadow是一个完全按照Android系统说明书实现的插件框架，在这个实现中不包含任何Android官方文档上找不到的东西。因此Shadow可以稳定运行在任何版本的Android系统上，包括严格限制非公开SDK接口访问的Android9.0。再换一种说法，Shadow不会触发任何Android 9.0的限制API（包括黑名单、深灰名单、浅灰名单）。
 
 ## Shadow的特点
 * **复用独立安装App的源码**：插件App的源码原本就是可以正常安装运行的。
