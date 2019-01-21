@@ -13,8 +13,7 @@ public interface ContentProviderDelegateProvider {
     /**
      * 获取与delegator相应的HostContentProviderDelegator
      *
-     * @param delegator HostContentProvider 委托者
      * @return HostContentProvider被委托者
      */
-    HostContentProviderDelegate  getHostContentProviderDelegate(Class<? extends HostContentProviderDelegator> delegator);
+    HostContentProviderDelegate  getHostContentProviderDelegate();
 }

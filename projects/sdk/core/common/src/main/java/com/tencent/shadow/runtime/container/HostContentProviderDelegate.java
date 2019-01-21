@@ -22,8 +22,6 @@ public interface HostContentProviderDelegate {
 
     void onTrimMemory(int level);
 
-    void setDelegator(HostContentProviderDelegator delegator);
-
     Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder);
 
     String getType(Uri uri);

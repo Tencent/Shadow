@@ -164,7 +164,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         return ServiceContainerReuseDelegate(this)
     }
 
-    override fun getHostContentProviderDelegate(delegator: Class<out HostContentProviderDelegator>?): HostContentProviderDelegate {
+    override fun getHostContentProviderDelegate(): HostContentProviderDelegate {
         return ShadowContentProviderDelegate(mPluginContentProviderManager)
     }
 

@@ -1,25 +1,14 @@
 package com.tencent.shadow.runtime.container;
 
 import android.content.ContentProvider;
-import android.content.ContentProviderOperation;
-import android.content.ContentProviderResult;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.OperationApplicationException;
-import android.content.pm.ProviderInfo;
-import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.CancellationSignal;
-import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-
-public class PluginContainerContentProvider extends ContentProvider implements HostContentProvider, HostContentProviderDelegator {
+public class PluginContainerContentProvider extends ContentProvider {
 
     private final static String TAG = "ContentProvider_";
 
@@ -32,8 +21,7 @@ public class PluginContainerContentProvider extends ContentProvider implements H
             public void onPrepare() {
                 HostContentProviderDelegate delegate;
                 if (ContentProviderDelegateProviderHolder.contentProviderDelegateProvider != null) {
-                    delegate = ContentProviderDelegateProviderHolder.contentProviderDelegateProvider.getHostContentProviderDelegate(PluginContainerContentProvider.this.getClass());
-                    delegate.setDelegator(PluginContainerContentProvider.this);
+                    delegate = ContentProviderDelegateProviderHolder.contentProviderDelegateProvider.getHostContentProviderDelegate();
                     delegate.onCreate();
                 } else {
                     Log.e(TAG, "PluginContainerContentProvider: DelegateProviderHolder没有初始化");

@@ -7,11 +7,8 @@ import android.net.Uri
 
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.runtime.container.HostContentProviderDelegate
-import com.tencent.shadow.runtime.container.HostContentProviderDelegator
 
 class ShadowContentProviderDelegate(private val mProviderManager: PluginContentProviderManager) : ShadowDelegate(), HostContentProviderDelegate {
-
-    private var mDelegator: HostContentProviderDelegator? = null
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         mProviderManager.getAllContentProvider().forEach {
@@ -35,10 +32,6 @@ class ShadowContentProviderDelegate(private val mProviderManager: PluginContentP
         return true
     }
 
-
-    override fun setDelegator(delegator: HostContentProviderDelegator) {
-        mDelegator = delegator
-    }
 
     override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
         val pluginUri = mProviderManager.convert2PluginUri(uri)
