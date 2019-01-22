@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
+import android.provider.OpenableColumns;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -13,6 +16,10 @@ import android.widget.Toast;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
+
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 
 public class TestDBContentProviderActivity extends BaseActivity {
 
@@ -39,6 +46,28 @@ public class TestDBContentProviderActivity extends BaseActivity {
 
         getContentResolver().registerContentObserver(TestProviderInfo.TestEntry.CONTENT_URI,
                 false, mObserver);
+
+        String path = getFilesDir() + "/abc.txt";
+        File file = new File(path);
+        if (file.exists()) {
+            Uri fileUri = FileProvider.getUriForFile(TestDBContentProviderActivity.this,
+                    "com.tencent.shadow.demo_install.fileprovider", file);
+            Cursor cursor = getContentResolver().query(fileUri, null, null,
+                    null, null);
+            while (cursor.moveToNext()) {
+                String size = cursor.getString(cursor.getColumnIndex(OpenableColumns.SIZE));
+                String name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                Log.d(TAG, "size = " + size + " name = " + name);
+            }
+
+            try {
+                ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(fileUri, "r");
+                FileDescriptor fd = pfd.getFileDescriptor();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     public void insert(View view){
