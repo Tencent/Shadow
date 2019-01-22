@@ -22,7 +22,6 @@ public class TestProvider extends ContentProvider{
     }
 
 
-
     @Nullable
     @Override
     public String getType(Uri uri) {

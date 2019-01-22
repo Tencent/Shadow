@@ -9,7 +9,8 @@ import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.MyReceiver;
-import com.tencent.shadow.demo.usecases.service.MyLocalService;
+import com.tencent.shadow.demo.usecases.service.TestService;
+import com.tencent.shadow.demo.usecases.service.TestStartServiceActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +48,7 @@ public class UseCaseManager {
         UseCaseCategory serviceCategory = new UseCaseCategory(Case_Service.CATEGORY_ID, "Service测试用例");
         useCases.add(serviceCategory);
         serviceCategory.caseList.add(new UseCase(Case_Service.CASE_START_SERVICE,
-                "startService", "测试startService的方式启动Service", MyLocalService.class));
-        serviceCategory.caseList.add(new UseCase(Case_Service.CASE_BIND_SERVICE,
-                "bindService", "测试bindService的方式启动Service", MyLocalService.class));
+                "启动Service", "测试startService,bindService,stopService,unBindService等调用", TestStartServiceActivity.class));
 
 
         UseCaseCategory broadcastReceiverCategory = new UseCaseCategory(Case_BroadcastReceiver.CATEGORY_ID, "广播测试用例");

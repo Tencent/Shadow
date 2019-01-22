@@ -7,6 +7,7 @@
     <application
         android:name="com.tencent.shadow.demo.gallery.DemoApplication"
         android:icon="@android:drawable/sym_def_app_icon"
+        android:theme="@android:style/Theme.NoTitleBar"
         android:label="@string/app_name">
         <activity
             android:name="com.tencent.shadow.demo.gallery.splash.SplashActivity"
@@ -29,6 +30,10 @@
         <activity android:name="com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity"/>
 
         <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem" />
+
+        <activity android:name="com.tencent.shadow.demo.usecases.service.TestStartServiceActivity" />
+
+        <service android:name="com.tencent.shadow.demo.usecases.service.TestService"/>
 
         <provider
             android:authorities="com.tencent.shadow.provider.test"
