@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.tencent.shadow.demo.gallery.R;
 import com.tencent.shadow.demo.gallery.util.ToastUtil;
 
 public class TestActivityOnCreate extends Activity {
@@ -11,6 +12,7 @@ public class TestActivityOnCreate extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.layout_activity_lifecycle);
         ToastUtil.showToast(this,"onCreate");
     }
 

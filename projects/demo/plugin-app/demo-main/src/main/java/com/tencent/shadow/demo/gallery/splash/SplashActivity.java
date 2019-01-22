@@ -36,7 +36,11 @@ public class SplashActivity extends Activity {
                 if(caseId != -1){
                     UseCase useCase = UseCaseManager.findTestCaseById(caseId);
                     if (useCase != null) {
-                        startActivity(new Intent(SplashActivity.this, useCase.pageClass));
+                        Intent intent = new Intent(SplashActivity.this, useCase.pageClass);
+                        if (useCase.bundle != null) {
+                            intent.putExtras(useCase.bundle);
+                        }
+                        startActivity(intent);
                         return;
                     }else {
                         ToastUtil.showToast(SplashActivity.this,"没有找到对应的测试用例，请检测是否在TestCaseManager 中正确注册了");
