@@ -39,7 +39,11 @@ public class UseCaseSummaryFragment extends Fragment {
         mStartCase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getActivity(), useCase.pageClass));
+                Intent intent = new Intent(getActivity(), useCase.pageClass);
+                if (useCase.bundle != null) {
+                    intent.putExtras(useCase.bundle);
+                }
+                startActivity(intent);
             }
         });
     }

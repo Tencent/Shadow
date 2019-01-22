@@ -28,6 +28,8 @@
 
         <activity android:name="com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity"/>
 
+        <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem" />
+
         <provider
             android:authorities="com.tencent.shadow.provider.test"
             android:name="com.tencent.shadow.demo.usecases.provider.TestProvider"/>
