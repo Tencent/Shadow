@@ -7,16 +7,16 @@
     android:orientation="horizontal">
 
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:onClick="reCreate"
-        android:text="reCreate"
-        android:layout_gravity="top"
-       />
+    <!--<Button-->
+        <!--android:id="@+id/button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="8dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:onClick="reCreate"-->
+        <!--android:text="reCreate"-->
+        <!--android:layout_gravity="top"-->
+       <!--/>-->
 
     <TextView
         android:id="@+id/tv_msg"
@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_gravity="center"
-        android:text="Result:"
+        android:text="Activity生命周期测试"
         android:textColor="@android:color/black"
         android:textSize="20sp"
         />

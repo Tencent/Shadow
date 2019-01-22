@@ -46,6 +46,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     private var mRawIntentExtraBundle: Bundle? = null
     private var mPluginActivityCreated = false
     private var mDependenciesInjected = false
+    private var mRecreateCalled = false
     /**
      * 判断是否调用过OnWindowAttributesChanged，如果调用过就说明需要在onCreate之前调用
      */
@@ -147,7 +148,11 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         outState.putBundle(PLUGIN_OUT_STATE_KEY, pluginOutState)
         outState.putString(CM_PART_KEY, mPartKey)
         outState.putBundle(CM_LOADER_BUNDLE_KEY, mBundleForPluginLoader)
-        outState.putBundle(CM_EXTRAS_BUNDLE_KEY, mRawIntentExtraBundle)
+        if (mRecreateCalled) {
+            outState.putBundle(CM_EXTRAS_BUNDLE_KEY, mHostActivityDelegator.intent.extras)
+        } else {
+            outState.putBundle(CM_EXTRAS_BUNDLE_KEY, mRawIntentExtraBundle)
+        }
     }
 
     override fun onPause() {
@@ -335,5 +340,10 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
         mPluginActivity.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun recreate() {
+        mRecreateCalled = true
+        mHostActivityDelegator.superRecreate()
     }
 }

@@ -3,14 +3,17 @@ package com.tencent.shadow.core.loader.managers
 import android.content.ContentProvider
 import android.content.Context
 import android.net.Uri
-
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.infos.PluginProviderInfo
 import com.tencent.shadow.runtime.UriParseDelegate
-import java.lang.IllegalArgumentException
-
 import java.util.HashMap
+import kotlin.collections.HashSet
+import kotlin.collections.Set
+import kotlin.collections.contains
+import kotlin.collections.forEach
+import kotlin.collections.hashSetOf
+import kotlin.collections.set
 
 class PluginContentProviderManager() : UriParseDelegate {
 
@@ -67,7 +70,6 @@ class PluginContentProviderManager() : UriParseDelegate {
                 val clz = pluginParts!!.classLoader.loadClass(it.className)
                 val contentProvider = ContentProvider::class.java.cast(clz.newInstance())
                 contentProvider?.attachInfo(mContext, it.providerInfo)
-                contentProvider!!.onCreate()
                 providerMap[it.authority] = contentProvider
             } catch (e: Exception) {
                 throw RuntimeException(e)

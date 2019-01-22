@@ -1,9 +1,12 @@
 package com.tencent.shadow.demo.gallery.cases;
 
+import android.os.Bundle;
+
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
+import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.MyReceiver;
 import com.tencent.shadow.demo.usecases.service.MyLocalService;
@@ -31,6 +34,14 @@ public class UseCaseManager {
                 "生命周期测试", "测试Activity的生命周期方法是否正确回调", TestActivityOnCreate.class));
         activityCategory.caseList.add(new UseCase(Case_Activity.CASE_RECREATE,
                 "ReCreate", "测试Activity的调用ReCreate是否工作正常", TestActivityReCreate.class));
+
+        UseCase useCase = new UseCase(Case_Activity.CASE_RECREATE_BY_SYTEM, "ReCreateBySystem",
+                "不保留活动进行测试，需要手动到开发者模式中开启", TestActivityReCreateBySystem.class);
+        useCase.bundle = new Bundle();
+        useCase.bundle.putString("url", "https://www.baidu.com");
+
+        activityCategory.caseList.add(useCase);
+
 
 
         UseCaseCategory serviceCategory = new UseCaseCategory(Case_Service.CATEGORY_ID, "Service测试用例");
@@ -73,6 +84,7 @@ public class UseCaseManager {
 
         public final static int CASE_ONCREATE = 10000;
         public final static int CASE_RECREATE = 10001;
+        public final static int CASE_RECREATE_BY_SYTEM = 10002;
     }
 
     private static class Case_Service {
