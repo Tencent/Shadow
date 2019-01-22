@@ -303,4 +303,8 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
     public void onPointerCaptureChanged(boolean hasCapture) {
         mHostActivityDelegator.superOnPointerCaptureChanged(hasCapture);
     }
+
+    public void recreate() {
+        mHostActivityDelegator.recreate();
+    }
 }

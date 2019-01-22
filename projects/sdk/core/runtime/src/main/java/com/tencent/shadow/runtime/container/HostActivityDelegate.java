@@ -117,4 +117,6 @@ public interface HostActivityDelegate {
     void onAttachFragment(Fragment fragment);
 
     void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
+
+    void recreate();
 }
