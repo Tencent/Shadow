@@ -9,6 +9,7 @@ import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.MyReceiver;
+import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
 import com.tencent.shadow.demo.usecases.service.TestService;
 import com.tencent.shadow.demo.usecases.service.TestStartServiceActivity;
 
@@ -54,7 +55,7 @@ public class UseCaseManager {
         UseCaseCategory broadcastReceiverCategory = new UseCaseCategory(Case_BroadcastReceiver.CATEGORY_ID, "广播测试用例");
         useCases.add(broadcastReceiverCategory);
         broadcastReceiverCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
+                "静态广播测试", "测试静态广播的发送和接收是否工作正常", TestReceiverActivity.class));
 
 
 

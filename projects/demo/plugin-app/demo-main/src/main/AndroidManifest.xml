@@ -33,7 +33,15 @@
 
         <activity android:name="com.tencent.shadow.demo.usecases.service.TestStartServiceActivity" />
 
+        <activity android:name="com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity" />
+
         <service android:name="com.tencent.shadow.demo.usecases.service.TestService"/>
+
+        <receiver android:name="com.tencent.shadow.demo.usecases.receiver.MyReceiver">
+            <intent-filter>
+                <action android:name="com.tencent.test.action"/>
+            </intent-filter>
+        </receiver>
 
         <provider
             android:authorities="com.tencent.shadow.provider.test"
