@@ -26,9 +26,11 @@ public class TestFragment extends Fragment {
         View view = inflater.inflate(R.layout.layout_fragment_test, null, false);
         TextView textView = view.findViewById(R.id.tv_msg);
         Bundle bundle = getArguments();
-        String msg = bundle.getString("msg");
-        if (!TextUtils.isEmpty(msg)) {
-            textView.setText(msg);
+        if (bundle != null) {
+            String msg = bundle.getString("msg");
+            if (!TextUtils.isEmpty(msg)) {
+                textView.setText(msg);
+            }
         }
         return view;
     }

@@ -8,6 +8,7 @@ import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
+import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
@@ -71,6 +72,8 @@ public class UseCaseManager {
         useCases.add(fragmentCategory);
         fragmentCategory.caseList.add(new UseCase(Case_Fragment.CATEGORY_ID,
                 "代码添加fragment相关测试", "测试通过代码添加一个fragment", TestDynamicFragmentActivity.class));
+        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CATEGORY_ID,
+                "xml中使用fragment相关测试", "测试在Activity现实xml中定义的fragment", TestXmlFragmentActivity.class));
 
 
     }
