@@ -7,6 +7,7 @@ import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
+import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
@@ -66,6 +67,12 @@ public class UseCaseManager {
                 "ContentProvider DB相关测试", "测试通过ContentProvider来操作数据库", TestDBContentProviderActivity.class));
 
 
+        UseCaseCategory fragmentCategory = new UseCaseCategory(Case_Provider.CATEGORY_ID, "fragment测试用例");
+        useCases.add(fragmentCategory);
+        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CATEGORY_ID,
+                "代码添加fragment相关测试", "测试通过代码添加一个fragment", TestDynamicFragmentActivity.class));
+
+
     }
 
     public static UseCase findTestCaseById(int caseId) {
@@ -92,7 +99,6 @@ public class UseCaseManager {
         public final static int CATEGORY_ID = 2;
 
         public final static int CASE_START_SERVICE = 20000;
-        public final static int CASE_BIND_SERVICE = 20001;
     }
 
     private static class Case_BroadcastReceiver {
@@ -106,6 +112,13 @@ public class UseCaseManager {
         public final static int CATEGORY_ID = 4;
 
         public final static int CASE_DB = 40000;
+    }
+
+    private static class Case_Fragment {
+        public final static int CATEGORY_ID = 5;
+
+        public final static int CASE_FRAGMENT_DYNAMIC = 50000;
+        public final static int CASE_FRAGMENT_XML = 50001;
     }
 
 }

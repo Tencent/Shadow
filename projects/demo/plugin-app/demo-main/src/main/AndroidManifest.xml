@@ -37,6 +37,8 @@
 
         <activity android:name="com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity" />
 
+        <activity android:name="com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity" />
+
         <service android:name="com.tencent.shadow.demo.usecases.service.TestService"/>
 
         <receiver android:name="com.tencent.shadow.demo.usecases.receiver.MyReceiver">
