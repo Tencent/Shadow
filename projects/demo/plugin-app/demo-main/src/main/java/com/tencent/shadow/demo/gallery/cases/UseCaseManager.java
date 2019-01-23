@@ -7,9 +7,13 @@ import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
+import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
+import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
+import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
-import com.tencent.shadow.demo.usecases.receiver.MyReceiver;
-import com.tencent.shadow.demo.usecases.service.MyLocalService;
+import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
+import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
+import com.tencent.shadow.demo.usecases.service.TestStartServiceActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,15 +51,15 @@ public class UseCaseManager {
         UseCaseCategory serviceCategory = new UseCaseCategory(Case_Service.CATEGORY_ID, "Service测试用例");
         useCases.add(serviceCategory);
         serviceCategory.caseList.add(new UseCase(Case_Service.CASE_START_SERVICE,
-                "startService", "测试startService的方式启动Service", MyLocalService.class));
-        serviceCategory.caseList.add(new UseCase(Case_Service.CASE_BIND_SERVICE,
-                "bindService", "测试bindService的方式启动Service", MyLocalService.class));
+                "启动Service", "测试startService,bindService,stopService,unBindService等调用", TestStartServiceActivity.class));
 
 
         UseCaseCategory broadcastReceiverCategory = new UseCaseCategory(Case_BroadcastReceiver.CATEGORY_ID, "广播测试用例");
         useCases.add(broadcastReceiverCategory);
         broadcastReceiverCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", MyReceiver.class));
+                "静态广播测试", "测试静态广播的发送和接收是否工作正常", TestReceiverActivity.class));
+        broadcastReceiverCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE_DYNAMIC,
+                "动态广播测试", "测试动态广播的发送和接收是否工作正常", TestDynamicReceiverActivity.class));
 
 
 
@@ -63,6 +67,19 @@ public class UseCaseManager {
         useCases.add(providerCategory);
         providerCategory.caseList.add(new UseCase(Case_Provider.CASE_DB,
                 "ContentProvider DB相关测试", "测试通过ContentProvider来操作数据库", TestDBContentProviderActivity.class));
+
+
+        UseCaseCategory fragmentCategory = new UseCaseCategory(Case_Fragment.CATEGORY_ID, "fragment测试用例");
+        useCases.add(fragmentCategory);
+        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CASE_FRAGMENT_DYNAMIC,
+                "代码添加fragment相关测试", "测试通过代码添加一个fragment", TestDynamicFragmentActivity.class));
+        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CASE_FRAGMENT_XML,
+                "xml中使用fragment相关测试", "测试在Activity现实xml中定义的fragment", TestXmlFragmentActivity.class));
+
+        UseCaseCategory dialogCategory = new UseCaseCategory(Case_Dialog.CATEGORY_ID, "Dialog测试用例");
+        useCases.add(dialogCategory);
+        dialogCategory.caseList.add(new UseCase(Case_Dialog.CASE_SHOW_DIALOG,
+                "Dialog 相关测试", "测试show Dialog", TestDialogActivity.class));
 
 
     }
@@ -91,19 +108,32 @@ public class UseCaseManager {
         public final static int CATEGORY_ID = 2;
 
         public final static int CASE_START_SERVICE = 20000;
-        public final static int CASE_BIND_SERVICE = 20001;
     }
 
     private static class Case_BroadcastReceiver {
         public final static int CATEGORY_ID = 3;
 
         public final static int CASE_RECEIVE = 30000;
+        public final static int CASE_RECEIVE_DYNAMIC = 30001;
     }
 
     private static class Case_Provider {
         public final static int CATEGORY_ID = 4;
 
         public final static int CASE_DB = 40000;
+    }
+
+    private static class Case_Fragment {
+        public final static int CATEGORY_ID = 5;
+
+        public final static int CASE_FRAGMENT_DYNAMIC = 50000;
+        public final static int CASE_FRAGMENT_XML = 50001;
+    }
+
+    private static class Case_Dialog {
+        public final static int CATEGORY_ID = 6;
+
+        public final static int CASE_SHOW_DIALOG = 60000;
     }
 
 }
