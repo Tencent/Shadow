@@ -67,8 +67,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     private val mPluginServiceManagerLock = ReentrantLock()
 
-    private val mInterfaceClassLoader = InterfaceClassLoader(ShadowPluginLoader::class.java.classLoader.parent)
-
+    private val mInterfaceClassLoader :InterfaceClassLoader
     /**
      * 插件将要使用的so的ABI，Loader会将其从apk中解压出来。
      * 如果插件不需要so，则返回""空字符串。
@@ -83,6 +82,17 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     companion object {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
+    }
+
+    init {
+        val hostClassLoader: ClassLoader = hostAppContext.classLoader
+        //如果当前类的classLoader和宿主的classLoader一致，则说明loader模块是打包在宿主中的，否则说明loader模块是动态加载的
+        mInterfaceClassLoader = if (ShadowPluginLoader::class.java.classLoader == hostClassLoader) {
+            InterfaceClassLoader(hostClassLoader)
+        } else {
+            InterfaceClassLoader(ShadowPluginLoader::class.java.classLoader.parent)
+        }
+
     }
 
     fun getPluginServiceManager(): PluginServiceManager {
