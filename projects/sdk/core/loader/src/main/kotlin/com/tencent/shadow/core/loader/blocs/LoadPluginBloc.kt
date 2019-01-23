@@ -1,6 +1,7 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
+import android.content.pm.PackageManager
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.loader.LoadParameters
 import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
@@ -43,13 +44,30 @@ object LoadPluginBloc {
                 }
             })
 
+            val getPackageInfo = executorService.submit(Callable {
+                val archiveFilePath = installedApk.apkFilePath
+                val packageManager = hostAppContext.packageManager
+                val packageArchiveInfo = packageManager.getPackageArchiveInfo(
+                        archiveFilePath,
+                        PackageManager.GET_ACTIVITIES
+                                or PackageManager.GET_META_DATA
+                                or PackageManager.GET_SERVICES
+                                or PackageManager.GET_PROVIDERS
+                                or PackageManager.GET_SIGNATURES
+                )
+                        ?: throw NullPointerException("getPackageArchiveInfo return null.archiveFilePath==$archiveFilePath")
+                packageArchiveInfo
+            })
+
             val buildPackageManager = executorService.submit(Callable {
-                val pluginInfo = ParsePluginApkBloc.parse(installedApk, loadParameters, hostAppContext)
+                val packageInfo = getPackageInfo.get()
+                val pluginInfo = ParsePluginApkBloc.parse(packageInfo, loadParameters, hostAppContext)
                 PluginPackageManager(commonPluginPackageManager, pluginInfo)
             })
 
             val buildResources = executorService.submit(Callable {
-                CreateResourceBloc.create(installedApk.apkFilePath, hostAppContext)
+                val packageInfo = getPackageInfo.get()
+                CreateResourceBloc.create(packageInfo, installedApk.apkFilePath, hostAppContext)
             })
 
             val buildApplication = executorService.submit(Callable {

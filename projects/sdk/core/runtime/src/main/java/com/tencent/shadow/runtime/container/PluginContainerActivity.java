@@ -2114,4 +2114,13 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             super.setTheme(resid);
         }
     }
+
+    @Override
+    public void recreate() {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.recreate();
+        } else {
+            super.recreate();
+        }
+    }
 }

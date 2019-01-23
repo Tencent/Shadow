@@ -1,8 +1,7 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
-import android.content.pm.PackageManager.*
-import com.tencent.shadow.core.common.InstalledApk
+import android.content.pm.PackageInfo
 import com.tencent.shadow.core.loader.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.ParsePluginApkException
 import com.tencent.shadow.core.loader.infos.PluginActivityInfo
@@ -24,14 +23,7 @@ object ParsePluginApkBloc {
      * @throws ParsePluginApkException 解析失败时抛出
      */
     @Throws(ParsePluginApkException::class)
-    fun parse(installedApk: InstalledApk, loadParameters: LoadParameters, hostAppContext: Context): PluginInfo {
-        val archiveFilePath = installedApk.apkFilePath
-        val packageManager = hostAppContext.packageManager
-        val packageArchiveInfo = packageManager.getPackageArchiveInfo(
-                archiveFilePath,
-                GET_ACTIVITIES or GET_META_DATA or GET_SERVICES or GET_PROVIDERS or  GET_SIGNATURES
-        )
-
+    fun parse(packageArchiveInfo: PackageInfo, loadParameters: LoadParameters, hostAppContext: Context): PluginInfo {
         if (packageArchiveInfo.applicationInfo.packageName != hostAppContext.packageName) {
             /*
             要求插件和宿主包名一致有两方面原因：

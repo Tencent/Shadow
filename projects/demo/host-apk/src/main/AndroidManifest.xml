@@ -71,7 +71,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="CPLExample"
+        android:label="Shadow测试宿主App"
         android:name=".HostApplication"
         android:theme="@android:style/Theme.DeviceDefault"
         tools:ignore="GoogleAppIndexingWarning">
