@@ -7,6 +7,7 @@ import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
+import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
@@ -75,6 +76,11 @@ public class UseCaseManager {
         fragmentCategory.caseList.add(new UseCase(Case_Fragment.CASE_FRAGMENT_XML,
                 "xml中使用fragment相关测试", "测试在Activity现实xml中定义的fragment", TestXmlFragmentActivity.class));
 
+        UseCaseCategory dialogCategory = new UseCaseCategory(Case_Dialog.CATEGORY_ID, "Dialog测试用例");
+        useCases.add(dialogCategory);
+        dialogCategory.caseList.add(new UseCase(Case_Dialog.CASE_SHOW_DIALOG,
+                "Dialog 相关测试", "测试show Dialog", TestDialogActivity.class));
+
 
     }
 
@@ -122,6 +128,12 @@ public class UseCaseManager {
 
         public final static int CASE_FRAGMENT_DYNAMIC = 50000;
         public final static int CASE_FRAGMENT_XML = 50001;
+    }
+
+    private static class Case_Dialog {
+        public final static int CATEGORY_ID = 6;
+
+        public final static int CASE_SHOW_DIALOG = 60000;
     }
 
 }
