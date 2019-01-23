@@ -8,9 +8,8 @@ import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
-import com.tencent.shadow.demo.usecases.receiver.MyReceiver;
+import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
-import com.tencent.shadow.demo.usecases.service.TestService;
 import com.tencent.shadow.demo.usecases.service.TestStartServiceActivity;
 
 import java.util.ArrayList;
@@ -56,6 +55,8 @@ public class UseCaseManager {
         useCases.add(broadcastReceiverCategory);
         broadcastReceiverCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
                 "静态广播测试", "测试静态广播的发送和接收是否工作正常", TestReceiverActivity.class));
+        broadcastReceiverCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE_DYNAMIC,
+                "动态广播测试", "测试动态广播的发送和接收是否工作正常", TestDynamicReceiverActivity.class));
 
 
 
@@ -98,6 +99,7 @@ public class UseCaseManager {
         public final static int CATEGORY_ID = 3;
 
         public final static int CASE_RECEIVE = 30000;
+        public final static int CASE_RECEIVE_DYNAMIC = 30001;
     }
 
     private static class Case_Provider {
