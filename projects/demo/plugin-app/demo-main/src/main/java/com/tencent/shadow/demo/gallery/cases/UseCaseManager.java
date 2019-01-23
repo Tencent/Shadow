@@ -68,11 +68,11 @@ public class UseCaseManager {
                 "ContentProvider DB相关测试", "测试通过ContentProvider来操作数据库", TestDBContentProviderActivity.class));
 
 
-        UseCaseCategory fragmentCategory = new UseCaseCategory(Case_Provider.CATEGORY_ID, "fragment测试用例");
+        UseCaseCategory fragmentCategory = new UseCaseCategory(Case_Fragment.CATEGORY_ID, "fragment测试用例");
         useCases.add(fragmentCategory);
-        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CATEGORY_ID,
+        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CASE_FRAGMENT_DYNAMIC,
                 "代码添加fragment相关测试", "测试通过代码添加一个fragment", TestDynamicFragmentActivity.class));
-        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CATEGORY_ID,
+        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CASE_FRAGMENT_XML,
                 "xml中使用fragment相关测试", "测试在Activity现实xml中定义的fragment", TestXmlFragmentActivity.class));
 
 
