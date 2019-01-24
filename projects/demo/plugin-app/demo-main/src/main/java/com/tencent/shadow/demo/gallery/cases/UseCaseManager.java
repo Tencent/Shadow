@@ -11,12 +11,10 @@ import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
+import com.tencent.shadow.demo.usecases.provider.TestFileProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
 import com.tencent.shadow.demo.usecases.service.TestStartServiceActivity;
-import com.tencent.shadow.demo.usecases.provider.TestFileProviderActivity;
-import com.tencent.shadow.demo.usecases.receiver.MyReceiver;
-import com.tencent.shadow.demo.usecases.service.MyLocalService;
 
 import java.util.ArrayList;
 import java.util.List;
