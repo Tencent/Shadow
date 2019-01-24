@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.loader.LoadParameters
-import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
+import com.tencent.shadow.core.loader.classloaders.ParentPluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
@@ -23,7 +23,6 @@ object LoadPluginBloc {
     @Throws(LoadPluginException::class)
     fun loadPlugin(
             executorService: ExecutorService,
-            abi: String,
             commonPluginPackageManager: CommonPluginPackageManager,
             componentManager: ComponentManager,
             pluginBroadcastManager: PluginBroadcastManager,
@@ -112,11 +111,10 @@ object LoadPluginBloc {
         }
     }
 
-    fun loadInterface(
+    fun loadCommonPlugin(
             executorService: ExecutorService,
-            abi: String,
             hostAppContext: Context,
-            comInterface: InterfaceClassLoader,
+            parentPluginClassLoader: ParentPluginClassLoader,
             installedApk: InstalledApk
     ): Future<*> {
         if (installedApk.apkFilePath == null) {
@@ -124,11 +122,8 @@ object LoadPluginBloc {
         } else {
 
             return executorService.submit {
-                val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
-                val hostAppParentClassLoader = pluginLoaderClassLoader.parent.parent
-                val pluginClassLoader = LoadApkBloc.loadInterface(hostAppContext, installedApk, hostAppParentClassLoader)
-
-                comInterface.addInterfaceClassLoader(pluginClassLoader)
+                val pluginClassLoader = LoadApkBloc.loadInterface(hostAppContext, installedApk, parentPluginClassLoader.parent)
+                parentPluginClassLoader.addCommonClassLoader(pluginClassLoader)
             }
 
         }

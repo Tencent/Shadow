@@ -3,19 +3,18 @@ package com.tencent.shadow.core.loader.classloaders
 import android.os.Build
 
 /**
- * 公用接口classloader,它加载插件间共用的接口，它将作为所有插件classloader的
- * 父classloader
+ * 插件classloader的父classloader,同时提供添加用于各插件都能访问的接口插件（公共插件）的classLoader
  * Created by jaylanchen on 2018/12/5.
  */
-class InterfaceClassLoader(parent: ClassLoader) : ClassLoader(parent) {
+class ParentPluginClassLoader(parent: ClassLoader) : ClassLoader(parent) {
 
     private val mGrandParent = parent.parent
-    private val mInterfaceClassLoaderList = ArrayList<ClassLoader>()
+    private val mCommonClassLoaderList = ArrayList<ClassLoader>()
 
 
     @Synchronized
-    fun addInterfaceClassLoader(classLoader: ClassLoader) {
-        mInterfaceClassLoaderList.add(classLoader)
+    fun addCommonClassLoader(classLoader: ClassLoader) {
+        mCommonClassLoaderList.add(classLoader)
     }
 
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
@@ -27,7 +26,7 @@ class InterfaceClassLoader(parent: ClassLoader) : ClassLoader(parent) {
 
             var clazz: Class<*>? = null
 
-            for (classLoader in mInterfaceClassLoaderList) {
+            for (classLoader in mCommonClassLoaderList) {
                 try {
                     clazz = classLoader.loadClass(className)
                     if (clazz != null) {
