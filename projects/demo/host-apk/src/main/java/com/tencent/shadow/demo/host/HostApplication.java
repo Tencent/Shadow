@@ -25,7 +25,6 @@ public class HostApplication extends Application {
             builder.penaltyDeath();
             builder.detectNonSdkApiUsage();
             StrictMode.setVmPolicy(builder.build());
-
         }
     }
 
