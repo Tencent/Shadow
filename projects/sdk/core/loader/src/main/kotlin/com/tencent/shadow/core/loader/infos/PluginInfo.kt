@@ -6,7 +6,7 @@ import android.os.Bundle
 class PluginInfo(
         val partKey: String,
         val packageName: String,
-        val applicationClassName: String,
+        val applicationClassName: String?,
         val metaData: Bundle?,
         val versionCode: Int,
         val versionName: String,
