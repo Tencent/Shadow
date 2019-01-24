@@ -7,7 +7,6 @@ import android.os.Parcel
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
-import com.tencent.shadow.core.loader.classloaders.ParentPluginClassLoader
 import com.tencent.shadow.core.loader.delegates.*
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
@@ -66,8 +65,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
     private val mPluginContentProviderManager: PluginContentProviderManager = PluginContentProviderManager()
 
     private val mPluginServiceManagerLock = ReentrantLock()
-
-    private val mParentPluginClassLoader :ParentPluginClassLoader = ParentPluginClassLoader(hostAppContext.classLoader)
     /**
      * 插件将要使用的so的ABI，Loader会将其从apk中解压出来。
      * 如果插件不需要so，则返回""空字符串。
@@ -146,29 +143,18 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
             mComponentManager.setPluginServiceManager(mPluginServiceManager)
         }
 
-        if (loadParameters.pluginFileType == 1) { // 是接口apk
-
-            return LoadPluginBloc.loadCommonPlugin(
-                    mExecutorService,
-                    mHostAppContext,
-                    mParentPluginClassLoader,
-                    installedApk
-                    )
-        } else {
-            return LoadPluginBloc.loadPlugin(
-                    mExecutorService,
-                    mCommonPluginPackageManager,
-                    mComponentManager,
-                    getBusinessPluginReceiverManager(mHostAppContext),
-                    mLock,
-                    mPluginPartsMap,
-                    mHostAppContext,
-                    installedApk,
-                    loadParameters,
-                    mParentPluginClassLoader,
-                    mShadowRemoteViewCreatorProvider
-            )
-        }
+        return LoadPluginBloc.loadPlugin(
+                mExecutorService,
+                mCommonPluginPackageManager,
+                mComponentManager,
+                getBusinessPluginReceiverManager(mHostAppContext),
+                mLock,
+                mPluginPartsMap,
+                mHostAppContext,
+                installedApk,
+                loadParameters,
+                mHostAppContext.classLoader,
+                mShadowRemoteViewCreatorProvider)
     }
 
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {

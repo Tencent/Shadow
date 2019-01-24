@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.loader.LoadParameters
-import com.tencent.shadow.core.loader.classloaders.ParentPluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
@@ -111,23 +110,6 @@ object LoadPluginBloc {
         }
     }
 
-    fun loadCommonPlugin(
-            executorService: ExecutorService,
-            hostAppContext: Context,
-            parentPluginClassLoader: ParentPluginClassLoader,
-            installedApk: InstalledApk
-    ): Future<*> {
-        if (installedApk.apkFilePath == null) {
-            throw LoadPluginException("apkFilePath==null")
-        } else {
-
-            return executorService.submit {
-                val pluginClassLoader = LoadApkBloc.loadInterface(hostAppContext, installedApk, parentPluginClassLoader.parent)
-                parentPluginClassLoader.addCommonClassLoader(pluginClassLoader)
-            }
-
-        }
-    }
 
 
 }

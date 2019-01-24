@@ -3,6 +3,7 @@ package com.tencent.shadow.core.loader.blocs
 import android.content.Context
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.loader.LoadParameters
+import com.tencent.shadow.core.loader.classloaders.BootPluginClassLoader
 import com.tencent.shadow.core.loader.classloaders.CombineClassLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadApkException
@@ -15,23 +16,6 @@ import java.io.File
  * @author cubershi
  */
 object LoadApkBloc {
-    /**
-     * 加载插件到ClassLoader中.
-     *
-     * @param installedPlugin    已安装（PluginManager已经下载解包）的插件
-     * @return 加载了插件的ClassLoader
-     */
-    @Throws(LoadApkException::class)
-    fun loadInterface(hostAppContext: Context, installedApk: InstalledApk, parentClassLoader: ClassLoader): PluginClassLoader {
-        val odexDir = installedApk.oDexPath
-        return PluginClassLoader(
-                hostAppContext,
-                installedApk.apkFilePath,
-                if (odexDir == null) null else File(odexDir),
-                installedApk.libraryPath,
-                parentClassLoader
-        )
-    }
 
     /**
      * 加载插件到ClassLoader中.
@@ -44,8 +28,8 @@ object LoadApkBloc {
         val apk = File(installedApk.apkFilePath)
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
         val dependsOn = loadParameters.dependsOn
-        if (dependsOn == null) {
-            return PluginClassLoader(
+        if (dependsOn == null || dependsOn.isEmpty()) {
+            return BootPluginClassLoader(
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
