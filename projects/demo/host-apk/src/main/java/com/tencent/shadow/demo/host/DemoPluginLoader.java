@@ -9,6 +9,7 @@ import com.tencent.shadow.core.loader.managers.PluginBroadcastManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -50,7 +51,9 @@ public class DemoPluginLoader extends ShadowPluginLoader {
         return new PluginBroadcastManager() {
             @Override
             public List<BroadcastInfo> getBroadcastInfoList(String s) {
-                return new LinkedList<>();
+                List<BroadcastInfo> broadcastInfos = new ArrayList<>();
+                broadcastInfos.add(new BroadcastInfo("com.tencent.shadow.demo.usecases.receiver.MyReceiver",new String[]{"com.tencent.test.action"}));
+                return broadcastInfos;
             }
         };
     }

@@ -81,14 +81,19 @@ public class TestDBContentProviderActivity extends BaseActivity {
 
     public void query(View view){
         Cursor cursor = getContentResolver().query(TestProviderInfo.TestEntry.CONTENT_URI, null, null, null, null);
-        StringBuilder s = new StringBuilder();
-        while (cursor.moveToNext()){
-            long id = cursor.getLong(cursor.getColumnIndex(TestProviderInfo.TestEntry._ID));
-            String name = cursor.getString(cursor.getColumnIndex(TestProviderInfo.TestEntry.COLUMN_NAME));
-            s.append("id:").append(id).append(" name:").append(name).append(" \n");
+        if(cursor != null){
+            StringBuilder s = new StringBuilder();
+            while (cursor.moveToNext()){
+                long id = cursor.getLong(cursor.getColumnIndex(TestProviderInfo.TestEntry._ID));
+                String name = cursor.getString(cursor.getColumnIndex(TestProviderInfo.TestEntry.COLUMN_NAME));
+                s.append("id:").append(id).append(" name:").append(name).append(" \n");
+            }
+            mTextView.setText(s);
+            cursor.close();
+        }else {
+            Toast.makeText(this,"请先插入数据",Toast.LENGTH_SHORT).show();
         }
-        mTextView.setText(s);
-        cursor.close();
+
     }
 
     public void update(View view) {

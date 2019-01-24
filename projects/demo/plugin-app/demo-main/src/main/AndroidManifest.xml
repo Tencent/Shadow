@@ -7,6 +7,7 @@
     <application
         android:name="com.tencent.shadow.demo.gallery.DemoApplication"
         android:icon="@android:drawable/sym_def_app_icon"
+        android:theme="@android:style/Theme.NoTitleBar"
         android:label="@string/app_name">
         <activity
             android:name="com.tencent.shadow.demo.gallery.splash.SplashActivity"
@@ -29,6 +30,26 @@
         <activity android:name="com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity"/>
 
         <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem" />
+
+        <activity android:name="com.tencent.shadow.demo.usecases.service.TestStartServiceActivity" />
+
+        <activity android:name="com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity" />
+
+        <activity android:name="com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity" />
+
+        <activity android:name="com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity" />
+
+        <activity android:name="com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity" />
+
+        <activity android:name="com.tencent.shadow.demo.usecases.dialog.TestDialogActivity" />
+
+        <service android:name="com.tencent.shadow.demo.usecases.service.TestService"/>
+
+        <receiver android:name="com.tencent.shadow.demo.usecases.receiver.MyReceiver">
+            <intent-filter>
+                <action android:name="com.tencent.test.action"/>
+            </intent-filter>
+        </receiver>
 
         <activity android:name="com.tencent.shadow.demo.usecases.provider.TestFileProviderActivity" />
 
