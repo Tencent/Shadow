@@ -15,7 +15,7 @@ open class PluginClassLoader(
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
     init {
-        if (optimizedDirectory != null && Build.VERSION.SDK_INT <= MultiDex.MAX_SUPPORTED_SDK_VERSION) {
+        if (Build.VERSION.SDK_INT <= MultiDex.MAX_SUPPORTED_SDK_VERSION) {
             val pluginLoaderMultiDex = hostAppContext.getSharedPreferences("com.tencent.shadow.multidex", Context.MODE_PRIVATE)
             MultiDex.install(this, dexPath, optimizedDirectory, pluginLoaderMultiDex)
         }
