@@ -22,6 +22,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         const val ShadowPendingIntentClassname = "com.tencent.shadow.runtime.ShadowPendingIntent"
         const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
         const val AndroidUriClassname = "android.net.Uri"
+        const val AndroidContentResolvername = "android.content.ContentResolver"
+        const val ShadowContentResolvername = "com.tencent.shadow.runtime.ContentResolverWrapper"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.shadow.runtime.ShadowApplication"
@@ -50,9 +52,10 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                 AndroidDialogClassname
                         to ShadowDialogClassname
                 ,
+                AndroidContentResolvername to ShadowContentResolvername
+                ,
                 "android.app.Instrumentation"
                         to "com.tencent.shadow.runtime.ShadowInstrumentation"
-
         )
 
         const val RemoteLocalSdkPackageName = "com.tencent.shadow.remoteview.localsdk"
@@ -84,7 +87,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()
         step7_redirectUriMethod()
-        step8_keepHostContext()
+        step8_redirectResolverMethod()
+        step9_keepHostContext()
     }
 
 
@@ -301,7 +305,58 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
     }
 
-    private fun step8_keepHostContext() {
+    private fun step8_redirectResolverMethod() {
+        val resolverMethod = classPool[AndroidContentResolvername].methods!!
+        val shadowResolverMethod = classPool[ShadowContentResolvername].methods!!
+
+        val method_resolvers = resolverMethod.filter {
+            it.name == "insert"
+                    || it.name == "delete"
+                    || it.name == "update"
+                    || it.name == "query"
+                    || it.name == "call"
+                    || it.name == "bulkInsert"
+                    || it.name == "notify"
+        }
+        val shadow_method_resolvers = shadowResolverMethod.filter {
+            it.name == "insert_"
+                    || it.name == "delete_"
+                    || it.name == "update_"
+                    || it.name == "query_"
+                    || it.name == "call_"
+                    || it.name == "bulkInsert_"
+                    || it.name == "notify_"
+        }
+        val codeConverter = CodeConverter()
+
+        for (ctAndroidMethod in method_resolvers) {
+            for (ctShadowMethod in shadow_method_resolvers) {
+
+                if (ctShadowMethod.methodInfo.name == ctAndroidMethod.methodInfo.name + "_"
+                        && ctAndroidMethod.methodInfo.descriptor == ctShadowMethod.methodInfo.descriptor) {
+
+                    System.err.println("ctAndroidMethod name " + ctAndroidMethod.name)
+                    System.err.println("ctAndroidMethod descriptor " + ctAndroidMethod.methodInfo.descriptor)
+                    System.err.println("ctShadowMethod name " + ctShadowMethod.name)
+                    System.err.println("ctShadowMethod descriptor " + ctShadowMethod.methodInfo.descriptor)
+                    System.err.println("")
+                    codeConverter.redirectMethodCall(ctAndroidMethod, ctShadowMethod)
+                }
+            }
+        }
+
+        forEachCanRecompileAppClass(listOf(ShadowContentResolvername)) { appCtClass ->
+            try {
+                System.err.println("instrument " + appCtClass)
+                appCtClass.instrument(codeConverter)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
+        }
+    }
+
+    private fun step9_keepHostContext() {
         val ShadowContextClassName = "com.tencent.shadow.runtime.ShadowContext"
 
         data class Rule(
