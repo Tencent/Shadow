@@ -18,7 +18,7 @@ object CreateApplicationBloc {
     @Throws(CreateApplicationException::class)
     fun createShadowApplication(
             pluginClassLoader: PluginClassLoader,
-            appClassName: String,
+            appClassName: String?,
             pluginPackageManager: PluginPackageManager,
             resources: Resources,
             hostAppContext: Context,
@@ -27,8 +27,13 @@ object CreateApplicationBloc {
             remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): ShadowApplication {
         try {
-            val appClass = pluginClassLoader.loadClass(appClassName)
-            val shadowApplication = ShadowApplication::class.java.cast(appClass.newInstance())
+            val shadowApplication : ShadowApplication;
+            shadowApplication = if (appClassName != null) {
+                val appClass = pluginClassLoader.loadClass(appClassName)
+                ShadowApplication::class.java.cast(appClass.newInstance())
+            } else {
+                object : ShadowApplication(){}
+            }
             shadowApplication.setPluginResources(resources)
             shadowApplication.setPluginClassLoader(pluginClassLoader)
             shadowApplication.setPluginComponentLauncher(componentManager)
