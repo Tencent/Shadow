@@ -88,7 +88,10 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public Bundle call(String method, String arg, Bundle extras) {
-        return super.call(method, arg, extras);
+        if (hostContentProviderDelegate != null) {
+            return hostContentProviderDelegate.call(method, arg, extras);
+        }
+        return null;
     }
 
 

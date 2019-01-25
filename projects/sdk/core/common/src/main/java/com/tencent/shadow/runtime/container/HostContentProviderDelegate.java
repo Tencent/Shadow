@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 
 /**
  * PluginContainerContentProvider的被委托者接口
@@ -34,4 +35,5 @@ public interface HostContentProviderDelegate {
 
     int bulkInsert( Uri uri,  ContentValues[] values);
 
+    Bundle call(String method, String arg, Bundle extras);
 }

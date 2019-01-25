@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.res.Configuration
 import android.database.Cursor
 import android.net.Uri
+import android.os.Bundle
 
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.runtime.container.HostContentProviderDelegate
@@ -61,5 +62,10 @@ class ShadowContentProviderDelegate(private val mProviderManager: PluginContentP
     override fun bulkInsert(uri: Uri, values: Array<ContentValues>?): Int {
         val pluginUri = mProviderManager.convert2PluginUri(uri)
         return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.bulkInsert(pluginUri, values)
+    }
+
+    override fun call(method: String, arg: String?, extras: Bundle): Bundle {
+        val pluginUri = mProviderManager.convert2PluginUri(extras)
+        return mProviderManager.getPluginContentProvider(pluginAuthority = pluginUri.authority!!)!!.call(method, arg, extras)
     }
 }

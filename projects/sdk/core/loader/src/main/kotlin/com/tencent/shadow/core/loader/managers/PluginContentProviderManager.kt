@@ -3,16 +3,13 @@ package com.tencent.shadow.core.loader.managers
 import android.content.ContentProvider
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.infos.PluginProviderInfo
 import com.tencent.shadow.runtime.UriParseDelegate
 import java.util.HashMap
 import kotlin.collections.HashSet
-import kotlin.collections.Set
-import kotlin.collections.contains
-import kotlin.collections.forEach
-import kotlin.collections.hashSetOf
 import kotlin.collections.set
 
 class PluginContentProviderManager() : UriParseDelegate {
@@ -45,6 +42,11 @@ class PluginContentProviderManager() : UriParseDelegate {
         return Uri.parse(uriString)
     }
 
+    override fun parseCall(uriString: String, extra: Bundle): Uri {
+        val pluginUri = parse(uriString)
+        extra.putString(SHADOW_BUNDLE_KEY, pluginUri.toString())
+        return pluginUri
+    }
 
     fun addContentProviderInfo(partKey: String, pluginProviderInfo: PluginProviderInfo, containerProviderInfo: ContainerProviderInfo) {
         if (providerMap.containsKey(pluginProviderInfo.authority)) {
@@ -103,10 +105,16 @@ class PluginContentProviderManager() : UriParseDelegate {
         return Uri.parse(uriString.replace("$containerAuthority/", ""))
     }
 
+    fun convert2PluginUri(extra: Bundle): Uri {
+        val uriString = extra.getString(SHADOW_BUNDLE_KEY)
+        extra.remove(SHADOW_BUNDLE_KEY)
+        return convert2PluginUri(Uri.parse(uriString))
+    }
+
     companion object {
 
         private val CONTENT_PREFIX = "content://"
-
+        private val SHADOW_BUNDLE_KEY = "shadow_cp_bundle_key"
     }
 
 

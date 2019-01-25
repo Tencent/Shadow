@@ -6,9 +6,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.ParcelFileDescriptor;
-import android.provider.OpenableColumns;
-import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -16,10 +13,6 @@ import android.widget.Toast;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
-
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileNotFoundException;
 
 public class TestDBContentProviderActivity extends BaseActivity {
 
@@ -46,28 +39,6 @@ public class TestDBContentProviderActivity extends BaseActivity {
 
         getContentResolver().registerContentObserver(TestProviderInfo.TestEntry.CONTENT_URI,
                 false, mObserver);
-
-        String path = getFilesDir() + "/abc.txt";
-        File file = new File(path);
-        if (file.exists()) {
-            Uri fileUri = FileProvider.getUriForFile(TestDBContentProviderActivity.this,
-                    "com.tencent.shadow.demo_install.fileprovider", file);
-            Cursor cursor = getContentResolver().query(fileUri, null, null,
-                    null, null);
-            while (cursor.moveToNext()) {
-                String size = cursor.getString(cursor.getColumnIndex(OpenableColumns.SIZE));
-                String name = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                Log.d(TAG, "size = " + size + " name = " + name);
-            }
-
-            try {
-                ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(fileUri, "r");
-                FileDescriptor fd = pfd.getFileDescriptor();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     public void insert(View view){
@@ -133,6 +104,35 @@ public class TestDBContentProviderActivity extends BaseActivity {
         }
 
         query(view);
+    }
+
+    public void bulkInsert(View view) {
+        ContentValues[] values = new ContentValues[3];
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TestProviderInfo.TestEntry.COLUMN_NAME, "test");
+        contentValues.put(TestProviderInfo.TestEntry._ID, System.currentTimeMillis());
+        values[0] = contentValues;
+
+        contentValues = new ContentValues();
+        contentValues.put(TestProviderInfo.TestEntry.COLUMN_NAME, "test");
+        contentValues.put(TestProviderInfo.TestEntry._ID, System.currentTimeMillis() + 5);
+        values[1] = contentValues;
+
+        contentValues = new ContentValues();
+        contentValues.put(TestProviderInfo.TestEntry.COLUMN_NAME, "test");
+        contentValues.put(TestProviderInfo.TestEntry._ID, System.currentTimeMillis() + 10);
+        values[2] = contentValues;
+
+        getContentResolver().bulkInsert(TestProviderInfo.TestEntry.CONTENT_URI, values);
+
+        query(view);
+    }
+
+    public void call(View view) {
+        Bundle beauty = getContentResolver().call(TestProviderInfo.TestEntry.CONTENT_URI, "getBeauty", "18", null);
+        if (beauty != null) {
+            Toast.makeText(this, "get beauty who name is " + beauty.getString("name"), Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

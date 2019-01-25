@@ -281,6 +281,7 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         val cursorClass = classPool["android.database.Cursor"]
         val bundleClass = classPool["android.os.Bundle"]
         val signalClass = classPool["android.os.CancellationSignal"]
+        val contentValueArrClass = classPool["android.content.ContentValues[]"]
 
 
         val insertMethod = resolverClass.getMethod("insert", Descriptor.ofMethod(uriClass,
@@ -319,7 +320,17 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                 arrayOf(resolverClass, uriClass, contentValuesClass, stringClass, stringArrClass)))
         codeConverter.redirectMethodCallToStaticMethodCall(updateMethod, newUpdateMethod)
 
+        val bulkInsertMethod = resolverClass.getMethod("bulkInsert", Descriptor.ofMethod(CtClass.intType,
+                arrayOf(uriClass, contentValueArrClass)))
+        val newBulkInsertMethod = targetClass.getMethod("bulkInsert", Descriptor.ofMethod(CtClass.intType,
+                arrayOf(resolverClass, uriClass, contentValueArrClass)))
+        codeConverter.redirectMethodCallToStaticMethodCall(bulkInsertMethod, newBulkInsertMethod)
 
+        val callMethod = resolverClass.getMethod("call", Descriptor.ofMethod(bundleClass,
+                arrayOf(uriClass, stringClass, stringClass, bundleClass)))
+        val newCallMethod = targetClass.getMethod("call", Descriptor.ofMethod(bundleClass,
+                arrayOf(resolverClass, uriClass, stringClass, stringClass, bundleClass)))
+        codeConverter.redirectMethodCallToStaticMethodCall(callMethod, newCallMethod)
 
         forEachCanRecompileAppClass(listOf(resolverName)) { appCtClass ->
             try {
