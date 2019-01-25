@@ -1,18 +1,14 @@
 package com.tencent.shadow.core.loader.classloaders
 
-import android.content.Context
 import android.os.Build
-import java.io.File
 
 
 /**
- * 用于加载插件的ClassLoader.
+ * 用于加载插件的ClassLoader的父classLoader
  *
- * @author cubershi
+ * @author owenguo
  */
-class BootPluginClassLoader(
-        hostAppContext: Context, dexPath: String, optimizedDirectory: File?, librarySearchPath: String, parent: ClassLoader
-) : PluginClassLoader(hostAppContext,dexPath, optimizedDirectory, librarySearchPath, parent) {
+class BootPluginClassLoader(parent: ClassLoader) : ClassLoader(parent) {
 
     private val mGrandParent: ClassLoader = parent.parent
 

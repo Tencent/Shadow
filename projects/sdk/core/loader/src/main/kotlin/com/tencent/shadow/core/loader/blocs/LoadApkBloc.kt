@@ -3,7 +3,6 @@ package com.tencent.shadow.core.loader.blocs
 import android.content.Context
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.loader.LoadParameters
-import com.tencent.shadow.core.loader.classloaders.BootPluginClassLoader
 import com.tencent.shadow.core.loader.classloaders.CombineClassLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadApkException
@@ -29,7 +28,7 @@ object LoadApkBloc {
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
         val dependsOn = loadParameters.dependsOn
         if (dependsOn == null || dependsOn.isEmpty()) {
-            return BootPluginClassLoader(
+            return PluginClassLoader(
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
