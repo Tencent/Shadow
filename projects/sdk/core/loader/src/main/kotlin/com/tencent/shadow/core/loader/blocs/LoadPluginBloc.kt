@@ -22,6 +22,7 @@ object LoadPluginBloc {
     @Throws(LoadPluginException::class)
     fun loadPlugin(
             executorService: ExecutorService,
+            abi: String,
             commonPluginPackageManager: CommonPluginPackageManager,
             componentManager: ComponentManager,
             pluginBroadcastManager: PluginBroadcastManager,

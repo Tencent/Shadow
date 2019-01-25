@@ -162,6 +162,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
         return LoadPluginBloc.loadPlugin(
                 mExecutorService,
+                mAbi,
                 mCommonPluginPackageManager,
                 mComponentManager,
                 getBusinessPluginReceiverManager(mHostAppContext),
