@@ -30,28 +30,22 @@ public class TestFileProviderActivity extends Activity {
         setContentView(R.layout.activity_test_file_provider);
         mImageView = findViewById(R.id.photo);
 
-        String fileName = String.valueOf(System.currentTimeMillis());
-        String filePath = getFilesDir() + "/images/" + fileName + ".jpg";
-        mFile = new File(filePath);
-        if (!mFile.getParentFile().exists()) {
-            mFile.getParentFile().mkdir();
-        }
-//                if (!mFile.exists()) {
-//                    try {
-//                        File.createTempFile(fileName, ".jpg", new File(getFilesDir().getAbsolutePath() + "/images/"));
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-
-
         findViewById(R.id.go_take_photo).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String fileName = String.valueOf(System.currentTimeMillis());
+                String filePath = getFilesDir() + "/images/" + fileName + ".jpg";
+                mFile = new File(filePath);
+                if (!mFile.getParentFile().exists()) {
+                    mFile.getParentFile().mkdir();
+                }
+
                 Uri contentUri;
                 if (targetSdkVersion() >= Build.VERSION_CODES.N) {
                     contentUri = FileProvider.getUriForFile(TestFileProviderActivity.this,
                             "com.tencent.shadow.demo_install.fileprovider", mFile);
+//                    contentUri = Uri.parse("content://com.tencent.shadow.contentprovider.authority/com.tencent.shadow.demo_install.fileprovider" +
+//                            "/name/data/data/com.tencent.shadow.demo_host/files/images/1548417832706.jpg");
                 } else {
                     contentUri = Uri.fromFile(mFile);
                 }

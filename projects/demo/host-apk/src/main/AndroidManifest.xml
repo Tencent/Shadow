@@ -87,8 +87,9 @@
 
 
         <provider
+            android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"
             android:authorities="com.tencent.shadow.contentprovider.authority"
-            android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"/>
+            android:exported="true" />
     </application>
 
 </manifest>

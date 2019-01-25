@@ -5,6 +5,8 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CancellationSignal;
+import android.os.ParcelFileDescriptor;
 
 /**
  * PluginContainerContentProvider的被委托者接口
@@ -36,4 +38,8 @@ public interface HostContentProviderDelegate {
     int bulkInsert( Uri uri,  ContentValues[] values);
 
     Bundle call(String method, String arg, Bundle extras);
+
+    ParcelFileDescriptor openFile(Uri uri, String mode);
+
+    ParcelFileDescriptor openFile(Uri uri, String mode, CancellationSignal signal);
 }

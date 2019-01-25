@@ -5,6 +5,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
 import android.os.Bundle;
 
 public class MixPackageManager extends PackageManagerWrapper {
@@ -53,5 +54,14 @@ public class MixPackageManager extends PackageManagerWrapper {
             hostInfo.versionName = pluginInfo.versionName ;
         }
         return hostInfo;
+    }
+
+    @Override
+    public ProviderInfo resolveContentProvider(String name, int flags) {
+        ProviderInfo providerInfo = mPluginPackageManager.resolveContentProvider(name, flags);
+        if (providerInfo == null) {
+            providerInfo = super.resolveContentProvider(name, flags);
+        }
+        return providerInfo;
     }
 }

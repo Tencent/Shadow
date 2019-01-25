@@ -1,10 +1,14 @@
 package com.tencent.shadow.core.loader.delegates
 
+import android.annotation.TargetApi
 import android.content.ContentValues
 import android.content.res.Configuration
 import android.database.Cursor
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.CancellationSignal
+import android.os.ParcelFileDescriptor
 
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.runtime.container.HostContentProviderDelegate
@@ -64,8 +68,19 @@ class ShadowContentProviderDelegate(private val mProviderManager: PluginContentP
         return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.bulkInsert(pluginUri, values)
     }
 
-    override fun call(method: String, arg: String?, extras: Bundle): Bundle {
+    override fun call(method: String, arg: String?, extras: Bundle): Bundle? {
         val pluginUri = mProviderManager.convert2PluginUri(extras)
         return mProviderManager.getPluginContentProvider(pluginAuthority = pluginUri.authority!!)!!.call(method, arg, extras)
+    }
+
+    override fun openFile(uri: Uri, mode: String?): ParcelFileDescriptor? {
+        val pluginUri = mProviderManager.convert2PluginUri(uri)
+        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.openFile(pluginUri, mode)
+    }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    override fun openFile(uri: Uri, mode: String?, signal: CancellationSignal?): ParcelFileDescriptor? {
+        val pluginUri = mProviderManager.convert2PluginUri(uri)
+        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.openFile(pluginUri, mode, signal)
     }
 }
