@@ -31,7 +31,6 @@ object LoadPluginBloc {
             hostAppContext: Context,
             installedApk: InstalledApk,
             loadParameters: LoadParameters,
-            parentClassLoader: ClassLoader,
             remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): Future<*> {
         if (installedApk.apkFilePath == null) {
@@ -39,7 +38,7 @@ object LoadPluginBloc {
         } else {
             val buildClassLoader = executorService.submit(Callable {
                 lock.withLock {
-                    LoadApkBloc.loadPlugin(hostAppContext, installedApk, loadParameters, parentClassLoader, pluginPartsMap)
+                    LoadApkBloc.loadPlugin(hostAppContext, installedApk, loadParameters, pluginPartsMap)
                 }
             })
 

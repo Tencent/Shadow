@@ -22,7 +22,7 @@ import java.io.File
 */
 class PluginClassLoader(
         hostAppContext: Context, dexPath: String, optimizedDirectory: File?, private val librarySearchPath: String?, parent: ClassLoader,
-        private val hostParentClassLoader: ClassLoader
+        private val specialClassLoader: ClassLoader?
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
     init {
@@ -34,7 +34,7 @@ class PluginClassLoader(
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
-        if (parent is PluginClassLoader || parent is CombineClassLoader //如果parent是一个PluginClassLoader或者CombineClassLoader,说明是有依赖关系的，需要走正常的双亲委派
+        if (specialClassLoader == null //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
                 || className.startsWith("com.tencent.shadow.runtime")
                 || className.startsWith("org.apache.commons.logging")//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
                 || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的
@@ -51,7 +51,7 @@ class PluginClassLoader(
                 }
                 if (clazz == null) {
                     try {
-                        clazz = hostParentClassLoader.loadClass(className)!!
+                        clazz = specialClassLoader.loadClass(className)!!
                     } catch (e: ClassNotFoundException) {
                         if (className.startsWith("com.tencent")) {
                             throw suppressed!!

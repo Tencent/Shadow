@@ -81,7 +81,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
     }
 
-
     fun getPluginServiceManager(): PluginServiceManager {
         mPluginServiceManagerLock.withLock {
             return mPluginServiceManager
@@ -154,7 +153,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                 mHostAppContext,
                 installedApk,
                 loadParameters,
-                mHostAppContext.classLoader,
                 mShadowRemoteViewCreatorProvider)
     }
 

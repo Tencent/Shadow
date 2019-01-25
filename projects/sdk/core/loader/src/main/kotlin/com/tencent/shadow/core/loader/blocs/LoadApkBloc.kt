@@ -2,6 +2,7 @@ package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
 import com.tencent.shadow.core.common.InstalledApk
+import com.tencent.shadow.core.common.Logger
 import com.tencent.shadow.core.loader.LoadParameters
 import com.tencent.shadow.core.loader.classloaders.CombineClassLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
@@ -23,18 +24,20 @@ object LoadApkBloc {
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadPlugin(hostAppContext: Context, installedApk: InstalledApk, loadParameters: LoadParameters, parentClassLoader: ClassLoader, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
+    fun loadPlugin(hostAppContext: Context, installedApk: InstalledApk, loadParameters: LoadParameters, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
         val apk = File(installedApk.apkFilePath)
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
         val dependsOn = loadParameters.dependsOn
-        val hostParentClassLoader = parentClassLoader.parent;
+        //Logger类一定打包在宿主中，所在的classLoader即为加载宿主的classLoader
+        val hostClassLoader: ClassLoader = Logger::class.java.classLoader!!
+        val hostParentClassLoader = hostClassLoader.parent
         if (dependsOn == null || dependsOn.isEmpty()) {
             return PluginClassLoader(
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
                     installedApk.libraryPath,
-                    parentClassLoader,
+                    hostClassLoader,
                     hostParentClassLoader
             )
         } else if (dependsOn.size == 1) {
@@ -49,7 +52,7 @@ object LoadApkBloc {
                         odexDir,
                         installedApk.libraryPath,
                         pluginParts.classLoader,
-                        hostParentClassLoader
+                        null
                 )
             }
         } else {
@@ -68,7 +71,7 @@ object LoadApkBloc {
                     odexDir,
                     installedApk.libraryPath,
                     combineClassLoader,
-                    hostParentClassLoader
+                    null
             )
         }
     }
