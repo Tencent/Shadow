@@ -7,7 +7,6 @@ import android.os.Parcel
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
-import com.tencent.shadow.core.loader.classloaders.BootPluginClassLoader
 import com.tencent.shadow.core.loader.delegates.*
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
@@ -77,22 +76,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
     private val mHostAppContext: Context = hostAppContext
 
     private val mUiHandler = Handler(Looper.getMainLooper())
-
-    /**
-     * -----------------  BootClassLoader
-     *                        |
-     * -----------------xxxClassLoader
-     *                        |
-     * ---------------PathClassLoader
-     *                        |
-     * -----------BootPluginClassLoader
-     *               |              |
-     * ----PluginClassLoader----CombineClassLoader
-     *           |                           |
-     * -----PluginClassLoader------------PluginClassLoader---
-     *
-     */
-    private val mBootPluginClassLoader:ClassLoader = BootPluginClassLoader(mHostAppContext.classLoader)
 
     companion object {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
@@ -171,7 +154,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                 mHostAppContext,
                 installedApk,
                 loadParameters,
-                mBootPluginClassLoader,
+                mHostAppContext.classLoader,
                 mShadowRemoteViewCreatorProvider)
     }
 

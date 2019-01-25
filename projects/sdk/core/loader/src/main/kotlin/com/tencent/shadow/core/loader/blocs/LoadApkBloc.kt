@@ -27,13 +27,15 @@ object LoadApkBloc {
         val apk = File(installedApk.apkFilePath)
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
         val dependsOn = loadParameters.dependsOn
+        val hostParentClassLoader = parentClassLoader.parent;
         if (dependsOn == null || dependsOn.isEmpty()) {
             return PluginClassLoader(
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
                     installedApk.libraryPath,
-                    parentClassLoader
+                    parentClassLoader,
+                    hostParentClassLoader
             )
         } else if (dependsOn.size == 1) {
             val partKey = dependsOn[0]
@@ -46,7 +48,8 @@ object LoadApkBloc {
                         apk.absolutePath,
                         odexDir,
                         installedApk.libraryPath,
-                        pluginParts.classLoader
+                        pluginParts.classLoader,
+                        hostParentClassLoader
                 )
             }
         } else {
@@ -58,13 +61,14 @@ object LoadApkBloc {
                     pluginParts.classLoader
                 }
             }.toTypedArray()
-            val combineClassLoader = CombineClassLoader(dependsOnClassLoaders, parentClassLoader)
+            val combineClassLoader = CombineClassLoader(dependsOnClassLoaders, hostParentClassLoader)
             return PluginClassLoader(
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
                     installedApk.libraryPath,
-                    combineClassLoader
+                    combineClassLoader,
+                    hostParentClassLoader
             )
         }
     }
