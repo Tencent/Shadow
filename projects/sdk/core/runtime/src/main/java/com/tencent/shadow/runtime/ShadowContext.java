@@ -24,7 +24,6 @@ public class ShadowContext extends ContextThemeWrapper {
     LayoutInflater mLayoutInflater;
     String mLibrarySearchPath;
     protected String mPartKey;
-    private ContentResolverWrapper mResolverWrapper;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
 
     public ShadowContext() {
@@ -202,14 +201,6 @@ public class ShadowContext extends ContextThemeWrapper {
         final ApplicationInfo applicationInfo = super.getApplicationInfo();
         applicationInfo.nativeLibraryDir = mLibrarySearchPath;
         return applicationInfo;
-    }
-
-    @Override
-    public ContentResolverWrapper getContentResolver() {
-        if (mResolverWrapper == null) {
-            mResolverWrapper = new ContentResolverWrapper(this, super.getContentResolver());
-        }
-        return mResolverWrapper;
     }
 
     public PluginComponentLauncher getPendingIntentConverter() {

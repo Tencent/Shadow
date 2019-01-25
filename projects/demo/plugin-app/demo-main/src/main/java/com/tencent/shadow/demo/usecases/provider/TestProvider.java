@@ -1,6 +1,5 @@
 package com.tencent.shadow.demo.usecases.provider;
 
-import android.app.Application;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -44,20 +43,20 @@ public class TestProvider extends ContentProvider{
         return cursor;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         Uri returnUri;
         long _id;
-        switch ( buildUriMatcher().match(uri)) {
+        switch (buildUriMatcher().match(uri)) {
             case TEST:
                 _id = db.insert(TestProviderInfo.TestEntry.TABLE_NAME, null, values);
-                if ( _id > 0 ) {
+                if (_id > 0) {
                     returnUri = TestProviderInfo.TestEntry.buildUri(_id);
-                    ((Application) getContext()).getContentResolver().notifyChange(uri, null);
-                }
-                else
+                    getContext().getContentResolver().notifyChange(returnUri, null);
+                } else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             default:
