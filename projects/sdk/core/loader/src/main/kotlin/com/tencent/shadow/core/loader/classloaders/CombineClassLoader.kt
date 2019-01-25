@@ -6,20 +6,32 @@ class CombineClassLoader(private val classLoaders: Array<out ClassLoader>, paren
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(name: String, resolve: Boolean): Class<*> {
-        var c: Class<*>? = null
+        var c: Class<*>? = findLoadedClass(name)
         val classNotFoundException = ClassNotFoundException(name)
-        for (classLoader in classLoaders) {
+        if (c == null) {
             try {
-                c = classLoader.loadClass(name)!!
-                break
+                c = super.loadClass(name, resolve)
             } catch (e: ClassNotFoundException) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     classNotFoundException.addSuppressed(e)
                 }
             }
-        }
-        if (c == null) {
-            throw classNotFoundException
+
+            if (c == null) {
+                for (classLoader in classLoaders) {
+                    try {
+                        c = classLoader.loadClass(name)!!
+                        break
+                    } catch (e: ClassNotFoundException) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            classNotFoundException.addSuppressed(e)
+                        }
+                    }
+                }
+                if (c == null) {
+                    throw classNotFoundException
+                }
+            }
         }
         return c
     }
