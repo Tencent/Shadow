@@ -7,7 +7,10 @@ import android.os.Bundle
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.infos.PluginProviderInfo
+import com.tencent.shadow.core.loader.provider.PathStrategy
+import com.tencent.shadow.core.loader.provider.ProviderUtil
 import com.tencent.shadow.runtime.UriParseDelegate
+import java.io.File
 import java.util.HashMap
 import kotlin.collections.HashSet
 import kotlin.collections.set
@@ -28,6 +31,7 @@ class PluginContentProviderManager() : UriParseDelegate {
 
     private val pluginProviderInfoMap = HashMap<String, HashSet<PluginProviderInfo>?>()
 
+    private val pluginProviderPathStrategyMap = HashMap<String, HashMap<String, PathStrategy>>()
 
     override fun parse(uriString: String): Uri {
         if (uriString.startsWith(CONTENT_PREFIX)) {
@@ -48,6 +52,17 @@ class PluginContentProviderManager() : UriParseDelegate {
         return pluginUri
     }
 
+    override fun getUriForFile(cxt: Context?, authority: String?, file: File?): Uri? {
+        for ((_, pathStrategyMap) in pluginProviderPathStrategyMap) {
+            for ((pluginAuthority, pathStrategy) in pathStrategyMap) {
+                if (pluginAuthority == authority) {
+                    return pathStrategy.getUriForFile(file)
+                }
+            }
+        }
+        return null
+    }
+
     fun addContentProviderInfo(partKey: String, pluginProviderInfo: PluginProviderInfo, containerProviderInfo: ContainerProviderInfo) {
         if (providerMap.containsKey(pluginProviderInfo.authority)) {
             throw RuntimeException("重复添加 ContentProvider")
@@ -62,8 +77,6 @@ class PluginContentProviderManager() : UriParseDelegate {
         }
         pluginProviderInfos?.add(pluginProviderInfo)
         pluginProviderInfoMap.put(partKey, pluginProviderInfos)
-
-
     }
 
     fun createContentProviderAndCallOnCreate(mContext: Context, partKey: String, pluginParts: PluginParts?) {
@@ -72,6 +85,22 @@ class PluginContentProviderManager() : UriParseDelegate {
                 val clz = pluginParts!!.classLoader.loadClass(it.className)
                 val contentProvider = ContentProvider::class.java.cast(clz.newInstance())
                 contentProvider?.attachInfo(mContext, it.providerInfo)
+
+
+                val pathStrategyMap: HashMap<String, PathStrategy>?
+                        = if (pluginProviderPathStrategyMap.containsKey(partKey)) {
+                    pluginProviderPathStrategyMap[partKey]
+                } else {
+                    HashMap()
+                }
+                val pathStrategy: PathStrategy? = ProviderUtil.parsePathStrategy(
+                        mContext, providerAuthorityMap[it.authority], it.authority)
+                if (pathStrategy != null) {
+                    pathStrategyMap!![it.authority] = pathStrategy
+                    pluginProviderPathStrategyMap[partKey] = pathStrategyMap
+                }
+
+
                 providerMap[it.authority] = contentProvider
             } catch (e: Exception) {
                 throw RuntimeException(e)

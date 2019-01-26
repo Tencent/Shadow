@@ -62,8 +62,7 @@ public class ResolverHook {
         return resolver.bulkInsert(containerUri, values);
     }
 
-    public static Uri getFileUri(Context context, String authority, File file) {
-
-        return null;
+    public static Uri getUriForFile(Context context, String authority, File file) {
+        return UriConverter.getUriForFile(context, authority, file);
     }
 }

@@ -1,5 +1,6 @@
 package com.tencent.shadow.demo.usecases.provider;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -29,6 +30,10 @@ public class TestFileProviderActivity extends Activity {
 
         setContentView(R.layout.activity_test_file_provider);
         mImageView = findViewById(R.id.photo);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, 1001);
+        }
 
         findViewById(R.id.go_take_photo).setOnClickListener(new View.OnClickListener() {
             @Override

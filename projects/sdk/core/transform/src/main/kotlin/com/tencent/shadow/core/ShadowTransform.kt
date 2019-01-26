@@ -78,6 +78,7 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step4_redirectDialogMethod()
         step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()
+        step7_redirectFileProviderMethod()
         step8_redirectResolverMethod()
         step9_keepHostContext()
     }
@@ -260,6 +261,38 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
         forEachCanRecompileAppClass(listOf(AndroidPendingIntentClassname)) { appCtClass ->
             try {
+                appCtClass.instrument(codeConverter)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
+        }
+
+    }
+
+    private fun step7_redirectFileProviderMethod() {
+        val providerClassName = "android.support.v4.content.FileProvider"
+        val providerMethod = classPool[providerClassName].methods!!
+        val shadowUriMethod = classPool["com.tencent.shadow.runtime.ResolverHook"].methods!!
+
+        val methodGetUri = providerMethod.filter { it.name == "getUriForFile" }
+        System.err.println("methodGetUri $methodGetUri")
+        val shadowMethodGetUri = shadowUriMethod.filter { it.name == "getUriForFile" }
+        System.err.println("shadowMethodGetUri $shadowMethodGetUri")
+        val codeConverter = CodeConverter()
+
+        for (ctAndroidMethod in methodGetUri) {
+            for (ctShadowMethod in shadowMethodGetUri) {
+                if (ctAndroidMethod.methodInfo.descriptor == ctShadowMethod.methodInfo.descriptor) {
+                    System.err.println("redirectMethodCall")
+                    codeConverter.redirectMethodCall(ctAndroidMethod, ctShadowMethod)
+                }
+            }
+        }
+
+        forEachCanRecompileAppClass(listOf(providerClassName)) { appCtClass ->
+            try {
+                System.err.println("appCtClass instrument $appCtClass")
                 appCtClass.instrument(codeConverter)
             } catch (e: Exception) {
                 System.err.println("处理" + appCtClass.name + "时出错")
