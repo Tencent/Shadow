@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.os.Build;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PluginFragmentManager {
@@ -37,15 +38,14 @@ public class PluginFragmentManager {
     @TargetApi(Build.VERSION_CODES.O)
     public List<ShadowFragment> getFragments() {
         List<Fragment> containerFragments = mBase.getFragments();
+        List<ShadowFragment> pluginFragments = new ArrayList<>();
         if (containerFragments != null && containerFragments.size() > 0) {
-            List<ShadowFragment> pluginFragments = new ArrayList<>();
             for (Fragment containerFragment : containerFragments) {
                 if (containerFragment instanceof IContainerFragment) {
                     pluginFragments.add(((IContainerFragment) containerFragment).getPluginFragment());
                 }
             }
-            return pluginFragments;
         }
-        return null;
+        return pluginFragments.size() > 0 ? pluginFragments : Collections.EMPTY_LIST;
     }
 }
