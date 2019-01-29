@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.loader.LoadParameters
-import com.tencent.shadow.core.loader.classloaders.InterfaceClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
@@ -32,7 +31,6 @@ object LoadPluginBloc {
             hostAppContext: Context,
             installedApk: InstalledApk,
             loadParameters: LoadParameters,
-            parentClassLoader: ClassLoader,
             remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): Future<*> {
         if (installedApk.apkFilePath == null) {
@@ -40,7 +38,7 @@ object LoadPluginBloc {
         } else {
             val buildClassLoader = executorService.submit(Callable {
                 lock.withLock {
-                    LoadApkBloc.loadPlugin(hostAppContext, installedApk, loadParameters, parentClassLoader, pluginPartsMap)
+                    LoadApkBloc.loadPlugin(hostAppContext, installedApk, loadParameters, pluginPartsMap)
                 }
             })
 
@@ -112,27 +110,6 @@ object LoadPluginBloc {
         }
     }
 
-    fun loadInterface(
-            executorService: ExecutorService,
-            abi: String,
-            hostAppContext: Context,
-            comInterface: InterfaceClassLoader,
-            installedApk: InstalledApk
-    ): Future<*> {
-        if (installedApk.apkFilePath == null) {
-            throw LoadPluginException("apkFilePath==null")
-        } else {
-
-            return executorService.submit {
-                val pluginLoaderClassLoader = LoadApkBloc::class.java.classLoader
-                val hostAppParentClassLoader = pluginLoaderClassLoader.parent.parent
-                val pluginClassLoader = LoadApkBloc.loadInterface(hostAppContext, installedApk, hostAppParentClassLoader)
-
-                comInterface.addInterfaceClassLoader(pluginClassLoader)
-            }
-
-        }
-    }
 
 
 }
