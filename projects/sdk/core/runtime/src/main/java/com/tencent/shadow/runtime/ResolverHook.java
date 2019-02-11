@@ -3,14 +3,11 @@ package com.tencent.shadow.runtime;
 import android.annotation.TargetApi;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
-
-import java.io.File;
 
 public class ResolverHook {
 
@@ -62,7 +59,5 @@ public class ResolverHook {
         return resolver.bulkInsert(containerUri, values);
     }
 
-    public static Uri getUriForFile(Context context, String authority, File file) {
-        return UriConverter.getUriForFile(context, authority, file);
-    }
+
 }

@@ -18,6 +18,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         const val ShadowWebViewClassname = "com.tencent.shadow.runtime.ShadowWebView"
         const val AndroidPendingIntentClassname = "android.app.PendingIntent"
         const val ShadowPendingIntentClassname = "com.tencent.shadow.runtime.ShadowPendingIntent"
+        const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
+        const val AndroidUriClassname = "android.net.Uri"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.shadow.runtime.ShadowApplication"
@@ -78,7 +80,7 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step4_redirectDialogMethod()
         step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()
-        step7_redirectFileProviderMethod()
+        step7_redirectUriMethod()
         step8_redirectResolverMethod()
         step9_keepHostContext()
     }
@@ -270,29 +272,24 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
     }
 
-    private fun step7_redirectFileProviderMethod() {
-        val providerClassName = "android.support.v4.content.FileProvider"
-        val providerMethod = classPool[providerClassName].methods!!
-        val shadowUriMethod = classPool["com.tencent.shadow.runtime.ResolverHook"].methods!!
+    private fun step7_redirectUriMethod() {
+        val uriMethod = classPool[AndroidUriClassname].methods!!
+        val shadowUriMethod = classPool[ShadowUriClassname].methods!!
 
-        val methodGetUri = providerMethod.filter { it.name == "getUriForFile" }
-        System.err.println("methodGetUri $methodGetUri")
-        val shadowMethodGetUri = shadowUriMethod.filter { it.name == "getUriForFile" }
-        System.err.println("shadowMethodGetUri $shadowMethodGetUri")
+        val method_parse = uriMethod.filter { it.name == "parse"  }
+        val shadow_method_parse = shadowUriMethod.filter { it.name == "parse"}!!
         val codeConverter = CodeConverter()
 
-        for (ctAndroidMethod in methodGetUri) {
-            for (ctShadowMethod in shadowMethodGetUri) {
-                if (ctAndroidMethod.methodInfo.descriptor == ctShadowMethod.methodInfo.descriptor) {
-                    System.err.println("redirectMethodCall")
-                    codeConverter.redirectMethodCall(ctAndroidMethod, ctShadowMethod)
+        for( ctAndroidMethod in method_parse) {
+            for (ctShadowMedthod in shadow_method_parse) {
+                if( ctAndroidMethod.methodInfo.descriptor == ctShadowMedthod.methodInfo.descriptor){
+                    codeConverter.redirectMethodCall(ctAndroidMethod, ctShadowMedthod)
                 }
             }
         }
 
-        forEachCanRecompileAppClass(listOf(providerClassName)) { appCtClass ->
+        forEachCanRecompileAppClass(listOf(AndroidUriClassname)) { appCtClass ->
             try {
-                System.err.println("appCtClass instrument $appCtClass")
                 appCtClass.instrument(codeConverter)
             } catch (e: Exception) {
                 System.err.println("处理" + appCtClass.name + "时出错")
@@ -300,70 +297,56 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
             }
         }
 
+        val uriClass = classPool[AndroidUriClassname]
+        val uriBuilderName = "android.net.Uri\$Builder"
+        val uriBuilderClass = classPool[uriBuilderName]
+        val buildMethod = uriBuilderClass.getMethod("build", Descriptor.ofMethod(uriClass, null))
+        val newBuildMethod = classPool[ShadowUriClassname].getMethod("build", Descriptor.ofMethod(uriClass, arrayOf(uriBuilderClass)))
+        val codeConverterExt = CodeConverterExtension()
+        codeConverterExt.redirectMethodCallToStaticMethodCall(buildMethod, newBuildMethod)
+        forEachCanRecompileAppClass(listOf(uriBuilderName)) { appCtClass ->
+            try {
+                appCtClass.instrument(codeConverterExt)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
+        }
     }
 
     private fun step8_redirectResolverMethod() {
         val codeConverter = CodeConverterExtension()
         val resolverName = "android.content.ContentResolver"
         val resolverClass = classPool[resolverName]
-        val targetClass = classPool["com.tencent.shadow.runtime.ResolverHook"]
+        val targetClass = classPool[ShadowUriClassname]
         val uriClass = classPool["android.net.Uri"]
-        val contentValuesClass = classPool["android.content.ContentValues"]
         val stringClass = classPool["java.lang.String"]
-        val stringArrClass = classPool["java.lang.String[]"]
-        val cursorClass = classPool["android.database.Cursor"]
         val bundleClass = classPool["android.os.Bundle"]
-        val signalClass = classPool["android.os.CancellationSignal"]
-        val contentValueArrClass = classPool["android.content.ContentValues[]"]
-
-
-        val insertMethod = resolverClass.getMethod("insert", Descriptor.ofMethod(uriClass,
-                arrayOf(uriClass, contentValuesClass)))
-        val newInsertMethod = targetClass.getMethod("insert", Descriptor.ofMethod(uriClass,
-                arrayOf(resolverClass, uriClass, contentValuesClass)))
-        codeConverter.redirectMethodCallToStaticMethodCall(insertMethod, newInsertMethod)
-
-        val deleteMethod = resolverClass.getMethod("delete", Descriptor.ofMethod(CtClass.intType,
-                arrayOf(uriClass, stringClass, stringArrClass)))
-        val newDeleteMethod = targetClass.getMethod("delete", Descriptor.ofMethod(CtClass.intType,
-                arrayOf(resolverClass, uriClass, stringClass, stringArrClass)))
-        codeConverter.redirectMethodCallToStaticMethodCall(deleteMethod, newDeleteMethod)
-
-        val queryMethod1 = resolverClass.getMethod("query", Descriptor.ofMethod(cursorClass,
-                arrayOf(uriClass, stringArrClass, bundleClass, signalClass)))
-        val newQueryMethod1 = targetClass.getMethod("query", Descriptor.ofMethod(cursorClass,
-                arrayOf(resolverClass, uriClass, stringArrClass, bundleClass, signalClass)))
-        codeConverter.redirectMethodCallToStaticMethodCall(queryMethod1, newQueryMethod1)
-
-        val queryMethod2 = resolverClass.getMethod("query", Descriptor.ofMethod(cursorClass,
-                arrayOf(uriClass, stringArrClass, stringClass, stringArrClass, stringClass)))
-        val newQueryMethod2 = targetClass.getMethod("query", Descriptor.ofMethod(cursorClass,
-                arrayOf(resolverClass, uriClass, stringArrClass, stringClass, stringArrClass, stringClass)))
-        codeConverter.redirectMethodCallToStaticMethodCall(queryMethod2, newQueryMethod2)
-
-        val queryMethod3 = resolverClass.getMethod("query", Descriptor.ofMethod(cursorClass,
-                arrayOf(uriClass, stringArrClass, stringClass, stringArrClass, stringClass, signalClass)))
-        val newQueryMethod3 = targetClass.getMethod("query", Descriptor.ofMethod(cursorClass,
-                arrayOf(resolverClass, uriClass, stringArrClass, stringClass, stringArrClass, stringClass, signalClass)))
-        codeConverter.redirectMethodCallToStaticMethodCall(queryMethod3, newQueryMethod3)
-
-        val updateMethod = resolverClass.getMethod("update", Descriptor.ofMethod(CtClass.intType,
-                arrayOf(uriClass, contentValuesClass, stringClass, stringArrClass)))
-        val newUpdateMethod = targetClass.getMethod("update", Descriptor.ofMethod(CtClass.intType,
-                arrayOf(resolverClass, uriClass, contentValuesClass, stringClass, stringArrClass)))
-        codeConverter.redirectMethodCallToStaticMethodCall(updateMethod, newUpdateMethod)
-
-        val bulkInsertMethod = resolverClass.getMethod("bulkInsert", Descriptor.ofMethod(CtClass.intType,
-                arrayOf(uriClass, contentValueArrClass)))
-        val newBulkInsertMethod = targetClass.getMethod("bulkInsert", Descriptor.ofMethod(CtClass.intType,
-                arrayOf(resolverClass, uriClass, contentValueArrClass)))
-        codeConverter.redirectMethodCallToStaticMethodCall(bulkInsertMethod, newBulkInsertMethod)
+        val observerClass = classPool["android.database.ContentObserver"]
 
         val callMethod = resolverClass.getMethod("call", Descriptor.ofMethod(bundleClass,
                 arrayOf(uriClass, stringClass, stringClass, bundleClass)))
         val newCallMethod = targetClass.getMethod("call", Descriptor.ofMethod(bundleClass,
                 arrayOf(resolverClass, uriClass, stringClass, stringClass, bundleClass)))
         codeConverter.redirectMethodCallToStaticMethodCall(callMethod, newCallMethod)
+
+        val notifyMethod1 = resolverClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(uriClass, observerClass)))
+        val newNotifyMethod1 = targetClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(resolverClass, uriClass, observerClass)))
+        codeConverter.redirectMethodCallToStaticMethodCall(notifyMethod1, newNotifyMethod1)
+
+        val notifyMethod2 = resolverClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(uriClass, observerClass, CtClass.booleanType)))
+        val newNotifyMethod2 = targetClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(resolverClass, uriClass, observerClass, CtClass.booleanType)))
+        codeConverter.redirectMethodCallToStaticMethodCall(notifyMethod2, newNotifyMethod2)
+
+        val notifyMethod3 = resolverClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(uriClass, observerClass, CtClass.intType)))
+        val newNotifyMethod3 = targetClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(resolverClass, uriClass, observerClass, CtClass.intType)))
+        codeConverter.redirectMethodCallToStaticMethodCall(notifyMethod3, newNotifyMethod3)
 
         forEachCanRecompileAppClass(listOf(resolverName)) { appCtClass ->
             try {
