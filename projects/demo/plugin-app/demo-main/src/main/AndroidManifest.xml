@@ -43,6 +43,8 @@
 
         <activity android:name="com.tencent.shadow.demo.usecases.dialog.TestDialogActivity" />
 
+        <activity android:name="com.tencent.shadow.demo.usecases.view.TestViewConstructorCache" />
+
         <service android:name="com.tencent.shadow.demo.usecases.service.TestService"/>
 
         <receiver android:name="com.tencent.shadow.demo.usecases.receiver.MyReceiver">

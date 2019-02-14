@@ -14,6 +14,7 @@ import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
 import com.tencent.shadow.demo.usecases.service.TestStartServiceActivity;
+import com.tencent.shadow.demo.usecases.view.TestViewConstructorCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,11 @@ public class UseCaseManager {
         dialogCategory.caseList.add(new UseCase(Case_Dialog.CASE_SHOW_DIALOG,
                 "Dialog 相关测试", "测试show Dialog", TestDialogActivity.class));
 
+        UseCaseCategory viewCategory = new UseCaseCategory(Case_View.CATEGORY_ID, "View测试用例");
+        useCases.add(viewCategory);
+        viewCategory.caseList.add(new UseCase(Case_View.CASE_TEST_VIEW_CONS_CACHE,
+                "同名View构造器缓存冲突测试", "宿主和插件具有同名View应该都能正常加载各自的版本", TestViewConstructorCache.class));
+
 
     }
 
@@ -134,6 +140,12 @@ public class UseCaseManager {
         public final static int CATEGORY_ID = 6;
 
         public final static int CASE_SHOW_DIALOG = 60000;
+    }
+
+    private static class Case_View {
+        public final static int CATEGORY_ID = 7;
+
+        public final static int CASE_TEST_VIEW_CONS_CACHE = 70000;
     }
 
 }
