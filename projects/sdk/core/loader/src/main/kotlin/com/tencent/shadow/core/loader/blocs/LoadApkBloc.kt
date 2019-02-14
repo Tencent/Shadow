@@ -2,6 +2,7 @@ package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
 import com.tencent.shadow.core.common.InstalledApk
+import com.tencent.shadow.core.common.Logger
 import com.tencent.shadow.core.loader.LoadParameters
 import com.tencent.shadow.core.loader.classloaders.CombineClassLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
@@ -15,23 +16,6 @@ import java.io.File
  * @author cubershi
  */
 object LoadApkBloc {
-    /**
-     * 加载插件到ClassLoader中.
-     *
-     * @param installedPlugin    已安装（PluginManager已经下载解包）的插件
-     * @return 加载了插件的ClassLoader
-     */
-    @Throws(LoadApkException::class)
-    fun loadInterface(hostAppContext: Context, installedApk: InstalledApk, parentClassLoader: ClassLoader): PluginClassLoader {
-        val odexDir = installedApk.oDexPath
-        return PluginClassLoader(
-                hostAppContext,
-                installedApk.apkFilePath,
-                if (odexDir == null) null else File(odexDir),
-                installedApk.libraryPath,
-                parentClassLoader
-        )
-    }
 
     /**
      * 加载插件到ClassLoader中.
@@ -40,17 +24,21 @@ object LoadApkBloc {
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadPlugin(hostAppContext: Context, installedApk: InstalledApk, loadParameters: LoadParameters, parentClassLoader: ClassLoader, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
+    fun loadPlugin(hostAppContext: Context, installedApk: InstalledApk, loadParameters: LoadParameters, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
         val apk = File(installedApk.apkFilePath)
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
         val dependsOn = loadParameters.dependsOn
-        if (dependsOn == null) {
+        //Logger类一定打包在宿主中，所在的classLoader即为加载宿主的classLoader
+        val hostClassLoader: ClassLoader = Logger::class.java.classLoader!!
+        val hostParentClassLoader = hostClassLoader.parent
+        if (dependsOn == null || dependsOn.isEmpty()) {
             return PluginClassLoader(
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
                     installedApk.libraryPath,
-                    parentClassLoader
+                    hostClassLoader,
+                    hostParentClassLoader
             )
         } else if (dependsOn.size == 1) {
             val partKey = dependsOn[0]
@@ -63,7 +51,8 @@ object LoadApkBloc {
                         apk.absolutePath,
                         odexDir,
                         installedApk.libraryPath,
-                        pluginParts.classLoader
+                        pluginParts.classLoader,
+                        null
                 )
             }
         } else {
@@ -75,13 +64,14 @@ object LoadApkBloc {
                     pluginParts.classLoader
                 }
             }.toTypedArray()
-            val combineClassLoader = CombineClassLoader(dependsOnClassLoaders, parentClassLoader)
+            val combineClassLoader = CombineClassLoader(dependsOnClassLoaders, hostParentClassLoader)
             return PluginClassLoader(
                     hostAppContext,
                     apk.absolutePath,
                     odexDir,
                     installedApk.libraryPath,
-                    combineClassLoader
+                    combineClassLoader,
+                    null
             )
         }
     }
