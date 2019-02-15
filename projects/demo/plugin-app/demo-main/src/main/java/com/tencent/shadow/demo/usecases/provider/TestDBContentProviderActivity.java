@@ -106,6 +106,35 @@ public class TestDBContentProviderActivity extends BaseActivity {
         query(view);
     }
 
+    public void bulkInsert(View view) {
+        ContentValues[] values = new ContentValues[3];
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TestProviderInfo.TestEntry.COLUMN_NAME, "test");
+        contentValues.put(TestProviderInfo.TestEntry._ID, System.currentTimeMillis());
+        values[0] = contentValues;
+
+        contentValues = new ContentValues();
+        contentValues.put(TestProviderInfo.TestEntry.COLUMN_NAME, "test");
+        contentValues.put(TestProviderInfo.TestEntry._ID, System.currentTimeMillis() + 5);
+        values[1] = contentValues;
+
+        contentValues = new ContentValues();
+        contentValues.put(TestProviderInfo.TestEntry.COLUMN_NAME, "test");
+        contentValues.put(TestProviderInfo.TestEntry._ID, System.currentTimeMillis() + 10);
+        values[2] = contentValues;
+
+        getContentResolver().bulkInsert(TestProviderInfo.TestEntry.CONTENT_URI, values);
+
+        query(view);
+    }
+
+    public void call(View view) {
+        Bundle beauty = getContentResolver().call(TestProviderInfo.TestEntry.CONTENT_URI, "getBeauty", "18", null);
+        if (beauty != null) {
+            Toast.makeText(this, "get beauty who name is " + beauty.getString("name"), Toast.LENGTH_LONG).show();
+        }
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
