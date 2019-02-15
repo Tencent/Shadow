@@ -10,6 +10,7 @@ import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
+import com.tencent.shadow.demo.usecases.packagemanager.TestPackageManagerActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
@@ -82,6 +83,10 @@ public class UseCaseManager {
                 "Dialog 相关测试", "测试show Dialog", TestDialogActivity.class));
 
 
+        UseCaseCategory packageManagerCategory = new UseCaseCategory(Case_PackageManager.CATEGORY_ID, "PackageManager测试用例");
+        useCases.add(packageManagerCategory);
+        packageManagerCategory.caseList.add(new UseCase(Case_PackageManager.CASE_PACKAGEMANAGER,
+                "PackageManager调用测试", "测试PackageManager相关api的调用，确保插件调用相关api时可以正确获取到插件相关的信息", TestPackageManagerActivity.class));
     }
 
     public static UseCase findTestCaseById(int caseId) {
@@ -134,6 +139,12 @@ public class UseCaseManager {
         public final static int CATEGORY_ID = 6;
 
         public final static int CASE_SHOW_DIALOG = 60000;
+    }
+
+    private static class Case_PackageManager {
+        public final static int CATEGORY_ID = 7;
+
+        public final static int CASE_PACKAGEMANAGER = 60000;
     }
 
 }
