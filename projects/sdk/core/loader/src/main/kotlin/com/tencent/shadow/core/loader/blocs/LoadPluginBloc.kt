@@ -11,6 +11,7 @@ import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
+import com.tencent.shadow.runtime.ShadowPackageManager
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.io.File
 import java.util.concurrent.Callable
@@ -94,13 +95,13 @@ object LoadPluginBloc {
                 }
                 val pluginPackageManager = buildPackageManager.get()
                 val pluginClassLoader = buildClassLoader.get()
+                ShadowPackageManager.addPluginPackageManager(pluginClassLoader,pluginPackageManager)
                 val resources = buildResources.get()
                 val pluginInfo = pluginPackageManager.pluginInfo
                 val shadowApplication = buildApplication.get()
                 lock.withLock {
                     componentManager.addPluginApkInfo(pluginInfo)
                     pluginPartsMap[pluginInfo.partKey] = PluginParts(
-                            pluginPackageManager,
                             shadowApplication,
                             pluginClassLoader,
                             resources

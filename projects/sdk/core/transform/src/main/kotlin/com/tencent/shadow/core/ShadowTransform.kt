@@ -1,11 +1,11 @@
 package com.tencent.shadow.core
 
 import com.android.build.api.transform.TransformInvocation
-import com.tencent.shadow.core.transformkit.ClassPoolBuilder
-import com.tencent.shadow.core.transformkit.DirInputClass
-import com.tencent.shadow.core.transformkit.JarInputClass
-import com.tencent.shadow.core.transformkit.JavassistTransform
+import com.tencent.shadow.core.transformkit.*
 import javassist.*
+import javassist.bytecode.CodeAttribute
+import javassist.bytecode.MethodInfo
+import javassist.bytecode.Opcode
 import org.gradle.api.Project
 import java.io.File
 
@@ -22,6 +22,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         const val ShadowPendingIntentClassname = "com.tencent.shadow.runtime.ShadowPendingIntent"
         const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
         const val AndroidUriClassname = "android.net.Uri"
+        const val AndroidPackageManagerClassname = "android.content.pm.PackageManager"
+        const val ShadowAndroidPackageManagerClassname = "com.tencent.shadow.runtime.ShadowPackageManager"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.shadow.runtime.ShadowApplication"
@@ -66,6 +68,7 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
     private val containerFragmentCtClass: CtClass get() = classPool["com.tencent.shadow.runtime.ContainerFragment"]
     private val containerDialogFragmentCtClass: CtClass get() = classPool["com.tencent.shadow.runtime.ContainerDialogFragment"]
+    private val androidPackageManagerClass: CtClass get() = classPool[AndroidPackageManagerClassname]
 
     val mAppFragments: MutableSet<CtClass> = mutableSetOf()
     val mAppDialogFragments: MutableSet<CtClass> = mutableSetOf()
@@ -85,6 +88,7 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step6_redirectPendingIntentMethod()
         step7_redirectUriMethod()
         step8_keepHostContext()
+        step9_redirectPackageManagerMethod()
     }
 
 
@@ -384,6 +388,98 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                     it.instrument(codeConverter)
             }
         }
+    }
+
+    private fun step9_redirectPackageManagerMethod() {
+        val packageManagerMethod = classPool[AndroidPackageManagerClassname].methods
+        val method_targets = packageManagerMethod.filter { it.name == "getApplicationInfo" || it.name == "getActivityInfo" || it.name == "getPackageInfo" }
+
+        forEachCanRecompileAppClass(listOf(AndroidPackageManagerClassname)) { appCtClass ->
+            val codeConverter = CodeConverterExtension()
+            for (method_target in method_targets) {
+                if (matchMethod(method_target, appCtClass)) {
+                    System.out.println(appCtClass.name + " matchMethod PackageManager :" + method_target.methodInfo.name + "=====")
+                    try {
+                        val parameterTypes: Array<CtClass> = Array(method_target.parameterTypes.size + 1) { index ->
+                            if (index == 0) {
+                                androidPackageManagerClass
+                            } else {
+                                method_target.parameterTypes[index - 1]
+                            }
+                        }
+                        val newMethod = CtNewMethod.make(Modifier.PUBLIC or Modifier.STATIC, method_target.returnType, method_target.name + "_shadow", parameterTypes, method_target.exceptionTypes, null, appCtClass)
+                        val newBodyBuilder = StringBuilder()
+                        newBodyBuilder.append("return " + ShadowAndroidPackageManagerClassname + "." + method_target.methodInfo.name + "(" + appCtClass.name + ".class.getClassLoader(),")
+                        for (i in 1..newMethod.parameterTypes.size) {
+                            if (i > 1) {
+                                newBodyBuilder.append(',')
+                            }
+                            newBodyBuilder.append("\$${i}")
+                        }
+                        newBodyBuilder.append(");")
+
+                        newMethod.setBody(newBodyBuilder.toString())
+                        appCtClass.addMethod(newMethod)
+                        codeConverter.redirectMethodCallToStaticMethodCall(method_target, newMethod)
+                        appCtClass.instrument(codeConverter)
+                    } catch (e: Exception) {
+                        System.err.println("处理" + appCtClass.name + "时出错:" + e)
+                        throw e
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    fun matchMethod(ctMethod: CtMethod, clazz: CtClass): Boolean {
+        for (methodInfo in clazz.classFile2.methods) {
+            methodInfo as MethodInfo
+            val codeAttr: CodeAttribute? = methodInfo.codeAttribute
+            val constPool = methodInfo.constPool
+            if (codeAttr != null) {
+                val iterator = codeAttr.iterator()
+                while (iterator.hasNext()) {
+                    val pos = iterator.next()
+                    val c = iterator.byteAt(pos)
+                    if (c == Opcode.INVOKEINTERFACE || c == Opcode.INVOKESPECIAL
+                            || c == Opcode.INVOKESTATIC || c == Opcode.INVOKEVIRTUAL) {
+                        val index = iterator.u16bitAt(pos + 1)
+                        val cname = constPool.eqMember(ctMethod.name, ctMethod.methodInfo2.descriptor, index)
+                        val className = ctMethod.declaringClass.name
+                        val matched = cname != null && matchClass(ctMethod.name, ctMethod.methodInfo.descriptor, className, cname, clazz.classPool)
+                        if (matched) {
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun matchClass(methodName: String, methodDescriptor: String, classname: String, name: String, pool: ClassPool): Boolean {
+        if (classname == name)
+            return true
+
+        try {
+            val clazz = pool.get(name)
+            val declClazz = pool.get(classname)
+            if (clazz.subtypeOf(declClazz))
+                try {
+                    val m = clazz.getMethod(methodName, methodDescriptor)
+                    return m.declaringClass.name == classname
+                } catch (e: NotFoundException) {
+                    // maybe the original method has been removed.
+                    return true
+                }
+
+        } catch (e: NotFoundException) {
+            return false
+        }
+
+        return false
     }
 
     private fun CtMethod.copyDescriptorFrom(other: CtMethod) {

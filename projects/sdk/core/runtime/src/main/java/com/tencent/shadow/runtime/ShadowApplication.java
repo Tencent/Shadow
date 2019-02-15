@@ -7,7 +7,6 @@ import android.content.ComponentCallbacks;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 
@@ -19,7 +18,6 @@ import java.util.Map;
  * 用于在plugin-loader中调用假的Application方法的接口
  */
 public abstract class ShadowApplication extends ShadowContext {
-    private MixPackageManager mMixPackageManager;
 
     private Application mHostApplication;
 
@@ -134,16 +132,8 @@ public abstract class ShadowApplication extends ShadowContext {
         mHostApplication = (Application) hostAppContext;
     }
 
-    public void setPluginPackageManager(PackageManager pluginPackageManager) {
-        mMixPackageManager = new MixPackageManager(super.getPackageManager(), pluginPackageManager);
-    }
-
     public void setBroadcasts(Map<String, List<String>> broadcast){
         mBroadcasts = broadcast;
     }
 
-    @Override
-    public PackageManager getPackageManager() {
-        return mMixPackageManager;
-    }
 }
