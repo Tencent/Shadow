@@ -17,6 +17,7 @@ class PluginPackageManager(val commonPluginPackageManager: CommonPluginPackageMa
     override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo {
         val applicationInfo = ApplicationInfo()
         applicationInfo.metaData = pluginInfo.metaData
+        applicationInfo.className = pluginInfo.applicationClassName
         return applicationInfo
     }
 
