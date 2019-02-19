@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.transformkit
+package com.tencent.shadow.core.transform.common
 
 import com.android.build.api.transform.TransformInvocation
 import javassist.ClassPool

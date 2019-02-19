@@ -1,7 +1,8 @@
 package com.tencent.shadow.core.transform
 
-import com.tencent.shadow.core.transform.common.Transform
-import com.tencent.shadow.core.transformkit.InputClass
+import com.tencent.shadow.core.transform.common.InputClass
+import com.tencent.shadow.core.transform.common.SpecificTransform
+import com.tencent.shadow.core.transform.specific.*
 import javassist.ClassPool
 import javassist.CtClass
 
@@ -11,7 +12,11 @@ class TransformManager(val mCtClassInputMap: Map<CtClass, InputClass>,
 ) {
     private val allInputClass = mCtClassInputMap.keys
 
-    private val mTransformList: List<Transform> = listOf(
+    private val mTransformList: List<SpecificTransform> = listOf(
+            ApplicationTransform(),
+            ActivityTransform(),
+            ServiceTransform(),
+            InstrumentationTransform(),
             RemoteViewTransform(),
             FragmentTransform(mCtClassInputMap),
             DialogTransform(),

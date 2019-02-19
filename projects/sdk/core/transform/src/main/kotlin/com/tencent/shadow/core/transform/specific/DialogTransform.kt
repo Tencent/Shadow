@@ -1,11 +1,11 @@
-package com.tencent.shadow.core.transform
+package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.Transform
+import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.common.TransformStep
 import javassist.CodeConverter
 import javassist.CtClass
 
-class DialogTransform : Transform() {
+class DialogTransform : SpecificTransform() {
     companion object {
         const val AndroidDialogClassname = "android.app.Dialog"
         const val ShadowDialogClassname = "com.tencent.shadow.runtime.ShadowDialog"

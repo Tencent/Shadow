@@ -1,14 +1,14 @@
-package com.tencent.shadow.core.transform
+package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.Transform
+import com.tencent.shadow.core.transform.common.CodeConverterExtension
+import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.common.TransformStep
-import com.tencent.shadow.core.transformkit.CodeConverterExtension
 import javassist.ClassPool
 import javassist.CodeConverter
 import javassist.CtClass
 import javassist.bytecode.Descriptor
 
-class ContentProviderTransform : Transform() {
+class ContentProviderTransform : SpecificTransform() {
     companion object {
         const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
         const val AndroidUriClassname = "android.net.Uri"

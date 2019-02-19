@@ -1,11 +1,11 @@
-package com.tencent.shadow.core.transform
+package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.Transform
+import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.common.TransformStep
 import javassist.CodeConverter
 import javassist.CtClass
 
-class WebViewTransform : Transform() {
+class WebViewTransform : SpecificTransform() {
     companion object {
         const val AndroidWebViewClassname = "android.webkit.WebView"
         const val ShadowWebViewClassname = "com.tencent.shadow.runtime.ShadowWebView"

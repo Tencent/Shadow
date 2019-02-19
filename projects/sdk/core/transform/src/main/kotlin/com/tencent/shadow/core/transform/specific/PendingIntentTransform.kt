@@ -1,11 +1,11 @@
-package com.tencent.shadow.core.transform
+package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.Transform
+import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.common.TransformStep
 import javassist.CodeConverter
 import javassist.CtClass
 
-class PendingIntentTransform : Transform() {
+class PendingIntentTransform : SpecificTransform() {
 
     companion object {
         const val AndroidPendingIntentClassname = "android.app.PendingIntent"

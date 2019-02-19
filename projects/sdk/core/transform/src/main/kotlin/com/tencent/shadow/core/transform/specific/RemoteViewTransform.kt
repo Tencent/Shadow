@@ -1,13 +1,13 @@
-package com.tencent.shadow.core.transform
+package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.Transform
+import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.common.TransformStep
 import javassist.CtClass
 
 /**
  * 替换跨插件apk创建view相关的类
  */
-class RemoteViewTransform : Transform() {
+class RemoteViewTransform : SpecificTransform() {
 
     companion object {
         const val RemoteLocalSdkPackageName = "com.tencent.shadow.remoteview.localsdk"

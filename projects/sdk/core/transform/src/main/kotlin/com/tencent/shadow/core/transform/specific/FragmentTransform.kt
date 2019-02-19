@@ -1,14 +1,10 @@
-package com.tencent.shadow.core.transform
+package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.Transform
-import com.tencent.shadow.core.transform.common.TransformStep
-import com.tencent.shadow.core.transformkit.DirInputClass
-import com.tencent.shadow.core.transformkit.InputClass
-import com.tencent.shadow.core.transformkit.JarInputClass
+import com.tencent.shadow.core.transform.common.*
 import javassist.CtClass
 import java.io.File
 
-class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : Transform() {
+class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : SpecificTransform() {
     companion object {
         const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"
         const val ShadowDialogFragmentClassname = "com.tencent.shadow.runtime.ShadowDialogFragment"

@@ -5,7 +5,7 @@ import javassist.CtClass
 import javassist.CtMethod
 import javassist.NotFoundException
 
-abstract class Transform {
+abstract class SpecificTransform {
     private val _list = mutableListOf<TransformStep>()
 
     val list: List<TransformStep> = _list
