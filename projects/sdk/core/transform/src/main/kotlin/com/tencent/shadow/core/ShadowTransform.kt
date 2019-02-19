@@ -1,8 +1,9 @@
 package com.tencent.shadow.core
 
 import com.android.build.api.transform.TransformInvocation
-import com.tencent.shadow.core.transform.BaseTransform
+import com.tencent.shadow.core.transform.DialogTransform
 import com.tencent.shadow.core.transform.RemoteViewTransform
+import com.tencent.shadow.core.transform.common.BaseTransform
 import com.tencent.shadow.core.transformkit.ClassPoolBuilder
 import com.tencent.shadow.core.transformkit.DirInputClass
 import com.tencent.shadow.core.transformkit.JarInputClass
@@ -16,8 +17,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
     companion object {
         const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"
         const val ShadowDialogFragmentClassname = "com.tencent.shadow.runtime.ShadowDialogFragment"
-        const val AndroidDialogClassname = "android.app.Dialog"
-        const val ShadowDialogClassname = "com.tencent.shadow.runtime.ShadowDialog"
         const val AndroidWebViewClassname = "android.webkit.WebView"
         const val ShadowWebViewClassname = "com.tencent.shadow.runtime.ShadowWebView"
         const val AndroidPendingIntentClassname = "android.app.PendingIntent"
@@ -49,9 +48,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                 "android.app.Application\$ActivityLifecycleCallbacks"
                         to "com.tencent.shadow.runtime.ShadowActivityLifecycleCallbacks"
                 ,
-                AndroidDialogClassname
-                        to ShadowDialogClassname
-                ,
                 "android.app.Instrumentation"
                         to "com.tencent.shadow.runtime.ShadowInstrumentation"
 
@@ -74,12 +70,16 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step1_renameShadowClass()
 
         listOf(
-                RemoteViewTransform(mCtClassInputMap)
+                RemoteViewTransform(mCtClassInputMap, classPool)
         ).forEach(BaseTransform::perform)
 
         step2_findFragments()
         step3_renameFragments()
-        step4_redirectDialogMethod()
+
+        listOf(
+                DialogTransform(mCtClassInputMap, classPool)
+        ).forEach(BaseTransform::perform)
+
         step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()
         step7_redirectUriMethod()
@@ -181,31 +181,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                         inputClass.addOutput(newContainerFragmentCtClass.name, ctClassOriginOutputEntryName!!)
                     }
                 }
-            }
-        }
-    }
-
-    private fun step4_redirectDialogMethod() {
-        val dialogMethods = classPool[AndroidDialogClassname].methods!!
-        val shadowDialogMethods = classPool[ShadowDialogClassname].methods!!
-        val method_getOwnerActivity = dialogMethods.find { it.name == "getOwnerActivity" }!!
-        val method_setOwnerActivity = dialogMethods.find { it.name == "setOwnerActivity" }!!
-        val method_getOwnerPluginActivity = shadowDialogMethods.find { it.name == "getOwnerPluginActivity" }!!
-        val method_setOwnerPluginActivity = shadowDialogMethods.find { it.name == "setOwnerPluginActivity" }!!
-        //appClass中的Activity都已经被改名为ShadowActivity了．所以要把方法签名也先改一下．
-        method_getOwnerActivity.copyDescriptorFrom(method_getOwnerPluginActivity)
-        method_setOwnerActivity.copyDescriptorFrom(method_setOwnerPluginActivity)
-
-        val codeConverter = CodeConverter()
-        codeConverter.redirectMethodCall(method_getOwnerActivity, method_getOwnerPluginActivity)
-        codeConverter.redirectMethodCall(method_setOwnerActivity, method_setOwnerPluginActivity)
-
-        forEachCanRecompileAppClass(listOf(ShadowDialogClassname)) { appCtClass ->
-            try {
-                appCtClass.instrument(codeConverter)
-            } catch (e: Exception) {
-                System.err.println("处理" + appCtClass.name + "时出错")
-                throw e
             }
         }
     }
@@ -366,10 +341,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                     it.instrument(codeConverter)
             }
         }
-    }
-
-    private fun CtMethod.copyDescriptorFrom(other: CtMethod) {
-        methodInfo.descriptor = other.methodInfo.descriptor
     }
 
     private fun String.appendFragmentAppendix() = this + "_"

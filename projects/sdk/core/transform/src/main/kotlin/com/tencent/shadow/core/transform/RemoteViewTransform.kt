@@ -1,13 +1,16 @@
 package com.tencent.shadow.core.transform
 
+import com.tencent.shadow.core.transform.common.BaseTransform
 import com.tencent.shadow.core.transformkit.InputClass
+import javassist.ClassPool
 import javassist.CtClass
 
 /**
  * 替换跨插件apk创建view相关的类
  */
-class RemoteViewTransform(mCtClassInputMap: Map<CtClass, InputClass>)
-    : BaseTransform(mCtClassInputMap) {
+class RemoteViewTransform(mCtClassInputMap: Map<CtClass, InputClass>,
+                          mClassPool: ClassPool)
+    : BaseTransform(mCtClassInputMap, mClassPool) {
     companion object {
         const val RemoteLocalSdkPackageName = "com.tencent.shadow.remoteview.localsdk"
         val RemoteViewRenameMap = mapOf(
