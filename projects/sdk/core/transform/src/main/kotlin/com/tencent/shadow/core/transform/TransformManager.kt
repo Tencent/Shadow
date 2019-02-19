@@ -9,11 +9,12 @@ class TransformManager(val mCtClassInputMap: Map<CtClass, InputClass>,
                        val classPool: ClassPool,
                        useHostContext: () -> Array<String>
 ) {
-    val allInputClass = mCtClassInputMap.keys
+    private val allInputClass = mCtClassInputMap.keys
 
     private val mTransformList: List<Transform> = listOf(
             RemoteViewTransform(),
             DialogTransform(),
+            WebViewTransform(),
             KeepHostContextTransform(useHostContext())
     )
 

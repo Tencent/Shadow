@@ -17,8 +17,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
     companion object {
         const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"
         const val ShadowDialogFragmentClassname = "com.tencent.shadow.runtime.ShadowDialogFragment"
-        const val AndroidWebViewClassname = "android.webkit.WebView"
-        const val ShadowWebViewClassname = "com.tencent.shadow.runtime.ShadowWebView"
         const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
         const val AndroidUriClassname = "android.net.Uri"
         val RenameMap = mapOf(
@@ -72,7 +70,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         val transformManager = TransformManager(mCtClassInputMap, classPool, useHostContext)
         transformManager.fireAll()
 
-        step5_renameWebViewChildClass()
         step7_redirectUriMethod()
     }
 
@@ -171,25 +168,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                         inputClass.addOutput(newContainerFragmentCtClass.name, ctClassOriginOutputEntryName!!)
                     }
                 }
-            }
-        }
-    }
-
-    private fun step5_renameWebViewChildClass(){
-        forEachCanRecompileAppClass { ctClass ->
-            if (ctClass.superclass.name == AndroidWebViewClassname) {
-                ctClass.classFile.superclass = ShadowWebViewClassname
-            }
-        }
-
-        val codeConverter = CodeConverter()
-        codeConverter.replaceNew(classPool[AndroidWebViewClassname], classPool[ShadowWebViewClassname])
-        forEachCanRecompileAppClass(listOf(AndroidWebViewClassname)) { appCtClass ->
-            try {
-                appCtClass.instrument(codeConverter)
-            } catch (e: Exception) {
-                System.err.println("处理" + appCtClass.name + "时出错")
-                throw e
             }
         }
     }
