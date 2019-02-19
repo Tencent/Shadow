@@ -16,6 +16,7 @@ class TransformManager(val mCtClassInputMap: Map<CtClass, InputClass>,
             FragmentTransform(mCtClassInputMap),
             DialogTransform(),
             WebViewTransform(),
+            ContentProviderTransform(),
             KeepHostContextTransform(useHostContext())
     )
 
