@@ -1,6 +1,8 @@
 package com.tencent.shadow.core
 
 import com.android.build.api.transform.TransformInvocation
+import com.tencent.shadow.core.transform.BaseTransform
+import com.tencent.shadow.core.transform.RemoteViewTransform
 import com.tencent.shadow.core.transformkit.ClassPoolBuilder
 import com.tencent.shadow.core.transformkit.DirInputClass
 import com.tencent.shadow.core.transformkit.JarInputClass
@@ -54,14 +56,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                         to "com.tencent.shadow.runtime.ShadowInstrumentation"
 
         )
-
-        const val RemoteLocalSdkPackageName = "com.tencent.shadow.remoteview.localsdk"
-        val RemoteViewRenameMap = mapOf(
-                "com.tencent.shadow.remoteview.localsdk.RemoteViewCreator" to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator",
-                "com.tencent.shadow.remoteview.localsdk.RemoteViewCreatorFactory" to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorFactory",
-                "com.tencent.shadow.remoteview.localsdk.RemoteViewCreateCallback" to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreateCallback",
-                "com.tencent.shadow.remoteview.localsdk.RemoteViewCreateException" to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreateException"
-        )
     }
 
     private val containerFragmentCtClass: CtClass get() = classPool["com.tencent.shadow.runtime.ContainerFragment"]
@@ -78,6 +72,11 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
     override fun onTransform() {
         step1_renameShadowClass()
+
+        listOf(
+                RemoteViewTransform(mCtClassInputMap)
+        ).forEach(BaseTransform::perform)
+
         step2_findFragments()
         step3_renameFragments()
         step4_redirectDialogMethod()
@@ -85,20 +84,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step6_redirectPendingIntentMethod()
         step7_redirectUriMethod()
         step8_keepHostContext()
-    }
-
-
-
-    private fun renameRemoteViewCreatorClass() {
-        forEachAppClass { ctClass ->
-            // 除RemoteLocalSdk包外的所有类，都需要替换
-            if (RemoteLocalSdkPackageName != ctClass.packageName) {
-                RemoteViewRenameMap.forEach {
-                    ctClass.replaceClassName(it.key, it.value)
-                }
-            }
-
-        }
     }
 
     private inline fun forEachAppClass(action: (CtClass) -> Unit) {
@@ -148,9 +133,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                 ctClass.replaceClassName(it.key, it.value)
             }
         }
-
-        // 替换跨插件apk创建view相关的类
-        renameRemoteViewCreatorClass()
     }
 
     private fun step2_findFragments() {
