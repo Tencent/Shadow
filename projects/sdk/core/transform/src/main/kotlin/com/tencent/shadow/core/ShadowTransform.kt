@@ -17,8 +17,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         const val ShadowDialogFragmentClassname = "com.tencent.shadow.runtime.ShadowDialogFragment"
         const val AndroidWebViewClassname = "android.webkit.WebView"
         const val ShadowWebViewClassname = "com.tencent.shadow.runtime.ShadowWebView"
-        const val AndroidPendingIntentClassname = "android.app.PendingIntent"
-        const val ShadowPendingIntentClassname = "com.tencent.shadow.runtime.ShadowPendingIntent"
         const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
         const val AndroidUriClassname = "android.net.Uri"
         val RenameMap = mapOf(
@@ -73,7 +71,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         transformManager.fireAll()
 
         step5_renameWebViewChildClass()
-        step6_redirectPendingIntentMethod()
         step7_redirectUriMethod()
         step8_keepHostContext()
     }
@@ -194,33 +191,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                 throw e
             }
         }
-    }
-
-    private fun step6_redirectPendingIntentMethod(){
-        val pendingIntentMethod = classPool[AndroidPendingIntentClassname].methods!!
-        val shadowPendingIntentMethod = classPool[ShadowPendingIntentClassname].methods!!
-
-        val method_getPengdingIntent = pendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity" }
-        val shadow_method_getPengdingIntent = shadowPendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity"}!!
-        val codeConverter = CodeConverter()
-
-        for( ctAndroidMethod in method_getPengdingIntent) {
-            for (ctShadowMedthod in shadow_method_getPengdingIntent) {
-                if(ctShadowMedthod.methodInfo.name == ctAndroidMethod.methodInfo.name && ctAndroidMethod.methodInfo.descriptor == ctShadowMedthod.methodInfo.descriptor){
-                    codeConverter.redirectMethodCall(ctAndroidMethod, ctShadowMedthod)
-                }
-            }
-        }
-
-        forEachCanRecompileAppClass(listOf(AndroidPendingIntentClassname)) { appCtClass ->
-            try {
-                appCtClass.instrument(codeConverter)
-            } catch (e: Exception) {
-                System.err.println("处理" + appCtClass.name + "时出错")
-                throw e
-            }
-        }
-
     }
 
     private fun step7_redirectUriMethod(){
