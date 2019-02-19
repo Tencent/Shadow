@@ -11,6 +11,7 @@ import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
+import com.tencent.shadow.demo.usecases.provider.TestFileProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
 import com.tencent.shadow.demo.usecases.service.TestStartServiceActivity;
@@ -68,6 +69,8 @@ public class UseCaseManager {
         useCases.add(providerCategory);
         providerCategory.caseList.add(new UseCase(Case_Provider.CASE_DB,
                 "ContentProvider DB相关测试", "测试通过ContentProvider来操作数据库", TestDBContentProviderActivity.class));
+        providerCategory.caseList.add(new UseCase(Case_Provider.CASE_FILE,
+                "FileProvider相关测试", "通过使用系统相机拍照来测试FileProvider", TestFileProviderActivity.class));
 
 
         UseCaseCategory fragmentCategory = new UseCaseCategory(Case_Fragment.CATEGORY_ID, "fragment测试用例");
@@ -127,6 +130,7 @@ public class UseCaseManager {
         public final static int CATEGORY_ID = 4;
 
         public final static int CASE_DB = 40000;
+        public final static int CASE_FILE = 40001;
     }
 
     private static class Case_Fragment {
