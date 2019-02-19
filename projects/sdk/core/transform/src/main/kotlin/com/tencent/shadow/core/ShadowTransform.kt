@@ -1,9 +1,7 @@
 package com.tencent.shadow.core
 
 import com.android.build.api.transform.TransformInvocation
-import com.tencent.shadow.core.transform.DialogTransform
-import com.tencent.shadow.core.transform.RemoteViewTransform
-import com.tencent.shadow.core.transform.common.BaseTransform
+import com.tencent.shadow.core.transform.TransformManager
 import com.tencent.shadow.core.transformkit.ClassPoolBuilder
 import com.tencent.shadow.core.transformkit.DirInputClass
 import com.tencent.shadow.core.transformkit.JarInputClass
@@ -68,17 +66,11 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
     override fun onTransform() {
         step1_renameShadowClass()
-
-        listOf(
-                RemoteViewTransform(mCtClassInputMap, classPool)
-        ).forEach(BaseTransform::perform)
-
         step2_findFragments()
         step3_renameFragments()
 
-        listOf(
-                DialogTransform(mCtClassInputMap, classPool)
-        ).forEach(BaseTransform::perform)
+        val transformManager = TransformManager(mCtClassInputMap, classPool)
+        transformManager.fireAll()
 
         step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()

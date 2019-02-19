@@ -1,26 +1,19 @@
 package com.tencent.shadow.core.transform
 
-import com.tencent.shadow.core.transform.common.EachCanRecompileAppClassTransform
-import com.tencent.shadow.core.transformkit.InputClass
-import javassist.ClassPool
+import com.tencent.shadow.core.transform.common.Transform
+import com.tencent.shadow.core.transform.common.TransformStep
 import javassist.CodeConverter
 import javassist.CtClass
 
-class DialogTransform(mCtClassInputMap: Map<CtClass, InputClass>,
-                      mClassPool: ClassPool)
-    : EachCanRecompileAppClassTransform(
-        listOf(AndroidDialogClassname),
-        mCtClassInputMap,
-        mClassPool
-) {
+class DialogTransform : Transform() {
     companion object {
         const val AndroidDialogClassname = "android.app.Dialog"
         const val ShadowDialogClassname = "com.tencent.shadow.runtime.ShadowDialog"
     }
 
-    private val codeConverter: CodeConverter
+    private lateinit var codeConverter: CodeConverter
 
-    init {
+    override fun setup() {
         val dialogMethods = mClassPool[AndroidDialogClassname].methods!!
         val shadowDialogMethods = mClassPool[ShadowDialogClassname].methods!!
         val method_getOwnerActivity = dialogMethods.find { it.name == "getOwnerActivity" }!!
@@ -34,15 +27,30 @@ class DialogTransform(mCtClassInputMap: Map<CtClass, InputClass>,
         codeConverter = CodeConverter()
         codeConverter.redirectMethodCall(method_getOwnerActivity, method_getOwnerPluginActivity)
         codeConverter.redirectMethodCall(method_setOwnerActivity, method_setOwnerPluginActivity)
+
+        newStep(object : TransformStep {
+            override fun filter(allInputClass: Set<CtClass>) = allInputClass
+
+            override fun transform(ctClass: CtClass) {
+                ctClass.replaceClassName(AndroidDialogClassname, ShadowDialogClassname)
+            }
+
+        })
+
+        newStep(object : TransformStep {
+            override fun filter(allInputClass: Set<CtClass>): Set<CtClass> =
+                    allCanRecompileAppClass(allInputClass, listOf(AndroidDialogClassname))
+
+            override fun transform(ctClass: CtClass) {
+                try {
+                    ctClass.instrument(codeConverter)
+                } catch (e: Exception) {
+                    System.err.println("处理" + ctClass.name + "时出错")
+                    throw e
+                }
+            }
+
+        })
     }
 
-    override fun transform(ctClass: CtClass) {
-        try {
-            ctClass.replaceClassName(AndroidDialogClassname, ShadowDialogClassname)
-            ctClass.instrument(codeConverter)
-        } catch (e: Exception) {
-            System.err.println("处理" + ctClass.name + "时出错")
-            throw e
-        }
-    }
 }
