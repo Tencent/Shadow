@@ -4,7 +4,6 @@ import com.tencent.shadow.core.transform.TransformManager
 import com.tencent.shadow.core.transformkit.ClassPoolBuilder
 import com.tencent.shadow.core.transformkit.JavassistTransform
 import javassist.CtClass
-import javassist.NotFoundException
 import org.gradle.api.Project
 
 class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val useHostContext: () -> Array<String>) : JavassistTransform(project, classPoolBuilder) {
@@ -44,42 +43,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
     private inline fun forEachAppClass(action: (CtClass) -> Unit) {
         val appClasses = mCtClassInputMap.keys
         appClasses.forEach(action)
-    }
-
-    private inline fun forEachCanRecompileAppClass(targetClassList: List<String>, action: (CtClass) -> Unit) {
-        val appClasses = mCtClassInputMap.keys
-        appClasses.filter { ctClass ->
-            targetClassList.any { targetClass ->
-                ctClass.refClasses.contains(targetClass)
-            }
-        }.filter {
-            it.refClasses.all {
-                var found: Boolean;
-                try {
-                    classPool[it as String]
-                    found = true
-                } catch (e: NotFoundException) {
-                    found = false
-                }
-                found
-            }
-        }.forEach(action)
-    }
-
-    private inline fun forEachCanRecompileAppClass( action: (CtClass) -> Unit) {
-        val appClasses = mCtClassInputMap.keys
-        appClasses.filter {
-            it.refClasses.all {
-                var found: Boolean;
-                try {
-                    classPool[it as String]
-                    found = true
-                } catch (e: NotFoundException) {
-                    found = false
-                }
-                found
-            }
-        }.forEach(action)
     }
 
     private fun step1_renameShadowClass() {
