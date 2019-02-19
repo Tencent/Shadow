@@ -13,6 +13,7 @@ class TransformManager(val mCtClassInputMap: Map<CtClass, InputClass>,
 
     private val mTransformList: List<Transform> = listOf(
             RemoteViewTransform(),
+            FragmentTransform(mCtClassInputMap),
             DialogTransform(),
             WebViewTransform(),
             KeepHostContextTransform(useHostContext())

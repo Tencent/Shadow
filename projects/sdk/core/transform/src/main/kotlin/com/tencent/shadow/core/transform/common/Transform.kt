@@ -39,4 +39,19 @@ abstract class Transform {
                     found
                 }
             }.toSet()
+
+    fun CtClass.isClassOf(className: String): Boolean {
+        var tmp: CtClass? = this
+        do {
+            if (tmp?.name == className) {
+                return true
+            }
+            try {
+                tmp = tmp?.superclass
+            } catch (e: NotFoundException) {
+                return false
+            }
+        } while (tmp != null)
+        return false
+    }
 }

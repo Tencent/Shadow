@@ -1,20 +1,18 @@
 package com.tencent.shadow.core
 
-import com.android.build.api.transform.TransformInvocation
 import com.tencent.shadow.core.transform.TransformManager
-import com.tencent.shadow.core.transformkit.*
+import com.tencent.shadow.core.transformkit.ClassPoolBuilder
+import com.tencent.shadow.core.transformkit.CodeConverterExtension
+import com.tencent.shadow.core.transformkit.JavassistTransform
 import javassist.CodeConverter
 import javassist.CtClass
 import javassist.NotFoundException
 import javassist.bytecode.Descriptor
 import org.gradle.api.Project
-import java.io.File
 
 class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val useHostContext: () -> Array<String>) : JavassistTransform(project, classPoolBuilder) {
 
     companion object {
-        const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"
-        const val ShadowDialogFragmentClassname = "com.tencent.shadow.runtime.ShadowDialogFragment"
         const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
         const val AndroidUriClassname = "android.net.Uri"
         val RenameMap = mapOf(
@@ -26,12 +24,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                 ,
                 "android.app.Service"
                         to "com.tencent.shadow.runtime.ShadowService"
-                ,
-                "android.app.Fragment"
-                        to ShadowFragmentClassname
-                ,
-                "android.app.DialogFragment"
-                        to ShadowDialogFragmentClassname
                 ,
                 "android.app.FragmentManager"
                         to "com.tencent.shadow.runtime.PluginFragmentManager"
@@ -47,22 +39,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         )
     }
 
-    private val containerFragmentCtClass: CtClass get() = classPool["com.tencent.shadow.runtime.ContainerFragment"]
-    private val containerDialogFragmentCtClass: CtClass get() = classPool["com.tencent.shadow.runtime.ContainerDialogFragment"]
-
-    val mAppFragments: MutableSet<CtClass> = mutableSetOf()
-    val mAppDialogFragments: MutableSet<CtClass> = mutableSetOf()
-
-    override fun beforeTransform(invocation: TransformInvocation) {
-        super.beforeTransform(invocation)
-        mAppFragments.clear()
-        mAppDialogFragments.clear()
-    }
-
     override fun onTransform() {
         step1_renameShadowClass()
-        step2_findFragments()
-        step3_renameFragments()
 
         val transformManager = TransformManager(mCtClassInputMap, classPool, useHostContext)
         transformManager.fireAll()
@@ -116,56 +94,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         forEachAppClass { ctClass ->
             RenameMap.forEach {
                 ctClass.replaceClassName(it.key, it.value)
-            }
-        }
-    }
-
-    private fun step2_findFragments() {
-        forEachAppClass { ctClass ->
-            if (ctClass.isDialogFragment()) {
-                mAppDialogFragments.add(ctClass)
-            } else if (ctClass.isFragment()) {
-                mAppFragments.add(ctClass)
-            }
-        }
-    }
-
-    private fun step3_renameFragments() {
-        val fragmentsName = listOf(mAppFragments, mAppDialogFragments).flatten().flatMap { listOf(it.name) }
-        forEachAppClass { ctClass ->
-            fragmentsName.forEach { fragmentName ->
-                ctClass.replaceClassName(fragmentName, fragmentName.appendFragmentAppendix())
-            }
-        }
-        listOf(
-                mAppFragments to containerFragmentCtClass,
-                mAppDialogFragments to containerDialogFragmentCtClass
-        ).forEach { (fragmentSet, container) ->
-            fragmentSet.forEach {
-                val inputClass = mCtClassInputMap[it]!!
-                val originalFragmentName = it.name.removeFragmentAppendix()
-                var ctClassOriginOutputFile: File? = null
-                var ctClassOriginOutputEntryName: String? = null
-                when (inputClass) {
-                    is DirInputClass -> {
-                        ctClassOriginOutputFile = inputClass.getOutput(originalFragmentName)
-                    }
-                    is JarInputClass -> {
-                        ctClassOriginOutputEntryName = inputClass.getOutput(originalFragmentName)
-                    }
-                }
-
-                inputClass.renameOutput(originalFragmentName, it.name)
-
-                val newContainerFragmentCtClass = classPool.makeClass(originalFragmentName, container)
-                when (inputClass) {
-                    is DirInputClass -> {
-                        inputClass.addOutput(newContainerFragmentCtClass.name, ctClassOriginOutputFile!!)
-                    }
-                    is JarInputClass -> {
-                        inputClass.addOutput(newContainerFragmentCtClass.name, ctClassOriginOutputEntryName!!)
-                    }
-                }
             }
         }
     }
@@ -255,28 +183,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
             }
         }
     }
-
-    private fun String.appendFragmentAppendix() = this + "_"
-
-    private fun String.removeFragmentAppendix() = this.substring(0, this.length - 1)
-
-    private fun CtClass.isClassOf(className: String): Boolean {
-        var tmp: CtClass? = this
-        do {
-            if (tmp?.name == className) {
-                return true
-            }
-            try {
-                tmp = tmp?.superclass
-            } catch (e: NotFoundException) {
-                return false
-            }
-        } while (tmp != null)
-        return false
-    }
-
-    private fun CtClass.isFragment(): Boolean = isClassOf(ShadowFragmentClassname)
-    private fun CtClass.isDialogFragment(): Boolean = isClassOf(ShadowDialogFragmentClassname)
 
     override fun getName(): String = "ShadowTransform"
 }
