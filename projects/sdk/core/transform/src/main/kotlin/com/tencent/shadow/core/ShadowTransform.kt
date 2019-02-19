@@ -19,12 +19,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                 "android.app.Service"
                         to "com.tencent.shadow.runtime.ShadowService"
                 ,
-                "android.app.FragmentManager"
-                        to "com.tencent.shadow.runtime.PluginFragmentManager"
-                ,
-                "android.app.FragmentTransaction"
-                        to "com.tencent.shadow.runtime.PluginFragmentTransaction"
-                ,
                 "android.app.Application\$ActivityLifecycleCallbacks"
                         to "com.tencent.shadow.runtime.ShadowActivityLifecycleCallbacks"
                 ,

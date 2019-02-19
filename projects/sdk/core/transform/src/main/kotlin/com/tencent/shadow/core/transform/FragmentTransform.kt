@@ -22,6 +22,12 @@ class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : Transf
             ,
             "android.app.DialogFragment"
                     to ShadowDialogFragmentClassname
+            ,
+            "android.app.FragmentManager"
+                    to "com.tencent.shadow.runtime.PluginFragmentManager"
+            ,
+            "android.app.FragmentTransaction"
+                    to "com.tencent.shadow.runtime.PluginFragmentTransaction"
     )
 
     val mAppFragments: MutableSet<CtClass> = mutableSetOf()
