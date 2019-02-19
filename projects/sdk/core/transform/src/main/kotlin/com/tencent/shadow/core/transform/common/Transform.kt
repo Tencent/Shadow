@@ -16,7 +16,7 @@ abstract class Transform {
         _list.add(transform)
     }
 
-    abstract fun setup()
+    abstract fun setup(allInputClass: Set<CtClass>)
 
     fun CtMethod.copyDescriptorFrom(other: CtMethod) {
         methodInfo.descriptor = other.methodInfo.descriptor

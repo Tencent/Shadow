@@ -13,7 +13,7 @@ class DialogTransform : Transform() {
 
     private lateinit var codeConverter: CodeConverter
 
-    override fun setup() {
+    override fun setup(allInputClass: Set<CtClass>) {
         val dialogMethods = mClassPool[AndroidDialogClassname].methods!!
         val shadowDialogMethods = mClassPool[ShadowDialogClassname].methods!!
         val method_getOwnerActivity = dialogMethods.find { it.name == "getOwnerActivity" }!!

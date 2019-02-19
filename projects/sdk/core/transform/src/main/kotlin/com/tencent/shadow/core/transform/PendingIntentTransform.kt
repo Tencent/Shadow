@@ -14,7 +14,7 @@ class PendingIntentTransform : Transform() {
 
     val codeConverter = CodeConverter()
 
-    override fun setup() {
+    override fun setup(allInputClass: Set<CtClass>) {
         val pendingIntentMethod = mClassPool[AndroidPendingIntentClassname].methods!!
         val shadowPendingIntentMethod = mClassPool[ShadowPendingIntentClassname].methods!!
 

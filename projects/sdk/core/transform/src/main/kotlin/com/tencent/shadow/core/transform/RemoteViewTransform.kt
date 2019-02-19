@@ -23,7 +23,7 @@ class RemoteViewTransform : Transform() {
         )
     }
 
-    override fun setup() {
+    override fun setup(allInputClass: Set<CtClass>) {
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) = allInputClass
 
