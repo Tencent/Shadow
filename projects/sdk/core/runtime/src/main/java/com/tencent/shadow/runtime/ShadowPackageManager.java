@@ -24,6 +24,14 @@ public class ShadowPackageManager {
         sPluginPackageManagers.put(classLoader, packageManager);
     }
 
+    /**
+     * @param classLoader 对应插件所在的classLoader
+     * @param packageManager 宿主的packageManager
+     * @param packageName 包名
+     * @param flags flag
+     * @return  如果包名为插件包名则返回插件对应的applicationInfo，否则返回宿主packageManager查询到的applicationInfo
+     * @throws PackageManager.NameNotFoundException
+     */
     public static ApplicationInfo getApplicationInfo(ClassLoader classLoader, PackageManager packageManager, String packageName, int flags) throws PackageManager.NameNotFoundException {
         PackageManager pluginPackageManager = sPluginPackageManagers.get(classLoader);
         if (pluginPackageManager == null) {
@@ -41,6 +49,15 @@ public class ShadowPackageManager {
         return applicationInfo;
     }
 
+    /**
+     *
+     * @param classLoader classLoader 对应插件所在的classLoader
+     * @param packageManager 宿主的packageManager
+     * @param component 要查询的component
+     * @param flags flags
+     * @return  从所有插件中查询对应component的ActivityInfo，查询不到则从宿主packageManager中继续查找
+     * @throws PackageManager.NameNotFoundException
+     */
     public static ActivityInfo getActivityInfo(ClassLoader classLoader, PackageManager packageManager, ComponentName component, int flags) throws PackageManager.NameNotFoundException {
         for (PackageManager pluginPackageManager : sPluginPackageManagers.values()) {
             try {
@@ -52,7 +69,13 @@ public class ShadowPackageManager {
     }
 
     /**
-     * 获取应用的版本信息的时候，如果传入的包名是插件的，由于无法和宿主区分，这里返回插件的，宿主的用宿主的context getPackageManager去取吧
+     *
+     * @param classLoader classLoader 对应插件所在的classLoader
+     * @param packageManager 宿主的packageManager
+     * @param packageName 要查询的packageName
+     * @param flags flags
+     * @return  如果包名为插件包名则包含当前插件的版本信息的PackageInfo
+     * @throws PackageManager.NameNotFoundException
      */
     public static PackageInfo getPackageInfo(ClassLoader classLoader, PackageManager packageManager, String packageName, int flags) throws PackageManager.NameNotFoundException {
         PackageManager pluginPackageManager = sPluginPackageManagers.get(classLoader);
@@ -64,6 +87,15 @@ public class ShadowPackageManager {
         return hostInfo;
     }
 
+    /**
+     *
+     * @param classLoader classLoader 对应插件所在的classLoader
+     * @param packageManager 宿主的packageManager
+     * @param versionedPackage 要查询的versionedPackage
+     * @param flags flags
+     * @return  如果包名为插件包名则包含当前插件的版本信息的PackageInfo
+     * @throws PackageManager.NameNotFoundException
+     */
     @TargetApi(Build.VERSION_CODES.O)
     public static PackageInfo getPackageInfo(ClassLoader classLoader, PackageManager packageManager, VersionedPackage versionedPackage,
                                              int flags) throws PackageManager.NameNotFoundException{
