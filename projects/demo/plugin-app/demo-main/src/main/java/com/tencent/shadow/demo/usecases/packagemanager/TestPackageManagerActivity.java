@@ -36,17 +36,6 @@ public class TestPackageManagerActivity extends BaseActivity {
         }
     }
 
-    public void getHostApplicationInfo(View view){
-        try {
-            ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(),0);
-            mTvTextView.setText("ApplicationInfo className:"+applicationInfo.className+
-                    "\nnativeLibraryDir:"+applicationInfo.nativeLibraryDir
-                    +"\nmetaData:"+applicationInfo.metaData);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public void getActivityInfo(View view){
         try {
