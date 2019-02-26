@@ -433,6 +433,9 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
     }
 
 
+    /**
+     * 查找目标class是否存在目标method的调用
+     */
     fun matchMethod(ctMethod: CtMethod, clazz: CtClass): Boolean {
         for (methodInfo in clazz.classFile2.methods) {
             methodInfo as MethodInfo
