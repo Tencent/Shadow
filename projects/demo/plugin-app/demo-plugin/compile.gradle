@@ -1,0 +1,179 @@
+import org.json.simple.JSONArray
+import org.json.simple.JSONObject
+
+import java.security.MessageDigest
+
+buildscript {
+    repositories {
+        maven {
+            url "http://maven.oa.com/nexus/content/groups/androidbuild"
+        }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.1'
+    }
+}
+
+
+static String getFileMD5(File file) {
+    if (!file.isFile()) {
+        return null
+    }
+    MessageDigest digest = null
+    FileInputStream inStream = null
+    byte[] buffer = new byte[1024]
+    int len
+    try {
+        digest = MessageDigest.getInstance("MD5")
+        inStream = new FileInputStream(file)
+        while ((len = inStream.read(buffer, 0, 1024)) != -1) {
+            digest.update(buffer, 0, len)
+        }
+    } catch (Exception e) {
+        e.printStackTrace()
+        return null
+    } finally {
+        inStream.close()
+    }
+    return bytes2HexStr(digest.digest())
+}
+
+static String bytes2HexStr(byte[] bytes) {
+    char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray()
+    if (bytes == null || bytes.length == 0) {
+        return null
+    }
+
+    char[] buf = new char[2 * bytes.length]
+    try {
+        for (int i = 0; i < bytes.length; i++) {
+            byte b = bytes[i]
+            buf[2 * i + 1] = HEX_ARRAY[b & 0xF]
+            b = (byte) (b >>> 4)
+            buf[2 * i + 0] = HEX_ARRAY[b & 0xF]
+        }
+    } catch (Exception e) {
+        return ""
+    }
+
+    return new String(buf)
+}
+
+
+def createPluginConfigTask(buildType) {
+    def pluginFileName, loaderFileName, runtimeFileName
+
+    if (buildType == 'debug') {
+        pluginFileName = 'demo-plugin-debug.apk'
+        loaderFileName = 'dynamic-loader-apk-debug.apk'
+        runtimeFileName = 'dynamic-runtime-apk-debug.apk'
+    } else {
+        assert buildType == 'release'
+        pluginFileName = 'demo-plugin-releaseapk'
+        loaderFileName = 'dynamic-loader-apk-release.apk'
+        runtimeFileName = 'plugin_runtime-debug.apk'
+    }
+
+    File pluginFile = new File("$rootDir/projects/demo/plugin-app/demo-plugin/build/outputs/apk/${buildType}/${pluginFileName}")
+    File loaderFile = new File("$rootDir/projects/demo/dynamic-loader-apk/build/outputs/apk/${buildType}/${loaderFileName}")
+    File runtimeFile = new File("$rootDir/projects/demo/dynamic-runtime-apk/build/outputs/apk/${buildType}/${runtimeFileName}")
+
+    def targetConfigFile = file(project.getBuildDir().absolutePath + "/intermediates/generatePluginConfig/${buildType}/config.json")
+    targetConfigFile.getParentFile().mkdirs()
+
+    def versionName
+    def git_short_rev = project.GIT_SHORT_REV
+    if ("${System.env.IsFinalRelease}".equalsIgnoreCase("true")) {
+        versionName = "${System.env.MajorVersion}.${System.env.MinorVersion}.${System.env.FixVersion}" +
+                ".${System.env.BuildNo}-$git_short_rev"
+    } else if ("${System.env.CI}".equalsIgnoreCase("true")) {
+        String git_branch = project.GIT_BRANCH
+        def split = git_branch.split('/')
+        if (split.size() != 2) {
+            return split[0] + project.GIT_DESCRIBE
+        }
+        String branch_short_name = split[1]
+        def fileVersionName = "$branch_short_name-${System.env.BuildNo}-$git_short_rev"
+        versionName = fileVersionName
+    } else {
+        versionName = 'local'
+    }
+
+
+    def generateConfigTask = tasks.create("generate${buildType.capitalize()}Config") {
+        group = 'plugin'
+        description = '生成插件配置文件'
+        outputs.file(targetConfigFile)
+    }.dependsOn(":projects:demo:plugin-app:demo-plugin:assemble${buildType.capitalize()}")
+            .dependsOn(":projects:demo:dynamic-loader-apk:assemble${buildType.capitalize()}")
+            .dependsOn(":projects:demo:dynamic-runtime-apk:assemble${buildType.capitalize()}")
+            .doLast {
+        JSONObject json = new JSONObject()
+
+
+        //Json文件中 plugin-loader部分信息
+        JSONObject pluginLoaderObj = new JSONObject()
+        pluginLoaderObj.put("apkName", loaderFileName)
+        pluginLoaderObj.put("hash", getFileMD5(loaderFile).toString())
+        json.put("pluginLoader", pluginLoaderObj)
+
+
+        //Json文件中 plugin-runtime部分信息
+        JSONObject runtimeObj = new JSONObject()
+        runtimeObj.put("apkName", runtimeFileName)
+        runtimeObj.put("hash", getFileMD5(runtimeFile).toString())
+        json.put("runtime", runtimeObj)
+
+
+        //Json文件中 plugin部分信息
+        JSONArray jsonArr = new JSONArray()
+        JSONObject pluginObj = new JSONObject()
+        pluginObj.put("partKey", "GV")
+        pluginObj.put("apkName", pluginFileName)
+        pluginObj.put("hash", getFileMD5(pluginFile).toString())
+        jsonArr.add(pluginObj)
+        json.put("plugins", jsonArr)
+
+
+        //Config.json版本号
+        if (project.hasProperty('cVersion')) {
+            json.put("version", Integer.valueOf(cVersion.toString()))
+        }
+
+
+        //UUID UUID_NickName
+        String uuid = UUID.randomUUID().toString().toUpperCase()
+        json.put("UUID", uuid)
+        if (project.hasProperty('cUUID_NickName')) {
+            json.put("UUID_NickName", cUUID_NickName)
+        }
+
+
+        BufferedWriter bizWriter = new BufferedWriter(new FileWriter(targetConfigFile))
+        bizWriter.write(json.toJSONString())
+        bizWriter.newLine()
+        bizWriter.flush()
+        bizWriter.close()
+    }
+
+    tasks.create("package${buildType.capitalize()}Plugin", Zip) {
+        group = 'plugin'
+        description = '打包插件'
+        from pluginFile, loaderFile, runtimeFile, targetConfigFile
+        if ("${System.env.IsFinalRelease}".equalsIgnoreCase("true")) {
+            archiveName = "plugin-${System.env.MajorVersion}.${System.env.MinorVersion}" +
+                    ".${System.env.FixVersion}.${System.env.BuildNo}-${git_short_rev}.zip"
+        } else {
+            archiveName = "plugin-${buildType}-${versionName}.zip"
+        }
+        if ("${System.env.CI}".equalsIgnoreCase("true")) {
+            destinationDir(file("$rootDir/bin/"))
+        } else {
+            destinationDir(file("$rootDir/build/"))
+        }
+    }.dependsOn(generateConfigTask)
+}
+
+
+createPluginConfigTask('debug')
+createPluginConfigTask('release')

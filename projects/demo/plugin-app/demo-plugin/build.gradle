@@ -1,4 +1,5 @@
 apply from: "../demo-install/build.gradle"
+apply from: "$rootDir/projects/demo/plugin-app/demo-plugin/compile.gradle"
 
 android {
     defaultConfig {
