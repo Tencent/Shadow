@@ -5,17 +5,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class ShadowPackageItemInfo {
-
-    private static Map<ClassLoader, Resources> sPluginResources = new HashMap<>();
-
-    public static void addPluginPluginResources(ClassLoader classLoader, MixResources resources) {
-        sPluginResources.put(classLoader, resources);
-    }
-
 
     /**
      * @param classLoader 对应插件所在的classLoader
@@ -25,10 +15,8 @@ public class ShadowPackageItemInfo {
      * @return  返回所在插件的xml对应的XmlResourceParser
      */
     public static XmlResourceParser loadXmlMetaData(ClassLoader classLoader, PackageItemInfo packageItemInfo, PackageManager pm, String name) {
-        Resources resources = sPluginResources.get(classLoader);
-        if (resources == null) {
-            throw new RuntimeException("没有找到classLoader对应的resources classLoader:" + classLoader);
-        }
+        PluginPartInfo pluginPartInfo = PluginPartInfoManager.getPluginInfo(classLoader);
+        Resources resources = pluginPartInfo.application.getResources();
         if (packageItemInfo.metaData != null) {
             int resid = packageItemInfo.metaData.getInt(name);
             if (resid != 0) {

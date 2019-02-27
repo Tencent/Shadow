@@ -11,19 +11,10 @@ import android.content.pm.VersionedPackage;
 import android.os.Build;
 import android.os.Bundle;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 将插件中的PackageManager部分方法转调到本类上来，以达到修改PackageManager的行为
  */
 public class ShadowPackageManager {
-
-    private static Map<ClassLoader, PackageManager> sPluginPackageManagers = new HashMap<>();
-
-    public static void addPluginPackageManager(ClassLoader classLoader, PackageManager packageManager) {
-        sPluginPackageManagers.put(classLoader, packageManager);
-    }
 
     /**
      * @param classLoader 对应插件所在的classLoader
@@ -34,12 +25,9 @@ public class ShadowPackageManager {
      * @throws PackageManager.NameNotFoundException
      */
     public static ApplicationInfo getApplicationInfo(ClassLoader classLoader, PackageManager packageManager, String packageName, int flags) throws PackageManager.NameNotFoundException {
-        PackageManager pluginPackageManager = sPluginPackageManagers.get(classLoader);
-        if (pluginPackageManager == null) {
-            throw new RuntimeException("没有找到classLoader对应的packageManager classLoader:"+classLoader);
-        }
+        PluginPartInfo pluginPartInfo = PluginPartInfoManager.getPluginInfo(classLoader);
         final ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageName, flags);
-        final ApplicationInfo pluginAppInfo = pluginPackageManager.getApplicationInfo(packageName, flags);
+        final ApplicationInfo pluginAppInfo = pluginPartInfo.packageManager.getApplicationInfo(packageName, flags);
         if (pluginAppInfo.metaData != null) {
             if (applicationInfo.metaData == null) {
                 applicationInfo.metaData = new Bundle();
@@ -60,9 +48,9 @@ public class ShadowPackageManager {
      * @throws PackageManager.NameNotFoundException
      */
     public static ActivityInfo getActivityInfo(ClassLoader classLoader, PackageManager packageManager, ComponentName component, int flags) throws PackageManager.NameNotFoundException {
-        for (PackageManager pluginPackageManager : sPluginPackageManagers.values()) {
+        for (PluginPartInfo pluginPartInfo : PluginPartInfoManager.getAllPluginInfo()) {
             try {
-                return pluginPackageManager.getActivityInfo(component, flags);
+                return pluginPartInfo.packageManager.getActivityInfo(component, flags);
             } catch (PackageManager.NameNotFoundException ignored) {
             }
         }
@@ -79,10 +67,8 @@ public class ShadowPackageManager {
      * @throws PackageManager.NameNotFoundException
      */
     public static PackageInfo getPackageInfo(ClassLoader classLoader, PackageManager packageManager, String packageName, int flags) throws PackageManager.NameNotFoundException {
-        PackageManager pluginPackageManager = sPluginPackageManagers.get(classLoader);
-        if (pluginPackageManager == null) {
-            throw new RuntimeException("没有找到classLoader对应的packageManager classLoader:"+classLoader);
-        }
+        PluginPartInfo pluginPartInfo = PluginPartInfoManager.getPluginInfo(classLoader);
+        PackageManager pluginPackageManager = pluginPartInfo.packageManager;
         PackageInfo hostInfo = packageManager.getPackageInfo(packageName, flags);
         getPluginPackageInfo(packageName, flags, pluginPackageManager, hostInfo);
         return hostInfo;
@@ -100,17 +86,14 @@ public class ShadowPackageManager {
     @TargetApi(Build.VERSION_CODES.O)
     public static PackageInfo getPackageInfo(ClassLoader classLoader, PackageManager packageManager, VersionedPackage versionedPackage,
                                              int flags) throws PackageManager.NameNotFoundException{
-        PackageManager pluginPackageManager = sPluginPackageManagers.get(classLoader);
-        if (pluginPackageManager == null) {
-            throw new RuntimeException("没有找到classLoader对应的packageManager classLoader:"+classLoader);
-        }
+        PluginPartInfo pluginPartInfo = PluginPartInfoManager.getPluginInfo(classLoader);
+        PackageManager pluginPackageManager = pluginPartInfo.packageManager;
         PackageInfo hostInfo = packageManager.getPackageInfo(versionedPackage, flags);
         getPluginPackageInfo(versionedPackage.getPackageName(), flags, pluginPackageManager, hostInfo);
         return hostInfo;
     }
 
     private static void getPluginPackageInfo(String packageName, int flags, PackageManager pluginPackageManager, PackageInfo hostInfo) throws PackageManager.NameNotFoundException {
-        //当packageName为插件时 获取的PackageInfo不为空
         PackageInfo pluginInfo = pluginPackageManager.getPackageInfo(packageName, flags);
         if (pluginInfo != null) {
             hostInfo.versionCode = pluginInfo.versionCode;
@@ -126,8 +109,8 @@ public class ShadowPackageManager {
      * @return 从所有插件中查询对应name的ProviderInfo，查询不到则从宿主packageManager中继续查找
      */
     public static ProviderInfo resolveContentProvider(ClassLoader classLoader, PackageManager packageManager, String name, int flags) {
-        for (PackageManager pluginPackageManager : sPluginPackageManagers.values()) {
-            ProviderInfo providerInfo = pluginPackageManager.resolveContentProvider(name, flags);
+        for (PluginPartInfo pluginPartInfo : PluginPartInfoManager.getAllPluginInfo()) {
+            ProviderInfo providerInfo = pluginPartInfo.packageManager.resolveContentProvider(name, flags);
             if (providerInfo != null) {
                 return providerInfo;
             }
