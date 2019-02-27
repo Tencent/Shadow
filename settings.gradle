@@ -4,6 +4,9 @@ includeBuild 'projects/sdk/coding'
 includeBuild 'projects/sdk/core'
 includeBuild 'projects/sdk/dynamic'
 
+include ':projects:demo:dynamic-host-apk'
+include ':projects:demo:dynamic-runtime-apk'
+include ':projects:demo:dynamic-loader-apk'
 
 include ':projects:demo:host-apk'
 include ':projects:demo:dynamic-host-apk'
