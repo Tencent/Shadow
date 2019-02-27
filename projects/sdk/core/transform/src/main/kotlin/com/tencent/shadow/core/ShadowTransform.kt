@@ -4,9 +4,9 @@ import com.android.build.api.transform.TransformInvocation
 import com.tencent.shadow.core.transformkit.*
 import javassist.*
 import javassist.bytecode.CodeAttribute
+import javassist.bytecode.Descriptor
 import javassist.bytecode.MethodInfo
 import javassist.bytecode.Opcode
-import javassist.bytecode.Descriptor
 import org.gradle.api.Project
 import java.io.File
 
@@ -452,7 +452,10 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
     private fun step10_redirectPackageManagerMethod() {
         val packageManagerMethod = classPool[AndroidPackageManagerClassname].methods
-        val method_targets = packageManagerMethod.filter { it.name == "getApplicationInfo" || it.name == "getActivityInfo" || it.name == "getPackageInfo" }
+        val method_targets = packageManagerMethod.filter { it.name == "getApplicationInfo"
+                             || it.name == "getActivityInfo"
+                             || it.name == "getPackageInfo"
+                             || it.name == "resolveContentProvider"  }
 
         forEachCanRecompileAppClass(listOf(AndroidPackageManagerClassname)) { appCtClass ->
             val codeConverter = CodeConverterExtension()

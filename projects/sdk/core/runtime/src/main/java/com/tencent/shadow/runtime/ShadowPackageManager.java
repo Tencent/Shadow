@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
 import android.content.pm.VersionedPackage;
 import android.os.Build;
 import android.os.Bundle;
@@ -115,6 +116,23 @@ public class ShadowPackageManager {
             hostInfo.versionCode = pluginInfo.versionCode;
             hostInfo.versionName = pluginInfo.versionName;
         }
+    }
+
+    /**
+     * @param classLoader    对应插件所在的classLoader
+     * @param packageManager 宿主的packageManager
+     * @param name           要查询的ProviderInfo
+     * @param flags          flags
+     * @return 从所有插件中查询对应name的ProviderInfo，查询不到则从宿主packageManager中继续查找
+     */
+    public static ProviderInfo resolveContentProvider(ClassLoader classLoader, PackageManager packageManager, String name, int flags) {
+        for (PackageManager pluginPackageManager : sPluginPackageManagers.values()) {
+            ProviderInfo providerInfo = pluginPackageManager.resolveContentProvider(name, flags);
+            if (providerInfo != null) {
+                return providerInfo;
+            }
+        }
+        return packageManager.resolveContentProvider(name, flags);
     }
 
 
