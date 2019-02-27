@@ -7,6 +7,7 @@ dependencies {
     implementation "com.android.tools.build:gradle:$build_gradle_version"
     implementation 'org.javassist:javassist:3.22.0-GA'
     implementation gradleApi()
+    testImplementation 'junit:junit:4.12'
 }
 
 compileKotlin {
