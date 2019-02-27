@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.tencent.shadow.demo_install"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 24
         versionCode 1
         versionName "1.0"
     }

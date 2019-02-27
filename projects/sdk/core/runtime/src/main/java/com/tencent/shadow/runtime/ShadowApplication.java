@@ -112,6 +112,7 @@ public abstract class ShadowApplication extends ShadowContext {
                 = mActivityLifecycleCallbacksMap.get(callback);
         if (activityLifecycleCallbacks != null) {
             mHostApplication.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks);
+            mActivityLifecycleCallbacksMap.remove(callback);
         }
     }
 

@@ -12,9 +12,11 @@ import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
 import com.tencent.shadow.demo.usecases.packagemanager.TestPackageManagerActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
+import com.tencent.shadow.demo.usecases.provider.TestFileProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity;
 import com.tencent.shadow.demo.usecases.service.TestStartServiceActivity;
+import com.tencent.shadow.demo.usecases.view.TestViewConstructorCache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +70,8 @@ public class UseCaseManager {
         useCases.add(providerCategory);
         providerCategory.caseList.add(new UseCase(Case_Provider.CASE_DB,
                 "ContentProvider DB相关测试", "测试通过ContentProvider来操作数据库", TestDBContentProviderActivity.class));
+        providerCategory.caseList.add(new UseCase(Case_Provider.CASE_FILE,
+                "FileProvider相关测试", "通过使用系统相机拍照来测试FileProvider", TestFileProviderActivity.class));
 
 
         UseCaseCategory fragmentCategory = new UseCaseCategory(Case_Fragment.CATEGORY_ID, "fragment测试用例");
@@ -81,6 +85,11 @@ public class UseCaseManager {
         useCases.add(dialogCategory);
         dialogCategory.caseList.add(new UseCase(Case_Dialog.CASE_SHOW_DIALOG,
                 "Dialog 相关测试", "测试show Dialog", TestDialogActivity.class));
+
+        UseCaseCategory viewCategory = new UseCaseCategory(Case_View.CATEGORY_ID, "View测试用例");
+        useCases.add(viewCategory);
+        viewCategory.caseList.add(new UseCase(Case_View.CASE_TEST_VIEW_CONS_CACHE,
+                "同名View构造器缓存冲突测试", "宿主和插件具有同名View应该都能正常加载各自的版本", TestViewConstructorCache.class));
 
 
         UseCaseCategory packageManagerCategory = new UseCaseCategory(Case_PackageManager.CATEGORY_ID, "PackageManager测试用例");
@@ -126,6 +135,7 @@ public class UseCaseManager {
         public final static int CATEGORY_ID = 4;
 
         public final static int CASE_DB = 40000;
+        public final static int CASE_FILE = 40001;
     }
 
     private static class Case_Fragment {
@@ -141,10 +151,16 @@ public class UseCaseManager {
         public final static int CASE_SHOW_DIALOG = 60000;
     }
 
-    private static class Case_PackageManager {
+    private static class Case_View {
         public final static int CATEGORY_ID = 7;
 
-        public final static int CASE_PACKAGEMANAGER = 60000;
+        public final static int CASE_TEST_VIEW_CONS_CACHE = 70000;
+    }
+
+    private static class Case_PackageManager {
+        public final static int CATEGORY_ID = 8;
+
+        public final static int CASE_PACKAGEMANAGER = 80000;
     }
 
 }

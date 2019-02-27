@@ -6,7 +6,11 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CancellationSignal;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
+
+import java.io.FileNotFoundException;
 
 public class PluginContainerContentProvider extends ContentProvider {
 
@@ -88,7 +92,10 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public Bundle call(String method, String arg, Bundle extras) {
-        return super.call(method, arg, extras);
+        if (hostContentProviderDelegate != null) {
+            return hostContentProviderDelegate.call(method, arg, extras);
+        }
+        return null;
     }
 
 
@@ -113,4 +120,21 @@ public class PluginContainerContentProvider extends ContentProvider {
         }
     }
 
+    @Override
+    public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
+        if (hostContentProviderDelegate != null) {
+            return hostContentProviderDelegate.openFile(uri, mode);
+        } else {
+            return super.openFile(uri, mode);
+        }
+    }
+
+    @Override
+    public ParcelFileDescriptor openFile(Uri uri, String mode, CancellationSignal signal) throws FileNotFoundException {
+        if (hostContentProviderDelegate != null) {
+            return hostContentProviderDelegate.openFile(uri, mode, signal);
+        } else {
+            return super.openFile(uri, mode);
+        }
+    }
 }

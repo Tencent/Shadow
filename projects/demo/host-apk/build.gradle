@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId "com.tencent.shadow.demo_host"
         minSdkVersion project.MIN_SDK_VERSION
-        targetSdkVersion 22
+        targetSdkVersion 24
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
