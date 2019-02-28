@@ -27,7 +27,10 @@ android {
 
 dependencies {
     implementation 'com.tencent.shadow.dynamic:dynamic-manager'
-    compileOnly "com.tencent.shadow.core:common"
-    compileOnly "com.tencent.shadow.dynamic:dynamic-host"
+    implementation 'com.tencent.shadow.core:manager'
+    implementation 'com.tencent.shadow.dynamic:dynamic-loader'
+
+    compileOnly 'com.tencent.shadow.core:common-debug'
+    compileOnly 'com.tencent.shadow.dynamic:dynamic-host-debug'
 }
 
