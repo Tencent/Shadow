@@ -40,6 +40,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.25'
 
     implementation 'com.tencent.shadow.core:common'
+    implementation 'com.tencent.shadow.dynamic:dynamic-host'
 }
 
 def createCopyTask(projectName, buildType, name, apkName) {
@@ -62,9 +63,9 @@ def createCopyTask(projectName, buildType, name, apkName) {
 
 tasks.whenTaskAdded { task ->
     if (task.name == "generateDebugAssets") {
-        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin', 'debug', 'demo-plugin', 'plugin.apk')
+        task.dependsOn createCopyTask(':projects:demo:dynamic-pluginmanager-apk', 'debug', 'dynamic-pluginmanager-apk', 'plugin.apk')
     }
     if (task.name == "generateReleaseAssets") {
-        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin', 'release', 'demo-plugin', 'plugin.apk')
+        task.dependsOn createCopyTask(':projects:demo:dynamic-pluginmanager-apk', 'release', 'dynamic-pluginmanager-apk', 'plugin.apk')
     }
 }

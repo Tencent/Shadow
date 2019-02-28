@@ -4,12 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#fcfcfc"
+    android:padding="16dp"
     tools:context="com.tencent.shadow.demo.host.MainActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:textColor="@android:color/black"
+        android:layout_marginTop="20dp"
+        android:text="这是一个全动态的demo，插件管理（dynamic-pluginmanager-apk）,插件框架（dynamic-loader-apk及dynamic-runtime-apk），以及插件本身（demo-plugin）,都是动态加载的" />
 
     <Button
         android:text="启动插件"

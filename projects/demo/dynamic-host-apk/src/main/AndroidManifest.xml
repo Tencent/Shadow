@@ -87,8 +87,13 @@
             android:authorities="com.tencent.shadow.contentprovider.authority"
             android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"/>
 
+        <service android:name="com.tencent.shadow.demo.host.DemoPluginProcessService" />
 
-        <!--dynamic activity注册 start !-->
+
+        <!--dynamic activity注册
+          注意configChanges需要全注册
+          theme需要注册成透明
+          -->
         <activity android:name="com.tencent.shadow.runtime.container.PluginDefaultProxyActivity"
             android:launchMode="standard"
             android:screenOrientation="portrait"
@@ -115,7 +120,7 @@
             android:process=":remote"
             android:theme="@style/troop_Transparent"
             />
-        <!--dynamic activity注册 end !-->
+        <!--dynamic activity注册 end -->
     </application>
 
 </manifest>
