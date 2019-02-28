@@ -17,6 +17,7 @@ class PluginPackageManager(val commonPluginPackageManager: CommonPluginPackageMa
     override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo {
         val applicationInfo = ApplicationInfo()
         applicationInfo.metaData = pluginInfo.metaData
+        applicationInfo.className = pluginInfo.applicationClassName
         return applicationInfo
     }
 
@@ -106,15 +107,11 @@ class PluginPackageManager(val commonPluginPackageManager: CommonPluginPackageMa
         ImplementLater()
     }
 
-    override fun resolveContentProvider(name: String?, flags: Int): ProviderInfo {
+    override fun resolveContentProvider(name: String?, flags: Int): ProviderInfo? {
         val find = pluginInfo.mProviders.find {
             it.authority == name
         }
-        if (find == null) {
-            return ProviderInfo()
-        } else {
-            return find.providerInfo
-        }
+        return find?.providerInfo
     }
 
     override fun getApplicationEnabledSetting(packageName: String?): Int {
