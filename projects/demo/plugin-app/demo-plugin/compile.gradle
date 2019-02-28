@@ -128,7 +128,7 @@ def createPluginConfigTask(buildType) {
         //Json文件中 plugin部分信息
         JSONArray jsonArr = new JSONArray()
         JSONObject pluginObj = new JSONObject()
-        pluginObj.put("partKey", "GV")
+        pluginObj.put("partKey", "demo_main")
         pluginObj.put("apkName", pluginFileName)
         pluginObj.put("hash", getFileMD5(pluginFile).toString())
         jsonArr.add(pluginObj)
