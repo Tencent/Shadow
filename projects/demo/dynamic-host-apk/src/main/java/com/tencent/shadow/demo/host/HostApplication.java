@@ -4,6 +4,8 @@ import android.app.Application;
 import android.os.Build;
 import android.os.StrictMode;
 
+import com.tencent.shadow.core.common.LoggerFactory;
+
 public class HostApplication extends Application {
     private static Application sApp;
 
@@ -14,6 +16,7 @@ public class HostApplication extends Application {
 
         detectNonSdkApiUsageOnAndroidP();
 
+        LoggerFactory.setILoggerFactory(new DemoLoggerFactory());
     }
 
     private static void detectNonSdkApiUsageOnAndroidP() {

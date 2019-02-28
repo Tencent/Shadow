@@ -26,10 +26,12 @@ android {
     }
     sourceSets {
         debug {
-            assets.srcDir('build/generated/assets/demo-plugin/debug/')
+            assets.srcDir('build/generated/assets/dynamic-pluginmanager-apk/debug/')
+            assets.srcDir('build/generated/assets/plugin-zip/debug/')
         }
         release {
-            assets.srcDir('build/generated/assets/demo-plugin/release/')
+            assets.srcDir('build/generated/assets/dynamic-pluginmanager-apk/release/')
+            assets.srcDir('build/generated/assets/plugin-zip/release/')
         }
     }
 }
@@ -43,12 +45,9 @@ dependencies {
     implementation 'com.tencent.shadow.dynamic:dynamic-host'
 }
 
-def createCopyTask(projectName, buildType, name, apkName) {
-    def split = (projectName as String).split(':')
-    def moduleName = split[split.length - 1]
+def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
     def outputFile = file("${getBuildDir()}/generated/assets/${name}/${buildType}/${apkName}")
     outputFile.getParentFile().mkdirs()
-    def inputFile = file("${project("${projectName}").getBuildDir()}/outputs/apk/${buildType}/${moduleName}-${buildType}.apk")
     return tasks.create("copy${buildType.capitalize()}${name.capitalize()}Task", Copy) {
         group = 'build'
         description = "复制${name}到assets中."
@@ -58,14 +57,27 @@ def createCopyTask(projectName, buildType, name, apkName) {
         }
         into(outputFile.getParent())
 
-    }.dependsOn("${projectName}:assemble${buildType.capitalize()}")
+    }.dependsOn("${projectName}:${taskName}")
 }
+
 
 tasks.whenTaskAdded { task ->
     if (task.name == "generateDebugAssets") {
-        task.dependsOn createCopyTask(':projects:demo:dynamic-pluginmanager-apk', 'debug', 'dynamic-pluginmanager-apk', 'plugin.apk')
+        def buildType = 'debug'
+        def moduleName = 'dynamic-pluginmanager-apk'
+        def inputFile = file("${project(":projects:demo:dynamic-pluginmanager-apk").getBuildDir()}/outputs/apk/${buildType}/${moduleName}-${buildType}.apk")
+        task.dependsOn createCopyTask(':projects:demo:dynamic-pluginmanager-apk', buildType, moduleName, 'dynamic-pluginmanager.apk', inputFile, 'assembleDebug')
+
+        def zipFile =file("${getRootProject().getBuildDir()}/plugin-debug-local.zip")
+        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin', buildType, 'plugin-zip', 'plugin-debug-local.zip', zipFile, 'packageDebugPlugin')
     }
     if (task.name == "generateReleaseAssets") {
-        task.dependsOn createCopyTask(':projects:demo:dynamic-pluginmanager-apk', 'release', 'dynamic-pluginmanager-apk', 'plugin.apk')
+        def buildType = 'release'
+        def moduleName = 'dynamic-pluginmanager-apk'
+        def inputFile = file("${project(":projects:demo:dynamic-pluginmanager-apk").getBuildDir()}/outputs/apk/${buildType}/${moduleName}-${buildType}.apk")
+        task.dependsOn createCopyTask(':projects:demo:dynamic-pluginmanager-apk', buildType, moduleName, 'dynamic-pluginmanager.apk', inputFile, 'assembleRelease')
+
+        def zipFile =file("${getRootProject().getBuildDir()}/plugin-debug-release.zip")
+        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin', buildType, 'plugin-zip', 'plugin-release-local.zip', zipFile, 'packageReleasePlugin')
     }
 }

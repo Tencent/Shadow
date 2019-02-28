@@ -138,6 +138,8 @@ def createPluginConfigTask(buildType) {
         //Config.json版本号
         if (project.hasProperty('cVersion')) {
             json.put("version", Integer.valueOf(cVersion.toString()))
+        }else{
+            json.put("version", 1)
         }
 
 
@@ -146,6 +148,8 @@ def createPluginConfigTask(buildType) {
         json.put("UUID", uuid)
         if (project.hasProperty('cUUID_NickName')) {
             json.put("UUID_NickName", cUUID_NickName)
+        }else{
+            json.put("UUID_NickName", "1.0")
         }
 
 

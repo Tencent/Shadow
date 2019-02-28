@@ -71,7 +71,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="Shadow测试宿主App"
+        android:label="Shadow Dyanamic测试宿主App"
         android:name=".HostApplication"
         android:theme="@android:style/Theme.DeviceDefault"
         tools:ignore="GoogleAppIndexingWarning">
@@ -87,7 +87,9 @@
             android:authorities="com.tencent.shadow.contentprovider.authority"
             android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"/>
 
-        <service android:name="com.tencent.shadow.demo.host.DemoPluginProcessService" />
+        <service android:name="com.tencent.shadow.demo.host.DemoPluginProcessService"
+            android:process=":remote"
+            />
 
 
         <!--dynamic activity注册
