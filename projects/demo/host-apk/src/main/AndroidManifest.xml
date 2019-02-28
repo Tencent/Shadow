@@ -83,7 +83,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DefaultContainerActivity"></activity>
+        <activity android:name=".DefaultContainerActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
+            />
 
 
         <provider

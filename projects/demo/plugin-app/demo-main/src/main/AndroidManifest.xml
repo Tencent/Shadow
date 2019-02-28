@@ -27,6 +27,10 @@
 
         <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate" />
 
+        <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityOrientation"
+            android:configChanges="orientation"
+            />
+
         <activity android:name="com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity"/>
 
         <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem" />
