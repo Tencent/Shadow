@@ -54,7 +54,7 @@ public class DemoPluginManager extends FastPluginManager {
                     InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, true);
                     String partKey = "demo_main";
                     Intent pluginIntent = new Intent();
-                    pluginIntent.setClassName("com.tencent.shadow.demo_host", "com.tencent.shadow.demo.gallery.splash.SplashActivity");
+                    pluginIntent.setClassName(context.getPackageName(), "com.tencent.shadow.demo.gallery.splash.SplashActivity");
 
                     startPluginActivity(context, installedPlugin, partKey, pluginIntent);
                 } catch (Exception e) {
