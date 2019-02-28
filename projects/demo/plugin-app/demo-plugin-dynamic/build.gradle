@@ -1,8 +1,9 @@
 apply from: "../demo-install/build.gradle"
+apply from: "$rootDir/projects/demo/plugin-app/demo-plugin-dynamic/compile.gradle"
 
 android {
     defaultConfig {
-        applicationId "com.tencent.shadow.demo_host"
+        applicationId "com.tencent.shadow.dynamic_demo_host"
     }
 }
 

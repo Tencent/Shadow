@@ -64,17 +64,17 @@ def createPluginConfigTask(buildType) {
     def pluginFileName, loaderFileName, runtimeFileName
 
     if (buildType == 'debug') {
-        pluginFileName = 'demo-plugin-debug.apk'
+        pluginFileName = 'demo-plugin-dynamic-debug.apk'
         loaderFileName = 'dynamic-loader-apk-debug.apk'
         runtimeFileName = 'dynamic-runtime-apk-debug.apk'
     } else {
         assert buildType == 'release'
-        pluginFileName = 'demo-plugin-releaseapk'
+        pluginFileName = 'demo-plugin-dynamic-release.apk'
         loaderFileName = 'dynamic-loader-apk-release.apk'
         runtimeFileName = 'plugin_runtime-debug.apk'
     }
 
-    File pluginFile = new File("$rootDir/projects/demo/plugin-app/demo-plugin/build/outputs/apk/${buildType}/${pluginFileName}")
+    File pluginFile = new File("$rootDir/projects/demo/plugin-app/demo-plugin-dynamic/build/outputs/apk/${buildType}/${pluginFileName}")
     File loaderFile = new File("$rootDir/projects/demo/dynamic-loader-apk/build/outputs/apk/${buildType}/${loaderFileName}")
     File runtimeFile = new File("$rootDir/projects/demo/dynamic-runtime-apk/build/outputs/apk/${buildType}/${runtimeFileName}")
 
@@ -104,7 +104,7 @@ def createPluginConfigTask(buildType) {
         group = 'plugin'
         description = '生成插件配置文件'
         outputs.file(targetConfigFile)
-    }.dependsOn(":projects:demo:plugin-app:demo-plugin:assemble${buildType.capitalize()}")
+    }.dependsOn(":projects:demo:plugin-app:demo-plugin-dynamic:assemble${buildType.capitalize()}")
             .dependsOn(":projects:demo:dynamic-loader-apk:assemble${buildType.capitalize()}")
             .dependsOn(":projects:demo:dynamic-runtime-apk:assemble${buildType.capitalize()}")
             .doLast {
