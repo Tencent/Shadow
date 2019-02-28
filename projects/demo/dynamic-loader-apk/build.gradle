@@ -27,5 +27,8 @@ android {
 
 dependencies {
     implementation 'com.tencent.shadow.core:loader'
+
+    compileOnly 'com.tencent.shadow.core:runtime-debug'
+    compileOnly 'com.tencent.shadow.core:common-debug'
 }
 
