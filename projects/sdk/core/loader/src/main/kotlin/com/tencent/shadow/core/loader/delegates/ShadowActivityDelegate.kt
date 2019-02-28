@@ -84,6 +84,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
                 (pluginActivityInfo.activityInfo.configChanges
                         or ActivityInfo.CONFIG_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
                         or ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
+                        or 0x20000000 //见ActivityInfo.CONFIG_WINDOW_CONFIGURATION 系统处理属性
                         )
         mRawIntentExtraBundle = pluginInitBundle.getBundle(CM_EXTRAS_BUNDLE_KEY)
         mHostActivityDelegator.intent.replaceExtras(mRawIntentExtraBundle)
