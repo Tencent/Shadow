@@ -4,3 +4,4 @@ include 'dynamic-manager',
         'dynamic-host',
         'dynamic-loader',
         'dynamic-loader-impl'
+include ':jar-wrapper:dynamic-host-debug', ':jar-wrapper:dynamic-host-realse'
