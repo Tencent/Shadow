@@ -46,14 +46,10 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
             if (sCreateSystemMap.get(name) == null) {
                 sCreateSystemMap.put(name, mPartKey);
             }
-            if (mPartKey.equals(sCreateSystemMap.get(name))) {//首个插件中的自定义view让系统构造，当有其他插件重名的view需要构造时，走下面的自定义构造
+            try {
+                view = createCustomView(name, context, attrs);
+            } catch (Exception e) {
                 view = null;
-            } else {
-                try {
-                    view = createCustomView(name, context, attrs);
-                } catch (Exception e) {
-                    view = null;
-                }
             }
         } else {
             if (context instanceof PluginActivity) {//fragment的构造在activity中

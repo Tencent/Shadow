@@ -6,6 +6,8 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
@@ -43,20 +45,20 @@ public class TestProvider extends ContentProvider{
         return cursor;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Nullable
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         final SQLiteDatabase db = mOpenHelper.getWritableDatabase();
         Uri returnUri;
         long _id;
-        switch ( buildUriMatcher().match(uri)) {
+        switch (buildUriMatcher().match(uri)) {
             case TEST:
                 _id = db.insert(TestProviderInfo.TestEntry.TABLE_NAME, null, values);
-                if ( _id > 0 ) {
+                if (_id > 0) {
                     returnUri = TestProviderInfo.TestEntry.buildUri(_id);
-                    getContext().getContentResolver().notifyChange(uri, null);
-                }
-                else
+                    getContext().getContentResolver().notifyChange(returnUri, null);
+                } else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 break;
             default:
@@ -83,6 +85,16 @@ public class TestProvider extends ContentProvider{
             getContext().getContentResolver().notifyChange(uri, null);
         }
         return result;
+    }
+
+    public Bundle call(@NonNull String method, String arg, @Nullable Bundle extras) {
+        switch (method) {
+            case "getBeauty":
+                Bundle bundle = new Bundle();
+                bundle.putString("name", "Anne Hathaway");
+                return bundle;
+        }
+        return null;
     }
 
     private final static int TEST = 100;

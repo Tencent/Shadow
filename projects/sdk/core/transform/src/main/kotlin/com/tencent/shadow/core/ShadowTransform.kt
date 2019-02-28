@@ -1,11 +1,9 @@
 package com.tencent.shadow.core
 
 import com.android.build.api.transform.TransformInvocation
-import com.tencent.shadow.core.transformkit.ClassPoolBuilder
-import com.tencent.shadow.core.transformkit.DirInputClass
-import com.tencent.shadow.core.transformkit.JarInputClass
-import com.tencent.shadow.core.transformkit.JavassistTransform
+import com.tencent.shadow.core.transformkit.*
 import javassist.*
+import javassist.bytecode.Descriptor
 import org.gradle.api.Project
 import java.io.File
 
@@ -52,7 +50,6 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
                 ,
                 "android.app.Instrumentation"
                         to "com.tencent.shadow.runtime.ShadowInstrumentation"
-
         )
 
         const val RemoteLocalSdkPackageName = "com.tencent.shadow.remoteview.localsdk"
@@ -84,7 +81,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step5_renameWebViewChildClass()
         step6_redirectPendingIntentMethod()
         step7_redirectUriMethod()
-        step8_keepHostContext()
+        step8_redirectResolverMethod()
+        step9_keepHostContext()
     }
 
 
@@ -274,7 +272,7 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
 
     }
 
-    private fun step7_redirectUriMethod(){
+    private fun step7_redirectUriMethod() {
         val uriMethod = classPool[AndroidUriClassname].methods!!
         val shadowUriMethod = classPool[ShadowUriClassname].methods!!
 
@@ -299,9 +297,68 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
             }
         }
 
+        val uriClass = classPool[AndroidUriClassname]
+        val uriBuilderName = "android.net.Uri\$Builder"
+        val uriBuilderClass = classPool[uriBuilderName]
+        val buildMethod = uriBuilderClass.getMethod("build", Descriptor.ofMethod(uriClass, null))
+        val newBuildMethod = classPool[ShadowUriClassname].getMethod("build", Descriptor.ofMethod(uriClass, arrayOf(uriBuilderClass)))
+        val codeConverterExt = CodeConverterExtension()
+        codeConverterExt.redirectMethodCallToStaticMethodCall(buildMethod, newBuildMethod)
+        forEachCanRecompileAppClass(listOf(uriBuilderName)) { appCtClass ->
+            try {
+                appCtClass.instrument(codeConverterExt)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
+        }
     }
 
-    private fun step8_keepHostContext() {
+    private fun step8_redirectResolverMethod() {
+        val codeConverter = CodeConverterExtension()
+        val resolverName = "android.content.ContentResolver"
+        val resolverClass = classPool[resolverName]
+        val targetClass = classPool[ShadowUriClassname]
+        val uriClass = classPool["android.net.Uri"]
+        val stringClass = classPool["java.lang.String"]
+        val bundleClass = classPool["android.os.Bundle"]
+        val observerClass = classPool["android.database.ContentObserver"]
+
+        val callMethod = resolverClass.getMethod("call", Descriptor.ofMethod(bundleClass,
+                arrayOf(uriClass, stringClass, stringClass, bundleClass)))
+        val newCallMethod = targetClass.getMethod("call", Descriptor.ofMethod(bundleClass,
+                arrayOf(resolverClass, uriClass, stringClass, stringClass, bundleClass)))
+        codeConverter.redirectMethodCallToStaticMethodCall(callMethod, newCallMethod)
+
+        val notifyMethod1 = resolverClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(uriClass, observerClass)))
+        val newNotifyMethod1 = targetClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(resolverClass, uriClass, observerClass)))
+        codeConverter.redirectMethodCallToStaticMethodCall(notifyMethod1, newNotifyMethod1)
+
+        val notifyMethod2 = resolverClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(uriClass, observerClass, CtClass.booleanType)))
+        val newNotifyMethod2 = targetClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(resolverClass, uriClass, observerClass, CtClass.booleanType)))
+        codeConverter.redirectMethodCallToStaticMethodCall(notifyMethod2, newNotifyMethod2)
+
+        val notifyMethod3 = resolverClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(uriClass, observerClass, CtClass.intType)))
+        val newNotifyMethod3 = targetClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(resolverClass, uriClass, observerClass, CtClass.intType)))
+        codeConverter.redirectMethodCallToStaticMethodCall(notifyMethod3, newNotifyMethod3)
+
+        forEachCanRecompileAppClass(listOf(resolverName)) { appCtClass ->
+            try {
+                appCtClass.instrument(codeConverter)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错")
+                throw e
+            }
+        }
+    }
+
+    private fun step9_keepHostContext() {
         val ShadowContextClassName = "com.tencent.shadow.runtime.ShadowContext"
 
         data class Rule(

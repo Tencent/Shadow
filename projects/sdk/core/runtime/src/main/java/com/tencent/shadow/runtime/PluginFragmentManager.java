@@ -1,8 +1,14 @@
 package com.tencent.shadow.runtime;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.os.Build;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PluginFragmentManager {
     FragmentManager mBase;
@@ -27,5 +33,19 @@ public class PluginFragmentManager {
 
     public boolean executePendingTransactions() {
         return mBase.executePendingTransactions();
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    public List<ShadowFragment> getFragments() {
+        List<Fragment> containerFragments = mBase.getFragments();
+        List<ShadowFragment> pluginFragments = new ArrayList<>();
+        if (containerFragments != null && containerFragments.size() > 0) {
+            for (Fragment containerFragment : containerFragments) {
+                if (containerFragment instanceof IContainerFragment) {
+                    pluginFragments.add(((IContainerFragment) containerFragment).getPluginFragment());
+                }
+            }
+        }
+        return pluginFragments.size() > 0 ? pluginFragments : Collections.EMPTY_LIST;
     }
 }
