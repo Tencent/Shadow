@@ -3,8 +3,11 @@ package com.tencent.shadow.manager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
+import com.tencent.shadow.demo.pluginmanager.R;
 import com.tencent.shadow.dynamic.host.EnterCallback;
 
 import java.util.concurrent.ExecutorService;
@@ -15,8 +18,11 @@ public class DemoPluginManager extends FastPluginManager {
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
+    private Context mCurrentContext;
+
     public DemoPluginManager(Context context) {
         super(context);
+        mCurrentContext = context;
     }
 
     /**
@@ -44,8 +50,14 @@ public class DemoPluginManager extends FastPluginManager {
     }
 
     @Override
-    public void enter(final Context context, long formId, Bundle bundle, EnterCallback callback) {
+    public void enter(final Context context, long formId, Bundle bundle, final EnterCallback callback) {
         final String pluginZipPath = bundle.getString("pluginZipPath");
+
+        final View view = LayoutInflater.from(mCurrentContext).inflate(R.layout.activity_load_plugin,null);
+
+        if(callback != null){
+            callback.onShowLoadingView(view);
+        }
 
         executorService.execute(new Runnable() {
             @Override
@@ -59,6 +71,9 @@ public class DemoPluginManager extends FastPluginManager {
                     startPluginActivity(context, installedPlugin, partKey, pluginIntent);
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+                if(callback != null){
+                    callback.onCloseLoadingView();
                 }
             }
         });
