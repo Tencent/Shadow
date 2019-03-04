@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
+import com.tencent.shadow.demo.usecases.activity.TestActivityOrientation;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
@@ -48,6 +49,7 @@ public class UseCaseManager {
         useCase.bundle.putString("url", "https://www.baidu.com");
 
         activityCategory.caseList.add(useCase);
+        activityCategory.caseList.add(new UseCase(Case_Activity.CASE_ORIENTATION,"横竖屏切换测试","测试横竖屏切换时，Activity的生命周期变化是否和AndroidManifest.xml中配置的config相关", TestActivityOrientation.class));
 
 
 
@@ -116,6 +118,7 @@ public class UseCaseManager {
         public final static int CASE_ONCREATE = 10000;
         public final static int CASE_RECREATE = 10001;
         public final static int CASE_RECREATE_BY_SYTEM = 10002;
+        public final static int CASE_ORIENTATION = 10003;
     }
 
     private static class Case_Service {
