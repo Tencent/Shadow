@@ -20,6 +20,14 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         const val ShadowPendingIntentClassname = "com.tencent.shadow.runtime.ShadowPendingIntent"
         const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
         const val AndroidUriClassname = "android.net.Uri"
+        const val AndroidPackageManagerClassname = "android.content.pm.PackageManager"
+        const val ShadowAndroidPackageManagerClassname = "com.tencent.shadow.runtime.ShadowPackageManager"
+        const val AndroidProviderInfo = "android.content.pm.ProviderInfo"
+        const val AndroidActivityInfo = "android.content.pm.ActivityInfo"
+        const val AndroidApplicationInfo = "android.content.pm.ApplicationInfo"
+        const val AndroidServiceInfo = "android.content.pm.ServiceInfo"
+        const val AndroidPackageItemInfo = "android.content.pm.PackageItemInfo"
+        const val ShadowAndroidPackageItemInfo = "com.tencent.shadow.runtime.ShadowPackageItemInfo"
         val RenameMap = mapOf(
                 "android.app.Application"
                         to "com.tencent.shadow.runtime.ShadowApplication"
@@ -83,6 +91,8 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
         step7_redirectUriMethod()
         step8_redirectResolverMethod()
         step9_keepHostContext()
+        step10_redirectPackageManagerMethod()
+        step11_redirectPackageItemInfoMethod()
     }
 
 
@@ -442,6 +452,69 @@ class ShadowTransform(project: Project, classPoolBuilder: ClassPoolBuilder, val 
             }
         }
     }
+
+    private fun step10_redirectPackageManagerMethod() {
+        val method_targets = getTargetMethods(arrayOf(AndroidPackageManagerClassname), arrayOf("getActivityInfo", "getPackageInfo", "resolveContentProvider"))
+
+        forEachCanRecompileAppClass(listOf(AndroidPackageManagerClassname)) { appCtClass ->
+            val codeConverter = CodeConverterExtension()
+            for (method_target in method_targets) {
+                addStaticRedirectMethodIfNeed(classPool[AndroidPackageManagerClassname], method_target, appCtClass, ShadowAndroidPackageManagerClassname, codeConverter)
+            }
+        }
+
+    }
+
+    private fun step11_redirectPackageItemInfoMethod() {
+        val targetClassNames = arrayOf(AndroidProviderInfo, AndroidServiceInfo, AndroidApplicationInfo, AndroidActivityInfo);
+        val method_targets = getTargetMethods(targetClassNames, arrayOf("loadXmlMetaData"))
+
+        for (targetClassName in targetClassNames) {
+            forEachCanRecompileAppClass(listOf(targetClassName)) { appCtClass ->
+                val codeConverter = CodeConverterExtension()
+                for (method_target in method_targets) {
+                    addStaticRedirectMethodIfNeed(classPool[AndroidPackageItemInfo], method_target, appCtClass, ShadowAndroidPackageItemInfo, codeConverter)
+                }
+            }
+        }
+
+
+    }
+
+    private fun addStaticRedirectMethodIfNeed(targetClass: CtClass, method_target: CtMethod, appCtClass: CtClass, redirectClassName: String, codeConverter: CodeConverterExtension) {
+        if (matchMethodCallInClass(method_target, appCtClass)) {
+            System.out.println(appCtClass.name + " matchMethodCallInClass :" + method_target.methodInfo.name + "  =================")
+            try {
+                val parameterTypes: Array<CtClass> = Array(method_target.parameterTypes.size + 1) { index ->
+                    if (index == 0) {
+                        targetClass
+                    } else {
+                        method_target.parameterTypes[index - 1]
+                    }
+                }
+                val newMethod = CtNewMethod.make(Modifier.PUBLIC or Modifier.STATIC, method_target.returnType, method_target.name + "_shadow", parameterTypes, method_target.exceptionTypes, null, appCtClass)
+                val newBodyBuilder = StringBuilder()
+                newBodyBuilder.append("return " + redirectClassName + "." + method_target.methodInfo.name + "(" + appCtClass.name + ".class.getClassLoader(),")
+                for (i in 1..newMethod.parameterTypes.size) {
+                    if (i > 1) {
+                        newBodyBuilder.append(',')
+                    }
+                    newBodyBuilder.append("\$${i}")
+                }
+                newBodyBuilder.append(");")
+
+                newMethod.setBody(newBodyBuilder.toString())
+                appCtClass.addMethod(newMethod)
+                codeConverter.redirectMethodCallToStaticMethodCall(method_target, newMethod)
+                appCtClass.instrument(codeConverter)
+            } catch (e: Exception) {
+                System.err.println("处理" + appCtClass.name + "时出错:" + e)
+                throw e
+            }
+        }
+    }
+
+
 
     private fun CtMethod.copyDescriptorFrom(other: CtMethod) {
         methodInfo.descriptor = other.methodInfo.descriptor

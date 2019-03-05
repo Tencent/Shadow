@@ -21,11 +21,18 @@
             </intent-filter>
         </activity>
 
+        <meta-data android:name="test_meta" android:value="test_value" />
+
         <activity android:name="com.tencent.shadow.demo.gallery.MainActivity" />
 
         <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityReCreate" />
 
         <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate" />
+
+        <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityOrientation"
+            android:configChanges="orientation|screenSize|fontScale"
+            android:windowSoftInputMode="adjustResize"
+            />
 
         <activity android:name="com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity"/>
 
@@ -44,6 +51,8 @@
         <activity android:name="com.tencent.shadow.demo.usecases.dialog.TestDialogActivity" />
 
         <activity android:name="com.tencent.shadow.demo.usecases.view.TestViewConstructorCache" />
+
+        <activity android:name="com.tencent.shadow.demo.usecases.packagemanager.TestPackageManagerActivity" />
 
         <service android:name="com.tencent.shadow.demo.usecases.service.TestService"/>
 

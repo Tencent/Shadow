@@ -5,11 +5,13 @@ import android.os.Bundle;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
+import com.tencent.shadow.demo.usecases.activity.TestActivityOrientation;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
+import com.tencent.shadow.demo.usecases.packagemanager.TestPackageManagerActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.provider.TestFileProviderActivity;
 import com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity;
@@ -47,6 +49,7 @@ public class UseCaseManager {
         useCase.bundle.putString("url", "https://www.baidu.com");
 
         activityCategory.caseList.add(useCase);
+        activityCategory.caseList.add(new UseCase(Case_Activity.CASE_ORIENTATION,"横竖屏切换测试","测试横竖屏切换时，Activity的生命周期变化是否和AndroidManifest.xml中配置的config相关", TestActivityOrientation.class));
 
 
 
@@ -91,6 +94,10 @@ public class UseCaseManager {
                 "同名View构造器缓存冲突测试", "宿主和插件具有同名View应该都能正常加载各自的版本", TestViewConstructorCache.class));
 
 
+        UseCaseCategory packageManagerCategory = new UseCaseCategory(Case_PackageManager.CATEGORY_ID, "PackageManager测试用例");
+        useCases.add(packageManagerCategory);
+        packageManagerCategory.caseList.add(new UseCase(Case_PackageManager.CASE_PACKAGEMANAGER,
+                "PackageManager调用测试", "测试PackageManager相关api的调用，确保插件调用相关api时可以正确获取到插件相关的信息", TestPackageManagerActivity.class));
     }
 
     public static UseCase findTestCaseById(int caseId) {
@@ -111,6 +118,7 @@ public class UseCaseManager {
         public final static int CASE_ONCREATE = 10000;
         public final static int CASE_RECREATE = 10001;
         public final static int CASE_RECREATE_BY_SYTEM = 10002;
+        public final static int CASE_ORIENTATION = 10003;
     }
 
     private static class Case_Service {
@@ -150,6 +158,12 @@ public class UseCaseManager {
         public final static int CATEGORY_ID = 7;
 
         public final static int CASE_TEST_VIEW_CONS_CACHE = 70000;
+    }
+
+    private static class Case_PackageManager {
+        public final static int CATEGORY_ID = 8;
+
+        public final static int CASE_PACKAGEMANAGER = 80000;
     }
 
 }

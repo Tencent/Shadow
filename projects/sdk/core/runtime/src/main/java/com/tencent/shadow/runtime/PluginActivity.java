@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -34,8 +33,6 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
 
     ShadowApplication mPluginApplication;
 
-    PackageManager mPluginPackageManager;
-
     public final void setHostContextAsBase(Context context) {
         attachBaseContext(context);
     }
@@ -46,10 +43,6 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
 
     public void setPluginApplication(ShadowApplication pluginApplication) {
         mPluginApplication = pluginApplication;
-    }
-
-    public void setPluginPackageManager(PackageManager packageManager) {
-        mPluginPackageManager = packageManager;
     }
 
     public void onCreate(Bundle savedInstanceState) {
