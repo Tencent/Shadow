@@ -80,15 +80,15 @@ class ShadowPlugin : Plugin<Project> {
         val pluginApkTasks: MutableList<String> = mutableListOf()
         println("pluginApkProjects = " + extension.pluginApkProjectPaths.size)
         for (i in extension.pluginApkProjectPaths.indices) {
-            val task = (extension.pluginApkProjectPaths[i].replace("/", ":")
+            val task = ":" + (extension.pluginApkProjectPaths[i].replace("/", ":")
                     + ":assemble${buildType.capitalize()}")
             println("pluginApkProjects task = $task")
             pluginApkTasks.add(i, task)
         }
 
-        val runtimeTask = (extension.runtimeApkProjectPath.replace("/", ":")
+        val runtimeTask = ":" + (extension.runtimeApkProjectPath.replace("/", ":")
                 + ":assemble${buildType.capitalize()}")
-        val loaderTask = (extension.loaderApkProjectPath.replace("/", ":")
+        val loaderTask = ":" + (extension.loaderApkProjectPath.replace("/", ":")
                 + ":assemble${buildType.capitalize()}")
         println("loader task = $loaderTask")
         println("runtime task = $runtimeTask")
@@ -109,7 +109,7 @@ class ShadowPlugin : Plugin<Project> {
                     val pluginLoaderObj = JSONObject()
                     pluginLoaderObj["apkName"] = loaderApkName
                     val loaderFile: String = "${project.rootDir}" +
-                            "${extension.loaderApkProjectPath}/build/outputs/apk/$buildType/$loaderApkName"
+                            "/${extension.loaderApkProjectPath}/build/outputs/apk/$buildType/$loaderApkName"
                     println("loaderFile = $loaderFile")
                     println("loaderFile exists ? " + File(loaderFile).exists())
                     pluginLoaderObj["hash"] = ShadowPluginHelper.getFileMD5(File(loaderFile))
@@ -120,7 +120,7 @@ class ShadowPlugin : Plugin<Project> {
                     val runtimeObj = JSONObject()
                     runtimeObj["apkName"] = runtimeApkName
                     val runtimeFile: String = "${project.rootDir}" +
-                            "${extension.runtimeApkProjectPath}/build/outputs/apk/$buildType/$runtimeApkName"
+                            "/${extension.runtimeApkProjectPath}/build/outputs/apk/$buildType/$runtimeApkName"
                     println("runtimeFile = $runtimeFile")
                     println("runtimeFile exists ? " + File(runtimeFile).exists())
                     runtimeObj["hash"] = ShadowPluginHelper.getFileMD5(File(runtimeFile))
@@ -134,7 +134,7 @@ class ShadowPlugin : Plugin<Project> {
                         pluginObj["partKey"] = extension.pluginApkPartKeys[i]
                         pluginObj["apkName"] = pluginApkName[i]
                         val pluginApk = "${project.rootDir}" +
-                                "${extension.pluginApkProjectPaths[i]}/build/outputs/apk/$buildType/${pluginApkName[i]}"
+                                "/${extension.pluginApkProjectPaths[i]}/build/outputs/apk/$buildType/${pluginApkName[i]}"
                         println("pluginApkPath = $pluginApk")
                         println("pluginApkPath exits ? " + File(pluginApk).exists())
                         pluginObj["hash"] = ShadowPluginHelper.getFileMD5(File(pluginApk))
@@ -201,17 +201,17 @@ class ShadowPlugin : Plugin<Project> {
             targetConfigFile.parentFile.mkdirs()
 
             val runtimeFile = File("${project.rootDir}" +
-                    "${extension.runtimeApkProjectPath}/build/outputs/apk/$buildType/$runtimeApkName")
+                    "/${extension.runtimeApkProjectPath}/build/outputs/apk/$buildType/$runtimeApkName")
             println("runtimeFile = $runtimeFile")
 
             val loaderFile = File("${project.rootDir}" +
-                    "${extension.loaderApkProjectPath}/build/outputs/apk/$buildType/$loaderApkName")
+                    "/${extension.loaderApkProjectPath}/build/outputs/apk/$buildType/$loaderApkName")
             println("loaderFile = $loaderFile")
 
             val pluginFiles: MutableList<File> = mutableListOf()
             for (i in extension.pluginApkProjectPaths.indices) {
                 val pluginApk = "${project.rootDir}" +
-                        "${extension.pluginApkProjectPaths[i]}/build/outputs/apk/$buildType/${pluginApkName[i]}"
+                        "/${extension.pluginApkProjectPaths[i]}/build/outputs/apk/$buildType/${pluginApkName[i]}"
                 println("pluginApk = $pluginApk")
                 pluginFiles.add(File(pluginApk))
             }
