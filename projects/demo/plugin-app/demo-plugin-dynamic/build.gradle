@@ -39,7 +39,7 @@ packagePlugin {
         pluginApkNames = ['demo-plugin-dynamic-release.apk']
     }
 
-    pluginApkPartKeys = ['GVideo']
+    pluginApkPartKeys = ['demo_main']
     pluginApkProjectPaths = ['/projects/demo/plugin-app/demo-plugin-dynamic']
 
     loaderApkProjectPath = '/projects/demo/dynamic-loader-apk'
