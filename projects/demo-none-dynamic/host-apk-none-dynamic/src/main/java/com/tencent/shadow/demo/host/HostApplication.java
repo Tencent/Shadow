@@ -16,10 +16,7 @@ public class HostApplication extends Application {
 
         detectNonSdkApiUsageOnAndroidP();
 
-        LoggerFactory.setILoggerFactory(new DemoLoggerFactory());
-
-        PluginHelper.getInstance().init(this);
-
+        LoggerFactory.setILoggerFactory(new SLoggerFactory());
     }
 
     private static void detectNonSdkApiUsageOnAndroidP() {

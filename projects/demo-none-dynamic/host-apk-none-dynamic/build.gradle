@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId "com.tencent.shadow.demo_host"
         minSdkVersion project.MIN_SDK_VERSION
-        targetSdkVersion 22
+        targetSdkVersion 24
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -26,12 +26,10 @@ android {
     }
     sourceSets {
         debug {
-            assets.srcDir('build/generated/assets/pluginmanager-apk/debug/')
-            assets.srcDir('build/generated/assets/plugin-zip/debug/')
+            assets.srcDir('build/generated/assets/demo-plugin/debug/')
         }
         release {
-            assets.srcDir('build/generated/assets/pluginmanager-apk/release/')
-            assets.srcDir('build/generated/assets/plugin-zip/release/')
+            assets.srcDir('build/generated/assets/demo-plugin/release/')
         }
     }
 }
@@ -47,9 +45,12 @@ dependencies {
     implementation 'com.tencent.shadow.core:runtime'
 }
 
-def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
+def createCopyTask(projectName, buildType, name, apkName) {
+    def split = (projectName as String).split(':')
+    def moduleName = split[split.length - 1]
     def outputFile = file("${getBuildDir()}/generated/assets/${name}/${buildType}/${apkName}")
     outputFile.getParentFile().mkdirs()
+    def inputFile = file("${project("${projectName}").getBuildDir()}/outputs/apk/${buildType}/${moduleName}-${buildType}.apk")
     return tasks.create("copy${buildType.capitalize()}${name.capitalize()}Task", Copy) {
         group = 'build'
         description = "复制${name}到assets中."
@@ -59,27 +60,14 @@ def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
         }
         into(outputFile.getParent())
 
-    }.dependsOn("${projectName}:${taskName}")
+    }.dependsOn("${projectName}:assemble${buildType.capitalize()}")
 }
-
 
 tasks.whenTaskAdded { task ->
     if (task.name == "generateDebugAssets") {
-        def buildType = 'debug'
-        def moduleName = 'pluginmanager-apk'
-        def inputFile = file("${project(":projects:demo:pluginmanager-apk").getBuildDir()}/outputs/apk/${buildType}/${moduleName}-${buildType}.apk")
-        task.dependsOn createCopyTask(':projects:demo:pluginmanager-apk', buildType, moduleName, 'pluginmanager.apk', inputFile, 'assembleDebug')
-
-        def zipFile =file("${getRootProject().getBuildDir()}/plugin-debug-local.zip")
-        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin-dynamic', buildType, 'plugin-zip', 'plugin-debug-local.zip', zipFile, 'packageDebugPlugin')
+        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin', 'debug', 'demo-plugin', 'plugin.apk')
     }
     if (task.name == "generateReleaseAssets") {
-        def buildType = 'release'
-        def moduleName = 'pluginmanager-apk'
-        def inputFile = file("${project(":projects:demo:pluginmanager-apk").getBuildDir()}/outputs/apk/${buildType}/${moduleName}-${buildType}.apk")
-        task.dependsOn createCopyTask(':projects:demo:pluginmanager-apk', buildType, moduleName, 'pluginmanager.apk', inputFile, 'assembleRelease')
-
-        def zipFile =file("${getRootProject().getBuildDir()}/plugin-debug-release.zip")
-        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin-dynamic', buildType, 'plugin-zip', 'plugin-release-local.zip', zipFile, 'packageReleasePlugin')
+        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin', 'release', 'demo-plugin', 'plugin.apk')
     }
 }
