@@ -1,4 +1,4 @@
-apply from: "../demo-install/build.gradle"
+apply from: "../../plugin-app/demo-install/build.gradle"
 
 android {
     defaultConfig {
@@ -32,24 +32,37 @@ shadow {
     }
 
     packagePlugin {
+        pluginTypes {
+            debug {
+                loaderApkConfig = new Tuple2('dynamic-loader-apk-debug.apk', 'assembleDebug')
+                runtimeApkConfig = new Tuple2('dynamic-runtime-apk-debug.apk', 'assembleDebug')
+                pluginApks {
+                    pluginApk1 {
+                        partKey = 'demo_main'
+                        buildTask = 'assembleDebug'
+                        apkName = 'demo-plugin-dynamic-debug.apk'
+                        projectPath = 'projects/demo/dynamic/demo-plugin-dynamic'
+                    }
+                }
+            }
 
-        debug {
-            loaderApkName = 'dynamic-loader-apk-debug.apk'
-            runtimeApkName = 'dynamic-runtime-apk-debug.apk'
-            pluginApkNames = ['demo-plugin-dynamic-debug.apk']
+            release {
+                loaderApkConfig = new Tuple2('dynamic-loader-apk-release.apk', 'assembleRelease')
+                runtimeApkConfig = new Tuple2('dynamic-runtime-apk-release.apk', 'assembleRelease')
+                pluginApks {
+                    pluginApk1 {
+                        partKey = 'demo_main'
+                        buildTask = 'assembleRelease'
+                        apkName = 'demo-plugin-dynamic-release.apk'
+                        projectPath = 'projects/demo/dynamic/demo-plugin-dynamic'
+                    }
+                }
+            }
         }
 
-        release {
-            loaderApkName = 'dynamic-loader-apk-release.apk'
-            runtimeApkName = 'dynamic-runtime-apk-release.apk'
-            pluginApkNames = ['demo-plugin-dynamic-release.apk']
-        }
+        loaderApkProjectPath = 'projects/demo/dynamic/dynamic-loader-apk'
 
-        pluginApks = ['demo_main': 'projects/demo/plugin-app/demo-plugin-dynamic']
-
-        loaderApkProjectPath = 'projects/demo/dynamic-loader-apk'
-
-        runtimeApkProjectPath = 'projects/demo/dynamic-runtime-apk'
+        runtimeApkProjectPath = 'projects/demo/dynamic/dynamic-runtime-apk'
 
         version = 4
         compactVersion = [1, 2, 3]

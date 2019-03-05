@@ -1,5 +1,7 @@
 package com.tencent.shadow.core.gradle.extensions
 
+import groovy.lang.Closure
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 
 open class PackagePluginExtension  {
@@ -11,13 +13,16 @@ open class PackagePluginExtension  {
     var uuidNickName = ""
     var compactVersion : Array<Int> = emptyArray()
 
-    var debug : PluginExtensionBase = PluginExtensionBase()
-    var release : PluginExtensionBase = PluginExtensionBase()
-
-    var pluginApks: Map<String, String> = emptyMap()
+    var buildTypes: NamedDomainObjectContainer<PluginBuildType>
 
     constructor(project: Project) {
-        project.extensions.add("debug", debug)
-        project.extensions.add("release", release)
+        buildTypes = project.container(PluginBuildType::class.java)
+        buildTypes.all {
+            it.pluginApks = project.container(PluginApkConfig::class.java)
+        }
+    }
+
+    fun pluginTypes(closure: Closure<PluginBuildType>) {
+        buildTypes.configure(closure)
     }
 }
