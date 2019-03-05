@@ -19,6 +19,7 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ShadowPlugin : Plugin<Project> {
 
@@ -66,9 +67,6 @@ class ShadowPlugin : Plugin<Project> {
             loaderApkName = extension.release.loaderApkName
         }
 
-        if (pluginApkName.size != extension.pluginApkProjectPaths.size) {
-            throw IllegalArgumentException("pluginApkProjects 与 pluginApkNames长度不相等")
-        }
         for (pluginApk in pluginApkName) {
             println("pluginApk = $pluginApk")
         }
@@ -78,9 +76,9 @@ class ShadowPlugin : Plugin<Project> {
         println("configFile parentFile = " + targetConfigFile.parentFile)
 
         val pluginApkTasks: MutableList<String> = mutableListOf()
-        println("pluginApkProjects = " + extension.pluginApkProjectPaths.size)
-        for (i in extension.pluginApkProjectPaths.indices) {
-            val task = ":" + (extension.pluginApkProjectPaths[i].replace("/", ":")
+        val pluginApkProjectPaths: ArrayList<String> = ArrayList(extension.pluginApks.values)
+        for (i in pluginApkProjectPaths.indices) {
+            val task = ":" + (pluginApkProjectPaths[i].replace("/", ":")
                     + ":assemble${buildType.capitalize()}")
             println("pluginApkProjects task = $task")
             pluginApkTasks.add(i, task)
@@ -129,12 +127,14 @@ class ShadowPlugin : Plugin<Project> {
 
                     //Json文件中 plugin部分信息
                     val jsonArr = JSONArray()
-                    for (i in extension.pluginApkProjectPaths.indices) {
+                    val pluginApkProjectPathLists: ArrayList<String> = ArrayList(extension.pluginApks.values)
+                    val pluginApkPartKeys: ArrayList<String> = ArrayList(extension.pluginApks.keys)
+                    for (i in pluginApkProjectPathLists.indices) {
                         val pluginObj = JSONObject()
-                        pluginObj["partKey"] = extension.pluginApkPartKeys[i]
+                        pluginObj["partKey"] = pluginApkPartKeys[i]
                         pluginObj["apkName"] = pluginApkName[i]
                         val pluginApk = "${project.rootDir}" +
-                                "/${extension.pluginApkProjectPaths[i]}/build/outputs/apk/$buildType/${pluginApkName[i]}"
+                                "/${pluginApkProjectPathLists[i]}/build/outputs/apk/$buildType/${pluginApkName[i]}"
                         println("pluginApkPath = $pluginApk")
                         println("pluginApkPath exits ? " + File(pluginApk).exists())
                         pluginObj["hash"] = ShadowPluginHelper.getFileMD5(File(pluginApk))
@@ -209,9 +209,10 @@ class ShadowPlugin : Plugin<Project> {
             println("loaderFile = $loaderFile")
 
             val pluginFiles: MutableList<File> = mutableListOf()
-            for (i in extension.pluginApkProjectPaths.indices) {
+            val pluginApkProjectPaths: ArrayList<String> = ArrayList(extension.pluginApks.values)
+            for (i in pluginApkProjectPaths.indices) {
                 val pluginApk = "${project.rootDir}" +
-                        "/${extension.pluginApkProjectPaths[i]}/build/outputs/apk/$buildType/${pluginApkName[i]}"
+                        "/${pluginApkProjectPaths[i]}/build/outputs/apk/$buildType/${pluginApkName[i]}"
                 println("pluginApk = $pluginApk")
                 pluginFiles.add(File(pluginApk))
             }

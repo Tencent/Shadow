@@ -14,8 +14,7 @@ open class PackagePluginExtension  {
     var debug : PluginExtensionBase = PluginExtensionBase()
     var release : PluginExtensionBase = PluginExtensionBase()
 
-    var pluginApkProjectPaths : Array<String> = emptyArray()
-    var pluginApkPartKeys : Array<String> = emptyArray()
+    var pluginApks: Map<String, String> = emptyMap()
 
     constructor(project: Project) {
         project.extensions.add("debug", debug)
