@@ -1,4 +1,4 @@
-apply from: "../demo-install/build.gradle"
+apply from: "../../plugin-app/demo-install/build.gradle"
 
 android {
     defaultConfig {
@@ -45,11 +45,11 @@ shadow {
             pluginApkNames = ['demo-plugin-dynamic-release.apk']
         }
 
-        pluginApks = ['demo_main': 'projects/demo/plugin-app/demo-plugin-dynamic']
+        pluginApks = ['demo_main': 'projects/demo/dynamic/demo-plugin-dynamic']
 
-        loaderApkProjectPath = 'projects/demo/dynamic-loader-apk'
+        loaderApkProjectPath = 'projects/demo/dynamic/dynamic-loader-apk'
 
-        runtimeApkProjectPath = 'projects/demo/dynamic-runtime-apk'
+        runtimeApkProjectPath = 'projects/demo/dynamic/dynamic-runtime-apk'
 
         version = 4
         compactVersion = [1, 2, 3]
