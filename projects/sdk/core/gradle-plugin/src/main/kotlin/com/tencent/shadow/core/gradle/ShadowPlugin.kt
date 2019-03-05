@@ -112,7 +112,7 @@ class ShadowPlugin : Plugin<Project> {
                             "${extension.loaderApkProjectPath}/build/outputs/apk/$buildType/$loaderApkName"
                     println("loaderFile = $loaderFile")
                     println("loaderFile exists ? " + File(loaderFile).exists())
-                    pluginLoaderObj["hash"] = ShadowPluginHelper.bytes2HexStr(loaderFile.toByteArray())
+                    pluginLoaderObj["hash"] = ShadowPluginHelper.getFileMD5(File(loaderFile))
                     json["pluginLoader"] = pluginLoaderObj
 
 
@@ -123,7 +123,7 @@ class ShadowPlugin : Plugin<Project> {
                             "${extension.runtimeApkProjectPath}/build/outputs/apk/$buildType/$runtimeApkName"
                     println("runtimeFile = $runtimeFile")
                     println("runtimeFile exists ? " + File(runtimeFile).exists())
-                    runtimeObj["hash"] = ShadowPluginHelper.bytes2HexStr(runtimeFile.toByteArray())
+                    runtimeObj["hash"] = ShadowPluginHelper.getFileMD5(File(runtimeFile))
                     json["runtime"] = runtimeObj
 
 
@@ -137,7 +137,7 @@ class ShadowPlugin : Plugin<Project> {
                                 "${extension.pluginApkProjectPaths[i]}/build/outputs/apk/$buildType/${pluginApkName[i]}"
                         println("pluginApkPath = $pluginApk")
                         println("pluginApkPath exits ? " + File(pluginApk).exists())
-                        pluginObj["hash"] = ShadowPluginHelper.bytes2HexStr(pluginApk.toByteArray())
+                        pluginObj["hash"] = ShadowPluginHelper.getFileMD5(File(pluginApk))
                         jsonArr.add(pluginObj)
                     }
                     json["plugins"] = jsonArr
