@@ -84,7 +84,7 @@
         </activity>
 
         <provider
-            android:authorities="com.tencent.shadow.contentprovider.authority"
+            android:authorities="com.tencent.shadow.contentprovider.authority.dynamic"
             android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"/>
 
         <service android:name="com.tencent.shadow.demo.host.DemoPluginProcessService"

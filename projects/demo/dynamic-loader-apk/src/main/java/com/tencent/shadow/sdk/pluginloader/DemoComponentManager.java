@@ -62,6 +62,6 @@ public class DemoComponentManager extends ComponentManager {
     public ContainerProviderInfo onBindContainerContentProvider(ComponentName pluginContentProvider) {
         return new ContainerProviderInfo(
                 "com.tencent.shadow.runtime.container.PluginContainerContentProvider",
-                "com.tencent.shadow.contentprovider.authority");
+                "com.tencent.shadow.contentprovider.authority.dynamic");
     }
 }
