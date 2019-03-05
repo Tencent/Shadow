@@ -153,7 +153,7 @@ class ShadowPlugin : Plugin<Project> {
 
                     //uuid UUID_NickName
                     val uuid = UUID.randomUUID().toString().toUpperCase()
-                    json["uuid"] = uuid
+                    json["UUID"] = uuid
 
                     if (!TextUtils.isEmpty(extension.uuidNickName)) {
                         json["UUID_NickName"] = extension.uuidNickName
