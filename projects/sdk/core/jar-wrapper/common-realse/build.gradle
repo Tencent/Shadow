@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.core'
+
+dependencies {
+    api files("${project(":common").getBuildDir()}/outputs/jar/common-release.jar")
+}
+
+compileJava.dependsOn(":common:jarReleasePackage")
