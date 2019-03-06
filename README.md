@@ -52,20 +52,19 @@ Shadow（Shadow框架分为Core和Dynamic两部分）
 ## 代码结构
 项目的代码都在`projects`子目录中，根目录中的其余文件都是Gradle相关的构建脚本。
 
-Shadow SDK的代码都位于`projects/sdk`中。全动态Demo代码位于`projects/demo`中。非动态Demo代码位于`projects/demo-none-dynamic`中。整个项目是一个复合构建。Demo代码以源码依赖方式依赖了SDK。
+Shadow SDK的代码都位于`projects/sdk`中。Demo代码位于`projects/demo`中。整个项目是一个复合构建。Demo代码以源码依赖方式依赖了SDK。
 
-插件框架、插件下载安装管理、插件全动态化demo说明：
-`projects/demo/host-apk`也是一个宿主App程序，该宿主APP直接没有打包插件框架，用于演示动态加载插件安装管理、插件框架动态加载、插件动态加载的过程，在构建过程中会自动构建出demo-plugin.apk以及loader.apk、runtime.apk、pluginmanager.apk及配置json构成的插件压缩包，并将它们都打包到自己的assets中，因此可以直接运行启动插件。
+Demo说明：
+`projects/demo/host-apk`是一个宿主App程序，该宿主APP没有直接打包插件框架，演示了动态加载插件安装管理、插件框架动态加载、插件动态加载的过程，在构建过程中会自动构建出demo-plugin.apk以及loader.apk、runtime.apk、pluginmanager.apk及配置json构成的插件压缩包，并将它们都打包到自己的assets中，因此可以直接运行启动插件。
 
 `projects/demo/plugin-app/demo-plugin`是一个Android Application模块,它将`projects/demo/plugin-app/demo-main`打包成插件。
-`projects/demo/loader-apk` 是一个Android Application模块，它依赖打包了`sdk/core/loader`、`sdk/dynamic/loader`、`sdk/dynamic/loader-impl`模块，并配置了对应插件的组件和宿主组件的关系，可动态加载。
-`projects/demo/runtime-apk` 是一个Android Application模块，它依赖打包了`sdk/core/runtime`模块，并定义了宿主中注册的Activity组件，可动态加载。
-`projects/demo/pluginmanager-apk` 是一个Android Application模块，它依赖打包了`sdk/core/manager`、`sdk/dynamic/manager`、`sdk/dynamic/loader`模块，并实现了插件安装管理启动，可动态加载
+`projects/demo/loader-apk` 是一个Android Application模块，它打包了`sdk/core/loader`、`sdk/dynamic/loader`、`sdk/dynamic/loader-impl`模块，并配置了对应插件的组件和宿主组件的关系，可动态加载。
+`projects/demo/runtime-apk` 是一个Android Application模块，它打包了`sdk/core/runtime`模块，并定义了宿主中注册的Activity组件，可动态加载。
+`projects/demo/pluginmanager-apk` 是一个Android Application模块，它打包了`sdk/core/manager`、`sdk/dynamic/manager`、`sdk/dynamic/loader`模块，并实现了插件安装管理启动，可动态加载。
 
 
-插件框架非动态化demo说明：
-`projects/demo/host-apk-none-dynamic`是一个宿主App程序，该宿主APP直接依赖打包了插件框架，用于演示直接打包插件框架时仅动态加载插件的情况。
-在构建过程中会将projects/demo/plugin-app/demo-plugin自动构建出并打包在自己的assets中，因此它可以直接运行并将插件App以免安装方式运行起来。
+`projects/demo-none-dynamic`是宿主APP直接打包插件框架的演示程序。此Demo主要用于保证SDK开发时core层可以单独使用，与dynamic层解耦。
+在构建过程中会将`projects/demo/plugin-app/demo-plugin`自动构建出并打包在自己的assets中，因此它可以直接运行并将插件App以免安装方式运行起来。
 
 
 **注意：** `projects/demo/plugin-app/demo-plugin`是不能正常安装运行的，运行时会出现类找不到的Crash。
