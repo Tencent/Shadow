@@ -19,6 +19,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.tools.build:gradle:$build_gradle_version"
     implementation project(':transform')
+    testImplementation 'junit:junit:4.12'
 }
 
 compileKotlin {
