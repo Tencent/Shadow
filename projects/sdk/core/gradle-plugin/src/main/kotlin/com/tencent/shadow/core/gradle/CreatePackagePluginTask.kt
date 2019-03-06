@@ -5,10 +5,6 @@ import com.tencent.shadow.core.gradle.extensions.PluginBuildType
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.bundling.Zip
-import org.gradle.internal.impldep.com.google.gson.JsonArray
-import org.gradle.internal.impldep.org.apache.http.util.TextUtils
-import org.json.simple.JSONArray
-import org.json.simple.JSONObject
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -105,84 +101,12 @@ private fun createGenerateConfigTask(project: Project, buildType: PluginBuildTyp
             .doLast {
 
                 println("generateConfig task begin")
-                val json = JSONObject()
-
-                //Json文件中 plugin-loader部分信息
-                val pluginLoaderObj = JSONObject()
-                pluginLoaderObj["apkName"] = loaderApkName
-                val loaderFileParent = buildType.loaderApkConfig.second.replace("assemble", "")
-                val loaderFile = File("${project.rootDir}" +
-                        "/${extension.loaderApkProjectPath}/build/outputs/apk/$loaderFileParent/$loaderApkName")
-                println("loaderFile = $loaderFile")
-                println("loaderFile exists ? " + loaderFile.exists())
-                pluginLoaderObj["hash"] = ShadowPluginHelper.getFileMD5(loaderFile)
-                json["pluginLoader"] = pluginLoaderObj
-
-
-                //Json文件中 plugin-runtime部分信息
-                val runtimeObj = JSONObject()
-                runtimeObj["apkName"] = runtimeApkName
-                val runtimeFileParent = buildType.runtimeApkConfig.second.replace("assemble", "")
-                val runtimeFile = File("${project.rootDir}" +
-                        "/${extension.runtimeApkProjectPath}/build/outputs/apk/$runtimeFileParent/$runtimeApkName")
-                println("runtimeFile = $runtimeFile")
-                println("runtimeFile exists ? " + runtimeFile.exists())
-                runtimeObj["hash"] = ShadowPluginHelper.getFileMD5(runtimeFile)
-                json["runtime"] = runtimeObj
-
-
-                //Json文件中 plugin部分信息
-                val jsonArr = JSONArray()
-                for (i in buildType.pluginApks) {
-                    val pluginObj = JSONObject()
-                    pluginObj["partKey"] = i.partKey
-                    pluginObj["apkName"] = i.apkName
-                    val pluginFileParent = i.buildTask.replace("assemble", "")
-                    val pluginApk = "${project.rootDir}" +
-                            "/${i.projectPath}/build/outputs/apk/$pluginFileParent/${i.apkName}"
-                    println("pluginApkPath = $pluginApk")
-                    println("pluginApkPath exits ? " + File(pluginApk).exists())
-                    pluginObj["hash"] = ShadowPluginHelper.getFileMD5(File(pluginApk))
-                    if (i.dependsOn.isNotEmpty()) {
-                        val dependsOnJson = JSONArray()
-                        for (k in i.dependsOn) {
-                            dependsOnJson.add(k)
-                        }
-                        pluginObj["dependsOn"] = dependsOnJson
-                    }
-                    jsonArr.add(pluginObj)
-                }
-                json["plugins"] = jsonArr
-
-
-                //Config.json版本号
-                if (extension.version > 0) {
-                    json["version"] = extension.version
-                } else {
-                    json["version"] = 1
-                }
-
-
-                //uuid UUID_NickName
-                if (TextUtils.isEmpty(extension.uuid)) {
-                    json["UUID"] = UUID.randomUUID().toString().toUpperCase()
-                } else {
-                    json["UUID"] = extension.uuid
-                }
-
-                if (!TextUtils.isEmpty(extension.uuidNickName)) {
-                    json["UUID_NickName"] = extension.uuidNickName
-                } else {
-                    json["UUID_NickName"] = "1.0"
-                }
-
-                if (extension.compactVersion.isNotEmpty()) {
-                    val jsonArray = JsonArray()
-                    for (i in extension.compactVersion) {
-                        jsonArray.add(i)
-                    }
-                    json["compact_version"] = jsonArray
-                }
+                val json = extension.toJson(
+                        loaderApkName,
+                        runtimeApkName,
+                        buildType,
+                        project.rootDir
+                )
 
                 val bizWriter = BufferedWriter(FileWriter(targetConfigFile))
                 bizWriter.write(json.toJSONString())
