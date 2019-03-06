@@ -4,6 +4,7 @@ import com.tencent.shadow.core.gradle.ShadowPluginHelper
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.internal.impldep.org.apache.http.util.TextUtils
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import java.io.File
@@ -76,6 +77,13 @@ open class PackagePluginExtension  {
             println("pluginApkPath = $pluginApk")
             println("pluginApkPath exits ? " + File(pluginApk).exists())
             pluginObj["hash"] = ShadowPluginHelper.getFileMD5(File(pluginApk))
+            if (i.dependsOn.isNotEmpty()) {
+                val dependsOnJson = JSONArray()
+                for (k in i.dependsOn) {
+                    dependsOnJson.add(k)
+                }
+                pluginObj["dependsOn"] = dependsOnJson
+            }
             jsonArr.add(pluginObj)
         }
         json["plugins"] = jsonArr
@@ -90,8 +98,11 @@ open class PackagePluginExtension  {
 
 
         //uuid UUID_NickName
-        val uuid = UUID.randomUUID().toString().toUpperCase()
-        json["UUID"] = uuid
+        if (TextUtils.isEmpty(uuid)) {
+            json["UUID"] = UUID.randomUUID().toString().toUpperCase()
+        } else {
+            json["UUID"] = uuid
+        }
 
         if (uuidNickName.isNotEmpty()) {
             json["UUID_NickName"] = uuidNickName
