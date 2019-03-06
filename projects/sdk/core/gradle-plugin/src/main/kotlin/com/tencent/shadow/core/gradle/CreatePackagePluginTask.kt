@@ -157,6 +157,13 @@ private fun createGenerateConfigTask(project: Project, buildType: PluginBuildTyp
                     println("pluginApkPath = $pluginApk")
                     println("pluginApkPath exits ? " + File(pluginApk).exists())
                     pluginObj["hash"] = ShadowPluginHelper.getFileMD5(File(pluginApk))
+                    if (i.dependsOn.isNotEmpty()) {
+                        val dependsOnJson = JSONArray()
+                        for (k in i.dependsOn) {
+                            dependsOnJson.add(k)
+                        }
+                        pluginObj["dependsOn"] = dependsOnJson
+                    }
                     jsonArr.add(pluginObj)
                 }
                 json["plugins"] = jsonArr
@@ -171,8 +178,11 @@ private fun createGenerateConfigTask(project: Project, buildType: PluginBuildTyp
 
 
                 //uuid UUID_NickName
-                val uuid = UUID.randomUUID().toString().toUpperCase()
-                json["UUID"] = uuid
+                if (TextUtils.isEmpty(extension.uuid)) {
+                    json["UUID"] = UUID.randomUUID().toString().toUpperCase()
+                } else {
+                    json["UUID"] = extension.uuid
+                }
 
                 if (!TextUtils.isEmpty(extension.uuidNickName)) {
                     json["UUID_NickName"] = extension.uuidNickName

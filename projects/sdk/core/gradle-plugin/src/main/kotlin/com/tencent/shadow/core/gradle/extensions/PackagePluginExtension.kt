@@ -9,6 +9,7 @@ open class PackagePluginExtension  {
     var loaderApkProjectPath = ""
     var runtimeApkProjectPath = ""
 
+    var uuid = ""
     var version : Int = 0
     var uuidNickName = ""
     var compactVersion : Array<Int> = emptyArray()
