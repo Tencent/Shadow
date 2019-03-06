@@ -4,8 +4,6 @@ import com.tencent.shadow.core.gradle.ShadowPluginHelper
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.internal.impldep.com.google.gson.JsonArray
-import org.gradle.internal.impldep.org.apache.http.util.TextUtils
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import java.io.File
@@ -94,14 +92,14 @@ open class PackagePluginExtension  {
         val uuid = UUID.randomUUID().toString().toUpperCase()
         json["UUID"] = uuid
 
-        if (!TextUtils.isEmpty(uuidNickName)) {
+        if (uuidNickName.isNotEmpty()) {
             json["UUID_NickName"] = uuidNickName
         } else {
             json["UUID_NickName"] = "1.0"
         }
 
         if (compactVersion.isNotEmpty()) {
-            val jsonArray = JsonArray()
+            val jsonArray = JSONArray()
             for (i in compactVersion) {
                 jsonArray.add(i)
             }
