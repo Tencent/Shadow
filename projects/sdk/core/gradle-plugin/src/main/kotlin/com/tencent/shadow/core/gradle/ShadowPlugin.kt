@@ -25,11 +25,13 @@ class ShadowPlugin : Plugin<Project> {
         val classPoolBuilder = AndroidClassPoolBuilder(contextClassLoader, androidJar)
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
-        plugin.extension.registerTransform(ShadowTransform(
-                project,
-                classPoolBuilder,
-                { shadowExtension.transformConfig.useHostContext }
-        ))
+        if (!project.hasProperty("disable_shadow_transform")) {
+            plugin.extension.registerTransform(ShadowTransform(
+                    project,
+                    classPoolBuilder,
+                    { shadowExtension.transformConfig.useHostContext }
+            ))
+        }
 
         project.extensions.create("packagePlugin", PackagePluginExtension::class.java, project)
 
