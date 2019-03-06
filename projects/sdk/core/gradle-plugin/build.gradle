@@ -20,6 +20,8 @@ dependencies {
     implementation "com.android.tools.build:gradle:$build_gradle_version"
     implementation project(':transform')
     testImplementation 'junit:junit:4.12'
+    testImplementation gradleTestKit()
+
 }
 
 compileKotlin {
