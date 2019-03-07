@@ -14,6 +14,7 @@ open class PackagePluginExtension  {
     var loaderApkProjectPath = ""
     var runtimeApkProjectPath = ""
 
+    var uuid = ""
     var version : Int = 0
     var uuidNickName = ""
     var compactVersion : Array<Int> = emptyArray()
@@ -75,6 +76,13 @@ open class PackagePluginExtension  {
             println("pluginApkPath = $pluginApk")
             println("pluginApkPath exits ? " + File(pluginApk).exists())
             pluginObj["hash"] = ShadowPluginHelper.getFileMD5(File(pluginApk))
+            if (i.dependsOn.isNotEmpty()) {
+                val dependsOnJson = JSONArray()
+                for (k in i.dependsOn) {
+                    dependsOnJson.add(k)
+                }
+                pluginObj["dependsOn"] = dependsOnJson
+            }
             jsonArr.add(pluginObj)
         }
         json["plugins"] = jsonArr
@@ -89,8 +97,11 @@ open class PackagePluginExtension  {
 
 
         //uuid UUID_NickName
-        val uuid = UUID.randomUUID().toString().toUpperCase()
-        json["UUID"] = uuid
+        if (uuid.isEmpty()) {
+            json["UUID"] = UUID.randomUUID().toString().toUpperCase()
+        } else {
+            json["UUID"] = uuid
+        }
 
         if (uuidNickName.isNotEmpty()) {
             json["UUID_NickName"] = uuidNickName

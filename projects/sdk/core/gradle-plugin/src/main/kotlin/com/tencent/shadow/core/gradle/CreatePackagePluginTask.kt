@@ -50,22 +50,8 @@ internal fun createPackagePluginTask(project: Project, buildType: PluginBuildTyp
         it.group = "plugin"
         it.description = "打包插件"
         it.from(pluginFiles, runtimeFile, loaderFile, targetConfigFile)
-
-        if (ShadowPluginHelper.isFinalRelease()) {
-            it.archiveName = "plugin-${System.getenv("MajorVersion")}.${System.getenv("MinorVersion")}" +
-                    ".${System.getenv("FixVersion")}.${System.getenv("BuildNo")}-${ShadowPluginHelper.gitShortRev()}.zip"
-        } else {
-            it.archiveName = "plugin-${buildType.name}-${ShadowPluginHelper.versionName()}.zip"
-        }
-        println()
-        println("archiveName = " + it.archiveName)
-
-        if (ShadowPluginHelper.isCIEnv()) {
-            it.destinationDir = File("${project.rootDir}/bin")
-        } else {
-            it.destinationDir = File("${project.rootDir}/build")
-        }
-        println("destinationDir = " + it.destinationDir)
+        it.archiveName = "plugin-${buildType.name}-local.zip"
+        it.destinationDir = File("${project.rootDir}/build")
     }
             .dependsOn(createGenerateConfigTask(project, buildType))
 }
