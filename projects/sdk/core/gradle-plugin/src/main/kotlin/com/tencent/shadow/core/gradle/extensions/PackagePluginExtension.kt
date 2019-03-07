@@ -4,7 +4,6 @@ import com.tencent.shadow.core.gradle.ShadowPluginHelper
 import groovy.lang.Closure
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.internal.impldep.org.apache.http.util.TextUtils
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import java.io.File
@@ -98,7 +97,7 @@ open class PackagePluginExtension  {
 
 
         //uuid UUID_NickName
-        if (TextUtils.isEmpty(uuid)) {
+        if (uuid.isEmpty()) {
             json["UUID"] = UUID.randomUUID().toString().toUpperCase()
         } else {
             json["UUID"] = uuid
