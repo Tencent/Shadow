@@ -21,3 +21,6 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class org.slf4j.**{*;}
+-dontwarn org.slf4j.impl.**
+
+-keep class com.tencent.shadow.runtime.container.**{*;}
