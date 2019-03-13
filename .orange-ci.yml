@@ -1,28 +1,27 @@
-.build_env_config: &build_env_config
-  - network: idc #在idc可以运行sdkmanager安装缺失组件
-      docker:
-        image: runmymind/docker-android-sdk:ubuntu-standalone
-
-.build_sdk: &build_sdk
-  - name: 构建全部SDK模块
-    script: ./gradlew buildSdk
-  - name: Lint全部SDK模块
-    script: ./gradlew lintSdk
-
-.build_all: &build_all
-  - <<: *build_sdk
-  - name: 构建Demo模块
-    script: ./gradlew :projects:demo:host-apk:assemble
-
 '**':
   push:
-    - <<: *build_env_config
-        - stages:
-            - <<: *build_all
-            - name: 发布SNAPSHOT版到maven.oa.com
-                script: ./gradlew publish
+    - network: idc #在idc可以运行sdkmanager安装缺失组件
+      docker:
+        image: runmymind/docker-android-sdk:ubuntu-standalone
+      stages:
+        - name: 构建全部SDK模块
+          script: ./gradlew buildSdk
+        - name: Lint全部SDK模块
+          script: ./gradlew lintSdk
+        - name: 构建Demo模块
+          script: ./gradlew :projects:demo:host-apk:assemble
+        - name: 发布SNAPSHOT版到maven.oa.com
+          script: ./gradlew publish
 
   merge_request:
-    - <<: *build_env_config
-        - stages:
-            - <<: *build_all
+    - network: idc #在idc可以运行sdkmanager安装缺失组件
+      docker:
+        image: runmymind/docker-android-sdk:ubuntu-standalone
+      stages:
+        - name: 构建全部SDK模块
+          script: ./gradlew buildSdk
+        - name: Lint全部SDK模块
+          script: ./gradlew lintSdk
+        - name: 构建Demo模块
+          script: ./gradlew :projects:demo:host-apk:assemble
+
