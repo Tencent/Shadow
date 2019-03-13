@@ -23,7 +23,6 @@ task lintSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:lint')
 }
 
-apply from: 'buildScripts/gradle/GitHelper.gradle'
 apply plugin: 'maven-publish'
 
 static def getDependencyNode(scope, groupId, artifactId, version) {
@@ -35,9 +34,25 @@ static def getDependencyNode(scope, groupId, artifactId, version) {
     return node
 }
 
+def gitShortRev() {
+    def gitCommit = ""
+    def proc = "git rev-parse --short HEAD".execute()
+    proc.in.eachLine { line -> gitCommit = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    return gitCommit
+}
+
 def setScm(scm) {
     scm.appendNode('connection', 'http://git.code.oa.com/shadow/shadow.git')
-    scm.appendNode('url', "https://git.code.oa.com/shadow/shadow/commit/$project.GIT_SHORT_REV")
+
+    def commit
+    if ("${System.env.ORANGE}".equalsIgnoreCase("true")) {
+        commit = $ { System.env.ORANGE_COMMIT }
+    } else {
+        commit = gitShortRev()
+    }
+    scm.appendNode('url', "https://git.code.oa.com/shadow/shadow/commit/$commit")
 }
 
 def setGeneratePomFileAndDepends(publicationName) {
