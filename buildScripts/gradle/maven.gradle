@@ -48,7 +48,7 @@ def setScm(scm) {
 
     def commit
     if ("${System.env.ORANGE}".equalsIgnoreCase("true")) {
-        commit = $ { System.env.ORANGE_COMMIT }
+        commit = "${System.env.ORANGE_COMMIT}"
     } else {
         commit = gitShortRev()
     }
