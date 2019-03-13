@@ -22,3 +22,7 @@
 
 -keep class org.slf4j.**{*;}
 -dontwarn org.slf4j.impl.**
+
+-keep class com.tencent.shadow.dynamic.host.**{*;}
+-keep class com.tencent.shadow.core.common.**{*;}
+-keep class com.tencent.shadow.runtime.container.**{*;}
