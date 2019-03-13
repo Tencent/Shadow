@@ -4,8 +4,6 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
-apply from: "${rootDir.parentFile.parentFile.parentFile}/buildScripts/gradle/GitHelper.gradle"
-
 group 'com.tencent.shadow.dynamic'
 
 android {

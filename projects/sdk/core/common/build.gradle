@@ -1,7 +1,5 @@
 apply plugin: 'com.android.library'
 
-apply from: "${rootDir.parentFile.parentFile.parentFile}/buildScripts/gradle/GitHelper.gradle"
-
 group 'com.tencent.shadow.core'
 
 android {
@@ -43,52 +41,4 @@ afterEvaluate {
             jarPackage(buildTypeName)
         }
     }
-}
-
-apply plugin: 'maven-publish'
-
-publishing {
-    publications {
-        release(MavenPublication) {
-            groupId 'com.tencent.shadow'
-            artifactId "${project.name}"
-            version project.ARTIFACT_VERSION
-            artifact("build/outputs/jar/${project.name}-release.jar")
-            pom.withXml {
-                def root = asNode()
-                def scm = root.appendNode('scm')
-                scm.appendNode('connection', 'http://git.code.oa.com/plugin-framework/shadow.git')
-                scm.appendNode('url', "http://git.code.oa.com/plugin-framework/shadow/commit/$project.GIT_SHORT_REV")
-            }
-        }
-    }
-    repositories {
-        maven {
-            credentials {
-                username "rdm"
-                password "rdm"
-            }
-            if (isPublishRelease()) {
-                url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
-            } else {
-                url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots"
-            }
-        }
-    }
-}
-
-model {
-    tasks.generatePomFileForReleasePublication {
-        destination = file("$buildDir/release-pom.xml")
-    }
-}
-
-tasks.whenTaskAdded { theTask ->
-    if (theTask.name.equals("generatePomFileForReleasePublication")) {
-        theTask.dependsOn(project.getTasksByName("jarReleasePackage", false).first())
-    }
-}
-
-static def isPublishRelease() {
-    return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
 }
