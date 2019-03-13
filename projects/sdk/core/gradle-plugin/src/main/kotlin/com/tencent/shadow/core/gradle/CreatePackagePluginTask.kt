@@ -50,7 +50,12 @@ internal fun createPackagePluginTask(project: Project, buildType: PluginBuildTyp
         it.group = "plugin"
         it.description = "打包插件"
         it.from(pluginFiles, runtimeFile, loaderFile, targetConfigFile)
-        it.archiveName = "plugin-${buildType.name}.zip"
+        val suffix: String? = System.getenv("PluginSuffix")
+        if (suffix == null) {
+            it.archiveName = "plugin-${buildType.name}.zip"
+        } else {
+            it.archiveName = "plugin-${buildType.name}-$suffix.zip"
+        }
         it.destinationDir = File("${project.rootDir}/build")
     }
             .dependsOn(createGenerateConfigTask(project, buildType))
