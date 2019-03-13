@@ -3,6 +3,7 @@ package com.tencent.shadow.core.gradle
 import com.android.build.gradle.AppPlugin
 import com.tencent.shadow.core.AndroidClassPoolBuilder
 import com.tencent.shadow.core.ShadowTransform
+import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -24,11 +25,24 @@ class ShadowPlugin : Plugin<Project> {
         val classPoolBuilder = AndroidClassPoolBuilder(contextClassLoader, androidJar)
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
-        plugin.extension.registerTransform(ShadowTransform(
-                project,
-                classPoolBuilder,
-                { shadowExtension.transformConfig.useHostContext }
-        ))
+        if (!project.hasProperty("disable_shadow_transform")) {
+            plugin.extension.registerTransform(ShadowTransform(
+                    project,
+                    classPoolBuilder,
+                    { shadowExtension.transformConfig.useHostContext }
+            ))
+        }
+
+        project.extensions.create("packagePlugin", PackagePluginExtension::class.java, project)
+
+        project.afterEvaluate {
+            val packagePlugin = project.extensions.findByName("packagePlugin")
+            val extension = packagePlugin as PackagePluginExtension
+            val buildTypes = extension.buildTypes
+            for (i in buildTypes) {
+                createPackagePluginTask(project, i)
+            }
+        }
     }
 
     open class ShadowExtension {
