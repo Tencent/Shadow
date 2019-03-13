@@ -186,6 +186,9 @@ public class PluginProcessService extends Service {
             }
             throw new FailedException(e);
         } catch (Exception e) {
+            if (mLogger.isErrorEnabled()) {
+                mLogger.error("loadPluginLoader发生Exception", e);
+            }
             throw new FailedException(ERROR_CODE_RUNTIME_EXCEPTION, "加载动态实现失败 cause：" + e.getCause().getMessage());
         }
     }
