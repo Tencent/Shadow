@@ -26,8 +26,3 @@
     - <<: *build_env_config
         - stages:
             - <<: *build_all
-
-
-
-
-
