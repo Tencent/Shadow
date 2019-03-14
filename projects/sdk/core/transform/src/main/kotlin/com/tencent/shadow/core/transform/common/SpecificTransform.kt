@@ -4,6 +4,9 @@ import javassist.ClassPool
 import javassist.CtClass
 import javassist.CtMethod
 import javassist.NotFoundException
+import javassist.bytecode.CodeAttribute
+import javassist.bytecode.MethodInfo
+import javassist.bytecode.Opcode
 
 abstract class SpecificTransform {
     private val _list = mutableListOf<TransformStep>()
@@ -52,6 +55,58 @@ abstract class SpecificTransform {
                 return false
             }
         } while (tmp != null)
+        return false
+    }
+
+    /**
+     * 查找目标class是否存在目标method的调用
+     */
+    fun matchMethodCallInClass(ctMethod: CtMethod, clazz: CtClass): Boolean {
+        for (methodInfo in clazz.classFile2.methods) {
+            methodInfo as MethodInfo
+            val codeAttr: CodeAttribute? = methodInfo.codeAttribute
+            val constPool = methodInfo.constPool
+            if (codeAttr != null) {
+                val iterator = codeAttr.iterator()
+                while (iterator.hasNext()) {
+                    val pos = iterator.next()
+                    val c = iterator.byteAt(pos)
+                    if (c == Opcode.INVOKEINTERFACE || c == Opcode.INVOKESPECIAL
+                            || c == Opcode.INVOKESTATIC || c == Opcode.INVOKEVIRTUAL) {
+                        val index = iterator.u16bitAt(pos + 1)
+                        val cname = constPool.eqMember(ctMethod.name, ctMethod.methodInfo2.descriptor, index)
+                        val className = ctMethod.declaringClass.name
+                        val matched = cname != null && matchClass(ctMethod.name, ctMethod.methodInfo.descriptor, className, cname, clazz.classPool)
+                        if (matched) {
+                            return true
+                        }
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    private fun matchClass(methodName: String, methodDescriptor: String, classname: String, name: String, pool: ClassPool): Boolean {
+        if (classname == name)
+            return true
+
+        try {
+            val clazz = pool.get(name)
+            val declClazz = pool.get(classname)
+            if (clazz.subtypeOf(declClazz))
+                try {
+                    val m = clazz.getMethod(methodName, methodDescriptor)
+                    return m.declaringClass.name == classname
+                } catch (e: NotFoundException) {
+                    // maybe the original method has been removed.
+                    return true
+                }
+
+        } catch (e: NotFoundException) {
+            return false
+        }
+
         return false
     }
 }

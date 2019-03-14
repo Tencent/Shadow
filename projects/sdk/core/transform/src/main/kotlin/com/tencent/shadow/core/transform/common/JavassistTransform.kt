@@ -43,6 +43,7 @@ open class JavassistTransform(project: Project, val classPoolBuilder: ClassPoolB
     fun CtClass.writeOut(output: OutputStream) {
         this.toBytecode(java.io.DataOutputStream(output))
     }
+
 }
 
 interface ClassPoolBuilder {

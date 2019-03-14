@@ -10,6 +10,8 @@ import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
+import com.tencent.shadow.runtime.PluginPartInfo
+import com.tencent.shadow.runtime.PluginPartInfoManager
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.io.File
 import java.util.concurrent.Callable
@@ -98,11 +100,12 @@ object LoadPluginBloc {
                 lock.withLock {
                     componentManager.addPluginApkInfo(pluginInfo)
                     pluginPartsMap[pluginInfo.partKey] = PluginParts(
-                            pluginPackageManager,
                             shadowApplication,
                             pluginClassLoader,
                             resources
                     )
+                    PluginPartInfoManager.addPluginInfo(pluginClassLoader, PluginPartInfo(shadowApplication, resources,
+                            pluginClassLoader, pluginPackageManager))
                 }
             }
 

@@ -5,7 +5,6 @@ import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,8 +16,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 public abstract class ShadowActivity extends PluginActivity {
-
-    private MixPackageManager mMixPackageManager;
 
     private int mFragmentManagerHash;
 
@@ -82,16 +79,6 @@ public abstract class ShadowActivity extends PluginActivity {
         return mHostActivityDelegator.getWindowManager();
     }
 
-    @Override
-    public void setPluginPackageManager(PackageManager pluginPackageManager) {
-        super.setPluginPackageManager(pluginPackageManager);
-        mMixPackageManager = new MixPackageManager(super.getPackageManager(), pluginPackageManager);
-    }
-
-    @Override
-    public PackageManager getPackageManager() {
-        return mMixPackageManager;
-    }
 
     public final ShadowActivity getParent() {
         return null;

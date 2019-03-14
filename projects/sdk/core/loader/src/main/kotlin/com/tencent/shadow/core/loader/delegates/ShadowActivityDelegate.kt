@@ -125,7 +125,6 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.setPluginClassLoader(mPluginClassLoader)
         pluginActivity.setPluginComponentLauncher(mComponentManager)
         pluginActivity.setPluginApplication(mPluginApplication)
-        pluginActivity.setPluginPackageManager(mPluginPackageManager)
         pluginActivity.setShadowApplication(mPluginApplication)
         pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
         pluginActivity.setPluginPartKey(mPartKey)
