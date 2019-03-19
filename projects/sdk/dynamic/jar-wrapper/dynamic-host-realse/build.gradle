@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.dynamic'
+
+dependencies {
+    api files("${project(":dynamic-host").getBuildDir()}/outputs/jar/dynamic-host-release.jar")
+}
+
+compileJava.dependsOn(":dynamic-host:jarReleasePackage")

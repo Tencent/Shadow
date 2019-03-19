@@ -9,6 +9,8 @@ import org.jetbrains.annotations.NotNull;
 
 public class DemoComponentManager extends ComponentManager {
     final private static ComponentName sDefaultContainer = new ComponentName("com.tencent.shadow.demo_host", "com.tencent.shadow.demo.host.DefaultContainerActivity");
+    final private static ComponentName sSingleTaskContainer = new ComponentName("com.tencent.shadow.demo_host", "com.tencent.shadow.demo.host.SingleTaskContainerActivity");
+
 
     @Override
     public ComponentName getLauncherActivity(String s) {
@@ -17,6 +19,9 @@ public class DemoComponentManager extends ComponentManager {
 
     @Override
     public ComponentName onBindContainerActivity(ComponentName componentName) {
+        if(componentName.getClassName().equals("com.tencent.shadow.demo.usecases.activity.TestActivityOrientation")){
+            return sSingleTaskContainer;
+        }
         return sDefaultContainer;
     }
 

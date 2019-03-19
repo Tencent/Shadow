@@ -1,4 +1,4 @@
-apply from: "../demo-install/build.gradle"
+apply from: "../../plugin-app/demo-install/build.gradle"
 
 android {
     defaultConfig {
@@ -25,8 +25,47 @@ buildscript {
 
 apply plugin: 'com.tencent.shadow.plugin'
 
+
 shadow {
     transform {
 //        useHostContext = ['abc']
+    }
+
+    packagePlugin {
+        pluginTypes {
+            debug {
+                loaderApkConfig = new Tuple2('loader-apk-debug.apk', 'assembleDebug')
+                runtimeApkConfig = new Tuple2('runtime-apk-debug.apk', 'assembleDebug')
+                pluginApks {
+                    pluginApk1 {
+                        partKey = 'demo_main'
+                        buildTask = 'assembleDebug'
+                        apkName = 'demo-plugin-debug.apk'
+                        projectPath = 'projects/demo/plugin-app/demo-plugin'
+                    }
+                }
+            }
+
+            release {
+                loaderApkConfig = new Tuple2('loader-apk-release.apk', 'assembleRelease')
+                runtimeApkConfig = new Tuple2('runtime-apk-release.apk', 'assembleRelease')
+                pluginApks {
+                    pluginApk1 {
+                        partKey = 'demo_main'
+                        buildTask = 'assembleRelease'
+                        apkName = 'demo-plugin-release.apk'
+                        projectPath = 'projects/demo/plugin-app/demo-plugin'
+                    }
+                }
+            }
+        }
+
+        loaderApkProjectPath = 'projects/demo/loader-apk'
+
+        runtimeApkProjectPath = 'projects/demo/runtime-apk'
+
+        version = 4
+        compactVersion = [1, 2, 3]
+        uuidNickName = "1.1.5"
     }
 }

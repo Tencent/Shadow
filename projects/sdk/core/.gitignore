@@ -8,7 +8,7 @@
 .externalNativeBuild
 .gradletasknamecache
 
-gradle
-gradlew
-gradlew.bat
-gradle.properties
+/gradle
+/gradlew
+/gradlew.bat
+/gradle.properties

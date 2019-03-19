@@ -1,0 +1,15 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION
+
+    defaultConfig {
+        applicationId "com.tencent.shadow.test.gradle.case1"
+        minSdkVersion MIN_SDK_VERSION
+        targetSdkVersion TARGET_SDK_VERSION
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+    }
+}

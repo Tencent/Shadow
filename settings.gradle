@@ -4,8 +4,12 @@ includeBuild 'projects/sdk/coding'
 includeBuild 'projects/sdk/core'
 includeBuild 'projects/sdk/dynamic'
 
+include ':projects:demo-none-dynamic:host-apk-none-dynamic'
 
 include ':projects:demo:host-apk'
+include ':projects:demo:runtime-apk'
+include ':projects:demo:loader-apk'
+include ':projects:demo:pluginmanager-apk'
 include ':projects:demo:plugin-app:slidingmenu'
 include ':projects:demo:plugin-app:pinnedheaderexpandablelistview'
 include ':projects:demo:plugin-app:demo-main'

@@ -1,0 +1,27 @@
+'**':
+  push:
+    - network: idc #在idc可以运行sdkmanager安装缺失组件
+      docker:
+        image: runmymind/docker-android-sdk:ubuntu-standalone
+      stages:
+        - name: 构建全部SDK模块
+          script: ./gradlew buildSdk
+        - name: Lint全部SDK模块
+          script: ./gradlew lintSdk
+        - name: 构建Demo模块
+          script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
+        - name: 发布SNAPSHOT版到maven.oa.com
+          script: ./gradlew publish
+
+  merge_request:
+    - network: idc #在idc可以运行sdkmanager安装缺失组件
+      docker:
+        image: runmymind/docker-android-sdk:ubuntu-standalone
+      stages:
+        - name: 构建全部SDK模块
+          script: ./gradlew buildSdk
+        - name: Lint全部SDK模块
+          script: ./gradlew lintSdk
+        - name: 构建Demo模块
+          script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
+
