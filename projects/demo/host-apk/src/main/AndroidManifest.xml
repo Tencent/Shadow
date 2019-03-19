@@ -85,7 +85,9 @@
 
         <provider
             android:authorities="com.tencent.shadow.contentprovider.authority.dynamic"
-            android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"/>
+            android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"
+            android:process=":remote"
+            />
 
         <service android:name="com.tencent.shadow.demo.host.DemoPluginProcessService"
             android:process=":remote"
