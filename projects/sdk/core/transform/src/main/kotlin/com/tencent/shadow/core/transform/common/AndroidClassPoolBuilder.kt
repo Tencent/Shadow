@@ -1,6 +1,5 @@
-package com.tencent.shadow.core
+package com.tencent.shadow.core.transform.common
 
-import com.tencent.shadow.core.transformkit.ClassPoolBuilder
 import javassist.ClassPool
 import javassist.LoaderClassPath
 import java.io.File

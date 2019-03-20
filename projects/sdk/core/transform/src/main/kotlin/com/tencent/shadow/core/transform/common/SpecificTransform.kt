@@ -1,6 +1,5 @@
-package com.tencent.shadow.core.transformkit
+package com.tencent.shadow.core.transform.common
 
-import com.android.build.api.transform.TransformInvocation
 import javassist.ClassPool
 import javassist.CtClass
 import javassist.CtMethod
@@ -8,60 +7,56 @@ import javassist.NotFoundException
 import javassist.bytecode.CodeAttribute
 import javassist.bytecode.MethodInfo
 import javassist.bytecode.Opcode
-import org.gradle.api.Project
-import java.io.File
-import java.io.OutputStream
-import java.util.*
-import java.util.zip.ZipInputStream
 
-open class JavassistTransform(project: Project, val classPoolBuilder: ClassPoolBuilder) : ClassTransform(project) {
-    val mCtClassInputMap = mutableMapOf<CtClass, InputClass>()
-    lateinit var classPool: ClassPool
+abstract class SpecificTransform {
+    private val _list = mutableListOf<TransformStep>()
 
-    override fun onOutputClass(className: String, outputStream: OutputStream) {
-        classPool[className].writeOut(outputStream)
+    val list: List<TransformStep> = _list
+
+    lateinit var mClassPool: ClassPool
+
+    fun newStep(transform: TransformStep) {
+        _list.add(transform)
     }
 
-    override fun DirInputClass.onInputClass(classFile: File, outputFile: File) {
-        val ctClass: CtClass = classPool.makeClass(classFile.inputStream())
-        addOutput(ctClass.name, outputFile)
-        mCtClassInputMap[ctClass] = this
+    abstract fun setup(allInputClass: Set<CtClass>)
+
+    fun CtMethod.copyDescriptorFrom(other: CtMethod) {
+        methodInfo.descriptor = other.methodInfo.descriptor
     }
 
-    override fun JarInputClass.onInputClass(zipInputStream: ZipInputStream, entryName: String) {
-        val ctClass = classPool.makeClass(zipInputStream)
-        addOutput(ctClass.name, entryName)
-        mCtClassInputMap[ctClass] = this
+    fun allCanRecompileAppClass(allAppClass: Set<CtClass>, targetClassList: List<String>) =
+            allAppClass.filter { ctClass ->
+                targetClassList.any { targetClass ->
+                    ctClass.refClasses.contains(targetClass)
+                }
+            }.filter {
+                it.refClasses.all {
+                    var found: Boolean;
+                    try {
+                        mClassPool[it as String]
+                        found = true
+                    } catch (e: NotFoundException) {
+                        found = false
+                    }
+                    found
+                }
+            }.toSet()
+
+    fun CtClass.isClassOf(className: String): Boolean {
+        var tmp: CtClass? = this
+        do {
+            if (tmp?.name == className) {
+                return true
+            }
+            try {
+                tmp = tmp?.superclass
+            } catch (e: NotFoundException) {
+                return false
+            }
+        } while (tmp != null)
+        return false
     }
-
-    override fun beforeTransform(invocation: TransformInvocation) {
-        super.beforeTransform(invocation)
-        mCtClassInputMap.clear()
-        classPool = classPoolBuilder.build()
-    }
-
-
-
-    override fun onTransform() {
-        //do nothing.
-    }
-
-    fun CtClass.writeOut(output: OutputStream) {
-        this.toBytecode(java.io.DataOutputStream(output))
-    }
-
-    /**
-     * 查找目标class对象的目标method
-     */
-    fun getTargetMethods(targetClassNames: Array<String>, targetMethodName: Array<String>): List<CtMethod> {
-        val method_targets = ArrayList<CtMethod>()
-        for (targetClassName in targetClassNames) {
-            val methods = classPool[targetClassName].methods
-            method_targets.addAll(methods.filter { targetMethodName.contains(it.name) })
-        }
-        return method_targets
-    }
-
 
     /**
      * 查找目标class是否存在目标method的调用
@@ -114,8 +109,4 @@ open class JavassistTransform(project: Project, val classPoolBuilder: ClassPoolB
 
         return false
     }
-}
-
-interface ClassPoolBuilder {
-    fun build(): ClassPool
 }
