@@ -5,9 +5,15 @@ import android.os.Build;
 import android.os.StrictMode;
 
 import com.tencent.shadow.core.common.LoggerFactory;
+import com.tencent.shadow.demo.host.manager.Shadow;
+import com.tencent.shadow.dynamic.host.PluginManager;
+
+import java.io.File;
 
 public class HostApplication extends Application {
-    private static Application sApp;
+    private static HostApplication sApp;
+
+    private PluginManager mPluginManager;
 
     @Override
     public void onCreate() {
@@ -42,7 +48,18 @@ public class HostApplication extends Application {
         StrictMode.setVmPolicy(builder.build());
     }
 
-    public static Application getApp() {
+    public static HostApplication getApp() {
         return sApp;
+    }
+
+    public void loadPluginManager(File apk) {
+        if (mPluginManager != null) {
+            throw new IllegalStateException("mPluginManager != null");
+        }
+        mPluginManager = Shadow.getPluginManager(apk);
+    }
+
+    public PluginManager getPluginManager() {
+        return mPluginManager;
     }
 }
