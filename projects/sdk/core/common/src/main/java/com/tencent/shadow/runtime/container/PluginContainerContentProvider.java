@@ -43,6 +43,7 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        checkHostContentProviderDelegate();
         if (hostContentProviderDelegate != null) {
             return hostContentProviderDelegate.query(uri, projection, selection, selectionArgs, sortOrder);
         }
@@ -51,6 +52,7 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
+        checkHostContentProviderDelegate();
         if (hostContentProviderDelegate != null) {
             return hostContentProviderDelegate.getType(uri);
         }
@@ -59,6 +61,7 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        checkHostContentProviderDelegate();
         if (hostContentProviderDelegate != null) {
             return hostContentProviderDelegate.insert(uri, values);
         }
@@ -67,6 +70,7 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
+        checkHostContentProviderDelegate();
         if (hostContentProviderDelegate != null) {
             return hostContentProviderDelegate.delete(uri, selection, selectionArgs);
         }
@@ -75,6 +79,7 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        checkHostContentProviderDelegate();
         if (hostContentProviderDelegate != null) {
             return hostContentProviderDelegate.update(uri, values, selection, selectionArgs);
         }
@@ -84,6 +89,7 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public int bulkInsert(Uri uri, ContentValues[] values) {
+        checkHostContentProviderDelegate();
         if (hostContentProviderDelegate != null) {
             return hostContentProviderDelegate.bulkInsert(uri, values);
         }
@@ -92,6 +98,7 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public Bundle call(String method, String arg, Bundle extras) {
+        checkHostContentProviderDelegate();
         if (hostContentProviderDelegate != null) {
             return hostContentProviderDelegate.call(method, arg, extras);
         }
@@ -122,6 +129,7 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
+        checkHostContentProviderDelegate();
         if (hostContentProviderDelegate != null) {
             return hostContentProviderDelegate.openFile(uri, mode);
         } else {
@@ -131,10 +139,17 @@ public class PluginContainerContentProvider extends ContentProvider {
 
     @Override
     public ParcelFileDescriptor openFile(Uri uri, String mode, CancellationSignal signal) throws FileNotFoundException {
+        checkHostContentProviderDelegate();
         if (hostContentProviderDelegate != null) {
             return hostContentProviderDelegate.openFile(uri, mode, signal);
         } else {
             return super.openFile(uri, mode);
+        }
+    }
+
+    private void checkHostContentProviderDelegate(){
+        if(hostContentProviderDelegate == null){
+            throw new IllegalArgumentException("hostContentProviderDelegate is null ,请检查ContentProviderDelegateProviderHolder.setDelegateProviderHolderPrepareListener是否调用，或"+this.getClass().getSimpleName()+" 是否和插件在同一进程");
         }
     }
 }
