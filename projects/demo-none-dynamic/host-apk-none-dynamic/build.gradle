@@ -8,7 +8,7 @@ android {
         targetSdkVersion 24
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.tencent.shadow.demo.host.CustomAndroidJUnitRunner"
     }
     buildTypes {
         debug {
