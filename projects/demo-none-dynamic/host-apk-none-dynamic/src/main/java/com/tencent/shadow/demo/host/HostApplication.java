@@ -20,12 +20,23 @@ public class HostApplication extends Application {
     }
 
     private static void detectNonSdkApiUsageOnAndroidP() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-            builder.penaltyDeath();
-            builder.detectNonSdkApiUsage();
-            StrictMode.setVmPolicy(builder.build());
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            return;
         }
+        boolean isRunningEspressoTest;
+        try {
+            Class.forName("android.support.test.espresso.Espresso");
+            isRunningEspressoTest = true;
+        } catch (Exception ignored) {
+            isRunningEspressoTest = false;
+        }
+        if (isRunningEspressoTest) {
+            return;
+        }
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        builder.penaltyDeath();
+        builder.detectNonSdkApiUsage();
+        StrictMode.setVmPolicy(builder.build());
     }
 
     public static Application getApp() {
