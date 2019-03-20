@@ -53,9 +53,8 @@ public class DemoPluginManager extends FastPluginManager {
     public void enter(final Context context, long formId, Bundle bundle, final EnterCallback callback) {
         final String pluginZipPath = bundle.getString("pluginZipPath");
 
-        final View view = LayoutInflater.from(mCurrentContext).inflate(R.layout.activity_load_plugin,null);
-
         if(callback != null){
+            final View view = LayoutInflater.from(mCurrentContext).inflate(R.layout.activity_load_plugin, null);
             callback.onShowLoadingView(view);
         }
 
