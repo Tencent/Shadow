@@ -6,12 +6,11 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tencent.shadow.demo.testutil.Constant;
 import com.tencent.shadow.dynamic.host.EnterCallback;
 
 
 public class PluginLoadActivity extends Activity {
-
-    private long mFromId = 1001;
 
     private ViewGroup mViewGroup;
 
@@ -37,10 +36,10 @@ public class PluginLoadActivity extends Activity {
                 HostApplication.getApp().loadPluginManager(PluginHelper.getInstance().pluginManagerFile);
 
                 Bundle bundle = new Bundle();
-                bundle.putString("pluginZipPath", PluginHelper.getInstance().pluginZipFile.getAbsolutePath());
+                bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, PluginHelper.getInstance().pluginZipFile.getAbsolutePath());
 
                 HostApplication.getApp().getPluginManager()
-                        .enter(PluginLoadActivity.this, mFromId, bundle, new EnterCallback() {
+                        .enter(PluginLoadActivity.this, Constant.FROM_ID_ENTRY_START_DEMO_PLUGIN, bundle, new EnterCallback() {
                     @Override
                     public void onShowLoadingView(final View view) {
                         mHandler.post(new Runnable() {
