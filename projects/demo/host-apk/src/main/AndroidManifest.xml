@@ -97,6 +97,7 @@
             android:theme="@style/troop_Transparent"
             />
 
+        <activity android:name=".JumpToPluginActivity" />
 
         <!--dynamic activity注册
           注意configChanges需要全注册

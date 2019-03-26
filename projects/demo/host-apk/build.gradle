@@ -43,6 +43,14 @@ dependencies {
     implementation 'com.tencent.shadow.core:common'
     implementation 'com.tencent.shadow.dynamic:dynamic-host'
     implementation project(':projects:demo:test-util')
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:core:1.1.1-alpha02'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1-alpha02'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-alpha02'
+    androidTestImplementation 'androidx.test.espresso:espresso-remote:3.2.0-alpha02'
+    implementation 'androidx.test.espresso:espresso-idling-resource:3.2.0-alpha02'
+    androidTestImplementation "androidx.test:runner:1.1.2-alpha02"
 }
 
 def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {

@@ -34,7 +34,7 @@ public class HostApplication extends Application {
         }
         boolean isRunningEspressoTest;
         try {
-            Class.forName("android.support.test.espresso.Espresso");
+            Class.forName("androidx.test.espresso.Espresso");
             isRunningEspressoTest = true;
         } catch (Exception ignored) {
             isRunningEspressoTest = false;
