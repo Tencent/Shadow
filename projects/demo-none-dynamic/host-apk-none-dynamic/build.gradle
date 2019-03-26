@@ -32,6 +32,9 @@ android {
             assets.srcDir('build/generated/assets/demo-plugin/release/')
         }
     }
+    lintOptions {
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {

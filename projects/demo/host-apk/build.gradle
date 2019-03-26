@@ -34,6 +34,9 @@ android {
             assets.srcDir('build/generated/assets/plugin-zip/release/')
         }
     }
+    lintOptions {
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {
