@@ -3,8 +3,8 @@
 //buildscript不能从其他gradle文件中apply，所以这段buildscript脚本存在于多个子构建中。
 //请更新buildscript时同步更新。
 buildscript {
-    ext.kotlin_version = '1.2.41'
-    ext.build_gradle_version = '3.1.2'
+    ext.kotlin_version = '1.2.51'
+    ext.build_gradle_version = '3.2.0'
     repositories {
         maven {
             url "http://maven.oa.com/nexus/content/repositories/jcenter"
