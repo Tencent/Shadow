@@ -111,17 +111,21 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
 
 
     public void startPluginActivity(Context context, InstalledPlugin installedPlugin, String partKey, Intent pluginIntent) throws RemoteException, TimeoutException, FailedException {
-        loadPlugin(installedPlugin.UUID, partKey);
-        Map map = mPluginLoader.getLoadedPlugin();
-        Boolean isCall = (Boolean) map.get(partKey);
-        if(isCall == null || !isCall){
-            mPluginLoader.callApplicationOnCreate(partKey);
-        }
-        Intent intent = mPluginLoader.convertActivityIntent(pluginIntent);
+        Intent intent = convertActivityIntent(installedPlugin, partKey, pluginIntent);
         if (!(context instanceof Activity)) {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
         context.startActivity(intent);
+    }
+
+    public Intent convertActivityIntent(InstalledPlugin installedPlugin, String partKey, Intent pluginIntent) throws RemoteException, TimeoutException, FailedException {
+        loadPlugin(installedPlugin.UUID, partKey);
+        Map map = mPluginLoader.getLoadedPlugin();
+        Boolean isCall = (Boolean) map.get(partKey);
+        if (isCall == null || !isCall) {
+            mPluginLoader.callApplicationOnCreate(partKey);
+        }
+        return mPluginLoader.convertActivityIntent(pluginIntent);
     }
 
     private void loadPluginLoaderAndRuntime(String uuid) throws RemoteException, TimeoutException, FailedException {

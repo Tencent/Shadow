@@ -175,7 +175,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
 
     public final void loadPluginLoader(String uuid) throws RemoteException, FailedException {
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("loadRunTime loadPluginLoader:" + mPluginLoader);
+            mLogger.info("loadPluginLoader mPluginLoader:" + mPluginLoader);
         }
         if (mPluginLoader == null) {
             PpsStatus ppsStatus = mPpsController.getPpsStatus();

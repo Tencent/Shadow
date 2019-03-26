@@ -8,10 +8,10 @@ import java.io.File;
 public class Shadow {
 
     public static PluginManager getPluginManager(File apk){
-        final DataLocalTmpPmUpdater dataLocalTmpPmUpdater = new DataLocalTmpPmUpdater(apk);
-        File tempPm = dataLocalTmpPmUpdater.getLatest();
+        final FixedPathPmUpdater fixedPathPmUpdater = new FixedPathPmUpdater(apk);
+        File tempPm = fixedPathPmUpdater.getLatest();
         if (tempPm != null) {
-            return new DynamicPluginManager(dataLocalTmpPmUpdater);
+            return new DynamicPluginManager(fixedPathPmUpdater);
         }
         return null;
     }

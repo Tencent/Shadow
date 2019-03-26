@@ -12,6 +12,7 @@
         android:text="Hello World!" />
 
     <Button
+        android:id="@+id/startButton"
         android:text="@string/start_demo_plugin"
         android:onClick="startDemoPlugin"
         android:layout_width="wrap_content"

@@ -63,7 +63,7 @@ public class PluginHelper {
             FileUtils.copyInputStreamToFile(zip, pluginZipFile);
 
         } catch (IOException e) {
-            throw new RuntimeException("启动插件发生异常", e);
+            throw new RuntimeException("从assets中复制apk出错", e);
         }
     }
 
