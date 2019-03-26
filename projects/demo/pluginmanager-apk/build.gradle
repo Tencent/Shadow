@@ -35,3 +35,13 @@ dependencies {
     compileOnly 'com.tencent.shadow.dynamic:dynamic-host-debug'
 }
 
+afterEvaluate {
+    android {
+        buildTypes.findAll().each { buildType ->
+            def buildTypeName = buildType.getName()
+            def task = project.getTasksByName("check${buildTypeName.capitalize()}Classpath", false).first() as Task
+            task.dependsOn gradle.includedBuild('core').task(':common:jarDebugPackage')
+            task.dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:jarDebugPackage')
+        }
+    }
+}
