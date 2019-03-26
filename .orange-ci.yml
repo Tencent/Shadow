@@ -3,7 +3,7 @@
     - network: idc-kvm
       docker:
         kvm: true
-        image: runmymind/docker-android-sdk:ubuntu-standalone
+        image: dockerimage.isd.com/shadow_ci/orange_ci
       stages:
         - name: 构建全部SDK模块
           script: ./gradlew buildSdk
@@ -25,7 +25,7 @@
     - network: idc-kvm
       docker:
         kvm: true
-        image: runmymind/docker-android-sdk:ubuntu-standalone
+        image: dockerimage.isd.com/shadow_ci/orange_ci
       stages:
         - name: 构建全部SDK模块
           script: ./gradlew buildSdk
