@@ -9,8 +9,6 @@ import com.tencent.shadow.dynamic.host.EnterCallback;
 
 public class JumpToPluginActivity extends Activity {
 
-    final public SimpleIdlingResource mIdlingResource = new SimpleIdlingResource();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,16 +23,18 @@ public class JumpToPluginActivity extends Activity {
         bundle.putString(Constant.KEY_ACTIVITY_CLASSNAME, getIntent().getStringExtra(Constant.KEY_ACTIVITY_CLASSNAME));
         bundle.putBundle(Constant.KEY_EXTRAS, getIntent().getBundleExtra(Constant.KEY_EXTRAS));
 
+        final SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
+        idlingResource.setIdleState(false);
         HostApplication.getApp().getPluginManager()
                 .enter(this, Constant.FROM_ID_START_ACTIVITY, bundle, new EnterCallback() {
                     @Override
                     public void onShowLoadingView(View view) {
-                        mIdlingResource.setIdleState(false);
+
                     }
 
                     @Override
                     public void onCloseLoadingView() {
-                        mIdlingResource.setIdleState(true);
+                        idlingResource.setIdleState(true);
                     }
 
                     @Override

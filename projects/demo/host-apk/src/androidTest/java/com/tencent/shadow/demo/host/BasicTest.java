@@ -18,11 +18,9 @@ package com.tencent.shadow.demo.host;
 
 import android.content.Intent;
 
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -41,25 +39,17 @@ import org.junit.runner.RunWith;
 public class BasicTest {
     private static final String TAG = "ExampleInstrumentedTest";
 
-    private IdlingResource mIdlingResource;
-
     @Before
     public void launchActivity() {
+        SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
+        IdlingRegistry.getInstance().register(idlingResource);
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         Intent pluginIntent = new Intent();
         pluginIntent.setClassName(
                 packageName,
                 "com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate"
         );
-        ActivityScenario<JumpToPluginActivity> activityScenario = PluginActivityScenario.launch(pluginIntent);
-
-        activityScenario.onActivity(new ActivityScenario.ActivityAction<JumpToPluginActivity>() {
-            @Override
-            public void perform(JumpToPluginActivity activity) {
-                mIdlingResource = activity.mIdlingResource;
-                IdlingRegistry.getInstance().register(mIdlingResource);
-            }
-        });
+        PluginActivityScenario.launch(pluginIntent);
     }
 
     @Test
@@ -72,8 +62,7 @@ public class BasicTest {
 
     @After
     public void unregisterIdlingResource() {
-        if (mIdlingResource != null) {
-            IdlingRegistry.getInstance().unregister(mIdlingResource);
-        }
+        SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
+        IdlingRegistry.getInstance().unregister(idlingResource);
     }
 }

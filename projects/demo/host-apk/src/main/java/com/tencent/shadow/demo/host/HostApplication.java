@@ -15,6 +15,8 @@ public class HostApplication extends Application {
 
     private PluginManager mPluginManager;
 
+    final public SimpleIdlingResource mIdlingResource = new SimpleIdlingResource();
+
     @Override
     public void onCreate() {
         super.onCreate();
