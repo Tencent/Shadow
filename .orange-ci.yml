@@ -1,7 +1,8 @@
 '**':
   push:
-    - network: idc #在idc可以运行sdkmanager安装缺失组件
+    - network: idc-kvm
       docker:
+        kvm: true
         image: runmymind/docker-android-sdk:ubuntu-standalone
       stages:
         - name: 构建全部SDK模块
@@ -10,12 +11,20 @@
           script: ./gradlew lintSdk
         - name: 构建Demo模块
           script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
+        - name: 启动虚拟机
+          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window
+          daemon: true
+        - name: 等待虚拟机
+          script: /opt/tools/android-wait-for-emulator.sh
+        - name: 测试SDK
+          script: ./gradlew testSdk
         - name: 发布SNAPSHOT版到maven.oa.com
           script: ./gradlew publish
 
   merge_request:
-    - network: idc #在idc可以运行sdkmanager安装缺失组件
+    - network: idc-kvm
       docker:
+        kvm: true
         image: runmymind/docker-android-sdk:ubuntu-standalone
       stages:
         - name: 构建全部SDK模块
@@ -24,4 +33,11 @@
           script: ./gradlew lintSdk
         - name: 构建Demo模块
           script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
+        - name: 启动虚拟机
+          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window
+          daemon: true
+        - name: 等待虚拟机
+          script: /opt/tools/android-wait-for-emulator.sh
+        - name: 测试SDK
+          script: ./gradlew testSdk
 

@@ -23,6 +23,12 @@ task lintSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:lint')
 }
 
+task testSdk() {
+    dependsOn gradle.includedBuild('core').task(':transform:test')
+    dependsOn gradle.includedBuild('core').task(':gradle-plugin:test')
+    dependsOn ':projects:demo:host-apk:connectedDebugAndroidTest'
+}
+
 apply plugin: 'maven-publish'
 
 static def getDependencyNode(scope, groupId, artifactId, version) {
