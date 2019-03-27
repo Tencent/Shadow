@@ -43,11 +43,14 @@ open class PackagePluginExtension  {
         //Json文件中 plugin-loader部分信息
         val pluginLoaderObj = JSONObject()
         pluginLoaderObj["apkName"] = loaderApkName
-        val loaderFileParent = buildType.loaderApkConfig.second.replace("assemble", "")
+        val loaderFileParent = buildType.loaderApkConfig.second.replace("assemble", "").toLowerCase()
         val loaderFile = File("$projectRootDir" +
                 "/$loaderApkProjectPath/build/outputs/apk/$loaderFileParent/$loaderApkName")
         println("loaderFile = $loaderFile")
         println("loaderFile exists ? " + loaderFile.exists())
+        if (!loaderFile.exists()) {
+            throw IllegalArgumentException("loader file not exists...")
+        }
         pluginLoaderObj["hash"] = ShadowPluginHelper.getFileMD5(loaderFile)
         json["pluginLoader"] = pluginLoaderObj
 
@@ -55,11 +58,14 @@ open class PackagePluginExtension  {
         //Json文件中 plugin-runtime部分信息
         val runtimeObj = JSONObject()
         runtimeObj["apkName"] = runtimeApkName
-        val runtimeFileParent = buildType.runtimeApkConfig.second.replace("assemble", "")
+        val runtimeFileParent = buildType.runtimeApkConfig.second.replace("assemble", "").toLowerCase()
         val runtimeFile = File("$projectRootDir" +
                 "/$runtimeApkProjectPath/build/outputs/apk/$runtimeFileParent/$runtimeApkName")
         println("runtimeFile = $runtimeFile")
         println("runtimeFile exists ? " + runtimeFile.exists())
+        if (!runtimeFile.exists()) {
+            throw IllegalArgumentException("runtime file not exists...")
+        }
         runtimeObj["hash"] = ShadowPluginHelper.getFileMD5(runtimeFile)
         json["runtime"] = runtimeObj
 
@@ -70,11 +76,14 @@ open class PackagePluginExtension  {
             val pluginObj = JSONObject()
             pluginObj["partKey"] = i.partKey
             pluginObj["apkName"] = i.apkName
-            val pluginFileParent = i.buildTask.replace("assemble", "")
+            val pluginFileParent = i.buildTask.replace("assemble", "").toLowerCase()
             val pluginApk = "$projectRootDir" +
                     "/${i.projectPath}/build/outputs/apk/$pluginFileParent/${i.apkName}"
             println("pluginApkPath = $pluginApk")
             println("pluginApkPath exits ? " + File(pluginApk).exists())
+            if (! File(pluginApk).exists()) {
+                throw IllegalArgumentException("pluginApk file not exists...")
+            }
             pluginObj["hash"] = ShadowPluginHelper.getFileMD5(File(pluginApk))
             if (i.dependsOn.isNotEmpty()) {
                 val dependsOnJson = JSONArray()
