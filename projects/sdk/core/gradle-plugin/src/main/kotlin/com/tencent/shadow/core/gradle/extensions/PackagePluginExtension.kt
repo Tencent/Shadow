@@ -77,8 +77,12 @@ open class PackagePluginExtension  {
             pluginObj["partKey"] = i.partKey
             pluginObj["apkName"] = i.apkName
             val pluginFileParent = i.buildTask.replace("assemble", "").toLowerCase()
-            val pluginApk = "$projectRootDir" +
-                    "/${i.projectPath}/build/outputs/apk/$pluginFileParent/${i.apkName}"
+            val pluginApk = if (i.projectPath.isNotEmpty()) {
+                "$projectRootDir" +
+                        "/${i.projectPath}/build/outputs/apk/$pluginFileParent/${i.apkName}"
+            } else {
+                "$projectRootDir" + "/build/outputs/apk/$pluginFileParent/${i.apkName}"
+            }
             println("pluginApkPath = $pluginApk")
             println("pluginApkPath exits ? " + File(pluginApk).exists())
             if (! File(pluginApk).exists()) {

@@ -58,7 +58,7 @@ shadow {
                     pluginApk1 {
                         partKey = 'demo_main'
                         buildTask = 'assembleDebug'
-                        apkName = 'demo-plugin-debug.apk'
+                        apkName = 'case1-debug.apk'
                         projectPath = ''
                     }
                 }
