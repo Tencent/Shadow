@@ -27,22 +27,31 @@ internal fun createPackagePluginTask(project: Project, buildType: PluginBuildTyp
         val targetConfigFile = File(project.buildDir.absolutePath + "/intermediates/generatePluginConfig/${buildType.name}/config.json")
         targetConfigFile.parentFile.mkdirs()
 
-        val runtimeFileParent = buildType.runtimeApkConfig.second.replace("assemble", "")
+        val runtimeFileParent = buildType.runtimeApkConfig.second.replace("assemble", "").toLowerCase()
         val runtimeFile = File("${project.rootDir}" +
                 "/${extension.runtimeApkProjectPath}/build/outputs/apk/$runtimeFileParent/$runtimeApkName")
+        if (!runtimeFile.exists()) {
+            throw IllegalArgumentException("runtime file not exists...")
+        }
         println("runtimeFile = $runtimeFile")
 
-        val loaderFileParent = buildType.loaderApkConfig.second.replace("assemble", "")
+        val loaderFileParent = buildType.loaderApkConfig.second.replace("assemble", "").toLowerCase()
         val loaderFile = File("${project.rootDir}" +
                 "/${extension.loaderApkProjectPath}/build/outputs/apk/$loaderFileParent/$loaderApkName")
+        if (!loaderFile.exists()) {
+            throw IllegalArgumentException("loader file not exists...")
+        }
         println("loaderFile = $loaderFile")
 
         val pluginFiles: MutableList<File> = mutableListOf()
         for (i in buildType.pluginApks) {
-            val pluginFileParent = i.buildTask.replace("assemble", "")
+            val pluginFileParent = i.buildTask.replace("assemble", "").toLowerCase()
             val pluginApk = "${project.rootDir}" +
                     "/${i.projectPath}/build/outputs/apk/$pluginFileParent/${i.apkName}"
             println("pluginApk = $pluginApk")
+            if (!File(pluginApk).exists()) {
+                throw IllegalArgumentException("pluginApk file not exists...")
+            }
             pluginFiles.add(File(pluginApk))
         }
 
