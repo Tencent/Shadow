@@ -92,6 +92,7 @@ class PackageManagerTransform : SpecificTransform() {
         setup(
                 arrayOf(AndroidPackageManagerClassname),
                 arrayOf(
+                        "getApplicationInfo",
                         "getActivityInfo",
                         "getPackageInfo",
                         "resolveContentProvider"
