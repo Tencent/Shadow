@@ -9,15 +9,15 @@ import org.json.simple.JSONObject
 import java.io.File
 import java.util.*
 
-open class PackagePluginExtension  {
+open class PackagePluginExtension {
 
     var loaderApkProjectPath = ""
     var runtimeApkProjectPath = ""
 
     var uuid = ""
-    var version : Int = 0
+    var version: Int = 0
     var uuidNickName = ""
-    var compactVersion : Array<Int> = emptyArray()
+    var compactVersion: Array<Int> = emptyArray()
 
     var buildTypes: NamedDomainObjectContainer<PluginBuildType>
 
@@ -33,41 +33,31 @@ open class PackagePluginExtension  {
     }
 
     fun toJson(
+            project: Project,
             loaderApkName: String,
             runtimeApkName: String,
-            buildType: PluginBuildType,
-            projectRootDir: File
+            buildType: PluginBuildType
     ): JSONObject {
         val json = JSONObject()
 
-        //Json文件中 plugin-loader部分信息
-        val pluginLoaderObj = JSONObject()
-        pluginLoaderObj["apkName"] = loaderApkName
-        val loaderFileParent = buildType.loaderApkConfig.second.replace("assemble", "").toLowerCase()
-        val loaderFile = File("$projectRootDir" +
-                "/$loaderApkProjectPath/build/outputs/apk/$loaderFileParent/$loaderApkName")
-        println("loaderFile = $loaderFile")
-        println("loaderFile exists ? " + loaderFile.exists())
-        if (!loaderFile.exists()) {
-            throw IllegalArgumentException("loader file not exists...")
+        if (loaderApkName.isNotEmpty()) {
+            //Json文件中 plugin-loader部分信息
+            val pluginLoaderObj = JSONObject()
+            pluginLoaderObj["apkName"] = loaderApkName
+            val loaderFile = ShadowPluginHelper.getLoaderApkFile(project, buildType, true)
+            pluginLoaderObj["hash"] = ShadowPluginHelper.getFileMD5(loaderFile)
+            json["pluginLoader"] = pluginLoaderObj
         }
-        pluginLoaderObj["hash"] = ShadowPluginHelper.getFileMD5(loaderFile)
-        json["pluginLoader"] = pluginLoaderObj
 
 
-        //Json文件中 plugin-runtime部分信息
-        val runtimeObj = JSONObject()
-        runtimeObj["apkName"] = runtimeApkName
-        val runtimeFileParent = buildType.runtimeApkConfig.second.replace("assemble", "").toLowerCase()
-        val runtimeFile = File("$projectRootDir" +
-                "/$runtimeApkProjectPath/build/outputs/apk/$runtimeFileParent/$runtimeApkName")
-        println("runtimeFile = $runtimeFile")
-        println("runtimeFile exists ? " + runtimeFile.exists())
-        if (!runtimeFile.exists()) {
-            throw IllegalArgumentException("runtime file not exists...")
+        if (runtimeApkName.isNotEmpty()) {
+            //Json文件中 plugin-runtime部分信息
+            val runtimeObj = JSONObject()
+            runtimeObj["apkName"] = runtimeApkName
+            val runtimeFile = ShadowPluginHelper.getRuntimeApkFile(project, buildType, true)
+            runtimeObj["hash"] = ShadowPluginHelper.getFileMD5(runtimeFile)
+            json["runtime"] = runtimeObj
         }
-        runtimeObj["hash"] = ShadowPluginHelper.getFileMD5(runtimeFile)
-        json["runtime"] = runtimeObj
 
 
         //Json文件中 plugin部分信息
@@ -76,19 +66,7 @@ open class PackagePluginExtension  {
             val pluginObj = JSONObject()
             pluginObj["partKey"] = i.partKey
             pluginObj["apkName"] = i.apkName
-            val pluginFileParent = i.buildTask.replace("assemble", "").toLowerCase()
-            val pluginApk = if (i.projectPath.isNotEmpty()) {
-                "$projectRootDir" +
-                        "/${i.projectPath}/build/outputs/apk/$pluginFileParent/${i.apkName}"
-            } else {
-                "$projectRootDir" + "/build/outputs/apk/$pluginFileParent/${i.apkName}"
-            }
-            println("pluginApkPath = $pluginApk")
-            println("pluginApkPath exits ? " + File(pluginApk).exists())
-            if (! File(pluginApk).exists()) {
-                throw IllegalArgumentException("pluginApk file not exists...")
-            }
-            pluginObj["hash"] = ShadowPluginHelper.getFileMD5(File(pluginApk))
+            pluginObj["hash"] = ShadowPluginHelper.getFileMD5(ShadowPluginHelper.getPluginFile(project, i, true))
             if (i.dependsOn.isNotEmpty()) {
                 val dependsOnJson = JSONArray()
                 for (k in i.dependsOn) {
@@ -110,10 +88,21 @@ open class PackagePluginExtension  {
 
 
         //uuid UUID_NickName
-        if (uuid.isEmpty()) {
-            json["UUID"] = UUID.randomUUID().toString().toUpperCase()
-        } else {
-            json["UUID"] = uuid
+        val uuid = "${project.rootDir}" + "/build/uuid.txt"
+        val uuidFile = File(uuid)
+        when {
+            uuidFile.exists() -> {
+                json["UUID"] = uuidFile.readText()
+                println("uuid = " + json["UUID"] + " 由文件生成")
+            }
+            this.uuid.isEmpty() -> {
+                json["UUID"] = UUID.randomUUID().toString().toUpperCase()
+                println("uuid = " + json["UUID"] + " 随机生成")
+            }
+            else -> {
+                json["UUID"] = this.uuid
+                println("uuid = " + json["UUID"] + " 由配置生成")
+            }
         }
 
         if (uuidNickName.isNotEmpty()) {

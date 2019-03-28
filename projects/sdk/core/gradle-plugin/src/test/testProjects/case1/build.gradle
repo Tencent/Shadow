@@ -52,8 +52,8 @@ shadow {
     packagePlugin {
         pluginTypes {
             debug {
-                loaderApkConfig = new Tuple2('loader-debug.apk', 'assembleDebug')
-                runtimeApkConfig = new Tuple2('runtime-debug.apk', 'assembleDebug')
+                loaderApkConfig = new Tuple2('loader-debug.apk', ':loader:assembleDebug')
+                runtimeApkConfig = new Tuple2('runtime-debug.apk', ':runtime:assembleDebug')
                 pluginApks {
                     pluginApk1 {
                         partKey = 'demo_main'
