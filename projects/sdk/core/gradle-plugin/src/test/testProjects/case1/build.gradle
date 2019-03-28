@@ -60,6 +60,7 @@ shadow {
                         buildTask = 'assembleDebug'
                         apkName = 'case1-debug.apk'
                         projectPath = ''
+                        dependsOn = ['Core', 'Base']
                     }
                 }
             }
@@ -69,6 +70,7 @@ shadow {
 
         runtimeApkProjectPath = 'runtime'
 
+        uuid = '1234567890'
         version = 4
         compactVersion = [1, 2, 3]
         uuidNickName = "1.1.5"
