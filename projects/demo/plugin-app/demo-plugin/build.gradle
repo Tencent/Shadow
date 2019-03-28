@@ -34,8 +34,8 @@ shadow {
     packagePlugin {
         pluginTypes {
             debug {
-                loaderApkConfig = new Tuple2('loader-apk-debug.apk', 'assembleDebug')
-                runtimeApkConfig = new Tuple2('runtime-apk-debug.apk', 'assembleDebug')
+                loaderApkConfig = new Tuple2('loader-apk-debug.apk', ':projects:demo:loader-apk:assembleDebug')
+                runtimeApkConfig = new Tuple2('runtime-apk-debug.apk', ':projects:demo:runtime-apk:assembleDebug')
                 pluginApks {
                     pluginApk1 {
                         partKey = 'demo_main'
@@ -47,8 +47,8 @@ shadow {
             }
 
             release {
-                loaderApkConfig = new Tuple2('loader-apk-release.apk', 'assembleRelease')
-                runtimeApkConfig = new Tuple2('runtime-apk-release.apk', 'assembleRelease')
+                loaderApkConfig = new Tuple2('loader-apk-release.apk', ':projects:demo:loader-apk:assembleRelease')
+                runtimeApkConfig = new Tuple2('runtime-apk-release.apk', ':projects:demo:runtime-apk:assembleRelease')
                 pluginApks {
                     pluginApk1 {
                         partKey = 'demo_main'

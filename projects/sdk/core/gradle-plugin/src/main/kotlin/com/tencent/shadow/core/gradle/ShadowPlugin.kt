@@ -1,12 +1,13 @@
 package com.tencent.shadow.core.gradle
 
 import com.android.build.gradle.AppPlugin
+import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import com.tencent.shadow.core.transform.ShadowTransform
 import com.tencent.shadow.core.transform.common.AndroidClassPoolBuilder
-import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import java.io.File
 
 class ShadowPlugin : Plugin<Project> {
@@ -39,8 +40,18 @@ class ShadowPlugin : Plugin<Project> {
             val packagePlugin = project.extensions.findByName("packagePlugin")
             val extension = packagePlugin as PackagePluginExtension
             val buildTypes = extension.buildTypes
+
+            val tasks = mutableListOf<Task>()
             for (i in buildTypes) {
-                createPackagePluginTask(project, i)
+                println("buildTypes = " + i.name)
+                val task = createPackagePluginTask(project, i)
+                tasks.add(task)
+            }
+            if (tasks.isNotEmpty()) {
+                project.tasks.create("packageAllPlugin") {
+                    it.group = "plugin"
+                    it.description = "打包所有插件"
+                }.dependsOn(tasks)
             }
         }
     }
