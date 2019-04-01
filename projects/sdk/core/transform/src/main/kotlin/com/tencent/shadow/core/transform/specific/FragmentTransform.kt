@@ -6,17 +6,19 @@ import java.io.File
 
 class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : SpecificTransform() {
     companion object {
+        const val FragmentClassname = "android.app.Fragment"
         const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"
+        const val DialogFragmentClassname = "android.app.DialogFragment"
         const val ShadowDialogFragmentClassname = "com.tencent.shadow.runtime.ShadowDialogFragment"
         const val ContainerFragmentClassname = "com.tencent.shadow.runtime.ContainerFragment"
         const val ContainerDialogFragmentClassname = "com.tencent.shadow.runtime.ContainerDialogFragment"
     }
 
     val RenameMap = mapOf(
-            "android.app.Fragment"
+            FragmentClassname
                     to ShadowFragmentClassname
             ,
-            "android.app.DialogFragment"
+            DialogFragmentClassname
                     to ShadowDialogFragmentClassname
             ,
             "android.app.FragmentManager"
@@ -29,23 +31,19 @@ class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : Specif
     val mAppFragments: MutableSet<CtClass> = mutableSetOf()
     val mAppDialogFragments: MutableSet<CtClass> = mutableSetOf()
 
-    private fun CtClass.isFragment(): Boolean = isClassOf(ShadowFragmentClassname)
+    /**
+     * 当前Transform的App中的Fragment的父类，不在当前Transform的App中，但它是Fragment，记录在这个集合。
+     */
+    val mRuntimeSuperclassFragments: MutableSet<CtClass> = mutableSetOf()
 
-    private fun CtClass.isDialogFragment(): Boolean = isClassOf(ShadowDialogFragmentClassname)
+    private fun CtClass.isFragment(): Boolean = isClassOf(FragmentClassname)
+
+    private fun CtClass.isDialogFragment(): Boolean = isClassOf(DialogFragmentClassname)
 
     private fun String.appendFragmentAppendix() = this + "_"
 
     override fun setup(allInputClass: Set<CtClass>) {
-        newStep(object : TransformStep {
-            override fun filter(allInputClass: Set<CtClass>): Set<CtClass> = allInputClass
-
-            override fun transform(ctClass: CtClass) {
-                RenameMap.forEach {
-                    ctClass.replaceClassName(it.key, it.value)
-                }
-            }
-        })
-
+        //收集哪些当前Transform的App类是Fragment
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>): Set<CtClass> = allInputClass
 
@@ -58,11 +56,45 @@ class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : Specif
             }
         })
 
+        //收集不在当前Transform的App中的类，但它是Fragment.只关心App中的Fragment的父类即可。
+        newStep(object : TransformStep {
+            override fun filter(allInputClass: Set<CtClass>): Set<CtClass> =
+                    listOf<Set<CtClass>>(mAppDialogFragments, mAppFragments).flatten().toSet()
+
+            override fun transform(ctClass: CtClass) {
+                val superclass = ctClass.superclass
+                if (superclass !in mAppDialogFragments
+                        && superclass !in mAppFragments
+                        && superclass.isFragment()
+                        && superclass.name != FragmentClassname
+                        && superclass.name != DialogFragmentClassname
+                ) {
+                    mRuntimeSuperclassFragments.add(superclass)
+                }
+            }
+        })
+
+        //替换App中出现的所有名字
+        newStep(object : TransformStep {
+            override fun filter(allInputClass: Set<CtClass>): Set<CtClass> = allInputClass
+
+            override fun transform(ctClass: CtClass) {
+                RenameMap.forEach {
+                    ctClass.replaceClassName(it.key, it.value)
+                }
+            }
+        })
+
+        //将App中出现的所有Fragment名字都加上后缀
         newStep(object : TransformStep {
             lateinit var fragmentsName: List<String>
 
             override fun filter(allInputClass: Set<CtClass>): Set<CtClass> {
-                fragmentsName = listOf(mAppFragments, mAppDialogFragments)
+                fragmentsName = listOf(
+                        mAppFragments,
+                        mAppDialogFragments,
+                        mRuntimeSuperclassFragments
+                )
                         .flatten()
                         .flatMap { listOf(it.name) }
                 return allInputClass
