@@ -64,6 +64,18 @@ shadow {
                     }
                 }
             }
+
+            onlyApk {
+                pluginApks {
+                    pluginApk1 {
+                        partKey = 'demo_main'
+                        buildTask = 'assembleDebug'
+                        apkName = 'case1-debug.apk'
+                        projectPath = ''
+                        dependsOn = ['Core', 'Base']
+                    }
+                }
+            }
         }
 
         loaderApkProjectPath = 'loader'
