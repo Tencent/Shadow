@@ -34,6 +34,21 @@ abstract class ClassTransform(val project: Project) : Transform() {
 
     fun input(inputs: Collection<com.android.build.api.transform.TransformInput>,
               outputProvider: TransformOutputProvider) {
+        val logger = project.logger
+        if (logger.isInfoEnabled) {
+            val sb = StringBuilder()
+            sb.appendln()
+            inputs.forEach {
+                it.directoryInputs.forEach {
+                    sb.appendln(it.file.absolutePath)
+                }
+                it.jarInputs.forEach {
+                    sb.appendln(it.file.absolutePath)
+                }
+            }
+            logger.info("ClassTransform input paths:$sb")
+        }
+
         inputs.forEach {
             it.directoryInputs.forEach {
                 val inputDir = it.file
