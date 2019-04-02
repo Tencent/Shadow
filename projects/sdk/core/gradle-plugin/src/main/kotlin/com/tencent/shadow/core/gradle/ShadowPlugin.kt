@@ -23,7 +23,7 @@ class ShadowPlugin : Plugin<Project> {
         //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
         val contextClassLoader = Thread.currentThread().contextClassLoader
 
-        val classPoolBuilder = AndroidClassPoolBuilder(contextClassLoader, androidJar)
+        val classPoolBuilder = AndroidClassPoolBuilder(project, contextClassLoader, androidJar)
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
         if (!project.hasProperty("disable_shadow_transform")) {
