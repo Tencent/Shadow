@@ -86,11 +86,9 @@
         <provider
             android:authorities="com.tencent.shadow.contentprovider.authority.dynamic"
             android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"
-            android:process=":remote"
             />
 
         <service android:name="com.tencent.shadow.demo.host.DemoPluginProcessService"
-            android:process=":remote"
             />
 
         <activity android:name=".PluginLoadActivity"
@@ -110,7 +108,6 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:process=":remote"
             android:theme="@style/troop_Transparent"
             />
 
@@ -119,7 +116,6 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:process=":remote"
             android:theme="@style/troop_Transparent"
             />
 
@@ -128,7 +124,6 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:process=":remote"
             android:theme="@style/troop_Transparent"
             />
         <!--dynamic activity注册 end -->
