@@ -4,15 +4,15 @@ import com.tencent.shadow.core.transform.common.ShadowTransformTest
 import org.junit.Assert
 import org.junit.Test
 
-class ServiceTransformTest : ShadowTransformTest() {
+class InstrumentationTransformTest : ShadowTransformTest() {
 
     @Test
-    fun testServiceTransform() {
-        val targetClass = sLoader["test.TestService"]
+    fun testInstrumentationTransform() {
+        val targetClass = sLoader["test.TestInstrumentation"]
 
         val allInputClass = setOf(targetClass)
 
-        val applicationTransform = ServiceTransform()
+        val applicationTransform = InstrumentationTransform()
         applicationTransform.mClassPool = sLoader
         applicationTransform.setup(allInputClass)
 
@@ -24,8 +24,8 @@ class ServiceTransformTest : ShadowTransformTest() {
 
         allInputClass.forEach {
             Assert.assertEquals(
-                    "Service父类应该都变为了ShadowService",
-                    "com.tencent.shadow.runtime.ShadowService",
+                    "Instrumentation父类应该都变为了ShadowInstrumentation",
+                    "com.tencent.shadow.runtime.ShadowInstrumentation",
                     it.classFile.superclass
             )
         }
