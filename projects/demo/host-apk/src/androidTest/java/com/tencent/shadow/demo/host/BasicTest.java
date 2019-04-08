@@ -19,50 +19,33 @@ package com.tencent.shadow.demo.host;
 import android.content.Intent;
 
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.IdlingRegistry;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.assertion.ViewAssertions;
-import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
-import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class BasicTest {
-    private static final String TAG = "ExampleInstrumentedTest";
+public class BasicTest extends BaseTest {
 
-    @Before
-    public void launchActivity() {
-        SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
-        IdlingRegistry.getInstance().register(idlingResource);
-        String packageName = ApplicationProvider.getApplicationContext().getPackageName();
+    @Override
+    Intent getLaunchIntent() {
         Intent pluginIntent = new Intent();
+        String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
                 "com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate"
         );
-        PluginActivityScenario.launch(pluginIntent);
+        return pluginIntent;
     }
 
     @Test
     public void testBasicUsage() {
-        Espresso.onView(ViewMatchers.withId(R.id.jump)).perform(ViewActions.click());
+        performJumpClick();
 
-        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("tv_msg")))
-                .check(ViewAssertions.matches(ViewMatchers.withText("Activity生命周期测试")));
+        matchTextWithViewTag("tv_msg", "Activity生命周期测试");
     }
 
-    @After
-    public void unregisterIdlingResource() {
-        SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
-        IdlingRegistry.getInstance().unregister(idlingResource);
-    }
 }
