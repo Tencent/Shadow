@@ -51,57 +51,23 @@ android {
 shadow {
     packagePlugin {
         pluginTypes {
-            debug {
-                loaderApkConfig = new Tuple2('loader-debug.apk', ':loader:assembleDebug')
-                runtimeApkConfig = new Tuple2('runtime-debug.apk', ':runtime:assembleDebug')
+            case2Debug {
                 pluginApks {
                     pluginApk1 {
                         partKey = 'demo_main'
                         buildTask = 'assembleDebug'
-                        apkName = 'case1-debug.apk'
-                        projectPath = ''
-                        dependsOn = ['Core', 'Base']
-                    }
-                }
-            }
-
-            onlyApk {
-                pluginApks {
-                    pluginApk1 {
-                        partKey = 'demo_main'
-                        buildTask = 'assembleDebug'
-                        apkName = 'case1-debug.apk'
-                        projectPath = ''
+                        apkName = 'case2-debug.apk'
+                        //这里因为单元测试时，会把项目根目录设置成case1的根目录
+                        projectPath = '/case2'
                         dependsOn = ['Core', 'Base']
                     }
                 }
             }
         }
 
-        loaderApkProjectPath = 'loader'
-
-        runtimeApkProjectPath = 'runtime'
-
         uuid = '1234567890'
         version = 4
         compactVersion = [1, 2, 3]
         uuidNickName = "1.1.5"
-    }
-}
-
-task genUUID()  {
-    doFirst {
-        def uuidFile = file(rootProject.projectDir.absolutePath + '/build/uuid.txt')
-        uuidFile.getParentFile().mkdirs()
-        BufferedWriter writer = new BufferedWriter(new FileWriter(uuidFile))
-        writer.write(UUID.randomUUID().toString().toUpperCase())
-        writer.flush()
-        writer.close()
-    }
-}
-
-task PackageMultiPlugin(dependsOn: ['genUUID', 'packageDebugPlugin', ':case2:packageCase2DebugPlugin']) {
-    doLast {
-        file(rootProject.projectDir.absolutePath + '/build/uuid.txt').delete()
     }
 }
