@@ -284,4 +284,7 @@ public abstract class ShadowActivity extends PluginActivity {
         mHostActivityDelegator.setExitSharedElementCallback(callback);
     }
 
+    public void postponeEnterTransition() {
+        mHostActivityDelegator.postponeEnterTransition();
+    }
 }
