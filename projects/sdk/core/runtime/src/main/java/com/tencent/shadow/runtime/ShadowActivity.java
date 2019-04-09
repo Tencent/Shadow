@@ -9,6 +9,8 @@ import android.database.Cursor;
 import android.media.session.MediaController;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.DragAndDropPermissions;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -240,4 +242,7 @@ public abstract class ShadowActivity extends PluginActivity {
         return mHostActivityDelegator.getParentActivityIntent();
     }
 
+    public DragAndDropPermissions requestDragAndDropPermissions(DragEvent event) {
+        return mHostActivityDelegator.requestDragAndDropPermissions(event);
+    }
 }
