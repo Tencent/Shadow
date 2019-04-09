@@ -12,7 +12,7 @@
         - name: 构建Demo模块
           script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
         - name: 启动虚拟机
-          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window
+          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window -port `bash /opt/tools/get-free-port-for-emulator.sh`
           daemon: true
         - name: 等待虚拟机
           script: /opt/tools/android-wait-for-emulator.sh
@@ -34,7 +34,7 @@
         - name: 构建Demo模块
           script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
         - name: 启动虚拟机
-          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window
+          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window -port `bash /opt/tools/get-free-port-for-emulator.sh`
           daemon: true
         - name: 等待虚拟机
           script: /opt/tools/android-wait-for-emulator.sh
