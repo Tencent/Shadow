@@ -14,6 +14,8 @@ public class WindowSoftModeJumpActivity extends BaseAndroidTestActivity {
 
     private TextView mText;
 
+    public static String KEY_FROM_JUMP = "fromJump";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,9 +23,11 @@ public class WindowSoftModeJumpActivity extends BaseAndroidTestActivity {
         mText = findViewById(R.id.text);
     }
 
-    public void doClick(View view){
+    public void doClick(View view) {
         mIdlingResource.setIdleState(false);
-        startActivityForResult(new Intent(this, TestActivityWindowSoftMode.class), 1001);
+        Intent intent = new Intent(this, TestActivityWindowSoftMode.class);
+        intent.putExtra(KEY_FROM_JUMP, true);
+        startActivityForResult(intent, 1001);
     }
 
     @Override
@@ -34,7 +38,6 @@ public class WindowSoftModeJumpActivity extends BaseAndroidTestActivity {
         mText.setText(txt);
 
     }
-
 
 
 }

@@ -18,32 +18,44 @@ public class TestActivityWindowSoftMode extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_softmode);
 
+        //是否来自单元测试的中转Activity
+        final boolean isFromJump = getIntent().getBooleanExtra(WindowSoftModeJumpActivity.KEY_FROM_JUMP, false);
+
         final Handler handler = new Handler();
 
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent();
-                intent.putExtra("result","hide");
-                setResult(0,intent);
-            }
-        },3000);
+        if (isFromJump) {
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setResult("hide");
+                }
+            }, 3000);
+        }
+
 
         SoftKeyBoardListener.setListener(this, new SoftKeyBoardListener.OnSoftKeyBoardChangeListener() {
             @Override
             public void keyBoardShow(int height) {
-                handler.removeCallbacksAndMessages(null);
+                if (isFromJump) {
+                    handler.removeCallbacksAndMessages(null);
 
-                Intent intent = new Intent();
-                intent.putExtra("result","show");
-                setResult(0,intent);
+                    setResult("show");
+                }
             }
+
             @Override
             public void keyBoardHide(int height) {
 
             }
         });
 
+    }
+
+    private void setResult(String result){
+        Intent intent = new Intent();
+        intent.putExtra("result", result);
+        setResult(0, intent);
+        finish();
     }
 
 }
