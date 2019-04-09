@@ -20,6 +20,10 @@ android {
             signingConfig.initWith(buildTypes.debug.signingConfig)
         }
     }
+
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
