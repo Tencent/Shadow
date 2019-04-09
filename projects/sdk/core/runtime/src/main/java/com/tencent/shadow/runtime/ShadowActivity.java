@@ -270,4 +270,8 @@ public abstract class ShadowActivity extends PluginActivity {
     public void finishAfterTransition() {
         mHostActivityDelegator.finishAfterTransition();
     }
+
+    public Uri getReferrer() {
+        return mHostActivityDelegator.getReferrer();
+    }
 }
