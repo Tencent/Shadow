@@ -2,6 +2,7 @@ package com.tencent.shadow.runtime;
 
 import android.app.ActionBar;
 import android.app.FragmentManager;
+import android.app.SharedElementCallback;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -274,4 +275,13 @@ public abstract class ShadowActivity extends PluginActivity {
     public Uri getReferrer() {
         return mHostActivityDelegator.getReferrer();
     }
+
+    public void setEnterSharedElementCallback(SharedElementCallback callback) {
+        mHostActivityDelegator.setEnterSharedElementCallback(callback);
+    }
+
+    public void setExitSharedElementCallback(SharedElementCallback callback) {
+        mHostActivityDelegator.setExitSharedElementCallback(callback);
+    }
+
 }
