@@ -26,7 +26,6 @@ public class TestActivityWindowSoftMode extends BaseActivity {
                 Intent intent = new Intent();
                 intent.putExtra("result","hide");
                 setResult(0,intent);
-                finish();
             }
         },3000);
 
@@ -38,7 +37,6 @@ public class TestActivityWindowSoftMode extends BaseActivity {
                 Intent intent = new Intent();
                 intent.putExtra("result","show");
                 setResult(0,intent);
-                finish();
             }
             @Override
             public void keyBoardHide(int height) {
