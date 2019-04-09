@@ -287,4 +287,8 @@ public abstract class ShadowActivity extends PluginActivity {
     public void postponeEnterTransition() {
         mHostActivityDelegator.postponeEnterTransition();
     }
+
+    public void startPostponedEnterTransition() {
+        mHostActivityDelegator.startPostponedEnterTransition();
+    }
 }
