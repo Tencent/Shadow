@@ -291,4 +291,13 @@ public abstract class ShadowActivity extends PluginActivity {
     public void startPostponedEnterTransition() {
         mHostActivityDelegator.startPostponedEnterTransition();
     }
+
+    public String getCallingPackage() {
+        return mHostActivityDelegator.getCallingPackage();
+    }
+
+    public ComponentName getCallingActivity() {
+        return mHostActivityDelegator.getCallingActivity();//todo 这里可能需要返回插件的ComponentName
+    }
+
 }
