@@ -36,6 +36,7 @@ class PluginClassLoader(
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
         if (specialClassLoader == null //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
                 || className.startsWith("com.tencent.shadow.runtime")
+                || className.startsWith("androidx.test.espresso")//todo 需要将这些需要访问宿主ClassLoader的包名弄成一个配置文件，由业务方自行配置
                 || className.startsWith("org.apache.commons.logging")//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
                 || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的
             return super.loadClass(className, resolve)
