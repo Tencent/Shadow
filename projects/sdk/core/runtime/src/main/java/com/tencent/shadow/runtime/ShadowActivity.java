@@ -225,4 +225,19 @@ public abstract class ShadowActivity extends PluginActivity {
     public final MediaController getMediaController() {
         return mHostActivityDelegator.getMediaController();
     }
+
+    public boolean shouldUpRecreateTask(Intent targetIntent) {
+        Intent intent = mPluginComponentLauncher.convertPluginActivityIntent(targetIntent);
+        return mHostActivityDelegator.shouldUpRecreateTask(intent);
+    }
+
+    public boolean navigateUpTo(Intent upIntent) {
+        Intent intent = mPluginComponentLauncher.convertPluginActivityIntent(upIntent);
+        return mHostActivityDelegator.navigateUpTo(intent);
+    }
+
+    public Intent getParentActivityIntent() {
+        return mHostActivityDelegator.getParentActivityIntent();
+    }
+
 }
