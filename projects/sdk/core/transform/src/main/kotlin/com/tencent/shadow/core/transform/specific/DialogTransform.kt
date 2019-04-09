@@ -1,5 +1,6 @@
 package com.tencent.shadow.core.transform.specific
 
+import com.tencent.shadow.core.transform.common.ReplaceClassName
 import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.common.TransformStep
 import javassist.CodeConverter
@@ -32,7 +33,7 @@ class DialogTransform : SpecificTransform() {
             override fun filter(allInputClass: Set<CtClass>) = allInputClass
 
             override fun transform(ctClass: CtClass) {
-                ctClass.replaceClassName(AndroidDialogClassname, ShadowDialogClassname)
+                ReplaceClassName.replaceClassName(ctClass, AndroidDialogClassname, ShadowDialogClassname)
             }
 
         })

@@ -1,5 +1,6 @@
 package com.tencent.shadow.core.transform.specific
 
+import com.tencent.shadow.core.transform.common.ReplaceClassName
 import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.common.TransformStep
 import javassist.CtClass
@@ -11,7 +12,7 @@ open class SimpleRenameTransform(private val fromToMap: Map<String, String>) : S
 
             override fun transform(ctClass: CtClass) {
                 fromToMap.forEach {
-                    ctClass.replaceClassName(it.key, it.value)
+                    ReplaceClassName.replaceClassName(ctClass, it.key, it.value)
                 }
             }
         })
