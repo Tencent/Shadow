@@ -8,6 +8,7 @@ import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOrientation;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
+import com.tencent.shadow.demo.usecases.activity.TestActivityWindowSoftMode;
 import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
@@ -50,6 +51,10 @@ public class UseCaseManager {
 
         activityCategory.caseList.add(useCase);
         activityCategory.caseList.add(new UseCase(Case_Activity.CASE_ORIENTATION,"横竖屏切换测试","测试横竖屏切换时，Activity的生命周期变化是否和AndroidManifest.xml中配置的config相关", TestActivityOrientation.class));
+
+        activityCategory.caseList.add(new UseCase(Case_Activity.CASE_WINDOW_SOFT_MODE,"windowSoftInputMode测试",
+                "测试插件中设置windowSoftInputMode是否生效", TestActivityWindowSoftMode.class));
+
 
 
 
@@ -119,6 +124,7 @@ public class UseCaseManager {
         public final static int CASE_RECREATE = 10001;
         public final static int CASE_RECREATE_BY_SYTEM = 10002;
         public final static int CASE_ORIENTATION = 10003;
+        public final static int CASE_WINDOW_SOFT_MODE = 10004;
     }
 
     private static class Case_Service {

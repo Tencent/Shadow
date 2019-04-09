@@ -104,6 +104,9 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
             //使PluginActivity替代ContainerActivity接收Window的Callback
             mHostActivityDelegator.window.callback = pluginActivity
 
+            //设置插件AndroidManifest.xml 中注册的WindowSoftInputMode
+            mHostActivityDelegator.window.setSoftInputMode(pluginActivityInfo.activityInfo.softInputMode)
+
             //Activity.onCreate调用之前应该先收到onWindowAttributesChanged。
             if (mCallOnWindowAttributesChanged) {
                 pluginActivity.onWindowAttributesChanged(mBeforeOnCreateOnWindowAttributesChangedCalledParams)

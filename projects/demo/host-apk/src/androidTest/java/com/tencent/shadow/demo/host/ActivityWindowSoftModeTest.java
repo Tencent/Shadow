@@ -16,19 +16,28 @@
 
 package com.tencent.shadow.demo.host;
 
+import android.app.Instrumentation;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class BasicTest extends BaseTest {
+public class ActivityWindowSoftModeTest extends BaseTest {
 
     @Override
     Intent getLaunchIntent() {
@@ -36,7 +45,7 @@ public class BasicTest extends BaseTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate"
+                "com.tencent.shadow.demo.usecases.activity.WindowSoftModeJumpActivity"
         );
         return pluginIntent;
     }
@@ -45,7 +54,9 @@ public class BasicTest extends BaseTest {
     public void testBasicUsage() {
         performJumpClick();
 
-        matchTextWithViewTag("tv_msg", "Activity生命周期测试");
+        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button"))).perform(ViewActions.click());;
+
+        matchTextWithViewTag("text","show");
     }
 
 }
