@@ -245,4 +245,8 @@ public abstract class ShadowActivity extends PluginActivity {
     public DragAndDropPermissions requestDragAndDropPermissions(DragEvent event) {
         return mHostActivityDelegator.requestDragAndDropPermissions(event);
     }
+
+    public void invalidateOptionsMenu() {
+        mHostActivityDelegator.invalidateOptionsMenu();
+    }
 }
