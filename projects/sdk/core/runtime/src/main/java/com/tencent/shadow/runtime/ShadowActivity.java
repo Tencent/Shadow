@@ -262,4 +262,12 @@ public abstract class ShadowActivity extends PluginActivity {
                                            Bundle options) throws IntentSender.SendIntentException {
         mHostActivityDelegator.startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, options);
     }
+
+    public void finishAffinity() {
+        mHostActivityDelegator.finishAffinity();
+    }
+
+    public void finishAfterTransition() {
+        mHostActivityDelegator.finishAfterTransition();
+    }
 }
