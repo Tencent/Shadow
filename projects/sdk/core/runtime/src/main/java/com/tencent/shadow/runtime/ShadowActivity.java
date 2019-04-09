@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.session.MediaController;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -215,5 +216,13 @@ public abstract class ShadowActivity extends PluginActivity {
 
     public boolean shouldShowRequestPermissionRationale(String permission) {
         return mHostActivityDelegator.shouldShowRequestPermissionRationale(permission);
+    }
+
+    public final void setMediaController(MediaController controller) {
+        mHostActivityDelegator.setMediaController(controller);
+    }
+
+    public final MediaController getMediaController() {
+        return mHostActivityDelegator.getMediaController();
     }
 }
