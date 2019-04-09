@@ -38,6 +38,8 @@
             android:windowSoftInputMode="stateVisible"
             />
 
+        <activity android:name="com.tencent.shadow.demo.usecases.activity.WindowSoftModeJumpActivity" />
+
         <activity android:name="com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity"/>
 
         <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem" />
