@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 /**
  * 这个类是Loader中复制过来的，需要和Loader中的保持一致。
- * todo 这个类要抽出一个单独的模块避免这种一个文件写两份的问题
+ * todo #26 这个类要抽出一个单独的模块避免这种一个文件写两份的问题
  */
 public class LoadParametersInManager implements Parcelable {
     public final String partKey;

@@ -7,8 +7,8 @@ import java.util.List;
 
 /**
  * 插件静态广播配置
- * todo 将广播配置移到ComponentManager
- * todo 动态解析AndroidManifest.xml 中的广播信息动态注册
+ * todo #38 将广播配置移到ComponentManager
+ * todo #39 动态解析AndroidManifest.xml 中的广播信息动态注册
  */
 public class DemoPluginBroadcastManager extends PluginBroadcastManager {
 

@@ -17,12 +17,12 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     fun setUuidManager(p0: UuidManager?) {
         if (p0 != null)
             mUuidManager = p0
-        //todo 兼容mUuidManager为null时的逻辑
+        //todo #30 兼容mUuidManager为null时的逻辑
     }
 
     companion object {
 
-        private val CLASSS_PLUGIN_LOADER_IMPL = "com.tencent.shadow.sdk.pluginloader.PluginLoaderImpl"//todo cubershi:这个类名的包名不规范
+        private val CLASSS_PLUGIN_LOADER_IMPL = "com.tencent.shadow.sdk.pluginloader.PluginLoaderImpl"//todo #31 这个类名的包名不规范
     }
 
     private val mPluginLoader: ShadowPluginLoader
@@ -72,7 +72,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
         return loadPlugins
     }
 
-    @Synchronized//todo cubershi: 确认这个注解的工作效果
+    @Synchronized
     fun callApplicationOnCreate(partKey: String) {
         mPluginLoader.callApplicationOnCreate(partKey)
     }
