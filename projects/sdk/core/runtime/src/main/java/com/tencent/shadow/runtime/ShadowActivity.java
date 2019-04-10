@@ -297,7 +297,7 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
     public ComponentName getCallingActivity() {
-        return mHostActivityDelegator.getCallingActivity();//todo 这里可能需要返回插件的ComponentName
+        return mHostActivityDelegator.getCallingActivity();//todo #35 这里可能需要返回插件的ComponentName
     }
 
 }

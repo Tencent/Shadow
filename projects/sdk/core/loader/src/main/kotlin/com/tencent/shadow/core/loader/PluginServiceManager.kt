@@ -78,7 +78,7 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
     }
 
     fun bindPluginService(intent: Intent, conn: ServiceConnection, flags: Int): Boolean {
-        // todo 目前实现未处理flags,后续实现补上
+        // todo #25 目前实现未处理flags,后续实现补上
 
         val componentName = intent.component
 
