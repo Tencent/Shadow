@@ -72,7 +72,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
         return loadPlugins
     }
 
-    @Synchronized//todo cubershi: 确认这个注解的工作效果
+    @Synchronized
     fun callApplicationOnCreate(partKey: String) {
         mPluginLoader.callApplicationOnCreate(partKey)
     }
