@@ -17,7 +17,7 @@ public class TestViewConstructorCache extends Activity {
         setContentView(R.layout.layout_test_view_cons_cache);
         TestViewConstructorCacheView testView = findViewById(R.id.testView);
 
-        PathClassLoader pathClassLoader = (PathClassLoader) getBaseContext().getClass().getClassLoader();
+        PathClassLoader pathClassLoader = (PathClassLoader) getApplication().getBaseContext().getClass().getClassLoader();
 
         boolean assertTrue;
         try {
