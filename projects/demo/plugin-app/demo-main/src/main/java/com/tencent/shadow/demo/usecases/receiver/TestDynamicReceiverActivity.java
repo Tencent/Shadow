@@ -11,9 +11,27 @@ import android.widget.Button;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.util.ToastUtil;
 
 public class TestDynamicReceiverActivity extends BaseActivity {
+
+    public static class Case extends UseCase {
+        @Override
+        public String getName() {
+            return "动态广播测试";
+        }
+
+        @Override
+        public String getSummary() {
+            return "测试动态广播的发送和接收是否工作正常";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestDynamicReceiverActivity.class;
+        }
+    }
 
     private final static String INTENT_ACTION = "com.tencent.test.action.DYNAMIC";
 

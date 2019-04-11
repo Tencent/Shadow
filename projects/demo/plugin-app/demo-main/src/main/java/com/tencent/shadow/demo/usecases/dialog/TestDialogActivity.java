@@ -6,8 +6,26 @@ import android.view.View;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 
 public class TestDialogActivity extends BaseActivity {
+
+    public static class Case extends UseCase {
+        @Override
+        public String getName() {
+            return "Dialog 相关测试";
+        }
+
+        @Override
+        public String getSummary() {
+            return "测试show Dialog";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestDialogActivity.class;
+        }
+    }
 
 
 

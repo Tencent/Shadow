@@ -5,9 +5,27 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.util.ToastUtil;
 
 public class TestActivityOnCreate extends Activity {
+
+    public static class Case extends UseCase{
+        @Override
+        public String getName() {
+            return "生命周期测试";
+        }
+
+        @Override
+        public String getSummary() {
+            return "测试Activity的生命周期方法是否正确回调";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestActivityOnCreate.class;
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
