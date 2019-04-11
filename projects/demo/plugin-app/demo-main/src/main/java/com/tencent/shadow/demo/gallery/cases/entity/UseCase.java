@@ -2,19 +2,15 @@ package com.tencent.shadow.demo.gallery.cases.entity;
 
 import android.os.Bundle;
 
-public class UseCase {
+public abstract class UseCase {
 
-    public String name;
+    public abstract String getName();
 
-    public String summary;
+    public abstract String getSummary();
 
-    public Class pageClass;
+    public abstract Class getPageClass();
 
-    public Bundle bundle;
-
-    public UseCase(String name, String summary, Class pageClass) {
-        this.name = name;
-        this.summary = summary;
-        this.pageClass = pageClass;
+    public Bundle getPageParams(){
+        return null;
     }
 }

@@ -14,10 +14,28 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 
 import java.io.File;
 
 public class TestFileProviderActivity extends Activity {
+
+    public static class Case extends UseCase {
+        @Override
+        public String getName() {
+            return "FileProvider相关测试";
+        }
+
+        @Override
+        public String getSummary() {
+            return "通过使用系统相机拍照来测试FileProvider";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestFileProviderActivity.class;
+        }
+    }
 
     private static final int REQUEST_CODE = 1001;
 

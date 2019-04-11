@@ -7,10 +7,28 @@ import android.support.annotation.Nullable;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.usecases.util.SoftKeyBoardListener;
 
 
 public class TestActivityWindowSoftMode extends BaseActivity {
+
+    public static class Case extends UseCase {
+        @Override
+        public String getName() {
+            return "windowSoftInputMode测试";
+        }
+
+        @Override
+        public String getSummary() {
+            return "测试插件中设置windowSoftInputMode是否生效";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestActivityWindowSoftMode.class;
+        }
+    }
 
 
     @Override

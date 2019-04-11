@@ -1,15 +1,13 @@
 package com.tencent.shadow.demo.gallery.cases.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class UseCaseCategory {
 
     public String title;
 
-    public List<UseCase> caseList = new ArrayList<>();
+    public UseCase[] caseList ;
 
-    public UseCaseCategory(String title) {
+    public UseCaseCategory(String title,UseCase[] caseList) {
         this.title = title;
+        this.caseList = caseList;
     }
 }

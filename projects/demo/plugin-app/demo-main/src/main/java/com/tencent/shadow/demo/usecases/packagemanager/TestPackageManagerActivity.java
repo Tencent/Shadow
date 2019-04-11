@@ -12,8 +12,26 @@ import android.widget.TextView;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 
 public class TestPackageManagerActivity extends BaseActivity {
+
+    public static class Case extends UseCase {
+        @Override
+        public String getName() {
+            return "PackageManager调用测试";
+        }
+
+        @Override
+        public String getSummary() {
+            return "测试PackageManager相关api的调用，确保插件调用相关api时可以正确获取到插件相关的信息";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestPackageManagerActivity.class;
+        }
+    }
 
     private TextView mTvTextView;
 
