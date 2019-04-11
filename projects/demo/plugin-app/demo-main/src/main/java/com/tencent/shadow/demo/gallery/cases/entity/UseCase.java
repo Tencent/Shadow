@@ -4,8 +4,6 @@ import android.os.Bundle;
 
 public class UseCase {
 
-    public int id;
-
     public String name;
 
     public String summary;
@@ -14,8 +12,7 @@ public class UseCase {
 
     public Bundle bundle;
 
-    public UseCase(int id, String name, String summary, Class pageClass) {
-        this.id = id;
+    public UseCase(String name, String summary, Class pageClass) {
         this.name = name;
         this.summary = summary;
         this.pageClass = pageClass;

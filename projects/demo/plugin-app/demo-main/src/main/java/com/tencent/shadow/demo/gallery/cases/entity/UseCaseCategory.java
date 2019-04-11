@@ -5,14 +5,11 @@ import java.util.List;
 
 public class UseCaseCategory {
 
-    public int id;
-
     public String title;
 
     public List<UseCase> caseList = new ArrayList<>();
 
-    public UseCaseCategory(int id, String title) {
-        this.id = id;
+    public UseCaseCategory(String title) {
         this.title = title;
     }
 }
