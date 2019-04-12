@@ -3,7 +3,7 @@
     - network: idc-kvm
       docker:
         kvm: true
-        image: dockerimage.isd.com/shadow_ci/orange_ci
+        image: dockerimage.isd.com/android-build/shadow-build-cache:latest
       stages:
         - name: 构建全部SDK模块
           script: ./gradlew buildSdk
@@ -29,7 +29,7 @@
     - network: idc-kvm
       docker:
         kvm: true
-        image: dockerimage.isd.com/shadow_ci/orange_ci
+        image: dockerimage.isd.com/android-build/shadow-build-cache:latest
       stages:
         - name: 构建全部SDK模块
           script: ./gradlew buildSdk
