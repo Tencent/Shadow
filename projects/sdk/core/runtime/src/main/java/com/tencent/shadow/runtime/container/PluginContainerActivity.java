@@ -2123,4 +2123,13 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             super.recreate();
         }
     }
+
+    @Override
+    public ComponentName getCallingActivity() {
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.getCallingActivity();
+        } else {
+            return super.getCallingActivity();
+        }
+    }
 }

@@ -31,6 +31,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         const val CM_EXTRAS_BUNDLE_KEY = "CM_EXTRAS_BUNDLE"
         const val CM_ACTIVITY_INFO_KEY = "CM_ACTIVITY_INFO"
         const val CM_CLASS_NAME_KEY = "CM_CLASS_NAME"
+        const val CM_CALLING_ACTIVITY_KEY = "CM_CALLING_ACTIVITY_KEY"
         const val CM_PACKAGE_NAME_KEY = "CM_PACKAGE_NAME"
         const val CM_INTENT_KEY = "CM_INTENT"
         const val CM_PART_KEY = "CM_PART"
@@ -57,18 +58,12 @@ abstract class ComponentManager : PluginComponentLauncher {
         }
     }
 
-    override fun startActivityForResult(delegator: HostActivityDelegator, pluginIntent: Intent, requestCode: Int): Boolean {
-        return if (pluginIntent.isPluginComponent()) {
-            delegator.startActivityForResult(pluginIntent.toActivityContainerIntent(), requestCode)
-            true
-        } else {
-            false
-        }
-    }
 
-    override fun startActivityForResult(delegator: HostActivityDelegator, pluginIntent: Intent, requestCode: Int, option: Bundle?): Boolean {
+    override fun startActivityForResult(delegator: HostActivityDelegator, pluginIntent: Intent, requestCode: Int, option: Bundle?, callingActivity: ComponentName): Boolean {
         return if (pluginIntent.isPluginComponent()) {
-            delegator.startActivityForResult(pluginIntent.toActivityContainerIntent(), requestCode, option)
+            val containerIntent = pluginIntent.toActivityContainerIntent()
+            containerIntent.putExtra(CM_CALLING_ACTIVITY_KEY,callingActivity)
+            delegator.startActivityForResult(containerIntent, requestCode, option)
             true
         } else {
             false

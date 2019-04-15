@@ -3,6 +3,7 @@ package com.tencent.shadow.runtime.container;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -119,4 +120,6 @@ public interface HostActivityDelegate {
     void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
 
     void recreate();
+
+    ComponentName getCallingActivity();
 }
