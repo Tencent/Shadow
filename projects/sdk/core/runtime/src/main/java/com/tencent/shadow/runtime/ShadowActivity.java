@@ -117,18 +117,14 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
     public void startActivityForResult(Intent intent, int requestCode) {
-        final Intent pluginIntent = new Intent(intent);
-        pluginIntent.setExtrasClassLoader(mPluginClassLoader);
-        final boolean success = mPluginComponentLauncher.startActivityForResult(mHostActivityDelegator, pluginIntent, requestCode);
-        if (!success) {
-            mHostActivityDelegator.startActivityForResult(intent, requestCode);
-        }
+        startActivityForResult(intent, requestCode, null);
     }
 
     public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
         final Intent pluginIntent = new Intent(intent);
         pluginIntent.setExtrasClassLoader(mPluginClassLoader);
-        final boolean success = mPluginComponentLauncher.startActivityForResult(mHostActivityDelegator, pluginIntent, requestCode, options);
+        ComponentName callingActivity = new ComponentName(getPackageName(), getClass().getName());
+        final boolean success = mPluginComponentLauncher.startActivityForResult(mHostActivityDelegator, pluginIntent, requestCode, options, callingActivity);
         if (!success) {
             mHostActivityDelegator.startActivityForResult(intent, requestCode, options);
         }
