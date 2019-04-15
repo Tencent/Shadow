@@ -12,7 +12,6 @@ import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
-import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.core.loader.remoteview.ShadowRemoteViewCreatorImp
 import com.tencent.shadow.runtime.UriParseDelegate
@@ -50,11 +49,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
      * @GuardedBy("mLock")
      */
     abstract fun getComponentManager():ComponentManager
-
-    /**
-     * @GuardedBy("mLock")
-     */
-    abstract fun getBusinessPluginReceiverManager(hostAppContext: Context): PluginBroadcastManager
 
     abstract val mExceptionReporter: Reporter
 
@@ -150,7 +144,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                 mAbi,
                 mCommonPluginPackageManager,
                 mComponentManager,
-                getBusinessPluginReceiverManager(mHostAppContext),
                 mLock,
                 mPluginPartsMap,
                 mHostAppContext,

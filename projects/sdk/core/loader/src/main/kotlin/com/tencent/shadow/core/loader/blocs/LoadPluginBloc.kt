@@ -8,7 +8,6 @@ import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
-import com.tencent.shadow.core.loader.managers.PluginBroadcastManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
 import com.tencent.shadow.runtime.PluginPartInfo
 import com.tencent.shadow.runtime.PluginPartInfoManager
@@ -27,7 +26,6 @@ object LoadPluginBloc {
             abi: String,
             commonPluginPackageManager: CommonPluginPackageManager,
             componentManager: ComponentManager,
-            pluginBroadcastManager: PluginBroadcastManager,
             lock: ReentrantLock,
             pluginPartsMap: MutableMap<String, PluginParts>,
             hostAppContext: Context,
@@ -83,7 +81,6 @@ object LoadPluginBloc {
                         resources,
                         hostAppContext,
                         componentManager,
-                        pluginBroadcastManager.getBroadcastsByPartKey(pluginInfo.partKey),
                         remoteViewCreatorProvider
                 )
             })
