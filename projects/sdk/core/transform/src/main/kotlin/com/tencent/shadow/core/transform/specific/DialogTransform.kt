@@ -4,6 +4,7 @@ import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.common.TransformStep
 import javassist.CodeConverter
 import javassist.CtClass
+import javassist.CtMethod
 
 class DialogTransform : SpecificTransform() {
     companion object {
@@ -16,17 +17,17 @@ class DialogTransform : SpecificTransform() {
     override fun setup(allInputClass: Set<CtClass>) {
         val dialogMethods = mClassPool[AndroidDialogClassname].methods!!
         val shadowDialogMethods = mClassPool[ShadowDialogClassname].methods!!
-        val method_getOwnerActivity = dialogMethods.find { it.name == "getOwnerActivity" }!!
-        val method_setOwnerActivity = dialogMethods.find { it.name == "setOwnerActivity" }!!
-        val method_getOwnerPluginActivity = shadowDialogMethods.find { it.name == "getOwnerPluginActivity" }!!
-        val method_setOwnerPluginActivity = shadowDialogMethods.find { it.name == "setOwnerPluginActivity" }!!
-        //appClass中的Activity都已经被改名为ShadowActivity了．所以要把方法签名也先改一下．
-        method_getOwnerActivity.copyDescriptorFrom(method_getOwnerPluginActivity)
-        method_setOwnerActivity.copyDescriptorFrom(method_setOwnerPluginActivity)
-
         codeConverter = CodeConverter()
-        codeConverter.redirectMethodCall(method_getOwnerActivity, method_getOwnerPluginActivity)
-        codeConverter.redirectMethodCall(method_setOwnerActivity, method_setOwnerPluginActivity)
+
+        redirectMethodCall(
+            dialogMethods.find { it.name == "getOwnerActivity" }!!,
+            shadowDialogMethods.find { it.name == "getOwnerPluginActivity" }!!
+        )
+
+        redirectMethodCall(
+            dialogMethods.find { it.name == "setOwnerActivity" }!!,
+            shadowDialogMethods.find { it.name == "setOwnerPluginActivity" }!!
+        )
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) = allInputClass
@@ -39,7 +40,7 @@ class DialogTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>): Set<CtClass> =
-                    allCanRecompileAppClass(allInputClass, listOf(AndroidDialogClassname))
+                allCanRecompileAppClass(allInputClass, listOf(AndroidDialogClassname))
 
             override fun transform(ctClass: CtClass) {
                 try {
@@ -51,6 +52,15 @@ class DialogTransform : SpecificTransform() {
             }
 
         })
+    }
+
+    private fun redirectMethodCall(
+        oldMethod: CtMethod,
+        newMethod: CtMethod
+    ) {
+        oldMethod.copyDescriptorFrom(newMethod)
+        //appClass中的Activity都已经被改名为ShadowActivity了．所以要把方法签名也先改一下．
+        codeConverter.redirectMethodCall(oldMethod, newMethod)
     }
 
 }
