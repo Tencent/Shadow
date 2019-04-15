@@ -64,17 +64,21 @@ public abstract class ShadowService extends ShadowContext {
 
     @Deprecated
     public final void setForeground(boolean isForeground) {
-
+        //todo #37 支持Service设置Foreground
     }
 
     public final void startForeground(int id, Notification notification) {
         //mHostServiceDelegator.startForeground(id, notification);
-        // todo: 这里需要重新实现
+        //todo #37 支持Service设置Foreground
     }
 
     public final void stopForeground(boolean removeNotification) {
-        //todo cubershi: 这里没有考虑多Service复用的情况。多Service复用时不能其中一个Service要stop就stop。
+        //todo #37 支持Service设置Foreground
         //mHostServiceDelegator.stopForeground(removeNotification);
+    }
+
+    public final void stopForeground(int flags) {
+
     }
 
     public final void stopSelf() {

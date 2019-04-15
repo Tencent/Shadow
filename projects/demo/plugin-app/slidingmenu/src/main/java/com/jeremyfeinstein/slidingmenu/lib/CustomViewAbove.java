@@ -788,7 +788,6 @@ public class CustomViewAbove extends ViewGroup {
 			mLastMotionX = x;
 			mLastMotionY = y;
 			setScrollingCacheEnabled(true);
-			// TODO add back in touch slop check
 		} else if (xDiff > mTouchSlop) {
 			mIsUnableToDrag = true;
 		}

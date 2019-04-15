@@ -16,7 +16,7 @@ import java.util.zip.ZipEntry;
 public class UnpackManager {
 
     private static final String UNPACK_DONE_PRE_FIX = "unpacked.";
-    private static final String CONFIG_FILENAME = "config.json";//todo json的格式需要沉淀文档。
+    private static final String CONFIG_FILENAME = "config.json";//todo #28 json的格式需要沉淀文档。
     private static final String DEFAULT_STORE_DIR_NAME = "ShadowPluginManager";
 
     private final File mPluginUnpackedDir;

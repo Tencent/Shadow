@@ -1,5 +1,6 @@
 package com.tencent.shadow.core.transform.specific
 
+import com.tencent.shadow.core.transform.common.ReplaceClassName
 import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.common.TransformStep
 import javassist.CtClass
@@ -31,7 +32,7 @@ class RemoteViewTransform : SpecificTransform() {
                 // 除RemoteLocalSdk包外的所有类，都需要替换
                 if (RemoteLocalSdkPackageName != ctClass.packageName) {
                     RemoteViewRenameMap.forEach {
-                        ctClass.replaceClassName(it.key, it.value)
+                        ReplaceClassName.replaceClassName(ctClass, it.key, it.value)
                     }
                 }
             }

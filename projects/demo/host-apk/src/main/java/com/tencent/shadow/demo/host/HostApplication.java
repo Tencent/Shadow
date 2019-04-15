@@ -55,10 +55,9 @@ public class HostApplication extends Application {
     }
 
     public void loadPluginManager(File apk) {
-        if (mPluginManager != null) {
-            throw new IllegalStateException("mPluginManager != null");
+        if (mPluginManager == null) {
+            mPluginManager = Shadow.getPluginManager(apk);
         }
-        mPluginManager = Shadow.getPluginManager(apk);
     }
 
     public PluginManager getPluginManager() {

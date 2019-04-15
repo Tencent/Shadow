@@ -3,7 +3,7 @@
     - network: idc-kvm
       docker:
         kvm: true
-        image: dockerimage.isd.com/shadow_ci/orange_ci
+        image: dockerimage.isd.com/android-build/shadow-build-cache:latest
       stages:
         - name: 构建全部SDK模块
           script: ./gradlew buildSdk
@@ -11,13 +11,17 @@
           script: ./gradlew lintSdk
         - name: 构建Demo模块
           script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
+        - name: 确定虚拟机端口号
+          script: echo -n `bash /opt/tools/get-free-port-for-emulator.sh`
+          envExport:
+            stdout: EMULATOR_PORT
         - name: 启动虚拟机
-          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window
+          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window -port $EMULATOR_PORT
           daemon: true
         - name: 等待虚拟机
           script: /opt/tools/android-wait-for-emulator.sh
         - name: 测试SDK
-          script: ./gradlew testSdk
+          script: ANDROID_SERIAL=emulator-$EMULATOR_PORT ./gradlew testSdk
         - name: 发布SNAPSHOT版到maven.oa.com
           script: ./gradlew publish
 
@@ -25,7 +29,7 @@
     - network: idc-kvm
       docker:
         kvm: true
-        image: dockerimage.isd.com/shadow_ci/orange_ci
+        image: dockerimage.isd.com/android-build/shadow-build-cache:latest
       stages:
         - name: 构建全部SDK模块
           script: ./gradlew buildSdk
@@ -33,11 +37,15 @@
           script: ./gradlew lintSdk
         - name: 构建Demo模块
           script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
+        - name: 确定虚拟机端口号
+          script: echo -n `bash /opt/tools/get-free-port-for-emulator.sh`
+          envExport:
+            stdout: EMULATOR_PORT
         - name: 启动虚拟机
-          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window
+          script: $ANDROID_HOME/tools/emulator -avd test -no-audio -no-window -port $EMULATOR_PORT
           daemon: true
         - name: 等待虚拟机
           script: /opt/tools/android-wait-for-emulator.sh
         - name: 测试SDK
-          script: ./gradlew testSdk
+          script: ANDROID_SERIAL=emulator-$EMULATOR_PORT ./gradlew testSdk
 

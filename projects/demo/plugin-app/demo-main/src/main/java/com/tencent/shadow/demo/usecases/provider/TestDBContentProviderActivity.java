@@ -13,8 +13,26 @@ import android.widget.Toast;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 
 public class TestDBContentProviderActivity extends BaseActivity {
+
+    public static class Case extends UseCase {
+        @Override
+        public String getName() {
+            return "ContentProvider DB相关测试";
+        }
+
+        @Override
+        public String getSummary() {
+            return "测试通过ContentProvider来操作数据库";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestDBContentProviderActivity.class;
+        }
+    }
 
     private static final String TAG = "ContentProviderActivity";
 

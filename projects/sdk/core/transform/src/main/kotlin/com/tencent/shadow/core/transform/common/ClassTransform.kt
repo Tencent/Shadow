@@ -145,12 +145,15 @@ abstract class ClassTransform(val project: Project) : Transform() {
         invocation.outputProvider.deleteAll()
     }
 
+    open fun afterTransform(invocation: TransformInvocation) {
+    }
 
     final override fun transform(invocation: TransformInvocation) {
         beforeTransform(invocation)
         input(invocation.inputs, invocation.outputProvider)
         onTransform()
         output(invocation.outputProvider)
+        afterTransform(invocation)
     }
 
     override fun getSecondaryFiles(): ImmutableList<SecondaryFile>? {

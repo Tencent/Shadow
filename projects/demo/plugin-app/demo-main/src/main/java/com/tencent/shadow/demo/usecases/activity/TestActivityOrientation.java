@@ -8,10 +8,28 @@ import android.view.View;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.util.ToastUtil;
 
 
 public class TestActivityOrientation extends BaseActivity {
+
+    public static class Case extends UseCase {
+        @Override
+        public String getName() {
+            return "横竖屏切换测试";
+        }
+
+        @Override
+        public String getSummary() {
+            return "测试横竖屏切换时，Activity的生命周期变化是否和AndroidManifest.xml中配置的config相关";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestActivityOrientation.class;
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

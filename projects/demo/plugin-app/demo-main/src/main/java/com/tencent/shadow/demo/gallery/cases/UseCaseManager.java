@@ -1,13 +1,12 @@
 package com.tencent.shadow.demo.gallery.cases;
 
-import android.os.Bundle;
-
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOrientation;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
+import com.tencent.shadow.demo.usecases.activity.TestActivityWindowSoftMode;
 import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
@@ -36,134 +35,58 @@ public class UseCaseManager {
 
         sInit = true;
 
-        UseCaseCategory activityCategory = new UseCaseCategory(Case_Activity.CATEGORY_ID, "Activity测试用例");
+        UseCaseCategory activityCategory = new UseCaseCategory("Activity测试用例",new UseCase[]{
+                new TestActivityOnCreate.Case(),
+                new TestActivityReCreate.Case(),
+                new TestActivityReCreateBySystem.Case(),
+                new TestActivityOrientation.Case(),
+                new TestActivityWindowSoftMode.Case()
+        });
         useCases.add(activityCategory);
-        activityCategory.caseList.add(new UseCase(Case_Activity.CASE_ONCREATE,
-                "生命周期测试", "测试Activity的生命周期方法是否正确回调", TestActivityOnCreate.class));
-        activityCategory.caseList.add(new UseCase(Case_Activity.CASE_RECREATE,
-                "ReCreate", "测试Activity的调用ReCreate是否工作正常", TestActivityReCreate.class));
-
-        UseCase useCase = new UseCase(Case_Activity.CASE_RECREATE_BY_SYTEM, "ReCreateBySystem",
-                "不保留活动进行测试，需要手动到开发者模式中开启", TestActivityReCreateBySystem.class);
-        useCase.bundle = new Bundle();
-        useCase.bundle.putString("url", "https://www.baidu.com");
-
-        activityCategory.caseList.add(useCase);
-        activityCategory.caseList.add(new UseCase(Case_Activity.CASE_ORIENTATION,"横竖屏切换测试","测试横竖屏切换时，Activity的生命周期变化是否和AndroidManifest.xml中配置的config相关", TestActivityOrientation.class));
 
 
-
-        UseCaseCategory serviceCategory = new UseCaseCategory(Case_Service.CATEGORY_ID, "Service测试用例");
+        UseCaseCategory serviceCategory = new UseCaseCategory("Service测试用例",new UseCase[]{
+                new TestStartServiceActivity.Case(),
+        });
         useCases.add(serviceCategory);
-        serviceCategory.caseList.add(new UseCase(Case_Service.CASE_START_SERVICE,
-                "启动Service", "测试startService,bindService,stopService,unBindService等调用", TestStartServiceActivity.class));
 
 
-        UseCaseCategory broadcastReceiverCategory = new UseCaseCategory(Case_BroadcastReceiver.CATEGORY_ID, "广播测试用例");
+        UseCaseCategory broadcastReceiverCategory = new UseCaseCategory("广播测试用例",new UseCase[]{
+                new TestReceiverActivity.Case(),
+                new TestDynamicReceiverActivity.Case()
+        });
         useCases.add(broadcastReceiverCategory);
-        broadcastReceiverCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE,
-                "静态广播测试", "测试静态广播的发送和接收是否工作正常", TestReceiverActivity.class));
-        broadcastReceiverCategory.caseList.add(new UseCase(Case_BroadcastReceiver.CASE_RECEIVE_DYNAMIC,
-                "动态广播测试", "测试动态广播的发送和接收是否工作正常", TestDynamicReceiverActivity.class));
 
 
-
-        UseCaseCategory providerCategory = new UseCaseCategory(Case_Provider.CATEGORY_ID, "ContentProvider测试用例");
+        UseCaseCategory providerCategory = new UseCaseCategory( "ContentProvider测试用例",new UseCase[]{
+                new TestDBContentProviderActivity.Case(),
+                new TestFileProviderActivity.Case()
+        });
         useCases.add(providerCategory);
-        providerCategory.caseList.add(new UseCase(Case_Provider.CASE_DB,
-                "ContentProvider DB相关测试", "测试通过ContentProvider来操作数据库", TestDBContentProviderActivity.class));
-        providerCategory.caseList.add(new UseCase(Case_Provider.CASE_FILE,
-                "FileProvider相关测试", "通过使用系统相机拍照来测试FileProvider", TestFileProviderActivity.class));
 
 
-        UseCaseCategory fragmentCategory = new UseCaseCategory(Case_Fragment.CATEGORY_ID, "fragment测试用例");
+        UseCaseCategory fragmentCategory = new UseCaseCategory("fragment测试用例",new UseCase[]{
+                new TestDynamicFragmentActivity.Case(),
+                new TestXmlFragmentActivity.Case()
+        });
         useCases.add(fragmentCategory);
-        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CASE_FRAGMENT_DYNAMIC,
-                "代码添加fragment相关测试", "测试通过代码添加一个fragment", TestDynamicFragmentActivity.class));
-        fragmentCategory.caseList.add(new UseCase(Case_Fragment.CASE_FRAGMENT_XML,
-                "xml中使用fragment相关测试", "测试在Activity现实xml中定义的fragment", TestXmlFragmentActivity.class));
 
-        UseCaseCategory dialogCategory = new UseCaseCategory(Case_Dialog.CATEGORY_ID, "Dialog测试用例");
+        UseCaseCategory dialogCategory = new UseCaseCategory("Dialog测试用例",new UseCase[]{
+                new TestDialogActivity.Case(),
+        });
         useCases.add(dialogCategory);
-        dialogCategory.caseList.add(new UseCase(Case_Dialog.CASE_SHOW_DIALOG,
-                "Dialog 相关测试", "测试show Dialog", TestDialogActivity.class));
 
-        UseCaseCategory viewCategory = new UseCaseCategory(Case_View.CATEGORY_ID, "View测试用例");
+        UseCaseCategory viewCategory = new UseCaseCategory("View测试用例",new UseCase[]{
+                new TestViewConstructorCache.Case(),
+        });
         useCases.add(viewCategory);
-        viewCategory.caseList.add(new UseCase(Case_View.CASE_TEST_VIEW_CONS_CACHE,
-                "同名View构造器缓存冲突测试", "宿主和插件具有同名View应该都能正常加载各自的版本", TestViewConstructorCache.class));
 
 
-        UseCaseCategory packageManagerCategory = new UseCaseCategory(Case_PackageManager.CATEGORY_ID, "PackageManager测试用例");
+        UseCaseCategory packageManagerCategory = new UseCaseCategory("PackageManager测试用例",new UseCase[]{
+                new TestPackageManagerActivity.Case(),
+        });
         useCases.add(packageManagerCategory);
-        packageManagerCategory.caseList.add(new UseCase(Case_PackageManager.CASE_PACKAGEMANAGER,
-                "PackageManager调用测试", "测试PackageManager相关api的调用，确保插件调用相关api时可以正确获取到插件相关的信息", TestPackageManagerActivity.class));
     }
 
-    public static UseCase findTestCaseById(int caseId) {
-        for (UseCaseCategory testCategory : useCases) {
-            for (UseCase useCase : testCategory.caseList) {
-                if (useCase.id == caseId) {
-                    return useCase;
-                }
-            }
-        }
-        return null;
-    }
-
-
-    private static class Case_Activity {
-        public final static int CATEGORY_ID = 1;
-
-        public final static int CASE_ONCREATE = 10000;
-        public final static int CASE_RECREATE = 10001;
-        public final static int CASE_RECREATE_BY_SYTEM = 10002;
-        public final static int CASE_ORIENTATION = 10003;
-    }
-
-    private static class Case_Service {
-        public final static int CATEGORY_ID = 2;
-
-        public final static int CASE_START_SERVICE = 20000;
-    }
-
-    private static class Case_BroadcastReceiver {
-        public final static int CATEGORY_ID = 3;
-
-        public final static int CASE_RECEIVE = 30000;
-        public final static int CASE_RECEIVE_DYNAMIC = 30001;
-    }
-
-    private static class Case_Provider {
-        public final static int CATEGORY_ID = 4;
-
-        public final static int CASE_DB = 40000;
-        public final static int CASE_FILE = 40001;
-    }
-
-    private static class Case_Fragment {
-        public final static int CATEGORY_ID = 5;
-
-        public final static int CASE_FRAGMENT_DYNAMIC = 50000;
-        public final static int CASE_FRAGMENT_XML = 50001;
-    }
-
-    private static class Case_Dialog {
-        public final static int CATEGORY_ID = 6;
-
-        public final static int CASE_SHOW_DIALOG = 60000;
-    }
-
-    private static class Case_View {
-        public final static int CATEGORY_ID = 7;
-
-        public final static int CASE_TEST_VIEW_CONS_CACHE = 70000;
-    }
-
-    private static class Case_PackageManager {
-        public final static int CATEGORY_ID = 8;
-
-        public final static int CASE_PACKAGEMANAGER = 80000;
-    }
 
 }

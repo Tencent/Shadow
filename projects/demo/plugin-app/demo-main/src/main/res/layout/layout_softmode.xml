@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="horizontal">
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="vertical"
+       android:layout_gravity="center"
+       >
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="18sp"
+          android:textColor="@android:color/black"
+          android:padding="20dp"
+          android:text="AndroidManifest中设置了windowSoftInputMode属性为stateVisible,输入法应该自动弹出"
+          />
+
+
+      <TextView
+          android:id="@+id/result"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:textSize="18sp"
+          android:textColor="@android:color/black"
+          android:padding="20dp"
+          />
+
+   </LinearLayout>
+
+
+
+
+
+   <EditText
+       android:layout_gravity="bottom"
+       android:hint="请输入"
+       android:layout_width="match_parent"
+       android:layout_height="40dp" />
+
+
+
+
+
+</FrameLayout>

@@ -1,0 +1,73 @@
+buildscript {
+    ext.build_gradle_version = '3.2.0'
+    repositories {
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/jcenter"
+        }
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
+        }
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$build_gradle_version"
+    }
+}
+
+plugins {
+    id 'com.android.application'
+    id 'com.tencent.shadow.plugin'
+}
+
+allprojects {
+    ext.COMPILE_SDK_VERSION = 28
+    ext.MIN_SDK_VERSION = 16
+    ext.TARGET_SDK_VERSION = 28
+    ext.VERSION_CODE = 1
+    ext.VERSION_NAME = "local"
+    repositories {
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
+        }
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/jcenter"
+        }
+    }
+}
+
+ext.disable_shadow_transform = true
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION
+
+    defaultConfig {
+        applicationId "com.tencent.shadow.test.gradle.case1"
+        minSdkVersion MIN_SDK_VERSION
+        targetSdkVersion TARGET_SDK_VERSION
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+    }
+}
+
+shadow {
+    packagePlugin {
+        pluginTypes {
+            case2Debug {
+                pluginApks {
+                    pluginApk1 {
+                        partKey = 'demo_main'
+                        buildTask = 'assembleDebug'
+                        apkName = 'case2-debug.apk'
+                        //这里因为单元测试时，会把项目根目录设置成case1的根目录
+                        projectPath = '/case2'
+                        dependsOn = ['Core', 'Base']
+                    }
+                }
+            }
+        }
+
+        uuid = '1234567890'
+        version = 4
+        compactVersion = [1, 2, 3]
+        uuidNickName = "1.1.5"
+    }
+}

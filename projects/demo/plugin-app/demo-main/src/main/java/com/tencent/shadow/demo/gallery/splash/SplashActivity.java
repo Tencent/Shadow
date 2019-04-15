@@ -15,15 +15,10 @@ public class SplashActivity extends Activity {
 
     private SplashAnimation mSplashAnimation;
 
-    private int caseId;
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_splash);
-
-        caseId = getIntent().getIntExtra("caseId",-1);
 
         mSplashAnimation = new SplashAnimation(this);
         mSplashAnimation.start();
@@ -33,19 +28,6 @@ public class SplashActivity extends Activity {
             public void onAnimationEnd() {
                 finish();
 
-                if(caseId != -1){
-                    UseCase useCase = UseCaseManager.findTestCaseById(caseId);
-                    if (useCase != null) {
-                        Intent intent = new Intent(SplashActivity.this, useCase.pageClass);
-                        if (useCase.bundle != null) {
-                            intent.putExtras(useCase.bundle);
-                        }
-                        startActivity(intent);
-                        return;
-                    }else {
-                        ToastUtil.showToast(SplashActivity.this,"没有找到对应的测试用例，请检测是否在TestCaseManager 中正确注册了");
-                    }
-                }
                 startActivity(new Intent(SplashActivity.this, MainActivity.class));
             }
         });

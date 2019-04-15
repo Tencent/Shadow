@@ -85,7 +85,7 @@ public class MainActivity extends Activity implements
         // 返回子列表个数
         @Override
         public int getChildrenCount(int groupPosition) {
-            return categoryList.get(groupPosition).caseList.size();
+            return categoryList.get(groupPosition).caseList.length;
         }
 
         @Override
@@ -96,7 +96,7 @@ public class MainActivity extends Activity implements
 
         @Override
         public Object getChild(int groupPosition, int childPosition) {
-            return categoryList.get(groupPosition).caseList.get(childPosition);
+            return categoryList.get(groupPosition).caseList[childPosition];
         }
 
         @Override
@@ -150,7 +150,7 @@ public class MainActivity extends Activity implements
             }
 
             childHolder.textName.setText(((UseCase) getChild(groupPosition,
-                    childPosition)).name);
+                    childPosition)).getName());
             return convertView;
         }
 
@@ -169,7 +169,7 @@ public class MainActivity extends Activity implements
     @Override
     public boolean onChildClick(ExpandableListView parent, View v,
                                 int groupPosition, int childPosition, long id) {
-        UseCase useCase = categoryList.get(groupPosition).caseList.get(childPosition);
+        UseCase useCase = categoryList.get(groupPosition).caseList[childPosition];
         caseSummaryFragment.setCase(useCase);
 
         slidingMenu.showMenu();

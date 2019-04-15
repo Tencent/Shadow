@@ -82,7 +82,7 @@ public class PluginConfig {
                 pluginConfig.compact_version[i] = compact_version_json.getInt(i);
             }
         }
-        //todo json的版本检查和不兼容检查
+        //todo #27 json的版本检查和不兼容检查
         pluginConfig.UUID = jsonObject.getString("UUID");
         pluginConfig.UUID_NickName = jsonObject.getString("UUID_NickName");
 

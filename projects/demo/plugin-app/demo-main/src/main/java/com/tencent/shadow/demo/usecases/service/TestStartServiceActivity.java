@@ -11,9 +11,27 @@ import android.view.View;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.util.ToastUtil;
 
 public class TestStartServiceActivity extends BaseActivity {
+
+    public static class Case extends UseCase {
+        @Override
+        public String getName() {
+            return "启动Service";
+        }
+
+        @Override
+        public String getSummary() {
+            return "测试startService,bindService,stopService,unBindService等调用";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestStartServiceActivity.class;
+        }
+    }
 
     private Intent serviceIntent ;
 

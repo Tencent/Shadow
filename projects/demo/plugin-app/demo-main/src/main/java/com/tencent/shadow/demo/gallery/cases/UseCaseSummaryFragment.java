@@ -32,16 +32,16 @@ public class UseCaseSummaryFragment extends Fragment {
 
 
     public void setCase(final UseCase useCase) {
-        mCaseName.setText(useCase.name);
-        mCaseSummary.setText(useCase.summary);
+        mCaseName.setText(useCase.getName());
+        mCaseSummary.setText(useCase.getSummary());
         mStartCase.setVisibility(View.VISIBLE);
 
         mStartCase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), useCase.pageClass);
-                if (useCase.bundle != null) {
-                    intent.putExtras(useCase.bundle);
+                Intent intent = new Intent(getActivity(), useCase.getPageClass());
+                if (useCase.getPageParams() != null) {
+                    intent.putExtras(useCase.getPageParams());
                 }
                 startActivity(intent);
             }

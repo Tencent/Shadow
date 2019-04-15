@@ -2,12 +2,17 @@ package com.tencent.shadow.runtime;
 
 import android.app.ActionBar;
 import android.app.FragmentManager;
+import android.app.SharedElementCallback;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.session.MediaController;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.DragAndDropPermissions;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.View;
@@ -216,4 +221,83 @@ public abstract class ShadowActivity extends PluginActivity {
     public boolean shouldShowRequestPermissionRationale(String permission) {
         return mHostActivityDelegator.shouldShowRequestPermissionRationale(permission);
     }
+
+    public final void setMediaController(MediaController controller) {
+        mHostActivityDelegator.setMediaController(controller);
+    }
+
+    public final MediaController getMediaController() {
+        return mHostActivityDelegator.getMediaController();
+    }
+
+    public boolean shouldUpRecreateTask(Intent targetIntent) {
+        Intent intent = mPluginComponentLauncher.convertPluginActivityIntent(targetIntent);
+        return mHostActivityDelegator.shouldUpRecreateTask(intent);
+    }
+
+    public boolean navigateUpTo(Intent upIntent) {
+        Intent intent = mPluginComponentLauncher.convertPluginActivityIntent(upIntent);
+        return mHostActivityDelegator.navigateUpTo(intent);
+    }
+
+    public Intent getParentActivityIntent() {
+        return mHostActivityDelegator.getParentActivityIntent();
+    }
+
+    public DragAndDropPermissions requestDragAndDropPermissions(DragEvent event) {
+        return mHostActivityDelegator.requestDragAndDropPermissions(event);
+    }
+
+    public void invalidateOptionsMenu() {
+        mHostActivityDelegator.invalidateOptionsMenu();
+    }
+
+    public void startIntentSenderForResult(IntentSender intent, int requestCode,
+                                           Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags)
+            throws IntentSender.SendIntentException {
+        mHostActivityDelegator.startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags);
+    }
+
+    public void startIntentSenderForResult(IntentSender intent, int requestCode,
+                                           Intent fillInIntent, int flagsMask, int flagsValues, int extraFlags,
+                                           Bundle options) throws IntentSender.SendIntentException {
+        mHostActivityDelegator.startIntentSenderForResult(intent, requestCode, fillInIntent, flagsMask, flagsValues, extraFlags, options);
+    }
+
+    public void finishAffinity() {
+        mHostActivityDelegator.finishAffinity();
+    }
+
+    public void finishAfterTransition() {
+        mHostActivityDelegator.finishAfterTransition();
+    }
+
+    public Uri getReferrer() {
+        return mHostActivityDelegator.getReferrer();
+    }
+
+    public void setEnterSharedElementCallback(SharedElementCallback callback) {
+        mHostActivityDelegator.setEnterSharedElementCallback(callback);
+    }
+
+    public void setExitSharedElementCallback(SharedElementCallback callback) {
+        mHostActivityDelegator.setExitSharedElementCallback(callback);
+    }
+
+    public void postponeEnterTransition() {
+        mHostActivityDelegator.postponeEnterTransition();
+    }
+
+    public void startPostponedEnterTransition() {
+        mHostActivityDelegator.startPostponedEnterTransition();
+    }
+
+    public String getCallingPackage() {
+        return mHostActivityDelegator.getCallingPackage();
+    }
+
+    public ComponentName getCallingActivity() {
+        return mHostActivityDelegator.getCallingActivity();//todo #35 这里可能需要返回插件的ComponentName
+    }
+
 }

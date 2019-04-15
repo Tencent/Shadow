@@ -42,6 +42,8 @@ class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : Specif
 
     private fun String.appendFragmentAppendix() = this + "_"
 
+    private lateinit var fragmentsName: List<String>
+
     override fun setup(allInputClass: Set<CtClass>) {
         //收集哪些当前Transform的App类是Fragment
         newStep(object : TransformStep {
@@ -80,29 +82,40 @@ class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : Specif
 
             override fun transform(ctClass: CtClass) {
                 RenameMap.forEach {
-                    ctClass.replaceClassName(it.key, it.value)
+                    ReplaceClassName.replaceClassName(ctClass, it.key, it.value)
                 }
             }
         })
 
-        //将App中出现的所有Fragment名字都加上后缀
+        //将App中所有Fragment名字都加上后缀
         newStep(object : TransformStep {
-            lateinit var fragmentsName: List<String>
-
             override fun filter(allInputClass: Set<CtClass>): Set<CtClass> {
-                fragmentsName = listOf(
+                val flattenList = listOf(
                         mAppFragments,
                         mAppDialogFragments,
                         mRuntimeSuperclassFragments
-                )
-                        .flatten()
-                        .flatMap { listOf(it.name) }
+                ).flatten()
+
+                fragmentsName = flattenList.flatMap { listOf(it.name) }
+
+                return flattenList.toSet()
+            }
+
+            override fun transform(ctClass: CtClass) {
+                val fragmentName = ctClass.name
+                ReplaceClassName.replaceClassName(ctClass, fragmentName, fragmentName.appendFragmentAppendix())
+            }
+        })
+
+        //将App中所有对Fragment的引用也都改为加上后缀名的
+        newStep(object : TransformStep {
+            override fun filter(allInputClass: Set<CtClass>): Set<CtClass> {
                 return allInputClass
             }
 
             override fun transform(ctClass: CtClass) {
                 fragmentsName.forEach { fragmentName ->
-                    ctClass.replaceClassName(fragmentName, fragmentName.appendFragmentAppendix())
+                    ReplaceClassName.replaceClassName(ctClass, fragmentName, fragmentName.appendFragmentAppendix())
                 }
             }
 

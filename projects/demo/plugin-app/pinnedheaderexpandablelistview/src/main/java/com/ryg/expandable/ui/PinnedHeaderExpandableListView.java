@@ -242,7 +242,6 @@ public class PinnedHeaderExpandableListView extends ExpandableListView implement
                 int delta = mHeaderHeight - view.getTop();
                 mHeaderView.layout(0, -delta, mHeaderWidth, mHeaderHeight - delta);
             } else {
-                //TODO : note it, when cause bug, remove it
                 mHeaderView.layout(0, 0, mHeaderWidth, mHeaderHeight);
             }
         } else {

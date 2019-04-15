@@ -48,7 +48,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 } else {
                     _arg0 = null
                 }
-                val _result = mDynamicPluginLoader.convertActivityIntent(_arg0!!)//todo cubershi: 去掉这个！！
+                val _result = mDynamicPluginLoader.convertActivityIntent(_arg0!!)//todo #32 去掉这个不安全的!!
                 reply!!.writeNoException()
                 if (_result != null) {
                     reply.writeInt(1)
@@ -66,7 +66,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 } else {
                     _arg0 = null
                 }
-                val _result = mDynamicPluginLoader.startPluginService(_arg0!!)//todo cubershi: 去掉这个！！
+                val _result = mDynamicPluginLoader.startPluginService(_arg0!!)//todo #32 去掉这个不安全的!!
                 reply!!.writeNoException()
                 if (_result != null) {
                     reply.writeInt(1)
@@ -84,7 +84,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 } else {
                     _arg0 = null
                 }
-                val _result = mDynamicPluginLoader.stopPluginService(_arg0!!)//todo cubershi: 去掉这个！！
+                val _result = mDynamicPluginLoader.stopPluginService(_arg0!!)//todo #32 去掉这个不安全的!!
                 reply!!.writeNoException()
                 reply.writeInt(if (_result) 1 else 0)
                 return true
@@ -100,7 +100,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 val _arg1 = BinderPluginServiceConnection(data.readStrongBinder())
                 val _arg2: Int
                 _arg2 = data.readInt()
-                val _result = mDynamicPluginLoader.bindPluginService(_arg0!!, _arg1, _arg2)//todo cubershi: 去掉这个！！
+                val _result = mDynamicPluginLoader.bindPluginService(_arg0!!, _arg1, _arg2)//todo #32 去掉这个不安全的!!
                 reply!!.writeNoException()
                 reply.writeInt(if (_result) 1 else 0)
                 return true

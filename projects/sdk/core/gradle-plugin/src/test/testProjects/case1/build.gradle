@@ -64,6 +64,18 @@ shadow {
                     }
                 }
             }
+
+            onlyApk {
+                pluginApks {
+                    pluginApk1 {
+                        partKey = 'demo_main'
+                        buildTask = 'assembleDebug'
+                        apkName = 'case1-debug.apk'
+                        projectPath = ''
+                        dependsOn = ['Core', 'Base']
+                    }
+                }
+            }
         }
 
         loaderApkProjectPath = 'loader'
@@ -74,5 +86,22 @@ shadow {
         version = 4
         compactVersion = [1, 2, 3]
         uuidNickName = "1.1.5"
+    }
+}
+
+task genUUID()  {
+    doFirst {
+        def uuidFile = file(rootProject.projectDir.absolutePath + '/build/uuid.txt')
+        uuidFile.getParentFile().mkdirs()
+        BufferedWriter writer = new BufferedWriter(new FileWriter(uuidFile))
+        writer.write(UUID.randomUUID().toString().toUpperCase())
+        writer.flush()
+        writer.close()
+    }
+}
+
+task PackageMultiPlugin(dependsOn: ['genUUID', 'packageDebugPlugin', ':case2:packageCase2DebugPlugin']) {
+    doLast {
+        file(rootProject.projectDir.absolutePath + '/build/uuid.txt').delete()
     }
 }

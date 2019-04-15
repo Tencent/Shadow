@@ -7,10 +7,28 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.tencent.shadow.demo.gallery.R;
+import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.util.ToastUtil;
 
 public class TestActivityReCreate extends Activity {
 
+
+    public static class Case extends UseCase {
+        @Override
+        public String getName() {
+            return "ReCreate";
+        }
+
+        @Override
+        public String getSummary() {
+            return "测试Activity的调用ReCreate是否工作正常";
+        }
+
+        @Override
+        public Class getPageClass() {
+            return TestActivityReCreate.class;
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
