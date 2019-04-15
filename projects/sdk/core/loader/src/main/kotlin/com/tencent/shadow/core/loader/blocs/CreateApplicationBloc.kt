@@ -23,7 +23,6 @@ object CreateApplicationBloc {
             resources: Resources,
             hostAppContext: Context,
             componentManager: ComponentManager,
-            broadcasts: Map<String, List<String>>,
             remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): ShadowApplication {
         try {
@@ -34,13 +33,14 @@ object CreateApplicationBloc {
             } else {
                 object : ShadowApplication(){}
             }
+            val partKey = pluginPackageManager.pluginInfo.partKey
             shadowApplication.setPluginResources(resources)
             shadowApplication.setPluginClassLoader(pluginClassLoader)
             shadowApplication.setPluginComponentLauncher(componentManager)
             shadowApplication.setHostApplicationContextAsBase(hostAppContext)
-            shadowApplication.setBroadcasts(broadcasts)
+            shadowApplication.setBroadcasts(componentManager.getBroadcastsByPartKey(partKey))
             shadowApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
-            shadowApplication.setPluginPartKey(pluginPackageManager.pluginInfo.partKey)
+            shadowApplication.setPluginPartKey(partKey)
             shadowApplication.remoteViewCreatorProvider = remoteViewCreatorProvider
             return shadowApplication
         } catch (e: Exception) {
