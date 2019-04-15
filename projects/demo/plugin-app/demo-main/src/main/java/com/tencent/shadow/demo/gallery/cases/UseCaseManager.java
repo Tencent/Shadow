@@ -7,6 +7,7 @@ import com.tencent.shadow.demo.usecases.activity.TestActivityOrientation;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.activity.TestActivityWindowSoftMode;
+import com.tencent.shadow.demo.usecases.activity.TestCallingActivity;
 import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
@@ -40,7 +41,8 @@ public class UseCaseManager {
                 new TestActivityReCreate.Case(),
                 new TestActivityReCreateBySystem.Case(),
                 new TestActivityOrientation.Case(),
-                new TestActivityWindowSoftMode.Case()
+                new TestActivityWindowSoftMode.Case(),
+                new TestCallingActivity.Case()
         });
         useCases.add(activityCategory);
 
