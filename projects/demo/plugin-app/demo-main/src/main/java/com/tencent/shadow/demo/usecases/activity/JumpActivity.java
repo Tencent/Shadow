@@ -14,7 +14,7 @@ public class JumpActivity extends BaseAndroidTestActivity {
     private TextView mText;
 
     public static String KEY_FROM_JUMP = "fromJump";
-    public static String KEY_JUMP_CLASS = "jumpClassName";
+    public static String KEY_TARGET_CLASS = "targetClassName";
 
 
     @Override
@@ -26,7 +26,7 @@ public class JumpActivity extends BaseAndroidTestActivity {
 
     public void doClick(View view) {
         mIdlingResource.setIdleState(false);
-        String className = getIntent().getStringExtra(KEY_JUMP_CLASS);
+        String className = getIntent().getStringExtra(KEY_TARGET_CLASS);
         Intent intent = new Intent();
         intent.setClassName(this,className);
         intent.putExtra(KEY_FROM_JUMP, true);

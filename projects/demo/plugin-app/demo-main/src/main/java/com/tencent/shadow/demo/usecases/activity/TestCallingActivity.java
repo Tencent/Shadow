@@ -30,7 +30,7 @@ public class TestCallingActivity extends BaseActivity {
         @Override
         public Bundle getPageParams() {
             Bundle bundle = new Bundle();
-            bundle.putString(JumpActivity.KEY_JUMP_CLASS,"com.tencent.shadow.demo.usecases.activity.TestCallingActivity");
+            bundle.putString(JumpActivity.KEY_TARGET_CLASS,"com.tencent.shadow.demo.usecases.activity.TestCallingActivity");
             return bundle;
         }
     }
