@@ -11,6 +11,10 @@ import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
 
+/**
+ *   测试打包包含loader、runtime、插件1、config.json的插件包
+ *  ./gradlew -p projects/sdk/core :gradle-plugin:test --tests com.tencent.shadow.core.gradle.PackagePluginTaskTest.testCase1PackageDebugPlugin
+ */
 class PackagePluginTaskTest {
 
     @Test

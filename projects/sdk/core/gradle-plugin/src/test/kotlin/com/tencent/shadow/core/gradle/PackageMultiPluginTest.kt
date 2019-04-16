@@ -10,6 +10,11 @@ import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
 
+/**
+ *  测试打包多个工程的插件包 第一个插件包包含loader、runtime、插件1、config.json的插件包  第二个插件包 包含 插件2、config.json
+ *  其中插件包1 中的json文件中的uuid 需要和 插件包2 中json文件的uuid 一样
+ * ./gradlew -p projects/sdk/core :gradle-plugin:test --tests com.tencent.shadow.core.gradle.PackageMultiPluginTest.testPackageMultiPlugin
+ */
 class PackageMultiPluginTest {
 
     @Test

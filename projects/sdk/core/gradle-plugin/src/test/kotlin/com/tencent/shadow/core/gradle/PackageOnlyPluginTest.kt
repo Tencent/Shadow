@@ -10,6 +10,10 @@ import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
 
+/**
+ *  测试打包只包含、插件1、config.json的插件包
+ * ./gradlew -p projects/sdk/core :gradle-plugin:test --tests com.tencent.shadow.core.gradle.PackageOnlyPluginTest.testCase1PackageOnlyApk
+ */
 class PackageOnlyPluginTest {
 
     @Test
