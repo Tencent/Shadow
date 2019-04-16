@@ -10,43 +10,45 @@ import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
 
+/**
+ *  测试打包只包含、插件1、config.json的插件包
+ * ./gradlew -p projects/sdk/core :gradle-plugin:test --tests com.tencent.shadow.core.gradle.PackageOnlyPluginTest.testCase1PackageOnlyApk
+ */
 class PackageOnlyPluginTest {
 
     @Test
     fun testCase1PackageOnlyApk() {
-        val projectDir = File("src/test/testProjects/case1")
-
         GradleRunner.create()
-                .withProjectDir(projectDir)
+                .withProjectDir(PLUGIN1_PROJECT_DIR)
                 .withPluginClasspath()
                 .withArguments("clean")
                 .build()
 
         val result = GradleRunner.create()
-                .withProjectDir(projectDir)
+                .withProjectDir(PLUGIN1_PROJECT_DIR)
                 .withPluginClasspath()
                 .withArguments(listOf(
                         "-Pdisable_shadow_transform=true",
-                        ":packageOnlyApkPlugin"
+                        ":plugin1:packageOnlyApkPlugin"
                 ))
                 .build()
 
-        val outcome = result.task(":packageOnlyApkPlugin")!!.outcome
+        val outcome = result.task(":plugin1:packageOnlyApkPlugin")!!.outcome
 
         Assert.assertEquals(TaskOutcome.SUCCESS, outcome)
 
-        val jsonFile = File(projectDir, "build/intermediates/generatePluginConfig/onlyApk/config.json")
+        val jsonFile = File(PLUGIN1_PROJECT_DIR, "build/intermediates/generatePluginConfig/onlyApk/config.json")
         val json = JSONParser().parse(jsonFile.bufferedReader()) as JSONObject
         assertJson(json)
 
-        val zipFile = ZipFile(projectDir.absolutePath + "/build/plugin-onlyApk.zip")
+        val zipFile = ZipFile(ROOT_PROJECT_DIR.absolutePath + "/build/plugin-onlyApk.zip")
         assertFile(zipFile)
     }
 
     private fun assertFile(zipFile: ZipFile) {
         val zipFileNames = mutableSetOf<String>()
         zipFileNames.add("config.json")
-        zipFileNames.add("case1-debug.apk")
+        zipFileNames.add("plugin1-debug.apk")
 
         val entries = zipFile.entries()
         Assert.assertEquals(2, zipFile.size())
@@ -72,9 +74,15 @@ class PackageOnlyPluginTest {
         val pluginsJson = json["plugins"] as JSONArray
         val pluginJson = pluginsJson[0] as JSONObject
         Assert.assertEquals("demo_main", pluginJson["partKey"])
-        Assert.assertEquals("case1-debug.apk", pluginJson["apkName"])
+        Assert.assertEquals("plugin1-debug.apk", pluginJson["apkName"])
         val dependsOnJson = pluginJson["dependsOn"] as JSONArray
         Assert.assertEquals(2, dependsOnJson.size)
         Assert.assertNotNull(pluginJson["hash"])
     }
+
+    companion object {
+        val ROOT_PROJECT_DIR = File("src/test/testProjects/case1")
+        val PLUGIN1_PROJECT_DIR = File("src/test/testProjects/case1/plugin1")
+    }
+
 }
