@@ -1,2 +1,2 @@
 rootProject.name = 'case1'
-include 'loader', 'runtime', 'case2'
+include 'loader', 'runtime', 'plugin1', 'plugin2'

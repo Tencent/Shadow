@@ -15,6 +15,7 @@ buildscript {
 
 plugins {
     id 'com.android.application'
+    id 'com.tencent.shadow.plugin'
 }
 
 allprojects {
@@ -47,3 +48,26 @@ android {
     }
 }
 
+shadow {
+    packagePlugin {
+        pluginTypes {
+            plugin2Debug {
+                pluginApks {
+                    pluginApk1 {
+                        partKey = 'demo_main'
+                        buildTask = 'assembleDebug'
+                        apkName = 'plugin2-debug.apk'
+                        //这里因为单元测试时，会把项目根目录设置成case1的根目录
+                        projectPath = '/plugin2'
+                        dependsOn = ['Core', 'Base']
+                    }
+                }
+            }
+        }
+
+        uuid = '1234567890'
+        version = 4
+        compactVersion = [1, 2, 3]
+        uuidNickName = "1.1.5"
+    }
+}
