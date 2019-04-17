@@ -99,4 +99,28 @@ abstract class ShadowTransformTest {
         return false
     }
 
+    /**
+     * 查找目标class是否存在目标构造器的调用
+     */
+    fun matchConstructorCallInClass(name: String, clazz: CtClass): Boolean {
+        for (methodInfo in clazz.classFile2.methods) {
+            methodInfo as MethodInfo
+            val codeAttr: CodeAttribute? = methodInfo.codeAttribute
+            val constPool = methodInfo.constPool
+            if (codeAttr != null) {
+                val iterator = codeAttr.iterator()
+                while (iterator.hasNext()) {
+                    val pos = iterator.next()
+                    val c = iterator.byteAt(pos)
+                    if (c == Opcode.INVOKESPECIAL) {
+                        val index = iterator.u16bitAt(pos + 1)
+                        val result = constPool.isConstructor(name,index)
+                        return result != 0
+                    }
+                }
+            }
+        }
+        return false
+    }
+
 }
