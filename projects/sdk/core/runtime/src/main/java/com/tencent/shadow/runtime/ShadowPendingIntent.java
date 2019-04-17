@@ -12,13 +12,7 @@ public class ShadowPendingIntent {
 
     public static PendingIntent getService(Context context, int requestCode,
                                             Intent intent,  int flags) {
-        if (context instanceof ShadowContext && intent.getComponent() != null) {
-            ShadowContext shadowContext = (ShadowContext) context;
-            if (shadowContext.getPendingIntentConverter() != null) {
-                intent = shadowContext.getPendingIntentConverter().convertPluginServiceIntent(intent);
-            }
-            context = shadowContext.getBaseContext();
-        }
+        //todo 实现PendingIntent 中的 Service和广播
         return PendingIntent.getService(context, requestCode, intent, flags);
     }
 

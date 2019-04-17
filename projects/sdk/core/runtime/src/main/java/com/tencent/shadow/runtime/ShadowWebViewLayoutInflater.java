@@ -5,7 +5,6 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 
 import com.tencent.shadow.runtime.container.PluginContainerActivity;
-import com.tencent.shadow.runtime.container.PluginContainerService;
 
 /**
  * 1.模拟PhoneLayoutInflater的系统view构造过程
@@ -25,12 +24,9 @@ public class ShadowWebViewLayoutInflater extends FixedContextLayoutInflater{
 
     @Override
     LayoutInflater createNewContextLayoutInflater(Context newContext) {
-        if (newContext instanceof PluginContainerService) {
-            //走到这里只有可能是系统在壳子service里面调用了，预期系统不应该需要插件的资源，直接使用系统的context构造
-            return new ShadowWebViewLayoutInflater(this, newContext);
-        } else if (newContext instanceof PluginContainerActivity) {
+        if (newContext instanceof PluginContainerActivity) {
             Object pluginActivity = ((PluginContainerActivity) newContext).getPluginActivity();
-            return new ShadowWebViewLayoutInflater(this, (Context)pluginActivity);
+            return new ShadowWebViewLayoutInflater(this, (Context) pluginActivity);
         } else {
             //context有2种可能，1种是ShadowContext,一种是其他context
             return new ShadowWebViewLayoutInflater(this, newContext);

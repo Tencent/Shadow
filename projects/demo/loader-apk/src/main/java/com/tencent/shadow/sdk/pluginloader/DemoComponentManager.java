@@ -21,14 +21,6 @@ public class DemoComponentManager extends ComponentManager {
         this.context = context;
     }
 
-    /**
-     * 已废弃，不需要再配置LauncherActivity，业务方显示指定要启动的Activity
-     */
-    @Deprecated
-    @Override
-    public ComponentName getLauncherActivity(String partKey) {
-        return null;
-    }
 
     /**
      * 配置插件Activity 到 壳子Activity的对应关系
@@ -44,15 +36,6 @@ public class DemoComponentManager extends ComponentManager {
              */
         }
         return new ComponentName(context, DEFAULT_ACTIVITY);
-    }
-
-    /**
-     * 已废弃，不需要再配置Service
-     */
-    @Deprecated
-    @Override
-    public ComponentName onBindContainerService(ComponentName shadowService) {
-        return null;
     }
 
     /**
