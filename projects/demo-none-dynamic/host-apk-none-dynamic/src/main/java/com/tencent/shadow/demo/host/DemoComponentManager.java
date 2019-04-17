@@ -7,6 +7,9 @@ import com.tencent.shadow.core.loader.managers.ComponentManager;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DemoComponentManager extends ComponentManager {
     final private static ComponentName sDefaultContainer = new ComponentName("com.tencent.shadow.demo_host", "com.tencent.shadow.demo.host.DefaultContainerActivity");
     final private static ComponentName sSingleTaskContainer = new ComponentName("com.tencent.shadow.demo_host", "com.tencent.shadow.demo.host.SingleTaskContainerActivity");
@@ -25,5 +28,13 @@ public class DemoComponentManager extends ComponentManager {
     @Override
     public ContainerProviderInfo onBindContainerContentProvider(@NotNull ComponentName pluginContentProvider) {
         return new ContainerProviderInfo("com.tencent.shadow.runtime.container.PluginContainerContentProvider","com.tencent.shadow.contentprovider.authority");
+    }
+
+    @Override
+    public List<BroadcastInfo> getBroadcastInfoList(String partKey) {
+        List<ComponentManager.BroadcastInfo> broadcastInfos = new ArrayList<>();
+        broadcastInfos.add(new ComponentManager.BroadcastInfo("com.tencent.shadow.demo.usecases.receiver.MyReceiver",
+                new String[]{"com.tencent.test.action"}));
+        return broadcastInfos;
     }
 }

@@ -41,6 +41,8 @@ abstract class ComponentManager : PluginComponentLauncher {
 
     abstract fun onBindContainerContentProvider(pluginContentProvider: ComponentName): ContainerProviderInfo
 
+    abstract fun getBroadcastInfoList(partKey: String): List<BroadcastInfo>?
+
     override fun startActivity(shadowContext: ShadowContext, pluginIntent: Intent): Boolean {
         return if (pluginIntent.isPluginComponent()) {
             shadowContext.superStartActivity(pluginIntent.toActivityContainerIntent())
@@ -136,6 +138,8 @@ abstract class ComponentManager : PluginComponentLauncher {
     private val pluginComponentInfoMap: MutableMap<ComponentName, PluginComponentInfo> = hashMapOf()
 
 
+    private var application2broadcastInfo: MutableMap<String, MutableMap<String, List<String>>> = HashMap()
+
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
         fun common(pluginComponentInfo: PluginComponentInfo,componentName:ComponentName) {
             packageNameMap[pluginComponentInfo.className] = pluginInfo.packageName
@@ -224,5 +228,21 @@ abstract class ComponentManager : PluginComponentLauncher {
         return containerIntent
     }
 
+
+    class BroadcastInfo(val className: String, val actions: Array<String>)
+
+    fun getBroadcastsByPartKey(partKey: String): MutableMap<String, List<String>> {
+        if (application2broadcastInfo[partKey] == null) {
+            application2broadcastInfo[partKey] = HashMap()
+            val broadcastInfoList = getBroadcastInfoList(partKey)
+            if (broadcastInfoList != null) {
+                for (broadcastInfo in broadcastInfoList) {
+                    application2broadcastInfo[partKey]!![broadcastInfo.className] =
+                            broadcastInfo.actions.toList()
+                }
+            }
+        }
+        return application2broadcastInfo[partKey]!!
+    }
 
 }

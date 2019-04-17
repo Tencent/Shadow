@@ -5,7 +5,6 @@ import android.content.Context;
 import com.tencent.shadow.core.loader.Reporter;
 import com.tencent.shadow.core.loader.ShadowPluginLoader;
 import com.tencent.shadow.core.loader.managers.ComponentManager;
-import com.tencent.shadow.core.loader.managers.PluginBroadcastManager;
 
 /**
  * 这里的类名和包名需要固定
@@ -25,11 +24,6 @@ public class PluginLoaderImpl extends ShadowPluginLoader {
     @Override
     public ComponentManager getComponentManager() {
         return componentManager;
-    }
-
-    @Override
-    public PluginBroadcastManager getBusinessPluginReceiverManager(Context hostAppContext) {
-        return new DemoPluginBroadcastManager();
     }
 
     @Override

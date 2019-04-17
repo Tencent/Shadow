@@ -6,6 +6,9 @@ import android.content.Context;
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo;
 import com.tencent.shadow.core.loader.managers.ComponentManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DemoComponentManager extends ComponentManager {
 
     /**
@@ -47,4 +50,13 @@ public class DemoComponentManager extends ComponentManager {
                 "com.tencent.shadow.runtime.container.PluginContainerContentProvider",
                 "com.tencent.shadow.contentprovider.authority.dynamic");
     }
+
+    @Override
+    public List<BroadcastInfo> getBroadcastInfoList(String partKey) {
+        List<ComponentManager.BroadcastInfo> broadcastInfos = new ArrayList<>();
+        broadcastInfos.add(new ComponentManager.BroadcastInfo("com.tencent.shadow.demo.usecases.receiver.MyReceiver",
+                new String[]{"com.tencent.test.action"}));
+        return broadcastInfos;
+    }
+
 }
