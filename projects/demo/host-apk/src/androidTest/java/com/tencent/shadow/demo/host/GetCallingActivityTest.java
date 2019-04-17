@@ -26,10 +26,7 @@ public class GetCallingActivityTest extends BaseTest {
 
     @Test
     public void testGetCallingActivity() {
-        performJumpClick();
-
         Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button"))).perform(ViewActions.click());
-
 
         matchTextWithViewTag("text", "com.tencent.shadow.demo.usecases.activity.JumpActivity");
     }

@@ -16,15 +16,10 @@
 
 package com.tencent.shadow.demo.host;
 
-import android.app.Instrumentation;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
-import androidx.test.espresso.IdlingRegistry;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -52,7 +47,6 @@ public class ActivityWindowSoftModeTest extends BaseTest {
 
     @Test
     public void testBasicUsage() {
-        performJumpClick();
 
         Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button"))).perform(ViewActions.click());;
 

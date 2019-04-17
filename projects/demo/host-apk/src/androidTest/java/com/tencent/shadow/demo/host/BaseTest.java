@@ -21,13 +21,6 @@ public abstract class BaseTest {
     abstract Intent getLaunchIntent();
 
     /**
-     * 点击跳转Activity的按钮
-     */
-    public void performJumpClick(){
-        Espresso.onView(ViewMatchers.withId(R.id.jump)).perform(ViewActions.click());
-    }
-
-    /**
      * 检测view
      * @param tag  view的tag
      * @param text view上的文字
@@ -42,6 +35,8 @@ public abstract class BaseTest {
         SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
         IdlingRegistry.getInstance().register(idlingResource);
         PluginActivityScenario.launch(getLaunchIntent());
+
+        Espresso.onView(ViewMatchers.withId(R.id.jump)).perform(ViewActions.click());
     }
 
 

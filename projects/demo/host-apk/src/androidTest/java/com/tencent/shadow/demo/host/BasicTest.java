@@ -43,7 +43,6 @@ public class BasicTest extends BaseTest {
 
     @Test
     public void testBasicUsage() {
-        performJumpClick();
 
         matchTextWithViewTag("tv_msg", "Activity生命周期测试");
     }
