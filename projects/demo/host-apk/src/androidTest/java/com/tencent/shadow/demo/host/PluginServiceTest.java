@@ -40,17 +40,58 @@ public class PluginServiceTest extends BaseTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.activity.WindowSoftModeJumpActivity"
+                "com.tencent.shadow.demo.usecases.service.TestStartServiceActivity"
         );
         return pluginIntent;
     }
 
     @Test
-    public void testBasicUsage() {
+    public void testService() {
+        // test startService
+        click("start");
+        String text = "onCreate-onStartCommand";
+        check(text);
 
-        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button"))).perform(ViewActions.click());;
+        // test stopService
+        click("stop");
+        text += "-onDestroy";
+        check(text);
 
-        matchTextWithViewTag("text","show");
+        // test bindService
+        click("bind");
+        text += "-onCreate-onBind";
+        check(text);
+
+        // test callBinder
+        click("testBinder");
+        text += "-callTest";
+        check(text);
+
+        // test unbindService
+        click("unbind");
+        text += "-onUnbind-onDestroy";
+        check(text);
+
+        // test startService + bindService + stopService + unBind
+        click("start");
+        text += "-onCreate-onStartCommand";
+        check(text);
+        click("bind");
+        text += "-onBind";
+        check(text);
+        click("stop");
+        check(text);
+        click("unbind");
+        text += "-onUnbind-onDestroy";
+        check(text);
+    }
+
+    private void click(String tag){
+        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is(tag))).perform(ViewActions.click());
+    }
+
+    private void check(String text){
+        matchTextWithViewTag("text",text);
     }
 
 }

@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
@@ -46,6 +48,8 @@ public class TestStartServiceActivity extends BaseAndroidTestActivity {
 
     public final static String INTENT_ACTION = "com.tencent.shadow.test.service";
 
+    private Handler mHandler = new Handler();
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,12 +60,12 @@ public class TestStartServiceActivity extends BaseAndroidTestActivity {
     }
 
     public void start(View view) {
-        mIdlingResource.setIdleState(false);
+        setIdle();
         startService(serviceIntent);
     }
 
     public void bind(View view) {
-        mIdlingResource.setIdleState(false);
+        setIdle();
         bindService(serviceIntent, serviceConnection, Service.BIND_AUTO_CREATE);
     }
 
@@ -78,21 +82,33 @@ public class TestStartServiceActivity extends BaseAndroidTestActivity {
     };
 
     public void stop(View view) {
-        mIdlingResource.setIdleState(false);
+        setIdle();
         stopService(serviceIntent);
     }
 
     public void unbind(View view) {
-        mIdlingResource.setIdleState(false);
+        setIdle();
         unbindService(serviceConnection);
     }
 
     public void testBinder(View view) {
+        setIdle();
         if (binder == null) {
             ToastUtil.showToast(this, "请先bindService");
         } else {
             binder.getMyLocalService().test();
         }
+    }
+
+    private void setIdle(){
+        mHandler.removeCallbacksAndMessages(null);
+        mIdlingResource.setIdleState(false);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mIdlingResource.setIdleState(true);
+            }
+        },2000);
     }
 
     @Override
@@ -104,7 +120,12 @@ public class TestStartServiceActivity extends BaseAndroidTestActivity {
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            mHandler.removeCallbacksAndMessages(null);
             String text = intent.getStringExtra("result");
+            String oldText = mTextView.getText().toString();
+            if(!TextUtils.isEmpty(oldText)){
+                text = oldText+"-"+text;
+            }
             mTextView.setText(text);
             mIdlingResource.setIdleState(true);
         }
