@@ -18,6 +18,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:tag="start"
             android:onClick="start"
             android:text="startService" />
 
@@ -28,6 +29,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:tag="bind"
             android:onClick="bind"
             android:text="bindService" />
 
@@ -47,6 +49,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:onClick="stop"
+            android:tag="stop"
             android:text="stopService" />
 
         <Button
@@ -57,6 +60,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:onClick="unbind"
+            android:tag="unbind"
             android:text="unbindService" />
 
 
@@ -70,18 +74,19 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:onClick="testBinder"
+        android:tag="testBinder"
         android:text="testBinder调用" />
 
 
-    <!--<TextView-->
-        <!--android:id="@+id/tv_msg"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_marginTop="30dp"-->
-        <!--android:text="ServiceResult:"-->
-        <!--android:textColor="@android:color/black"-->
-        <!--android:textSize="20sp" />-->
+    <TextView
+        android:id="@+id/tv_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="Result"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
 
 
 </LinearLayout>
