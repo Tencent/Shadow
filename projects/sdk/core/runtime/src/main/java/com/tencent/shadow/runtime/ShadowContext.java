@@ -139,7 +139,6 @@ public class ShadowContext extends ContextThemeWrapper {
 
         Intent convertPluginActivityIntent(Intent pluginIntent);
 
-        Intent convertPluginServiceIntent(Intent pluginIntent);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.loader
+package com.tencent.shadow.core.loader.managers
 
 import android.content.ComponentName
 import android.content.Context
@@ -7,9 +7,9 @@ import android.content.ServiceConnection
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.IBinder
+import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.delegates.ShadowDelegate
-import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.runtime.ShadowApplication
 import com.tencent.shadow.runtime.ShadowService
 

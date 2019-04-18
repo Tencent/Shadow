@@ -6,9 +6,6 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.util.Pair
 import com.tencent.shadow.core.loader.BuildConfig
-import com.tencent.shadow.core.loader.PluginServiceManager
-import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate
-import com.tencent.shadow.core.loader.delegates.ServiceContainerReuseDelegate.Companion.Operate
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginComponentInfo
 import com.tencent.shadow.core.loader.infos.PluginInfo
@@ -33,19 +30,14 @@ abstract class ComponentManager : PluginComponentLauncher {
         const val CM_CLASS_NAME_KEY = "CM_CLASS_NAME"
         const val CM_CALLING_ACTIVITY_KEY = "CM_CALLING_ACTIVITY_KEY"
         const val CM_PACKAGE_NAME_KEY = "CM_PACKAGE_NAME"
-        const val CM_INTENT_KEY = "CM_INTENT"
         const val CM_PART_KEY = "CM_PART"
     }
-
-    abstract fun getLauncherActivity(partKey: String): ComponentName
 
     /**
      * @param pluginActivity 插件Activity
      * @return 容器Activity
      */
     abstract fun onBindContainerActivity(pluginActivity: ComponentName): ComponentName
-
-    abstract fun onBindContainerService(shadowService: ComponentName): ComponentName
 
     abstract fun onBindContainerContentProvider(pluginContentProvider: ComponentName): ContainerProviderInfo
 
@@ -70,12 +62,6 @@ abstract class ComponentManager : PluginComponentLauncher {
         } else {
             false
         }
-    }
-
-    private fun doServiceOpt(context: ShadowContext, intent: Intent?): Boolean {
-        intent ?: return false
-        context.baseContext.startService(intent)
-        return true
     }
 
     override fun startService(context: ShadowContext, service: Intent): Pair<Boolean, ComponentName> {
@@ -127,14 +113,6 @@ abstract class ComponentManager : PluginComponentLauncher {
         }
     }
 
-    override fun convertPluginServiceIntent(pluginIntent: Intent): Intent {
-        return if (pluginIntent.isPluginComponent()) {
-            pluginIntent.toServiceContainerIntent(Operate.START)
-        } else {
-            pluginIntent
-        }
-    }
-
     /**
      * key:插件Activity类名
      * value:插件PackageName
@@ -159,40 +137,28 @@ abstract class ComponentManager : PluginComponentLauncher {
      */
     private val pluginComponentInfoMap: MutableMap<ComponentName, PluginComponentInfo> = hashMapOf()
 
-    /**
-     * key:long
-     * value:connection
-     */
-    private val containerIntentKeyToConnectionMap: MutableMap<Long, ServiceConnection> = HashMap()
-
-    /**
-     * key:connection
-     * value:Intent
-     */
-    private val connectionToContainerIntentMap: MutableMap<ServiceConnection, Intent> = HashMap()
 
     private var application2broadcastInfo: MutableMap<String, MutableMap<String, List<String>>> = HashMap()
 
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
-        fun common(pluginComponentInfo: PluginComponentInfo,
-                   bind: (name: ComponentName) -> ComponentName
-        ) {
-            val componentName = ComponentName(pluginInfo.packageName, pluginComponentInfo.className)
+        fun common(pluginComponentInfo: PluginComponentInfo,componentName:ComponentName) {
             packageNameMap[pluginComponentInfo.className] = pluginInfo.packageName
             val previousValue = pluginInfoMap.put(componentName, pluginInfo)
             if (previousValue != null) {
                 throw IllegalStateException("重复添加Component：$componentName")
             }
             pluginComponentInfoMap[componentName] = pluginComponentInfo
-            componentMap[componentName] = bind(componentName)
         }
 
         pluginInfo.mActivities.forEach {
-            common(it, ::onBindContainerActivity)
+            val componentName = ComponentName(pluginInfo.packageName, it.className)
+            common(it,componentName)
+            componentMap[componentName] = onBindContainerActivity(componentName)
         }
 
         pluginInfo.mServices.forEach {
-            common(it, ::onBindContainerService)
+            val componentName = ComponentName(pluginInfo.packageName, it.className)
+            common(it,componentName)
         }
 
         pluginInfo.mProviders.forEach {
@@ -233,15 +199,6 @@ abstract class ComponentManager : PluginComponentLauncher {
         return toContainerIntent(bundleForPluginLoader)
     }
 
-    /**
-     * 调用前必须先调用isPluginComponent判断Intent确实一个插件内的组件
-     */
-    private fun Intent.toServiceContainerIntent(opt: Operate): Intent {
-        val bundleForPluginLoader = Bundle()
-        bundleForPluginLoader.putSerializable(ServiceContainerReuseDelegate.OPT_EXTRA_KEY, opt)
-        return toContainerIntent(bundleForPluginLoader)
-    }
-
 
     /**
      * 构造pluginIntent对应的ContainerIntent
@@ -271,20 +228,6 @@ abstract class ComponentManager : PluginComponentLauncher {
         return containerIntent
     }
 
-    fun getConnection(intentKey: Long): ServiceConnection? {
-        return containerIntentKeyToConnectionMap[intentKey]
-    }
-
-    fun deleteConnection(conn: ServiceConnection?) {
-        if (conn != null) {
-            val intent = connectionToContainerIntentMap[conn]
-            if (intent != null) {
-                connectionToContainerIntentMap.remove(conn)
-                val intentKey = intent.getBundleExtra(CM_LOADER_BUNDLE_KEY).getLong(CM_INTENT_KEY, -1)
-                containerIntentKeyToConnectionMap.remove(intentKey)
-            }
-        }
-    }
 
     class BroadcastInfo(val className: String, val actions: Array<String>)
 

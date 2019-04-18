@@ -24,14 +24,6 @@ public interface DelegateProvider {
     HostActivityDelegate getHostActivityDelegate(Class<? extends HostActivityDelegator> delegator);
 
     /**
-     * 获取与delegator相应的HostServiceDelegate
-     *
-     * @param delegator HostService委托者
-     * @return HostService被委托者
-     */
-    HostServiceDelegate  getHostServiceDelegate(Class<? extends HostServiceDelegator> delegator);
-
-    /**
      * 获取UriParse对应的delegate
      * @return UriParseDelegate
      */
