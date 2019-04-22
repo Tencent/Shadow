@@ -15,6 +15,8 @@ allprojects {
     ext.VERSION_NAME = "2.0.12"
     if ("${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")) {
         ext.VERSION_SUFFIX = ""
+    } else if ("${System.env.ORANGE}".equalsIgnoreCase("true")) {
+        ext.VERSION_SUFFIX = "-${System.env.ORANGE_COMMIT_SHORT}-SNAPSHOT"
     } else {
         ext.VERSION_SUFFIX = "-${gitShortRev()}-SNAPSHOT"
     }
