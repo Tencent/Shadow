@@ -38,6 +38,7 @@ task clean(type: Delete) {
     dependsOn gradle.includedBuild('core').task(':manager:clean')
     dependsOn gradle.includedBuild('core').task(':runtime:clean')
     dependsOn gradle.includedBuild('core').task(':transform:clean')
+    dependsOn gradle.includedBuild('core').task(':transform-kit:clean')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:clean')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:clean')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:clean')

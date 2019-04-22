@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.transform.common
+package com.tencent.shadow.core.transform_kit
 
 import com.android.build.api.transform.TransformInvocation
 import javassist.ClassPool
@@ -33,7 +33,6 @@ open class JavassistTransform(project: Project, val classPoolBuilder: ClassPoolB
         mCtClassInputMap.clear()
         classPool = classPoolBuilder.build()
     }
-
 
 
     override fun onTransform() {

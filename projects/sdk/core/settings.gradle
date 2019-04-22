@@ -1,4 +1,4 @@
 includeBuild '../coding'
-include 'loader', 'runtime', 'transform', 'gradle-plugin', 'common', 'manager', 'load-parameters'
+include 'loader', 'runtime', 'transform', 'gradle-plugin', 'common', 'manager', 'load-parameters', 'transform-kit'
 include ':jar-wrapper:runtime-debug', ':jar-wrapper:runtime-release'
 include ':jar-wrapper:common-debug', ':jar-wrapper:common-realse'

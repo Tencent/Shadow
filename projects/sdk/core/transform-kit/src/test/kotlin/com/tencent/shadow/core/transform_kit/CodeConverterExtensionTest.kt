@@ -1,10 +1,10 @@
-package com.tencent.shadow.core.transform.common
+package com.tencent.shadow.core.transform_kit
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 
-class CodeConverterExtensionTest : ShadowTransformTest() {
+class CodeConverterExtensionTest : AbstractTransformTest() {
 
     @Test
     fun redirectMethodCallToStaticMethodCall() {
