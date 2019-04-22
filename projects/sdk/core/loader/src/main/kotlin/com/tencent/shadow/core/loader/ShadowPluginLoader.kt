@@ -6,13 +6,18 @@ import android.os.Looper
 import android.os.Parcel
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.LoggerFactory
+import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
-import com.tencent.shadow.core.loader.delegates.*
+import com.tencent.shadow.core.loader.delegates.DI
+import com.tencent.shadow.core.loader.delegates.ShadowActivityDelegate
+import com.tencent.shadow.core.loader.delegates.ShadowContentProviderDelegate
+import com.tencent.shadow.core.loader.delegates.ShadowDelegate
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
+import com.tencent.shadow.core.loader.managers.PluginServiceManager
 import com.tencent.shadow.core.loader.remoteview.ShadowRemoteViewCreatorImp
 import com.tencent.shadow.runtime.UriParseDelegate
 import com.tencent.shadow.runtime.container.*
@@ -156,9 +161,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         return ShadowActivityDelegate(this)
     }
 
-    override fun getHostServiceDelegate(aClass: Class<out HostServiceDelegator>): HostServiceDelegate {
-        return ServiceContainerReuseDelegate(this)
-    }
 
     override fun getHostContentProviderDelegate(): HostContentProviderDelegate {
         return ShadowContentProviderDelegate(mPluginContentProviderManager)

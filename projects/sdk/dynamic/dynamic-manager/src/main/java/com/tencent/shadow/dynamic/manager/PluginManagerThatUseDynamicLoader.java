@@ -15,7 +15,7 @@ import android.os.TransactionTooLargeException;
 import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
-import com.tencent.shadow.core.loader.LoadParametersInManager;
+import com.tencent.shadow.core.load_parameters.LoadParameters;
 import com.tencent.shadow.core.pluginmanager.BasePluginManager;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledType;
@@ -232,8 +232,8 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             int type = part instanceof InstalledPlugin.PluginPart ? InstalledType.TYPE_PLUGIN : InstalledType.TYPE_INTERFACE;
 
             int loaderType = type == 1 ? 0 : 1;
-            LoadParametersInManager loadParameters
-                    = new LoadParametersInManager(partKey, loaderType, dependsOn);
+            LoadParameters loadParameters
+                    = new LoadParameters(partKey, loaderType, dependsOn);
 
             Parcel parcelExtras = Parcel.obtain();
             loadParameters.writeToParcel(parcelExtras, 0);

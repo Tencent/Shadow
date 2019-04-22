@@ -11,43 +11,45 @@ import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
 
+/**
+ *   测试打包包含loader、runtime、插件1、config.json的插件包
+ *  ./gradlew -p projects/sdk/core :gradle-plugin:test --tests com.tencent.shadow.core.gradle.PackagePluginTaskTest.testCase1PackageDebugPlugin
+ */
 class PackagePluginTaskTest {
 
     @Test
     fun testCase1PackageDebugPlugin() {
-        val projectDir = File("src/test/testProjects/case1")
-
         GradleRunner.create()
-                .withProjectDir(projectDir)
+                .withProjectDir(ROOT_PROJECT_DIR)
                 .withPluginClasspath()
                 .withArguments("clean")
                 .build()
 
         val result = GradleRunner.create()
-                .withProjectDir(projectDir)
+                .withProjectDir(ROOT_PROJECT_DIR)
                 .withPluginClasspath()
                 .withArguments(listOf(
                         "-Pdisable_shadow_transform=true",
-                        ":packageDebugPlugin"
+                        ":plugin1:packageDebugPlugin"
                 ))
                 .build()
 
-        val outcome = result.task(":packageDebugPlugin")!!.outcome
+        val outcome = result.task(":plugin1:packageDebugPlugin")!!.outcome
 
         assertEquals(SUCCESS, outcome)
 
-        val jsonFile = File(projectDir, "build/intermediates/generatePluginConfig/debug/config.json")
+        val jsonFile = File(PLUGIN1_PROJECT_DIR, "build/intermediates/generatePluginConfig/debug/config.json")
         val json = JSONParser().parse(jsonFile.bufferedReader()) as JSONObject
         assertJson(json)
 
-        val zipFile = ZipFile(projectDir.absolutePath + "/build/plugin-debug.zip")
+        val zipFile = ZipFile(ROOT_PROJECT_DIR.absolutePath + "/build/plugin-debug.zip")
         assertFile(zipFile)
     }
 
     private fun assertFile(zipFile: ZipFile) {
         val zipFileNames = mutableSetOf<String>()
         zipFileNames.add("config.json")
-        zipFileNames.add("case1-debug.apk")
+        zipFileNames.add("plugin1-debug.apk")
         zipFileNames.add("loader-debug.apk")
         zipFileNames.add("runtime-debug.apk")
 
@@ -82,9 +84,14 @@ class PackagePluginTaskTest {
         val pluginsJson = json["plugins"] as JSONArray
         val pluginJson = pluginsJson[0] as JSONObject
         assertEquals("demo_main", pluginJson["partKey"])
-        assertEquals("case1-debug.apk", pluginJson["apkName"])
+        assertEquals("plugin1-debug.apk", pluginJson["apkName"])
         val dependsOnJson = pluginJson["dependsOn"] as JSONArray
         assertEquals(2, dependsOnJson.size)
         assertNotNull(pluginJson["hash"])
+    }
+
+    companion object {
+        val ROOT_PROJECT_DIR = File("src/test/testProjects/case1")
+        val PLUGIN1_PROJECT_DIR = File("src/test/testProjects/case1/plugin1")
     }
 }

@@ -44,6 +44,7 @@ dependencies {
 
     compileOnly project(':runtime')
     compileOnly project(':common')
+    api project(':load-parameters')
     implementation 'com.tencent.shadow.coding:lint'
 }
 

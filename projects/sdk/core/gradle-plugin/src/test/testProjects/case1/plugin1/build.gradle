@@ -40,7 +40,7 @@ android {
     compileSdkVersion COMPILE_SDK_VERSION
 
     defaultConfig {
-        applicationId "com.tencent.shadow.test.gradle.case1"
+        applicationId "com.tencent.shadow.test.gradle.plugin1"
         minSdkVersion MIN_SDK_VERSION
         targetSdkVersion TARGET_SDK_VERSION
         versionCode VERSION_CODE
@@ -51,23 +51,57 @@ android {
 shadow {
     packagePlugin {
         pluginTypes {
-            case2Debug {
+            debug {
+                loaderApkConfig = new Tuple2('loader-debug.apk', ':loader:assembleDebug')
+                runtimeApkConfig = new Tuple2('runtime-debug.apk', ':runtime:assembleDebug')
                 pluginApks {
                     pluginApk1 {
                         partKey = 'demo_main'
                         buildTask = 'assembleDebug'
-                        apkName = 'case2-debug.apk'
-                        //这里因为单元测试时，会把项目根目录设置成case1的根目录
-                        projectPath = '/case2'
+                        apkName = 'plugin1-debug.apk'
+                        projectPath = 'plugin1'
+                        dependsOn = ['Core', 'Base']
+                    }
+                }
+            }
+
+            onlyApk {
+                pluginApks {
+                    pluginApk1 {
+                        partKey = 'demo_main'
+                        buildTask = 'assembleDebug'
+                        apkName = 'plugin1-debug.apk'
+                        projectPath = 'plugin1'
                         dependsOn = ['Core', 'Base']
                     }
                 }
             }
         }
 
+        loaderApkProjectPath = 'loader'
+
+        runtimeApkProjectPath = 'runtime'
+
         uuid = '1234567890'
         version = 4
         compactVersion = [1, 2, 3]
         uuidNickName = "1.1.5"
+    }
+}
+
+task genUUID()  {
+    doFirst {
+        def uuidFile = file(rootProject.projectDir.absolutePath + '/build/uuid.txt')
+        uuidFile.getParentFile().mkdirs()
+        BufferedWriter writer = new BufferedWriter(new FileWriter(uuidFile))
+        writer.write(UUID.randomUUID().toString().toUpperCase())
+        writer.flush()
+        writer.close()
+    }
+}
+
+task PackageMultiPlugin(dependsOn: ['genUUID', 'packageDebugPlugin', ':plugin2:packagePlugin2DebugPlugin']) {
+    doLast {
+        file(rootProject.projectDir.absolutePath + '/build/uuid.txt').delete()
     }
 }

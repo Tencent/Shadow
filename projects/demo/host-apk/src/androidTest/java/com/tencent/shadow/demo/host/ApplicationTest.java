@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class ActivityWindowSoftModeTest extends BaseTest {
+public class ApplicationTest extends BaseTest {
 
     @Override
     Intent getLaunchIntent() {
@@ -40,17 +40,14 @@ public class ActivityWindowSoftModeTest extends BaseTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.activity.WindowSoftModeJumpActivity"
+                "com.tencent.shadow.demo.usecases.application.TestApplicationActivity"
         );
         return pluginIntent;
     }
 
     @Test
-    public void testBasicUsage() {
-
-        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button"))).perform(ViewActions.click());;
-
-        matchTextWithViewTag("text","show");
+    public void testApplication() {
+        matchTextWithViewTag("text","isCallOnCreate:true");
     }
 
 }
