@@ -5,6 +5,7 @@ task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':runtime:jarReleasePackage')
     dependsOn gradle.includedBuild('core').task(':transform:assemble')
+    dependsOn gradle.includedBuild('core').task(':load-parameters:assembleRelease')
 
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:jarReleasePackage')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:jarReleasePackage')
@@ -17,6 +18,7 @@ task lintSdk() {
     dependsOn gradle.includedBuild('core').task(':loader:lint')
     dependsOn gradle.includedBuild('core').task(':manager:lint')
     dependsOn gradle.includedBuild('core').task(':runtime:lint')
+    dependsOn gradle.includedBuild('core').task(':load-parameters:lint')
 
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:lint')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:lint')
@@ -112,6 +114,20 @@ publishing {
                 setScm(scm)
             }
         }
+
+        loadParameters(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'load-parameters'
+            version publicationVersion
+            artifact("$corePath/load-parameters/build/outputs/aar/load-parameters-release.aar")
+
+            pom.withXml {
+                def root = asNode()
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+
         coreLoader(MavenPublication) {
             groupId coreGroupId
             artifactId 'loader'
@@ -124,6 +140,7 @@ publishing {
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'load-parameters', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -139,6 +156,7 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'load-parameters', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -257,6 +275,7 @@ publishing {
 
 setGeneratePomFileAndDepends('gradlePlugin')
 setGeneratePomFileAndDepends('common')
+setGeneratePomFileAndDepends('loadParameters')
 setGeneratePomFileAndDepends('coreLoader')
 setGeneratePomFileAndDepends('coreManager')
 setGeneratePomFileAndDepends('runtime')

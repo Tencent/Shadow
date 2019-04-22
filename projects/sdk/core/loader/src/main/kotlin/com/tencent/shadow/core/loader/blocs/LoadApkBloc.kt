@@ -3,7 +3,7 @@ package com.tencent.shadow.core.loader.blocs
 import android.content.Context
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.Logger
-import com.tencent.shadow.core.loader.LoadParameters
+import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.classloaders.CombineClassLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadApkException
