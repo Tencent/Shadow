@@ -34,7 +34,7 @@
         image: dockerimage.isd.com/android-build/shadow-build-cache:latest
       stages:
         - name: 打印merge信息，记录目标分支版本
-          script: echo HEAD\'s parents:`git show --pretty=%P HEAD`
+          script: echo `git show --pretty="HEAD:%H parents:%P" HEAD`
         - name: 构建全部SDK模块
           script: ./gradlew buildSdk
         - name: Lint全部SDK模块
