@@ -1,12 +1,12 @@
 package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.ShadowTransformTest
+import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import javassist.CtClass
 import javassist.CtMethod
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class PackageManagerTransformTest : ShadowTransformTest() {
+class PackageManagerTransformTest : AbstractTransformTest() {
 
     val packageManagerClazz = sLoader["android.content.pm.PackageManager"]
 

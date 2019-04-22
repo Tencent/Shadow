@@ -3,7 +3,7 @@ package com.tencent.shadow.core.gradle
 import com.android.build.gradle.AppPlugin
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import com.tencent.shadow.core.transform.ShadowTransform
-import com.tencent.shadow.core.transform.common.AndroidClassPoolBuilder
+import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project

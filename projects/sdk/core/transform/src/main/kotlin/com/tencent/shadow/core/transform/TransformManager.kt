@@ -1,43 +1,28 @@
 package com.tencent.shadow.core.transform
 
-import com.tencent.shadow.core.transform.common.InputClass
-import com.tencent.shadow.core.transform.common.SpecificTransform
 import com.tencent.shadow.core.transform.specific.*
+import com.tencent.shadow.core.transform_kit.AbstractTransformManager
+import com.tencent.shadow.core.transform_kit.InputClass
+import com.tencent.shadow.core.transform_kit.SpecificTransform
 import javassist.ClassPool
 import javassist.CtClass
 
-class TransformManager(val mCtClassInputMap: Map<CtClass, InputClass>,
-                       val classPool: ClassPool,
+class TransformManager(ctClassInputMap: Map<CtClass, InputClass>,
+                       classPool: ClassPool,
                        useHostContext: () -> Array<String>
-) {
-    private val allInputClass = mCtClassInputMap.keys
+) : AbstractTransformManager(ctClassInputMap, classPool) {
 
-    private val mTransformList: List<SpecificTransform> = listOf(
+    override val mTransformList: List<SpecificTransform> = listOf(
             ApplicationTransform(),
             ActivityTransform(),
             ServiceTransform(),
             InstrumentationTransform(),
             RemoteViewTransform(),
-            FragmentTransform(mCtClassInputMap),
+            FragmentTransform(ctClassInputMap),
             DialogTransform(),
             WebViewTransform(),
             ContentProviderTransform(),
             PackageManagerTransform(),
             KeepHostContextTransform(useHostContext())
     )
-
-    init {
-        mTransformList.forEach {
-            it.mClassPool = classPool
-            it.setup(allInputClass)
-        }
-    }
-
-    fun fireAll() {
-        mTransformList.flatMap { it.list }.forEach { transform ->
-            transform.filter(allInputClass).forEach {
-                transform.transform(it)
-            }
-        }
-    }
 }

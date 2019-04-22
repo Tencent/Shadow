@@ -1,8 +1,8 @@
 package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.ReplaceClassName
-import com.tencent.shadow.core.transform.common.SpecificTransform
-import com.tencent.shadow.core.transform.common.TransformStep
+import com.tencent.shadow.core.transform_kit.ReplaceClassName
+import com.tencent.shadow.core.transform_kit.SpecificTransform
+import com.tencent.shadow.core.transform_kit.TransformStep
 import javassist.CtClass
 
 open class SimpleRenameTransform(private val fromToMap: Map<String, String>) : SpecificTransform() {

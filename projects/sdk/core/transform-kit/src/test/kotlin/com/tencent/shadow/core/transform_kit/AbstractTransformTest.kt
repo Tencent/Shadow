@@ -1,13 +1,13 @@
-package com.tencent.shadow.core.transform.common
+package com.tencent.shadow.core.transform_kit
 
 import javassist.*
 import javassist.bytecode.CodeAttribute
 import javassist.bytecode.MethodInfo
 import javassist.bytecode.Opcode
-import java.util.ArrayList
+import java.util.*
 
 
-abstract class ShadowTransformTest {
+abstract class AbstractTransformTest {
     companion object {
         const val WRITE_FILE_DIR = "build/test_write_file"
     }
@@ -36,8 +36,8 @@ abstract class ShadowTransformTest {
      * 查找目标class对象的目标method
      */
     fun getTargetMethods(classPool: ClassPool,
-            targetClassNames: Array<String>,
-            targetMethodName: Array<String>
+                         targetClassNames: Array<String>,
+                         targetMethodName: Array<String>
     ): List<CtMethod> {
         val method_targets = ArrayList<CtMethod>()
         for (targetClassName in targetClassNames) {
@@ -114,7 +114,7 @@ abstract class ShadowTransformTest {
                     val c = iterator.byteAt(pos)
                     if (c == Opcode.INVOKESPECIAL) {
                         val index = iterator.u16bitAt(pos + 1)
-                        val result = constPool.isConstructor(name,index)
+                        val result = constPool.isConstructor(name, index)
                         return result != 0
                     }
                 }
