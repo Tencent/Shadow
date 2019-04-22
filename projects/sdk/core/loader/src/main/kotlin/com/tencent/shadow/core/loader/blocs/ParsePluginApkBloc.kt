@@ -2,7 +2,7 @@ package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
 import android.content.pm.PackageInfo
-import com.tencent.shadow.core.loader.LoadParameters
+import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.ParsePluginApkException
 import com.tencent.shadow.core.loader.infos.PluginActivityInfo
 import com.tencent.shadow.core.loader.infos.PluginInfo

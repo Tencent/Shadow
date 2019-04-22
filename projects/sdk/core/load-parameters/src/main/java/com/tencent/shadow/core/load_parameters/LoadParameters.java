@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.loader;
+package com.tencent.shadow.core.load_parameters;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -23,7 +23,7 @@ public class LoadParameters implements Parcelable {
         this.dependsOn = dependsOn;
     }
 
-    protected LoadParameters(Parcel in) {
+    public LoadParameters(Parcel in) {
         partKey = in.readString();
         pluginFileType = in.readInt();
         dependsOn = in.createStringArray();
