@@ -1,10 +1,10 @@
 package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.ShadowTransformTest
+import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import org.junit.Assert
 import org.junit.Test
 
-class InstrumentationTransformTest : ShadowTransformTest() {
+class InstrumentationTransformTest : AbstractTransformTest() {
 
     @Test
     fun testInstrumentationTransform() {

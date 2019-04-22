@@ -4,6 +4,8 @@ task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':loader:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':runtime:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':transform-kit:assemble')
+    dependsOn gradle.includedBuild('core').task(':transform-kit:testJar')
     dependsOn gradle.includedBuild('core').task(':transform:assemble')
     dependsOn gradle.includedBuild('core').task(':load-parameters:assembleRelease')
 
@@ -26,6 +28,7 @@ task lintSdk() {
 }
 
 task testSdk() {
+    dependsOn gradle.includedBuild('core').task(':transform-kit:test')
     dependsOn gradle.includedBuild('core').task(':transform:test')
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:test')
     dependsOn ':projects:demo:host-apk:connectedDebugAndroidTest'
@@ -96,6 +99,7 @@ publishing {
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'transform-kit', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', publicationVersion))
 
                 def scm = root.appendNode('scm')
@@ -175,6 +179,41 @@ publishing {
                 setScm(scm)
             }
         }
+
+        transformKit(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'transform-kit'
+            version publicationVersion
+            artifact("$corePath/transform-kit/build/libs/transform-kit.jar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
+                dependencies.append(getDependencyNode('compile', 'org.javassist', 'javassist', '3.22.0-GA'))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+
+        transformKitTest(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'transform-kit-test'
+            version publicationVersion
+            artifact("$corePath/transform-kit/build/libs/test-transform-kit.jar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', 'junit', 'junit', '4.12'))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+
         transform(MavenPublication) {
             groupId coreGroupId
             artifactId 'transform'
@@ -184,9 +223,7 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
-                dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
-                dependencies.append(getDependencyNode('compile', 'org.javassist', 'javassist', '3.22.0-GA'))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'transform-kit', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -279,6 +316,8 @@ setGeneratePomFileAndDepends('loadParameters')
 setGeneratePomFileAndDepends('coreLoader')
 setGeneratePomFileAndDepends('coreManager')
 setGeneratePomFileAndDepends('runtime')
+setGeneratePomFileAndDepends('transformKit')
+setGeneratePomFileAndDepends('transformKitTest')
 setGeneratePomFileAndDepends('transform')
 setGeneratePomFileAndDepends('dynamicHost')
 setGeneratePomFileAndDepends('dynamicLoader')

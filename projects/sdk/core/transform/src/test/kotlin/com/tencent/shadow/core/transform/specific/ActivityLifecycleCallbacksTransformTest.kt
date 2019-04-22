@@ -1,11 +1,11 @@
 package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.ShadowTransformTest
+import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import javassist.NotFoundException
 import org.junit.Assert
 import org.junit.Test
 
-class ActivityLifecycleCallbacksTransformTest : ShadowTransformTest() {
+class ActivityLifecycleCallbacksTransformTest : AbstractTransformTest() {
 
     @Test
     fun testApplicationTransform() {

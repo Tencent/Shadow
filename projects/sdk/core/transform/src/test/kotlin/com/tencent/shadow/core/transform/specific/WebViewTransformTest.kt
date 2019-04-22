@@ -1,6 +1,6 @@
 package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.ShadowTransformTest
+import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import javassist.CtClass
 import org.junit.Assert
 import org.junit.Test
@@ -8,7 +8,7 @@ import org.junit.Test
 /**
  * ./gradlew -p projects/sdk/core :transform:test --tests com.tencent.shadow.core.transform.specific.WebViewTransformTest
  */
-class WebViewTransformTest : ShadowTransformTest() {
+class WebViewTransformTest : AbstractTransformTest() {
 
     val webViewClazz = sLoader["android.webkit.WebView"]
     val shadowWebViewClazz = sLoader["com.tencent.shadow.runtime.ShadowWebView"]

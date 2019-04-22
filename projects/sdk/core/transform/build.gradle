@@ -3,11 +3,9 @@ apply plugin: 'kotlin'
 group 'com.tencent.shadow.core'
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.android.tools.build:gradle:$build_gradle_version"
-    implementation 'org.javassist:javassist:3.22.0-GA'
-    implementation gradleApi()
-    testImplementation 'junit:junit:4.12'
+    compile project(':transform-kit')
+    testCompile 'junit:junit:4.12'
+    testCompile project(path: ':transform-kit', configuration: 'tests')
 }
 
 compileKotlin {

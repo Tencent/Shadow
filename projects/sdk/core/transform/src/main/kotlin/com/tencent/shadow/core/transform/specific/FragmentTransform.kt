@@ -1,6 +1,6 @@
 package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.*
+import com.tencent.shadow.core.transform_kit.*
 import javassist.CtClass
 import java.io.File
 

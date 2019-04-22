@@ -1,13 +1,13 @@
 package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform.common.ShadowTransformTest
+import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import javassist.NotFoundException
 import org.junit.Assert
 
 abstract class SimpleRenameTransformTest(private val renameTransform: SimpleRenameTransform,
                                          private val allInputClassName: Array<String>, private val methodName: String,
                                          private val newSuperClassName: String, private val methodFromToMap: Map<String, String>)
-    : ShadowTransformTest() {
+    : AbstractTransformTest() {
 
     protected fun doTest() {
         renameTransform.mClassPool = sLoader
