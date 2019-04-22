@@ -1,6 +1,7 @@
 '**':
   push:
     - network: idc-kvm
+      needGit: true
       docker:
         kvm: true
         image: dockerimage.isd.com/android-build/shadow-build-cache:latest
@@ -27,6 +28,7 @@
 
   merge_request:
     - network: idc-kvm
+      needGit: true
       docker:
         kvm: true
         image: dockerimage.isd.com/android-build/shadow-build-cache:latest
