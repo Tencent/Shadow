@@ -112,7 +112,9 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                         pluginParts.application, partKey, pluginParts)
             }
             pluginParts?.let {
-                pluginParts.application.onCreate()
+                val application = pluginParts.application
+                application.attachBaseContext(mHostAppContext)
+                application.onCreate()
             }
         }
         if (isUiThread()) {

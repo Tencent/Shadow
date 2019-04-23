@@ -23,6 +23,7 @@ public class ShadowContext extends ContextThemeWrapper {
     Resources mMixResources;
     LayoutInflater mLayoutInflater;
     String mLibrarySearchPath;
+    String mDexPath;
     protected String mPartKey;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
 
@@ -51,6 +52,10 @@ public class ShadowContext extends ContextThemeWrapper {
 
     public void setLibrarySearchPath(String mLibrarySearchPath) {
         this.mLibrarySearchPath = mLibrarySearchPath;
+    }
+
+    public void setDexPath(String dexPath) {
+        mDexPath = dexPath;
     }
 
     public void setPluginPartKey(String partKey) {
@@ -198,6 +203,7 @@ public class ShadowContext extends ContextThemeWrapper {
     public ApplicationInfo getApplicationInfo() {
         final ApplicationInfo applicationInfo = super.getApplicationInfo();
         applicationInfo.nativeLibraryDir = mLibrarySearchPath;
+        applicationInfo.sourceDir = mDexPath;
         return applicationInfo;
     }
 

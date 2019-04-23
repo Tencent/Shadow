@@ -129,7 +129,7 @@ public abstract class ShadowApplication extends ShadowContext {
     }
 
     public void setHostApplicationContextAsBase(Context hostAppContext) {
-        attachBaseContext(hostAppContext);
+        super.attachBaseContext(hostAppContext);
         mHostApplication = (Application) hostAppContext;
     }
 
@@ -137,4 +137,7 @@ public abstract class ShadowApplication extends ShadowContext {
         mBroadcasts = broadcast;
     }
 
+    public void attachBaseContext(Context base) {
+        //do nothing.
+    }
 }

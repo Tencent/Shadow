@@ -33,7 +33,6 @@ object LoadApkBloc {
         val hostParentClassLoader = hostClassLoader.parent
         if (dependsOn == null || dependsOn.isEmpty()) {
             return PluginClassLoader(
-                    hostAppContext,
                     apk.absolutePath,
                     odexDir,
                     installedApk.libraryPath,
@@ -47,7 +46,6 @@ object LoadApkBloc {
                 throw LoadApkException("加载" + loadParameters.partKey + "时它的依赖" + partKey + "还没有加载")
             } else {
                 return PluginClassLoader(
-                        hostAppContext,
                         apk.absolutePath,
                         odexDir,
                         installedApk.libraryPath,
@@ -66,7 +64,6 @@ object LoadApkBloc {
             }.toTypedArray()
             val combineClassLoader = CombineClassLoader(dependsOnClassLoaders, hostParentClassLoader)
             return PluginClassLoader(
-                    hostAppContext,
                     apk.absolutePath,
                     odexDir,
                     installedApk.libraryPath,
