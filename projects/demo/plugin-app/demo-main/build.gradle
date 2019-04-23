@@ -32,4 +32,6 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
 
     implementation 'androidx.test.espresso:espresso-idling-resource:3.2.0-alpha02'
+
+    implementation 'com.android.support:multidex:1.0.2'
 }

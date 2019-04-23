@@ -3,6 +3,12 @@ apply from: "../../plugin-app/demo-install/build.gradle"
 android {
     defaultConfig {
         applicationId "com.tencent.shadow.demo_host"
+        multiDexEnabled true
+        multiDexKeepProguard file('multidex-config.pro')
+    }
+
+    dexOptions {
+        additionalParameters += '--minimal-main-dex'//为了测试Multidex能力
     }
 }
 
