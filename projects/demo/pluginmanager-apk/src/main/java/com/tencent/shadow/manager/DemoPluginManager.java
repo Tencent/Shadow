@@ -86,7 +86,7 @@ public class DemoPluginManager extends FastPluginManager implements TestPluginMa
 
                     startPluginActivity(context, installedPlugin, partKey, pluginIntent);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
                 if (callback != null) {
                     callback.onCloseLoadingView();
