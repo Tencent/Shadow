@@ -63,7 +63,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     /**
      * 数据库的版本号
      */
-    private final static int VERSION = 1;
+    private final static int VERSION = 2;
 
 
     public InstalledPluginDBHelper(Context context, String name) {
@@ -90,6 +90,8 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if (oldVersion < 2) {
+            //todo 查询COLUMN_TYPE是Interface的uuid，然后删除这些uuid的记录。
+        }
     }
 }

@@ -43,7 +43,7 @@ public class HostApplication extends Application {
             throw new NullPointerException("partKey == " + partKey);
         }
 
-        LoadParameters loadParameters = new LoadParameters(partKey, 0, null);
+        LoadParameters loadParameters = new LoadParameters(partKey, null);
 
         Parcel parcel = Parcel.obtain();
         loadParameters.writeToParcel(parcel, 0);
