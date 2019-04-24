@@ -2,8 +2,12 @@ package com.tencent.shadow.core.pluginmanager.installplugin;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InstalledPluginDBHelper extends SQLiteOpenHelper {
 
@@ -92,6 +96,31 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 2) {
             //todo 查询COLUMN_TYPE是Interface的uuid，然后删除这些uuid的记录。
+            db.beginTransaction();
+            try {
+                Cursor cursor = db.query(
+                        true,
+                        TABLE_NAME_MANAGER,
+                        new String[]{COLUMN_UUID, COLUMN_TYPE},
+                        COLUMN_TYPE + " = ?",
+                        new String[]{"2"},//Interface Type
+                        null, null, null, null
+                );
+                List<String> uuids = new ArrayList<>();
+                while (cursor.moveToNext()) {
+                    String uuid = cursor.getString(cursor.getColumnIndex(COLUMN_UUID));
+                    uuids.add(uuid);
+                }
+                cursor.close();
+
+                for (String uuid : uuids) {
+                    db.delete(TABLE_NAME_MANAGER, COLUMN_UUID + " = ?", new String[]{uuid});
+                }
+
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
         }
     }
 }
