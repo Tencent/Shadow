@@ -41,4 +41,15 @@ public class DemoPluginLoader extends ShadowPluginLoader {
             }
         };
     }
+
+    /**
+     *
+     * 配置插件中可以访问宿主类的白名单
+     */
+    @Override
+    public String[] getWhiteList() {
+        return new String[]{
+                "androidx.test.espresso"//这个包添加是为了插件demo中可以访问测试框架的类
+        };
+    }
 }

@@ -76,6 +76,8 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     private val mUiHandler = Handler(Looper.getMainLooper())
 
+    abstract val whiteList: Array<String>?
+
     companion object {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
     }
@@ -154,7 +156,8 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                 mHostAppContext,
                 installedApk,
                 loadParameters,
-                mShadowRemoteViewCreatorProvider)
+                mShadowRemoteViewCreatorProvider,
+                whiteList)
     }
 
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {

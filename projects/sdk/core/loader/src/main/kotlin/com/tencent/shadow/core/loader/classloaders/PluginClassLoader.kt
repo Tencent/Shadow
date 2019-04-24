@@ -22,23 +22,31 @@ import java.io.File
 */
 class PluginClassLoader(
         hostAppContext: Context, dexPath: String, optimizedDirectory: File?, private val librarySearchPath: String?, parent: ClassLoader,
-        private val specialClassLoader: ClassLoader?
+        private val specialClassLoader: ClassLoader?, whiteList: Array<String>?
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
+
+    private val allWhiteList: Array<String>
 
     init {
         if (Build.VERSION.SDK_INT <= MultiDex.MAX_SUPPORTED_SDK_VERSION) {
             val pluginLoaderMultiDex = hostAppContext.getSharedPreferences("com.tencent.shadow.multidex", Context.MODE_PRIVATE)
             MultiDex.install(this, dexPath, optimizedDirectory, pluginLoaderMultiDex)
         }
+        val defaultWhiteList = arrayOf("com.tencent.shadow.runtime",
+                               "org.apache.commons.logging",//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
+                               "org.apache.http"//http包，和独立安装一样，优先查找系统的
+        )
+        if (whiteList != null) {
+            allWhiteList = defaultWhiteList.plus(whiteList)
+        }else {
+            allWhiteList = defaultWhiteList
+        }
     }
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
         if (specialClassLoader == null //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
-                || className.startsWith("com.tencent.shadow.runtime")
-                || className.startsWith("androidx.test.espresso")//todo #24 需要将这些需要访问宿主ClassLoader的包名弄成一个配置文件，由业务方自行配置
-                || className.startsWith("org.apache.commons.logging")//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
-                || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的
+                || allWhiteList.startWith(className)) {
             return super.loadClass(className, resolve)
         } else {
             var clazz: Class<*>? = findLoadedClass(className)
@@ -72,5 +80,15 @@ class PluginClassLoader(
     }
 
     fun getLibrarySearchPath() = librarySearchPath
+
+
+    private fun Array<String>.startWith(name: String): Boolean {
+        for (str in this) {
+            if (name.startsWith(str)) {
+                return true
+            }
+        }
+        return false
+    }
 
 }
