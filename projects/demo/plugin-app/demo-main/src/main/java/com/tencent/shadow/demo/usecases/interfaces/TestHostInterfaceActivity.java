@@ -5,12 +5,12 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
 
-import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.interfaces.HostTestInterface;
+import com.tencent.shadow.demo.usecases.BaseAndroidTestActivity;
 
-public class TestHostInterfaceActivity extends BaseActivity {
+public class TestHostInterfaceActivity extends BaseAndroidTestActivity {
 
     public static class Case extends UseCase {
         @Override
