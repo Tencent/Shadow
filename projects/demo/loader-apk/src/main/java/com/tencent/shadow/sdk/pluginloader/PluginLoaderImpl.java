@@ -54,6 +54,7 @@ public class PluginLoaderImpl extends ShadowPluginLoader {
     public String[] getWhiteList() {
         return new String[]{
                 "androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
+                "com.tencent.shadow.demo.interfaces"//测试插件访问宿主白名单类
         };
     }
 }
