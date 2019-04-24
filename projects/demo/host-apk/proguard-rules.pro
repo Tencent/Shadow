@@ -26,3 +26,5 @@
 -keep class com.tencent.shadow.dynamic.host.**{*;}
 -keep class com.tencent.shadow.core.common.**{*;}
 -keep class com.tencent.shadow.runtime.container.**{*;}
+
+-keep class com.tencent.shadow.demo.interfaces.**{*;}
