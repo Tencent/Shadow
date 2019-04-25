@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.tencent.shadow.demo.gallery.R;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.interfaces.HostTestInterface;
+import com.tencent.shadow.demo.other.HostOtherInterface;
 import com.tencent.shadow.demo.usecases.BaseAndroidTestActivity;
 
 public class TestHostInterfaceActivity extends BaseAndroidTestActivity {
@@ -32,12 +33,23 @@ public class TestHostInterfaceActivity extends BaseAndroidTestActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_common);
+        setContentView(R.layout.layout_host_interface);
 
     }
 
     public void doClick(View view){
         TextView textView = findViewById(R.id.text);
         textView.setText(HostTestInterface.getText());
+    }
+
+    public void doClick1(View view){
+        String str = "";
+        try {
+            str = HostOtherInterface.getText();
+        } catch (NoClassDefFoundError e) {
+            str = "ClassNotFound";
+        }
+        TextView textView = findViewById(R.id.text);
+        textView.setText(str);
     }
 }
