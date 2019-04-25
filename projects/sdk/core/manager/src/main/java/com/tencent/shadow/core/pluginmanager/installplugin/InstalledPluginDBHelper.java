@@ -127,5 +127,17 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 db.endTransaction();
             }
         }
+
+        if (oldVersion < 3) {
+            db.beginTransaction();
+            try {
+                //添加列COLUMN_BUSINESS_NAME。所有旧行保持空值即可，表示同宿主相同业务。
+                db.execSQL("ALTER TABLE " + TABLE_NAME_MANAGER + " ADD " + COLUMN_BUSINESS_NAME + " VARCHAR");
+
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+        }
     }
 }
