@@ -22,10 +22,10 @@ import java.io.File
 */
 class PluginClassLoader(
         hostAppContext: Context, dexPath: String, optimizedDirectory: File?, private val librarySearchPath: String?, parent: ClassLoader,
-        private val specialClassLoader: ClassLoader?, whiteList: Array<String>?
+        private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
-    private val allWhiteList: Array<String>
+    private val allHostWhiteList: Array<String>
 
     init {
         if (Build.VERSION.SDK_INT <= MultiDex.MAX_SUPPORTED_SDK_VERSION) {
@@ -35,17 +35,17 @@ class PluginClassLoader(
         val defaultWhiteList = arrayOf("com.tencent.shadow.runtime",
                                "org.apache.commons.logging"//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
         )
-        if (whiteList != null) {
-            allWhiteList = defaultWhiteList.plus(whiteList)
+        if (hostWhiteList != null) {
+            allHostWhiteList = defaultWhiteList.plus(hostWhiteList)
         }else {
-            allWhiteList = defaultWhiteList
+            allHostWhiteList = defaultWhiteList
         }
     }
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
         if (specialClassLoader == null //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
-                || className.startWith(allWhiteList)
+                || className.startWith(allHostWhiteList)
                 || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的) {
             return super.loadClass(className, resolve)
         } else {

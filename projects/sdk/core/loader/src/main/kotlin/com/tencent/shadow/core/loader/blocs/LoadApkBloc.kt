@@ -24,7 +24,7 @@ object LoadApkBloc {
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadPlugin(hostAppContext: Context, installedApk: InstalledApk, loadParameters: LoadParameters, pluginPartsMap: MutableMap<String, PluginParts>, whiteList: Array<String>?): PluginClassLoader {
+    fun loadPlugin(hostAppContext: Context, installedApk: InstalledApk, loadParameters: LoadParameters, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
         val apk = File(installedApk.apkFilePath)
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
         val dependsOn = loadParameters.dependsOn
@@ -39,7 +39,7 @@ object LoadApkBloc {
                     installedApk.libraryPath,
                     hostClassLoader,
                     hostParentClassLoader,
-                    whiteList
+                    loadParameters.hostWhiteList
             )
         } else if (dependsOn.size == 1) {
             val partKey = dependsOn[0]
@@ -54,7 +54,7 @@ object LoadApkBloc {
                         installedApk.libraryPath,
                         pluginParts.classLoader,
                         null,
-                        whiteList
+                        loadParameters.hostWhiteList
                 )
             }
         } else {
@@ -74,7 +74,7 @@ object LoadApkBloc {
                     installedApk.libraryPath,
                     combineClassLoader,
                     null,
-                    whiteList
+                    loadParameters.hostWhiteList
             )
         }
     }
