@@ -46,7 +46,7 @@ class PluginClassLoader(
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
         if (specialClassLoader == null //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
-                || allWhiteList.startWith(className)) {
+                || className.startWith(allWhiteList)) {
             return super.loadClass(className, resolve)
         } else {
             var clazz: Class<*>? = findLoadedClass(className)
@@ -82,9 +82,9 @@ class PluginClassLoader(
     fun getLibrarySearchPath() = librarySearchPath
 
 
-    private fun Array<String>.startWith(name: String): Boolean {
-        for (str in this) {
-            if (name.startsWith(str)) {
+    private fun String.startWith(array: Array<String>): Boolean {
+        for (str in array) {
+            if (startsWith(str)) {
                 return true
             }
         }
