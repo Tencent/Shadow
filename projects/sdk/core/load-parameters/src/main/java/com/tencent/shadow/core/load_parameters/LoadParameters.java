@@ -13,21 +13,25 @@ import android.os.Parcelable;
  * @author cubershi
  */
 public class LoadParameters implements Parcelable {
+    public final String businessName;
     public final String partKey;
     public final String[] dependsOn;
 
-    public LoadParameters(String partKey, String[] dependsOn) {
+    public LoadParameters(String businessName, String partKey, String[] dependsOn) {
+        this.businessName = businessName;
         this.partKey = partKey;
         this.dependsOn = dependsOn;
     }
 
     public LoadParameters(Parcel in) {
+        businessName = in.readString();
         partKey = in.readString();
         dependsOn = in.createStringArray();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(businessName);
         dest.writeString(partKey);
         dest.writeStringArray(dependsOn);
     }

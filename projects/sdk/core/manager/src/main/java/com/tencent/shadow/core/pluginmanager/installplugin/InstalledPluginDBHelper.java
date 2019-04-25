@@ -37,6 +37,10 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
      */
     public final static String COLUMN_PATH = "filePath";
     /**
+     * 插件的businessName
+     */
+    public final static String COLUMN_BUSINESS_NAME = "businessName";
+    /**
      * 插件的名称
      */
     public final static String COLUMN_PARTKEY = "partKey";
@@ -67,7 +71,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     /**
      * 数据库的版本号
      */
-    private final static int VERSION = 2;
+    private final static int VERSION = 3;
 
 
     public InstalledPluginDBHelper(Context context, String name) {
@@ -81,6 +85,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 + COLUMN_HASH + " VARCHAR , "
                 + COLUMN_PATH + " VARCHAR, "
                 + COLUMN_TYPE + " INTEGER, "
+                + COLUMN_BUSINESS_NAME + " VARCHAR, "
                 + COLUMN_PARTKEY + " VARCHAR, "
                 + COLUMN_DEPENDSON + " VARCHAR, "
                 + COLUMN_UUID + " VARCHAR, "

@@ -228,10 +228,11 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             } catch (RuntimeException e) {
                 throw new NotFoundException("uuid==" + uuid + "partKey==" + partKey + "的Plugin找不到");
             }
+            String businessName = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).businessName : null;
             String[] dependsOn = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).dependsOn : null;
 
             LoadParameters loadParameters
-                    = new LoadParameters(partKey, dependsOn);
+                    = new LoadParameters(businessName, partKey, dependsOn);
 
             Parcel parcelExtras = Parcel.obtain();
             loadParameters.writeToParcel(parcelExtras, 0);
