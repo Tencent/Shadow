@@ -24,6 +24,7 @@ public class ShadowContext extends ContextThemeWrapper {
     LayoutInflater mLayoutInflater;
     String mLibrarySearchPath;
     protected String mPartKey;
+    private String mBusinessName;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
 
     public ShadowContext() {
@@ -51,6 +52,13 @@ public class ShadowContext extends ContextThemeWrapper {
 
     public void setLibrarySearchPath(String mLibrarySearchPath) {
         this.mLibrarySearchPath = mLibrarySearchPath;
+    }
+
+    public void setBusinessName(String businessName) {
+        if (businessName == null) {
+            businessName = "";
+        }
+        this.mBusinessName = businessName;
     }
 
     public void setPluginPartKey(String partKey) {

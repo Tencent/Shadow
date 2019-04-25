@@ -6,4 +6,6 @@ import com.tencent.shadow.runtime.ShadowApplication
 
 class PluginParts(val application: ShadowApplication,
                   val classLoader: PluginClassLoader,
-                  val resources: Resources)
+                  val resources: Resources,
+                  val businessName: String?
+)

@@ -30,6 +30,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         const val CM_CLASS_NAME_KEY = "CM_CLASS_NAME"
         const val CM_CALLING_ACTIVITY_KEY = "CM_CALLING_ACTIVITY_KEY"
         const val CM_PACKAGE_NAME_KEY = "CM_PACKAGE_NAME"
+        const val CM_BUSINESS_NAME_KEY = "CM_BUSINESS_NAME"
         const val CM_PART_KEY = "CM_PART"
     }
 
@@ -167,6 +168,10 @@ abstract class ComponentManager : PluginComponentLauncher {
         }
     }
 
+    fun getComponentBusinessName(componentName: ComponentName): String? {
+        return pluginInfoMap[componentName]?.businessName
+    }
+
     fun getComponentPartKey(componentName: ComponentName) : String? {
         return pluginInfoMap[componentName]?.partKey
     }
@@ -209,6 +214,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         val packageName = packageNameMap[className]!!
         component = ComponentName(packageName, className)
         val containerComponent = componentMap[component]!!
+        val businessName = pluginInfoMap[component]!!.businessName
         val partKey = pluginInfoMap[component]!!.partKey
 
         val pluginExtras: Bundle? = extras
@@ -221,6 +227,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         bundleForPluginLoader.putString(CM_PACKAGE_NAME_KEY, packageName)
 
         containerIntent.putExtra(CM_EXTRAS_BUNDLE_KEY, pluginExtras)
+        containerIntent.putExtra(CM_BUSINESS_NAME_KEY, businessName)
         containerIntent.putExtra(CM_PART_KEY, partKey)
         containerIntent.putExtra(CM_LOADER_BUNDLE_KEY, bundleForPluginLoader)
         containerIntent.putExtra(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME)
