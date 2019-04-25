@@ -27,4 +27,7 @@
 -keep class com.tencent.shadow.core.common.**{*;}
 -keep class com.tencent.shadow.runtime.container.**{*;}
 
+#--start 下面是为了keep 插件访问宿主的白名单类--
 -keep class com.tencent.shadow.demo.interfaces.**{*;}
+-keep class com.tencent.shadow.demo.other.**{*;}
+#--end--
