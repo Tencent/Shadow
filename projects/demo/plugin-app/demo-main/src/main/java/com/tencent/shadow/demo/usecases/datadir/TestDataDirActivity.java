@@ -1,6 +1,7 @@
 package com.tencent.shadow.demo.usecases.datadir;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 
 import java.io.File;
+import java.io.FilenameFilter;
 
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
@@ -46,6 +48,11 @@ public class TestDataDirActivity extends BaseActivity {
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
         linearLayout.addView(makeCheckItem("getDataDir()", "GET_DATA_DIR"));
+        linearLayout.addView(makeCheckItem("getFilesDir()", "GET_FILES_DIR"));
+        linearLayout.addView(makeCheckItem("getCacheDir()", "GET_CACHE_DIR"));
+        linearLayout.addView(makeCheckItem("getDir(\"test\",MODE_PRIVATE)", "GET_DIR_TEST"));
+        linearLayout.addView(makeCheckItem("getDatabasePath(\"test\")", "GET_DATABASE_PATH"));
+        linearLayout.addView(makeCheckItem("getSharedPreferences(\"test\", MODE_PRIVATE)", "GET_SHARED_PREF"));
 
         setContentView(linearLayout);
         mRootView = linearLayout;
@@ -59,6 +66,49 @@ public class TestDataDirActivity extends BaseActivity {
             TextView getDataDir = mRootView.findViewWithTag("GET_DATA_DIR");
             getDataDir.setText(dataDir.getAbsolutePath());
         }
+
+        File filesDir = context.getFilesDir();
+        TextView getFilesDir = mRootView.findViewWithTag("GET_FILES_DIR");
+        getFilesDir.setText(filesDir.getAbsolutePath());
+
+        File cacheDir = context.getCacheDir();
+        TextView getCacheDir = mRootView.findViewWithTag("GET_CACHE_DIR");
+        getCacheDir.setText(cacheDir.getAbsolutePath());
+
+        File dir = context.getDir("test", MODE_PRIVATE);
+        TextView getDirTest = mRootView.findViewWithTag("GET_DIR_TEST");
+        getDirTest.setText(dir.getAbsolutePath());
+
+        File databasePath = context.getDatabasePath("test");
+        TextView getDatabasePath = mRootView.findViewWithTag("GET_DATABASE_PATH");
+        getDatabasePath.setText(databasePath.getAbsolutePath());
+
+        final String testSharedPreferences = "testSharedPreferences";
+        SharedPreferences sharedPreferences
+                = context.getSharedPreferences(testSharedPreferences, MODE_PRIVATE);
+        boolean commit = sharedPreferences.edit().putString("test", "test").commit();
+        if (!commit) {
+            throw new RuntimeException("commit failed");
+        }
+
+        File sharedPrefs = new File(getApplication().getBaseContext().getFilesDir().getParent(), "shared_prefs");
+        File[] files = sharedPrefs.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                if (name.contains(testSharedPreferences)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+        if (files.length != 1) {
+            throw new RuntimeException("匹配文件数量不对。");
+        }
+
+        TextView getSharedPref = mRootView.findViewWithTag("GET_SHARED_PREF");
+        getSharedPref.setText(files[0].getAbsolutePath());
+
     }
 
     private View makeCheckItem(String labelText, String viewTag) {
