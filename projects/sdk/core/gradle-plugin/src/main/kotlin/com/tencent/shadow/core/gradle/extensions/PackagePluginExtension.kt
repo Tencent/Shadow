@@ -64,6 +64,7 @@ open class PackagePluginExtension {
         val jsonArr = JSONArray()
         for (i in buildType.pluginApks) {
             val pluginObj = JSONObject()
+            pluginObj["businessName"] = i.businessName
             pluginObj["partKey"] = i.partKey
             pluginObj["apkName"] = i.apkName
             pluginObj["hash"] = ShadowPluginHelper.getFileMD5(ShadowPluginHelper.getPluginFile(project, i, true))
