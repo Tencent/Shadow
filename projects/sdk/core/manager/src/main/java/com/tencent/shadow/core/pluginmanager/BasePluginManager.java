@@ -260,11 +260,6 @@ public abstract class BasePluginManager {
                 suc = false;
             }
         }
-        for (Map.Entry<String, InstalledPlugin.Part> interfacePlugin : installedPlugin.interfaces.entrySet()) {
-            if (!deletePart(interfacePlugin.getValue())) {
-                suc = false;
-            }
-        }
         if (mInstalledDao.deleteByUUID(uuid) <= 0) {
             suc = false;
         }

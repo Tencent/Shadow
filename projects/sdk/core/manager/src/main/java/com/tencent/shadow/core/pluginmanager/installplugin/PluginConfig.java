@@ -39,10 +39,6 @@ public class PluginConfig {
      */
     public Map<String, PluginFileInfo> plugins = new HashMap<>();
     /**
-     * interface插件  key: partKey value:文件信息
-     */
-    public Map<String, FileInfo> interfaces = new HashMap<>();
-    /**
      * 插件的存储目录
      */
     public File storageDir;
@@ -105,14 +101,6 @@ public class PluginConfig {
             }
         }
 
-        JSONArray interfacesArray = jsonObject.optJSONArray("interfaces");
-        if (interfacesArray != null && interfacesArray.length() > 0) {
-            for (int i = 0; i < interfacesArray.length(); i++) {
-                JSONObject interfacePlugin = interfacesArray.getJSONObject(i);
-                String partKey = interfacePlugin.getString("partKey");
-                pluginConfig.interfaces.put(partKey, getFileInfo(interfacePlugin, storageDir));
-            }
-        }
         pluginConfig.storageDir = storageDir;
         return pluginConfig;
     }
