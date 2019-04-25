@@ -25,6 +25,10 @@ class PluginClassLoader(
         private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
+    /**
+     * 宿主的白名单包名
+     * 在白名单包里面的宿主类，插件才可以访问
+     */
     private val allHostWhiteList: Array<String>
 
     init {
