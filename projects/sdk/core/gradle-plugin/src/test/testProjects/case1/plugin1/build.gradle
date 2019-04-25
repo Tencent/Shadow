@@ -61,6 +61,8 @@ shadow {
                         apkName = 'plugin1-debug.apk'
                         projectPath = 'plugin1'
                         dependsOn = ['Core', 'Base']
+                        hostWhiteList = ["androidx.test.espresso",
+                                         "com.tencent.shadow.demo.interfaces"]
                     }
                 }
             }
@@ -73,6 +75,8 @@ shadow {
                         apkName = 'plugin1-debug.apk'
                         projectPath = 'plugin1'
                         dependsOn = ['Core', 'Base']
+                        hostWhiteList = ["androidx.test.espresso",
+                                         "com.tencent.shadow.demo.interfaces"]
                     }
                 }
             }

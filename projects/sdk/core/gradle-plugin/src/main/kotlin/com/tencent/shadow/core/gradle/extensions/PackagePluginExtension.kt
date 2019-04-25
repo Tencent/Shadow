@@ -74,6 +74,13 @@ open class PackagePluginExtension {
                 }
                 pluginObj["dependsOn"] = dependsOnJson
             }
+            if (i.hostWhiteList.isNotEmpty()) {
+                val hostWhiteListJson = JSONArray()
+                for (k in i.hostWhiteList) {
+                    hostWhiteListJson.add(k)
+                }
+                pluginObj["hostWhiteList"] = hostWhiteListJson
+            }
             jsonArr.add(pluginObj)
         }
         json["plugins"] = jsonArr
