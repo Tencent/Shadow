@@ -20,7 +20,9 @@ public class GetDataDirTest extends BaseTest {
 
     @Test
     public void testGetDataDir() {
-        String hostDataDir = ApplicationProvider.getApplicationContext().getDataDir().getAbsolutePath();
-        matchTextWithViewTag("GET_DATA_DIR", hostDataDir + "/ShadowPluginDataDir/demo");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            String hostDataDir = ApplicationProvider.getApplicationContext().getDataDir().getAbsolutePath();
+            matchTextWithViewTag("GET_DATA_DIR", hostDataDir + "/ShadowPluginDataDir/demo");
+        }
     }
 }
