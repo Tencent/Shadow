@@ -8,6 +8,7 @@ import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.activity.TestActivityWindowSoftMode;
 import com.tencent.shadow.demo.usecases.activity.TestCallingActivity;
+import com.tencent.shadow.demo.usecases.datadir.TestDataDirActivity;
 import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
@@ -88,6 +89,11 @@ public class UseCaseManager {
                 new TestPackageManagerActivity.Case(),
         });
         useCases.add(packageManagerCategory);
+
+        UseCaseCategory dataDirCategory = new UseCaseCategory("DataDir相关测试用例", new UseCase[]{
+                new TestDataDirActivity.Case(),
+        });
+        useCases.add(dataDirCategory);
     }
 
 

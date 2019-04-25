@@ -8,12 +8,15 @@ import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Pair;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 
 import com.tencent.shadow.runtime.container.HostActivityDelegator;
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider;
+
+import java.io.File;
 
 public class ShadowContext extends ContextThemeWrapper {
     PluginComponentLauncher mPluginComponentLauncher;
@@ -25,6 +28,10 @@ public class ShadowContext extends ContextThemeWrapper {
     String mLibrarySearchPath;
     protected String mPartKey;
     private String mBusinessName;
+    /**
+     * 缓存{@link ShadowContext#getDataDir()}
+     */
+    private File mDataDir;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
 
     public ShadowContext() {
@@ -211,5 +218,17 @@ public class ShadowContext extends ContextThemeWrapper {
 
     public PluginComponentLauncher getPendingIntentConverter() {
         return mPluginComponentLauncher;
+    }
+
+    @Override
+    public File getDataDir() {
+        if (TextUtils.isEmpty(mBusinessName)) {//如果mBusinessName为空，表示插件和宿主是同一业务，使用同一个Data目录
+            return super.getDataDir();
+        } else {
+            if (mDataDir == null) {
+                mDataDir = new File(super.getDataDir(), "ShadowPluginDataDir/" + mBusinessName);
+            }
+            return mDataDir;
+        }
     }
 }
