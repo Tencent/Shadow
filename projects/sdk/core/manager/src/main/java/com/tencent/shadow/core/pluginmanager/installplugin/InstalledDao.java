@@ -114,8 +114,6 @@ public class InstalledDao {
                             dependsOn = null;
                         }
                         installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(type,pluginFile, oDexDir, libDir, dependsOn));
-                    } else if (type == InstalledType.TYPE_INTERFACE) {
-                        installedPlugin.interfaces.put(partKey, new InstalledPlugin.Part(type, pluginFile, oDexDir, libDir));
                     } else {
                         throw new RuntimeException("出现不认识的type==" + type);
                     }
@@ -203,16 +201,6 @@ public class InstalledDao {
                 installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.dependsOn, fileInfo.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN));
             }
             installedPlugin.plugins = map;
-        }
-        if (pluginConfig.interfaces != null) {
-            Set<Map.Entry<String, PluginConfig.FileInfo>> plugins = pluginConfig.interfaces.entrySet();
-            Map<String, InstalledPlugin.Part> map = new HashMap<>();
-            for (Map.Entry<String, PluginConfig.FileInfo> plugin : plugins) {
-                PluginConfig.FileInfo fileInfo = plugin.getValue();
-                map.put(plugin.getKey(), new InstalledPlugin.Part(InstalledType.TYPE_INTERFACE, fileInfo.file, null, null));
-                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.file.getAbsolutePath(), InstalledType.TYPE_INTERFACE));
-            }
-            installedPlugin.interfaces = map;
         }
         InstalledRow uuidRow = new InstalledRow();
         uuidRow.type = InstalledType.TYPE_UUID;
