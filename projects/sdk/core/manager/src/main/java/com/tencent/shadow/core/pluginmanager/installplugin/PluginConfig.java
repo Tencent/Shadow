@@ -55,14 +55,16 @@ public class PluginConfig {
 
     static class PluginFileInfo extends FileInfo {
         final String[] dependsOn;
+        final String[] hostWhiteList;
 
-        PluginFileInfo(FileInfo fileInfo, String[] dependsOn) {
-            this(fileInfo.file, fileInfo.hash, dependsOn);
+        PluginFileInfo(FileInfo fileInfo, String[] dependsOn, String[] hostWhiteList) {
+            this(fileInfo.file, fileInfo.hash, dependsOn, hostWhiteList);
         }
 
-        PluginFileInfo(File file, String hash, String[] dependsOn) {
+        PluginFileInfo(File file, String hash, String[] dependsOn, String[] hostWhiteList) {
             super(file, hash);
             this.dependsOn = dependsOn;
+            this.hostWhiteList = hostWhiteList;
         }
     }
 
@@ -113,7 +115,13 @@ public class PluginConfig {
 
     private static PluginFileInfo getPluginFileInfo(JSONObject jsonObject, File storageDir) throws JSONException {
         FileInfo fileInfo = getFileInfo(jsonObject, storageDir);
-        JSONArray jsonArray = jsonObject.optJSONArray("dependsOn");
+        String[] dependsOn = getArrayStringByName(jsonObject, "dependsOn");
+        String[] hostWhiteList = getArrayStringByName(jsonObject, "hostWhiteList");
+        return new PluginFileInfo(fileInfo, dependsOn, hostWhiteList);
+    }
+
+    private static String[] getArrayStringByName(JSONObject jsonObject, String name) throws JSONException {
+        JSONArray jsonArray = jsonObject.optJSONArray(name);
         String[] dependsOn;
         if (jsonArray != null) {
             dependsOn = new String[jsonArray.length()];
@@ -123,7 +131,6 @@ public class PluginConfig {
         } else {
             dependsOn = new String[]{};
         }
-
-        return new PluginFileInfo(fileInfo, dependsOn);
+        return dependsOn;
     }
 }

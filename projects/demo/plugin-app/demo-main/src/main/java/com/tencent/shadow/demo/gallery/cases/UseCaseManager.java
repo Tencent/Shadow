@@ -2,6 +2,7 @@ package com.tencent.shadow.demo.gallery.cases;
 
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCaseCategory;
+import com.tencent.shadow.demo.gallery.util.PluginChecker;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityOrientation;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
@@ -11,6 +12,7 @@ import com.tencent.shadow.demo.usecases.activity.TestCallingActivity;
 import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
+import com.tencent.shadow.demo.usecases.interfaces.TestHostInterfaceActivity;
 import com.tencent.shadow.demo.usecases.packagemanager.TestPackageManagerActivity;
 import com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.demo.usecases.provider.TestFileProviderActivity;
@@ -88,6 +90,15 @@ public class UseCaseManager {
                 new TestPackageManagerActivity.Case(),
         });
         useCases.add(packageManagerCategory);
+
+
+        if (PluginChecker.isPluginMode()) {
+            UseCaseCategory hostInterfaceCategory = new UseCaseCategory("宿主接口调用测试用例", new UseCase[]{
+                    new TestHostInterfaceActivity.Case(),
+            });
+            useCases.add(hostInterfaceCategory);
+        }
+
     }
 
 

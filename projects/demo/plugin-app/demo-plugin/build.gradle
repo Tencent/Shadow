@@ -42,6 +42,8 @@ shadow {
                         buildTask = 'assembleDebug'
                         apkName = 'demo-plugin-debug.apk'
                         projectPath = 'projects/demo/plugin-app/demo-plugin'
+                        hostWhiteList = ["androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
+                                         "com.tencent.shadow.demo.interfaces"]//测试插件访问宿主白名单类
                     }
                 }
             }
@@ -55,6 +57,8 @@ shadow {
                         buildTask = 'assembleRelease'
                         apkName = 'demo-plugin-release.apk'
                         projectPath = 'projects/demo/plugin-app/demo-plugin'
+                        hostWhiteList = ["androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
+                                         "com.tencent.shadow.demo.interfaces"]//测试插件访问宿主白名单类
                     }
                 }
             }

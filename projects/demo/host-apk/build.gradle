@@ -55,6 +55,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-remote:3.2.0-alpha02'
     implementation 'androidx.test.espresso:espresso-idling-resource:3.2.0-alpha02'
     androidTestImplementation "androidx.test:runner:1.1.2-alpha02"
+
+    implementation project(':projects:demo:host_interface')
 }
 
 def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {

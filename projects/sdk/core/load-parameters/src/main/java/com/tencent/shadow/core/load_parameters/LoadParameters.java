@@ -15,21 +15,25 @@ import android.os.Parcelable;
 public class LoadParameters implements Parcelable {
     public final String partKey;
     public final String[] dependsOn;
+    public final String[] hostWhiteList;
 
-    public LoadParameters(String partKey, String[] dependsOn) {
+    public LoadParameters(String partKey, String[] dependsOn, String[] hostWhiteList) {
         this.partKey = partKey;
         this.dependsOn = dependsOn;
+        this.hostWhiteList = hostWhiteList;
     }
 
     public LoadParameters(Parcel in) {
         partKey = in.readString();
         dependsOn = in.createStringArray();
+        hostWhiteList = in.createStringArray();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(partKey);
         dest.writeStringArray(dependsOn);
+        dest.writeStringArray(hostWhiteList);
     }
 
     @Override
