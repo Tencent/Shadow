@@ -65,6 +65,24 @@ public class DbCompatibilityTest {
         );
     }
 
+    @Test
+    public void testCompatibleWithVersion2()
+            throws IOException, InterruptedException, TimeoutException {
+        testCompatibleWithVersion(
+                raw.init_sql_version2,
+                raw.expect_sql_version2
+        );
+    }
+
+    @Test
+    public void testCompatibleWithVersion3()
+            throws IOException, InterruptedException, TimeoutException {
+        testCompatibleWithVersion(
+                raw.init_sql_version3,
+                raw.expect_sql_version3
+        );
+    }
+
     private void testCompatibleWithVersion(int initSqlResId, int expectSqlResId)
             throws IOException, InterruptedException, TimeoutException {
         File initSqlFile = getResRawFile(initSqlResId);
