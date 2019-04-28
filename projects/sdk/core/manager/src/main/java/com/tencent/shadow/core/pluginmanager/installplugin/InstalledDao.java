@@ -98,24 +98,9 @@ public class InstalledDao {
                     String partKey = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PARTKEY));
 
                     if (type == InstalledType.TYPE_PLUGIN) {
-                        int columnIndex = cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_DEPENDSON);
-                        boolean hasDependencies = !cursor.isNull(columnIndex);
-                        String[] dependsOn;
-                        if (hasDependencies) {
-                            String string = cursor.getString(columnIndex);
-                            try {
-                                JSONArray jsonArray = new JSONArray(string);
-                                dependsOn = new String[jsonArray.length()];
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    dependsOn[i] = jsonArray.getString(i);
-                                }
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                        } else {
-                            dependsOn = null;
-                        }
-                        installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(type, businessName, pluginFile, oDexDir, libDir, dependsOn));
+                        String[] dependsOn = getArrayStringByColumnName(InstalledPluginDBHelper.COLUMN_DEPENDSON, cursor);
+                        String[] hostWhiteList = getArrayStringByColumnName(InstalledPluginDBHelper.COLUMN_HOST_WHITELIST, cursor);
+                        installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(type, businessName, pluginFile, oDexDir, libDir, dependsOn, hostWhiteList));
                     } else {
                         throw new RuntimeException("出现不认识的type==" + type);
                     }
@@ -124,6 +109,27 @@ public class InstalledDao {
         }
         cursor.close();
         return installedPlugin;
+    }
+
+    private String[] getArrayStringByColumnName(String columnName, Cursor cursor) {
+        int columnIndex = cursor.getColumnIndex(columnName);
+        boolean hasColumn = !cursor.isNull(columnIndex);
+        String[] arrayString;
+        if (hasColumn) {
+            String string = cursor.getString(columnIndex);
+            try {
+                JSONArray jsonArray = new JSONArray(string);
+                arrayString = new String[jsonArray.length()];
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    arrayString[i] = jsonArray.getString(i);
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            arrayString = null;
+        }
+        return arrayString;
     }
 
     /**
@@ -206,7 +212,8 @@ public class InstalledDao {
                                 fileInfo.file,
                                 null,
                                 null,
-                                fileInfo.dependsOn
+                                fileInfo.dependsOn,
+                                fileInfo.hostWhiteList
                         )
                 );
                 installedRows.add(
@@ -216,7 +223,8 @@ public class InstalledDao {
                                 plugin.getKey(),
                                 fileInfo.dependsOn,
                                 fileInfo.file.getAbsolutePath(),
-                                InstalledType.TYPE_PLUGIN
+                                InstalledType.TYPE_PLUGIN,
+                                fileInfo.hostWhiteList
                         )
                 );
             }

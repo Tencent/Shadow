@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:textColor="@android:color/black"
+        android:text="Test"
+        android:tag="text"
+        />
+
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:tag="button"
+        android:textColor="@android:color/background_dark"
+        android:textSize="22sp"
+        android:onClick="doClick"
+        android:text="调用HostTestInterface"
+        />
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:tag="button1"
+        android:textColor="@android:color/background_dark"
+        android:textSize="22sp"
+        android:onClick="doClick1"
+        android:text="调用HostTestInterface1"
+        />
+
+
+
+
+</LinearLayout>

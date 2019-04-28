@@ -15,6 +15,7 @@ open class PluginApkConfig {
     var projectPath = ""
     var buildTask = ""
     var dependsOn: Array<String> = emptyArray()
+    var hostWhiteList: Array<String> = emptyArray()
 
     constructor(name: String) {
         this.name = name

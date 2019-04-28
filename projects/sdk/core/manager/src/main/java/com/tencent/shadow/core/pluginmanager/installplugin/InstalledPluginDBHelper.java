@@ -14,7 +14,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     /**
      * 数据库名称
      */
-    private final static String DB_NAME_PREFIX = "shadow_installed_plugin_db";
+    final static String DB_NAME_PREFIX = "shadow_installed_plugin_db";
     /**
      * 表名称
      */
@@ -69,9 +69,13 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
      */
     public final static String COLUMN_PLUGIN_LIB = "libPath";
     /**
+     * 插件的依赖
+     */
+    public final static String COLUMN_HOST_WHITELIST = "hostWhiteList";
+    /**
      * 数据库的版本号
      */
-    private final static int VERSION = 3;
+    private final static int VERSION = 4;
 
 
     public InstalledPluginDBHelper(Context context, String name) {
@@ -92,7 +96,8 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 + COLUMN_VERSION + " VARCHAR, "
                 + COLUMN_INSTALL_TIME + " INTEGER ,"
                 + COLUMN_PLUGIN_ODEX + " VARCHAR ,"
-                + COLUMN_PLUGIN_LIB + " VARCHAR "
+                + COLUMN_PLUGIN_LIB + " VARCHAR ,"
+                + COLUMN_HOST_WHITELIST + " VARCHAR "
                 + ");";
         db.execSQL(sql);
     }
@@ -100,7 +105,6 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 2) {
-            //todo #59 查询COLUMN_TYPE是Interface的uuid，然后删除这些uuid的记录。
             db.beginTransaction();
             try {
                 Cursor cursor = db.query(
@@ -127,8 +131,19 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 db.endTransaction();
             }
         }
+        if(oldVersion < 3){
+            db.beginTransaction();
+            try {
+                //添加列COLUMN_HOST_WHITELIST
+                db.execSQL("ALTER TABLE " + TABLE_NAME_MANAGER + " ADD " + COLUMN_HOST_WHITELIST + " VARCHAR");
 
-        if (oldVersion < 3) {
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+
+        }
+        if (oldVersion < 4) {
             db.beginTransaction();
             try {
                 //添加列COLUMN_BUSINESS_NAME。所有旧行保持空值即可，表示同宿主相同业务。

@@ -230,9 +230,9 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
             }
             String businessName = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).businessName : null;
             String[] dependsOn = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).dependsOn : null;
-
+            String[] hostWhiteList = part instanceof InstalledPlugin.PluginPart ? ((InstalledPlugin.PluginPart) part).hostWhiteList : null;
             LoadParameters loadParameters
-                    = new LoadParameters(businessName, partKey, dependsOn);
+                    = new LoadParameters(businessName, partKey, dependsOn, hostWhiteList);
 
             Parcel parcelExtras = Parcel.obtain();
             loadParameters.writeToParcel(parcelExtras, 0);

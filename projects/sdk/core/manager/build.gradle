@@ -12,7 +12,7 @@ android {
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
 
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.tencent.shadow.core.pluginmanager.CustomAndroidJUnitRunner"
 
     }
     buildTypes {
@@ -28,6 +28,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'commons-io:commons-io:2.5'
 
     implementation 'com.tencent.shadow.coding:lint'
     compileOnly project(':common')

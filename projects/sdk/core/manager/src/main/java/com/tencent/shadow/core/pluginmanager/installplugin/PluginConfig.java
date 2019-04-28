@@ -55,16 +55,18 @@ public class PluginConfig {
 
     static class PluginFileInfo extends FileInfo {
         final String[] dependsOn;
+        final String[] hostWhiteList;
         final String businessName;
 
-        PluginFileInfo(String businessName, FileInfo fileInfo, String[] dependsOn) {
-            this(businessName, fileInfo.file, fileInfo.hash, dependsOn);
+        PluginFileInfo(String businessName, FileInfo fileInfo, String[] dependsOn, String[] hostWhiteList) {
+            this(businessName, fileInfo.file, fileInfo.hash, dependsOn, hostWhiteList);
         }
 
-        PluginFileInfo(String businessName, File file, String hash, String[] dependsOn) {
+        PluginFileInfo(String businessName, File file, String hash, String[] dependsOn, String[] hostWhiteList) {
             super(file, hash);
             this.businessName = businessName;
             this.dependsOn = dependsOn;
+            this.hostWhiteList = hostWhiteList;
         }
     }
 
@@ -116,7 +118,13 @@ public class PluginConfig {
     private static PluginFileInfo getPluginFileInfo(JSONObject jsonObject, File storageDir) throws JSONException {
         String businessName = jsonObject.getString("businessName");
         FileInfo fileInfo = getFileInfo(jsonObject, storageDir);
-        JSONArray jsonArray = jsonObject.optJSONArray("dependsOn");
+        String[] dependsOn = getArrayStringByName(jsonObject, "dependsOn");
+        String[] hostWhiteList = getArrayStringByName(jsonObject, "hostWhiteList");
+        return new PluginFileInfo(businessName, fileInfo, dependsOn, hostWhiteList);
+    }
+
+    private static String[] getArrayStringByName(JSONObject jsonObject, String name) throws JSONException {
+        JSONArray jsonArray = jsonObject.optJSONArray(name);
         String[] dependsOn;
         if (jsonArray != null) {
             dependsOn = new String[jsonArray.length()];
@@ -126,7 +134,6 @@ public class PluginConfig {
         } else {
             dependsOn = new String[]{};
         }
-
-        return new PluginFileInfo(businessName, fileInfo, dependsOn);
+        return dependsOn;
     }
 }

@@ -73,11 +73,13 @@ public class InstalledPlugin implements Serializable {
     static public class PluginPart extends Part {
         final public String businessName;
         final public String[] dependsOn;
+        final public String[] hostWhiteList;
 
-        PluginPart(int pluginType, String businessName, File file, File oDexDir, File libraryDir, String[] dependsOn) {
+        PluginPart(int pluginType, String businessName, File file, File oDexDir, File libraryDir, String[] dependsOn, String[] hostWhiteList) {
             super(pluginType, file, oDexDir, libraryDir);
             this.businessName = businessName;
             this.dependsOn = dependsOn;
+            this.hostWhiteList = hostWhiteList;
         }
     }
 }
