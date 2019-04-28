@@ -1,0 +1,23 @@
+{
+  "compact_version": [
+    1
+  ],
+  "pluginLoader": {
+    "apkName": "loader-apk-debug.apk",
+    "hash": "B0358A1919582A0FD467A42EEC40A5B7"
+  },
+  "plugins": [
+    {
+      "partKey": "demo_main",
+      "apkName": "demo-plugin-debug.apk",
+      "hash": "DAC0234D1BE7F363A66263A01595DA64"
+    }
+  ],
+  "runtime": {
+    "apkName": "runtime-apk-debug.apk",
+    "hash": "51FDE1246F62D17D881493B037795D63"
+  },
+  "UUID": "0087DACB-3373-4E11-B50B-1B3076BD4F16",
+  "version": 1,
+  "UUID_NickName": "plugin_config_version1.json"
+}

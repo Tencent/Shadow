@@ -10,7 +10,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     /**
      * 数据库名称
      */
-    private final static String DB_NAME_PREFIX = "shadow_installed_plugin_db";
+    final static String DB_NAME_PREFIX = "shadow_installed_plugin_db";
     /**
      * 表名称
      */
