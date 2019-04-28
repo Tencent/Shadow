@@ -8,6 +8,9 @@ import android.os.Build;
 import android.view.ContextThemeWrapper;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 /**
  * 将Context上所有get*Dir方法都放到原实现的子目录中
@@ -61,6 +64,29 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
             }
             return ensurePrivateDirExists(mFilesDir);
         }
+    }
+
+    @Override
+    public FileInputStream openFileInput(String name)
+            throws FileNotFoundException {
+        if (getSubDirName() == null) {
+            return super.openFileInput(name);
+        }
+        return super.openFileInput(getSubDirName() + name);
+    }
+
+    @Override
+    public FileOutputStream openFileOutput(String name, int mode) throws FileNotFoundException {
+        if (getSubDirName() == null) {
+            return super.openFileOutput(name, mode);
+        }
+        return super.openFileOutput(getSubDirName() + name, mode);
+    }
+
+    @Override
+    public boolean deleteFile(String name) {
+        File f = makeFilename(getFilesDir(), name);
+        return f.delete();
     }
 
     @Override
@@ -205,9 +231,26 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
         }
     }
 
+    @Override
+    public boolean deleteSharedPreferences(String name) {
+        if (getSubDirName() == null) {
+            return super.deleteSharedPreferences(name);
+        } else {
+            return super.deleteSharedPreferences("ShadowPlugin_" + getSubDirName() + "_" + name);
+        }
+    }
+
     private static File ensurePrivateDirExists(File dir) {
         //noinspection ResultOfMethodCallIgnored
         dir.mkdirs();
         return dir;
+    }
+
+    private static File makeFilename(File base, String name) {
+        if (name.indexOf(File.separatorChar) < 0) {
+            return new File(base, name);
+        }
+        throw new IllegalArgumentException(
+                "File " + name + " contains a path separator");
     }
 }
