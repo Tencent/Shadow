@@ -4,22 +4,18 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 
 import com.tencent.shadow.runtime.container.HostActivityDelegator;
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider;
 
-import java.io.File;
-
-public class ShadowContext extends ContextThemeWrapper {
+public class ShadowContext extends SubDirContextThemeWrapper {
     PluginComponentLauncher mPluginComponentLauncher;
     ClassLoader mPluginClassLoader;
     ShadowApplication mShadowApplication;
@@ -29,12 +25,6 @@ public class ShadowContext extends ContextThemeWrapper {
     String mLibrarySearchPath;
     protected String mPartKey;
     private String mBusinessName;
-    /**
-     * 缓存{@link ShadowContext#getDataDir()}等
-     * GuardedBy mLock
-     */
-    private File mDataDir, mFilesDir, mCacheDir;
-    final private Object mLock = new Object();
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
 
     public ShadowContext() {
@@ -65,8 +55,8 @@ public class ShadowContext extends ContextThemeWrapper {
     }
 
     public void setBusinessName(String businessName) {
-        if (businessName == null) {
-            businessName = "";
+        if (TextUtils.isEmpty(businessName)) {
+            businessName = null;
         }
         this.mBusinessName = businessName;
     }
@@ -223,83 +213,8 @@ public class ShadowContext extends ContextThemeWrapper {
         return mPluginComponentLauncher;
     }
 
-    /**
-     * 该方法只有API>=N时生效
-     */
     @Override
-    public File getDataDir() {
-        if (TextUtils.isEmpty(mBusinessName)) {//如果mBusinessName为空，表示插件和宿主是同一业务，使用同一个Data目录
-            return super.getDataDir();
-        } else {
-            synchronized (mLock) {
-                if (mDataDir == null) {
-                    mDataDir = new File(super.getDataDir(), "ShadowPluginDataDir/" + mBusinessName);
-                    mDataDir.mkdirs();
-                }
-                return mDataDir;
-            }
-        }
+    String getSubDirName() {
+        return mBusinessName;
     }
-
-    @Override
-    public File getFilesDir() {
-        if (TextUtils.isEmpty(mBusinessName)) {
-            return super.getFilesDir();
-        } else {
-            synchronized (mLock) {
-                if (mFilesDir == null) {
-                    mFilesDir = new File(super.getFilesDir(), "ShadowPluginFilesDir/" + mBusinessName);
-                    mFilesDir.mkdirs();
-                }
-                return mFilesDir;
-            }
-        }
-    }
-
-    @Override
-    public File getCacheDir() {
-        if (TextUtils.isEmpty(mBusinessName)) {
-            return super.getCacheDir();
-        } else {
-            synchronized (mLock) {
-                if (mCacheDir == null) {
-                    mCacheDir = new File(super.getCacheDir(), "ShadowPluginCacheDir/" + mBusinessName);
-                    mCacheDir.mkdirs();
-                }
-                return mCacheDir;
-            }
-        }
-    }
-
-    @Override
-    public File getDir(String name, int mode) {
-        if (mode != MODE_PRIVATE || TextUtils.isEmpty(mBusinessName)) {
-            return super.getDir(name, mode);
-        } else {
-            File file = new File(super.getDir(name, mode), "ShadowPluginDir/" + mBusinessName);
-            file.mkdirs();
-            return file;
-        }
-    }
-
-    @Override
-    public File getDatabasePath(String name) {
-        if (TextUtils.isEmpty(mBusinessName)) {
-            return super.getDatabasePath(name);
-        } else {
-            File databasePath = super.getDatabasePath("ShadowPluginDatabase_" + mBusinessName + "_" + name);
-            databasePath.mkdirs();
-            return databasePath;
-        }
-    }
-
-    @Override
-    public SharedPreferences getSharedPreferences(String name, int mode) {
-        if (mode != MODE_PRIVATE || TextUtils.isEmpty(mBusinessName)) {
-            return super.getSharedPreferences(name, mode);
-        } else {
-            return super.getSharedPreferences("ShadowPlugin_" + mBusinessName + "_" + name, mode);
-        }
-    }
-
 }
