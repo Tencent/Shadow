@@ -116,7 +116,7 @@ public class PluginConfig {
     }
 
     private static PluginFileInfo getPluginFileInfo(JSONObject jsonObject, File storageDir) throws JSONException {
-        String businessName = jsonObject.getString("businessName");
+        String businessName = jsonObject.optString("businessName", "");
         FileInfo fileInfo = getFileInfo(jsonObject, storageDir);
         String[] dependsOn = getArrayStringByName(jsonObject, "dependsOn");
         String[] hostWhiteList = getArrayStringByName(jsonObject, "hostWhiteList");
