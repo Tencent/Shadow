@@ -215,6 +215,10 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     @Override
     String getSubDirName() {
-        return mBusinessName;
+        if (mBusinessName == null) {
+            return null;
+        } else {
+            return "ShadowPlugin_" + mBusinessName;
+        }
     }
 }

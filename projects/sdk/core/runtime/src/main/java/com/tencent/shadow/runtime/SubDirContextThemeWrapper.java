@@ -4,6 +4,8 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.DatabaseErrorHandler;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.view.ContextThemeWrapper;
 
@@ -227,7 +229,7 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
         if (mode != MODE_PRIVATE || getSubDirName() == null) {
             return super.getSharedPreferences(name, mode);
         } else {
-            return super.getSharedPreferences("ShadowPlugin_" + getSubDirName() + "_" + name, mode);
+            return super.getSharedPreferences(makeSubName(name), mode);
         }
     }
 
@@ -236,8 +238,62 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
         if (getSubDirName() == null) {
             return super.deleteSharedPreferences(name);
         } else {
-            return super.deleteSharedPreferences("ShadowPlugin_" + getSubDirName() + "_" + name);
+            return super.deleteSharedPreferences(makeSubName(name));
         }
+    }
+
+    @Override
+    public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory) {
+        if (getSubDirName() == null) {
+            return super.openOrCreateDatabase(name, mode, factory);
+        } else {
+            return super.openOrCreateDatabase(makeSubName(name), mode, factory);
+        }
+    }
+
+    @Override
+    public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory, DatabaseErrorHandler errorHandler) {
+        if (getSubDirName() == null) {
+            return super.openOrCreateDatabase(name, mode, factory, errorHandler);
+        } else {
+            return super.openOrCreateDatabase(makeSubName(name), mode, factory, errorHandler);
+        }
+    }
+
+    @Override
+    public boolean moveDatabaseFrom(Context sourceContext, String name) {
+        if (getSubDirName() == null) {
+            return super.moveDatabaseFrom(sourceContext, name);
+        } else {
+            throw new UnsupportedOperationException("暂不支持");
+        }
+    }
+
+    @Override
+    public boolean deleteDatabase(String name) {
+        if (getSubDirName() == null) {
+            return super.deleteDatabase(name);
+        } else {
+            return super.deleteDatabase(makeSubName(name));
+        }
+    }
+
+    @Override
+    public File getDatabasePath(String name) {
+        if (getSubDirName() == null) {
+            return super.getDatabasePath(name);
+        } else {
+            return super.getDatabasePath(makeSubName(name));
+        }
+    }
+
+//    @Override 无需覆盖，因为database没有子目录，只是加了文件名前缀
+//    public String[] databaseList() {
+//        return super.databaseList();
+//    }
+
+    private String makeSubName(String name) {
+        return getSubDirName() + "_" + name;
     }
 
     private static File ensurePrivateDirExists(File dir) {
