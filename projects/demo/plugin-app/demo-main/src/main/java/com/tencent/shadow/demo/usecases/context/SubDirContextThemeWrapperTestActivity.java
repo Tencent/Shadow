@@ -16,6 +16,7 @@ import com.tencent.shadow.demo.gallery.util.UiUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -189,18 +190,22 @@ public class SubDirContextThemeWrapperTestActivity extends BaseActivity {
         makeItem("openOrCreateDatabase(\"foo\",MODE_PRIVATE,null)", "TAG_OOCD3_FOO",
                 testContext.openOrCreateDatabase("foo", MODE_PRIVATE, null).getPath()
         );
+        testContext.deleteDatabase("foo");
 
         makeItem("openOrCreateDatabase(\"bar\",MODE_PRIVATE,null)", "TAG_OOCD3_BAR",
                 testContext.openOrCreateDatabase("bar", MODE_PRIVATE, null).getPath()
         );
+        testContext.deleteDatabase("bar");
 
         makeItem("openOrCreateDatabase(\"foo\",MODE_PRIVATE,null,null)", "TAG_OOCD4_FOO",
                 testContext.openOrCreateDatabase("foo", MODE_PRIVATE, null, null).getPath()
         );
+        testContext.deleteDatabase("foo");
 
         makeItem("openOrCreateDatabase(\"bar\",MODE_PRIVATE,null,null)", "TAG_OOCD4_BAR",
                 testContext.openOrCreateDatabase("bar", MODE_PRIVATE, null, null).getPath()
         );
+        testContext.deleteDatabase("bar");
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             String value = "";
@@ -239,10 +244,15 @@ public class SubDirContextThemeWrapperTestActivity extends BaseActivity {
                 testContext.getDatabasePath("bar").getAbsolutePath()
         );
 
+
+        Context hostContext = getApplication().getBaseContext();
+        hostContext.openOrCreateDatabase("foo", MODE_PRIVATE, null);
+        testContext.openOrCreateDatabase("bar", MODE_PRIVATE, null);
         makeItem("databaseList()", "TAG_DATABASE_LIST",
                 Arrays.toString(testContext.databaseList())
         );
-
+        hostContext.deleteDatabase("foo");
+        testContext.deleteDatabase("bar");
     }
 
     private String getOpenFileInputAbsolutePath(Context context, String name) {
@@ -258,15 +268,20 @@ public class SubDirContextThemeWrapperTestActivity extends BaseActivity {
     }
 
     private String getOpenFileOutputAbsolutePath(Context context, String name) {
-        String result = "";
-        try {
-            context.openFileOutput(name, MODE_PRIVATE);
-        } catch (FileNotFoundException e) {
-            String message = e.getMessage();
-            int i = message.indexOf(' ');
-            result = message.substring(0, i);
+        File file = new File(context.getFilesDir(), name);
+        if (file.exists()) {
+            throw new RuntimeException("测试文件不能提前存在");
         }
-        return result;
+        try {
+            FileOutputStream fileOutputStream = context.openFileOutput(name, MODE_PRIVATE);
+            fileOutputStream.write(1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        if (!file.delete()) {
+            throw new RuntimeException("测试文件应该被创建出来了");
+        }
+        return file.getAbsolutePath();
     }
 
     private String isDeleteFileSuccess(Context context, String name) {

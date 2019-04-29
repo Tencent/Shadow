@@ -74,7 +74,8 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
         if (getSubDirName() == null) {
             return super.openFileInput(name);
         }
-        return super.openFileInput(getSubDirName() + name);
+        File f = makeFilename(getFilesDir(), name);
+        return new FileInputStream(f);
     }
 
     @Override
@@ -82,7 +83,9 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
         if (mode != MODE_PRIVATE || getSubDirName() == null) {
             return super.openFileOutput(name, mode);
         }
-        return super.openFileOutput(getSubDirName() + name, mode);
+        final boolean append = (mode & MODE_APPEND) != 0;
+        File f = makeFilename(getFilesDir(), name);
+        return new FileOutputStream(f, append);
     }
 
     @Override
@@ -296,8 +299,12 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
             boolean[] record = new boolean[databaseList.length];
             int size = 0;
             for (int i = 0; i < databaseList.length; i++) {
-                record[i] = databaseList[i].startsWith(getSubDirName());
-                size++;
+                if (databaseList[i].startsWith(getSubDirName())) {
+                    record[i] = true;
+                    size++;
+                } else {
+                    record[i] = false;
+                }
             }
             String[] result = new String[size];
             int j = 0;
