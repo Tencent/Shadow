@@ -79,7 +79,7 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
 
     @Override
     public FileOutputStream openFileOutput(String name, int mode) throws FileNotFoundException {
-        if (getSubDirName() == null) {
+        if (mode != MODE_PRIVATE || getSubDirName() == null) {
             return super.openFileOutput(name, mode);
         }
         return super.openFileOutput(getSubDirName() + name, mode);
@@ -218,7 +218,7 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
 
     @Override
     public File getDir(String name, int mode) {
-        if (getSubDirName() == null) {
+        if (mode != MODE_PRIVATE || getSubDirName() == null) {
             return super.getDir(name, mode);
         }
         return ensurePrivateDirExists(new File(super.getDir(name, mode), getSubDirName()));
@@ -244,7 +244,7 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
 
     @Override
     public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory) {
-        if (getSubDirName() == null) {
+        if (mode != MODE_PRIVATE || getSubDirName() == null) {
             return super.openOrCreateDatabase(name, mode, factory);
         } else {
             return super.openOrCreateDatabase(makeSubName(name), mode, factory);
@@ -253,7 +253,7 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
 
     @Override
     public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory, DatabaseErrorHandler errorHandler) {
-        if (getSubDirName() == null) {
+        if (mode != MODE_PRIVATE || getSubDirName() == null) {
             return super.openOrCreateDatabase(name, mode, factory, errorHandler);
         } else {
             return super.openOrCreateDatabase(makeSubName(name), mode, factory, errorHandler);
