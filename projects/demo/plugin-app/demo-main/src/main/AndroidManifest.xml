@@ -78,7 +78,7 @@
 
         <activity android:name="com.tencent.shadow.demo.usecases.interfaces.TestHostInterfaceActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.datadir.TestDataDirActivity" />
+        <activity android:name="com.tencent.shadow.demo.usecases.context.SubDirContextThemeWrapperTestActivity" />
 
         <provider
             android:authorities="com.tencent.shadow.provider.test"

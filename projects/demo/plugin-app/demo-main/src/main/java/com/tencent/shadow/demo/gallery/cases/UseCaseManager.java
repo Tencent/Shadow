@@ -9,7 +9,7 @@ import com.tencent.shadow.demo.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.demo.usecases.activity.TestActivityWindowSoftMode;
 import com.tencent.shadow.demo.usecases.activity.TestCallingActivity;
-import com.tencent.shadow.demo.usecases.datadir.TestDataDirActivity;
+import com.tencent.shadow.demo.usecases.context.SubDirContextThemeWrapperTestActivity;
 import com.tencent.shadow.demo.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity;
@@ -101,10 +101,10 @@ public class UseCaseManager {
         }
 
 
-        UseCaseCategory dataDirCategory = new UseCaseCategory("DataDir相关测试用例", new UseCase[]{
-                new TestDataDirActivity.Case(),
+        UseCaseCategory contextCategory = new UseCaseCategory("Context相关测试用例", new UseCase[]{
+                new SubDirContextThemeWrapperTestActivity.Case(),
         });
-        useCases.add(dataDirCategory);
+        useCases.add(contextCategory);
     }
 
 
