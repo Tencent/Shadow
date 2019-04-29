@@ -287,10 +287,28 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
         }
     }
 
-//    @Override 无需覆盖，因为database没有子目录，只是加了文件名前缀
-//    public String[] databaseList() {
-//        return super.databaseList();
-//    }
+    @Override
+    public String[] databaseList() {
+        if (getSubDirName() == null) {
+            return super.databaseList();
+        } else {
+            String[] databaseList = super.databaseList();
+            boolean[] record = new boolean[databaseList.length];
+            int size = 0;
+            for (int i = 0; i < databaseList.length; i++) {
+                record[i] = databaseList[i].startsWith(getSubDirName());
+                size++;
+            }
+            String[] result = new String[size];
+            int j = 0;
+            for (int i = 0; i < record.length; i++) {
+                if (record[i]) {
+                    result[j++] = databaseList[i];
+                }
+            }
+            return result;
+        }
+    }
 
     private String makeSubName(String name) {
         return getSubDirName() + "_" + name;
