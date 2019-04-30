@@ -5,6 +5,12 @@ open class PluginApkConfig {
     var name = ""
 
     var partKey = ""
+
+    /**
+     * 业务名（空字符串表示同宿主相同业务）
+     */
+    var businessName = ""
+
     var apkName = ""
     var projectPath = ""
     var buildTask = ""

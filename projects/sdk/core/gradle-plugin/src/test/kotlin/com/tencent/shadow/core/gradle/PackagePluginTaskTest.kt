@@ -85,6 +85,7 @@ class PackagePluginTaskTest {
         val pluginsJson = json["plugins"] as JSONArray
         val pluginJson = pluginsJson[0] as JSONObject
         assertEquals("demo_main", pluginJson["partKey"])
+        assertEquals("demo", pluginJson["businessName"])
         assertEquals("plugin1-debug.apk", pluginJson["apkName"])
         val dependsOnJson = pluginJson["dependsOn"] as JSONArray
         assertEquals(2, dependsOnJson.size)

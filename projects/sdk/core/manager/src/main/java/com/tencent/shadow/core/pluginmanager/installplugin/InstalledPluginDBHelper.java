@@ -37,6 +37,10 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
      */
     public final static String COLUMN_PATH = "filePath";
     /**
+     * 插件的businessName
+     */
+    public final static String COLUMN_BUSINESS_NAME = "businessName";
+    /**
      * 插件的名称
      */
     public final static String COLUMN_PARTKEY = "partKey";
@@ -71,7 +75,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     /**
      * 数据库的版本号
      */
-    private final static int VERSION = 3;
+    private final static int VERSION = 4;
 
 
     public InstalledPluginDBHelper(Context context, String name) {
@@ -85,6 +89,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 + COLUMN_HASH + " VARCHAR , "
                 + COLUMN_PATH + " VARCHAR, "
                 + COLUMN_TYPE + " INTEGER, "
+                + COLUMN_BUSINESS_NAME + " VARCHAR, "
                 + COLUMN_PARTKEY + " VARCHAR, "
                 + COLUMN_DEPENDSON + " VARCHAR, "
                 + COLUMN_UUID + " VARCHAR, "
@@ -137,6 +142,17 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 db.endTransaction();
             }
 
+        }
+        if (oldVersion < 4) {
+            db.beginTransaction();
+            try {
+                //添加列COLUMN_BUSINESS_NAME。所有旧行保持空值即可，表示同宿主相同业务。
+                db.execSQL("ALTER TABLE " + TABLE_NAME_MANAGER + " ADD " + COLUMN_BUSINESS_NAME + " VARCHAR");
+
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
         }
     }
 }

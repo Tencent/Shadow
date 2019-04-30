@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -81,6 +84,48 @@ public class DbCompatibilityTest {
                 raw.init_sql_version3,
                 raw.expect_sql_version3
         );
+    }
+
+    @Test
+    public void testCompatibleWithVersion4()
+            throws IOException, InterruptedException, TimeoutException {
+        testCompatibleWithVersion(
+                raw.init_sql_version4,
+                raw.expect_sql_version4
+        );
+    }
+
+    //    @Test //取消注释以生成文件
+    public void generateCurrentVersionInitSqlFile() throws Exception {
+        initDbWithConfigJson(raw.plugin1);
+    }
+
+    private void initDbWithConfigJson(int... configJsonResId)
+            throws IOException, JSONException, TimeoutException, InterruptedException {
+        List<String> configs = new LinkedList<>();
+        for (int resId : configJsonResId) {
+            File configJsonFile = getResRawFile(resId);
+            String configJson = FileUtils.readFileToString(configJsonFile, Charset.defaultCharset());
+            FileUtils.forceDelete(configJsonFile);
+            configs.add(configJson);
+        }
+
+
+        InstalledPluginDBHelper dbHelper = new InstalledPluginDBHelper(context, TEST_DB_NAME);
+        InstalledDao installedDao = new InstalledDao(dbHelper);
+
+        for (String configJson : configs) {
+            installedDao.insert(PluginConfig.parseFromJson(configJson, context.getCacheDir()));
+        }
+
+        dbHelper.close();
+
+        File dumpSqlFile = File.createTempFile("initDbWithConfigJson", ".sql", context.getExternalCacheDir());
+        dumpDbToFile(dumpSqlFile);
+
+        Assert.assertTrue(dumpSqlFile.exists() && dumpSqlFile.length() > 0);
+
+        throw new RuntimeException("执行命令复制文件到电脑:adb pull " + dumpSqlFile.getAbsolutePath());
     }
 
     private void testCompatibleWithVersion(int initSqlResId, int expectSqlResId)

@@ -38,6 +38,7 @@ shadow {
                 runtimeApkConfig = new Tuple2('runtime-apk-debug.apk', ':projects:demo:runtime-apk:assembleDebug')
                 pluginApks {
                     pluginApk1 {
+                        businessName = 'demo'
                         partKey = 'demo_main'
                         buildTask = 'assembleDebug'
                         apkName = 'demo-plugin-debug.apk'
@@ -53,6 +54,7 @@ shadow {
                 runtimeApkConfig = new Tuple2('runtime-apk-release.apk', ':projects:demo:runtime-apk:assembleRelease')
                 pluginApks {
                     pluginApk1 {
+                        businessName = 'demo'
                         partKey = 'demo_main'
                         buildTask = 'assembleRelease'
                         apkName = 'demo-plugin-release.apk'

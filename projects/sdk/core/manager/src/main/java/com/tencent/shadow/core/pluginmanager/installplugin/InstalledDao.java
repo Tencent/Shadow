@@ -93,12 +93,14 @@ public class InstalledDao {
                 } else if (type == InstalledType.TYPE_PLUGIN_RUNTIME) {
                     installedPlugin.runtimeFile = new InstalledPlugin.Part(type, pluginFile, oDexDir, libDir);
                 } else {
+                    String businessName = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_BUSINESS_NAME));
+
                     String partKey = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PARTKEY));
 
                     if (type == InstalledType.TYPE_PLUGIN) {
                         String[] dependsOn = getArrayStringByColumnName(InstalledPluginDBHelper.COLUMN_DEPENDSON, cursor);
                         String[] hostWhiteList = getArrayStringByColumnName(InstalledPluginDBHelper.COLUMN_HOST_WHITELIST, cursor);
-                        installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(type,pluginFile, oDexDir, libDir, dependsOn, hostWhiteList));
+                        installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(type, businessName, pluginFile, oDexDir, libDir, dependsOn, hostWhiteList));
                     } else {
                         throw new RuntimeException("出现不认识的type==" + type);
                     }
@@ -203,8 +205,28 @@ public class InstalledDao {
             Map<String, InstalledPlugin.PluginPart> map = new HashMap<>();
             for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : plugins) {
                 PluginConfig.PluginFileInfo fileInfo = plugin.getValue();
-                map.put(plugin.getKey(), new InstalledPlugin.PluginPart(InstalledType.TYPE_PLUGIN,fileInfo.file, null, null, fileInfo.dependsOn, fileInfo.hostWhiteList));
-                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.dependsOn, fileInfo.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN, fileInfo.hostWhiteList));
+                map.put(plugin.getKey(),
+                        new InstalledPlugin.PluginPart(
+                                InstalledType.TYPE_PLUGIN,
+                                fileInfo.businessName,
+                                fileInfo.file,
+                                null,
+                                null,
+                                fileInfo.dependsOn,
+                                fileInfo.hostWhiteList
+                        )
+                );
+                installedRows.add(
+                        new InstalledRow(
+                                fileInfo.hash,
+                                fileInfo.businessName,
+                                plugin.getKey(),
+                                fileInfo.dependsOn,
+                                fileInfo.file.getAbsolutePath(),
+                                InstalledType.TYPE_PLUGIN,
+                                fileInfo.hostWhiteList
+                        )
+                );
             }
             installedPlugin.plugins = map;
         }
