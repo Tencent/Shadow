@@ -241,8 +241,8 @@ abstract class SubDirContextThemeWrapperTestActivity extends BaseActivity {
             context.openFileInput(name);
         } catch (FileNotFoundException e) {
             String message = e.getMessage();
-            int i = message.indexOf(' ');
-            result = message.substring(0, i);
+            int i = message.indexOf(name);
+            result = message.substring(0, i + name.length());
         }
         return result;
     }

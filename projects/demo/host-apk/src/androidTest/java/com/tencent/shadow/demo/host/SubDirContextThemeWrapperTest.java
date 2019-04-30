@@ -306,12 +306,21 @@ abstract class SubDirContextThemeWrapperTest extends BaseTest {
     @Test
     public void testDatabaseList() {
         String dbName = EXPECT_NAME + "_bar";
+        StringBuilder sb = new StringBuilder();
+        sb.append("[").append(dbName);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            sb.append(", ").append(dbName).append("-wal");
+            sb.append(", ").append(dbName).append("-shm");
+        } else {
+            sb.append(", ").append(dbName).append("-journal");
+        }
+
+        sb.append("]");
+
         matchTextWithViewTag(
                 "TAG_DATABASE_LIST",
-                "[" + dbName
-                        + ", " + dbName + "-wal"
-                        + ", " + dbName + "-shm"
-                        + "]"
+                sb.toString()
         );
     }
 
