@@ -1,6 +1,5 @@
 package com.tencent.shadow.demo.host;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 
@@ -17,22 +16,11 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.os.Environment.DIRECTORY_MUSIC;
 import static android.os.Environment.DIRECTORY_PODCASTS;
 
-public class SubDirContextThemeWrapperTest extends BaseTest {
+abstract class SubDirContextThemeWrapperTest extends BaseTest {
 
     private static final String PREFIX = "ShadowPlugin";
     private static final String BUSINESS_NAME = "demo";
     private static final String EXPECT_NAME = PREFIX + "_" + BUSINESS_NAME;
-
-    @Override
-    Intent getLaunchIntent() {
-        Intent pluginIntent = new Intent();
-        String packageName = ApplicationProvider.getApplicationContext().getPackageName();
-        pluginIntent.setClassName(
-                packageName,
-                "com.tencent.shadow.demo.usecases.context.SubDirContextThemeWrapperTestActivity"
-        );
-        return pluginIntent;
-    }
 
     @Test
     public void testGetDataDir() {

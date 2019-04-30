@@ -11,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
-import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
 import com.tencent.shadow.demo.gallery.util.UiUtil;
 
 import java.io.File;
@@ -24,24 +23,7 @@ import java.util.Arrays;
 import static android.os.Environment.DIRECTORY_MUSIC;
 import static android.os.Environment.DIRECTORY_PODCASTS;
 
-public class SubDirContextThemeWrapperTestActivity extends BaseActivity {
-
-    public static class Case extends UseCase {
-        @Override
-        public String getName() {
-            return "SubDirContextThemeWrapper测试";
-        }
-
-        @Override
-        public String getSummary() {
-            return "测试SubDirContextThemeWrapper因BusinessName不同而隔离的相关特性";
-        }
-
-        @Override
-        public Class getPageClass() {
-            return SubDirContextThemeWrapperTestActivity.class;
-        }
-    }
+abstract class SubDirContextThemeWrapperTestActivity extends BaseActivity {
 
     private LinearLayout mRootView;
 
@@ -56,8 +38,6 @@ public class SubDirContextThemeWrapperTestActivity extends BaseActivity {
         scrollView.addView(linearLayout);
         setContentView(scrollView);
         mRootView = linearLayout;
-
-        fillTestValues(this);
     }
 
 
