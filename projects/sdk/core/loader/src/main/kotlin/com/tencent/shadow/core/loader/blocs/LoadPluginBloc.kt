@@ -99,7 +99,8 @@ object LoadPluginBloc {
                     pluginPartsMap[pluginInfo.partKey] = PluginParts(
                             shadowApplication,
                             pluginClassLoader,
-                            resources
+                            resources,
+                            pluginInfo.businessName
                     )
                     PluginPartInfoManager.addPluginInfo(pluginClassLoader, PluginPartInfo(shadowApplication, resources,
                             pluginClassLoader, pluginPackageManager))

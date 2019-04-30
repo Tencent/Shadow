@@ -38,10 +38,13 @@ shadow {
                 runtimeApkConfig = new Tuple2('runtime-apk-debug.apk', ':projects:demo:runtime-apk:assembleDebug')
                 pluginApks {
                     pluginApk1 {
+                        businessName = 'demo'
                         partKey = 'demo_main'
                         buildTask = 'assembleDebug'
                         apkName = 'demo-plugin-debug.apk'
                         projectPath = 'projects/demo/plugin-app/demo-plugin'
+                        hostWhiteList = ["androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
+                                         "com.tencent.shadow.demo.interfaces"]//测试插件访问宿主白名单类
                     }
                 }
             }
@@ -51,10 +54,13 @@ shadow {
                 runtimeApkConfig = new Tuple2('runtime-apk-release.apk', ':projects:demo:runtime-apk:assembleRelease')
                 pluginApks {
                     pluginApk1 {
+                        businessName = 'demo'
                         partKey = 'demo_main'
                         buildTask = 'assembleRelease'
                         apkName = 'demo-plugin-release.apk'
                         projectPath = 'projects/demo/plugin-app/demo-plugin'
+                        hostWhiteList = ["androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
+                                         "com.tencent.shadow.demo.interfaces"]//测试插件访问宿主白名单类
                     }
                 }
             }

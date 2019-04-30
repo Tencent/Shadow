@@ -38,10 +38,6 @@ public class InstalledPlugin implements Serializable {
      * 插件文件
      */
     public Map<String, PluginPart> plugins = new HashMap<>();
-    /**
-     * 接口文件
-     */
-    public Map<String, Part> interfaces = new HashMap<>();
 
 
     public InstalledPlugin() {
@@ -49,15 +45,7 @@ public class InstalledPlugin implements Serializable {
 
 
     public boolean hasPart(String partKey) {
-        return plugins.containsKey(partKey) || interfaces.containsKey(partKey);
-    }
-
-    public boolean isInterface(String partKey) {
-        return interfaces.containsKey(partKey);
-    }
-
-    public Part getInterface(String partKey) {
-        return interfaces.get(partKey);
+        return plugins.containsKey(partKey);
     }
 
     public PluginPart getPlugin(String partKey) {
@@ -65,11 +53,7 @@ public class InstalledPlugin implements Serializable {
     }
 
     public Part getPart(String partKey) {
-        Part part = plugins.get(partKey);
-        if (part == null) {
-            part = interfaces.get(partKey);
-        }
-        return part;
+        return plugins.get(partKey);
     }
 
     static public class Part implements Serializable {
@@ -87,11 +71,15 @@ public class InstalledPlugin implements Serializable {
     }
 
     static public class PluginPart extends Part {
+        final public String businessName;
         final public String[] dependsOn;
+        final public String[] hostWhiteList;
 
-        PluginPart(int pluginType, File file, File oDexDir, File libraryDir, String[] dependsOn) {
+        PluginPart(int pluginType, String businessName, File file, File oDexDir, File libraryDir, String[] dependsOn, String[] hostWhiteList) {
             super(pluginType, file, oDexDir, libraryDir);
+            this.businessName = businessName;
             this.dependsOn = dependsOn;
+            this.hostWhiteList = hostWhiteList;
         }
     }
 }

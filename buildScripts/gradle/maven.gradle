@@ -31,6 +31,7 @@ task testSdk() {
     dependsOn gradle.includedBuild('core').task(':transform-kit:test')
     dependsOn gradle.includedBuild('core').task(':transform:test')
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:test')
+    dependsOn gradle.includedBuild('core').task(':manager:connectedDebugAndroidTest')
     dependsOn ':projects:demo:host-apk:connectedDebugAndroidTest'
 }
 

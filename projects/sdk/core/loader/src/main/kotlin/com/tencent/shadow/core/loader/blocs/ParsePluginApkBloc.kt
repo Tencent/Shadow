@@ -51,7 +51,8 @@ object ParsePluginApkBloc {
         val partKey = loadParameters.partKey
 
         val pluginInfo = PluginInfo(
-                partKey
+                loadParameters.businessName
+                , partKey
                 , packageArchiveInfo.applicationInfo.packageName
                 , packageArchiveInfo.applicationInfo.className
                 , packageArchiveInfo.applicationInfo.metaData

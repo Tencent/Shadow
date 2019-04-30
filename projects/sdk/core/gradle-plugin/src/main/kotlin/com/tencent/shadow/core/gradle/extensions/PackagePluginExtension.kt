@@ -64,6 +64,7 @@ open class PackagePluginExtension {
         val jsonArr = JSONArray()
         for (i in buildType.pluginApks) {
             val pluginObj = JSONObject()
+            pluginObj["businessName"] = i.businessName
             pluginObj["partKey"] = i.partKey
             pluginObj["apkName"] = i.apkName
             pluginObj["hash"] = ShadowPluginHelper.getFileMD5(ShadowPluginHelper.getPluginFile(project, i, true))
@@ -73,6 +74,13 @@ open class PackagePluginExtension {
                     dependsOnJson.add(k)
                 }
                 pluginObj["dependsOn"] = dependsOnJson
+            }
+            if (i.hostWhiteList.isNotEmpty()) {
+                val hostWhiteListJson = JSONArray()
+                for (k in i.hostWhiteList) {
+                    hostWhiteListJson.add(k)
+                }
+                pluginObj["hostWhiteList"] = hostWhiteListJson
             }
             jsonArr.add(pluginObj)
         }

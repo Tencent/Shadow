@@ -5,6 +5,7 @@ import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.json.simple.JSONArray
 import org.json.simple.JSONObject
 import org.json.simple.parser.JSONParser
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Test
@@ -84,10 +85,14 @@ class PackagePluginTaskTest {
         val pluginsJson = json["plugins"] as JSONArray
         val pluginJson = pluginsJson[0] as JSONObject
         assertEquals("demo_main", pluginJson["partKey"])
+        assertEquals("demo", pluginJson["businessName"])
         assertEquals("plugin1-debug.apk", pluginJson["apkName"])
         val dependsOnJson = pluginJson["dependsOn"] as JSONArray
         assertEquals(2, dependsOnJson.size)
         assertNotNull(pluginJson["hash"])
+
+        val hostWhiteList = pluginJson["hostWhiteList"] as JSONArray
+        Assert.assertEquals(2, hostWhiteList.size)
     }
 
     companion object {
