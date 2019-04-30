@@ -26,6 +26,6 @@ public class ApplicationContextSubDirTestActivity extends SubDirContextThemeWrap
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fillTestValues(getApplicationContext());
+        fillTestValues(getApplication());
     }
 }
