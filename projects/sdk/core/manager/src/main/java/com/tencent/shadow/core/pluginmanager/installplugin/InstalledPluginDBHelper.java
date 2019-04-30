@@ -14,7 +14,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     /**
      * 数据库名称
      */
-    private final static String DB_NAME_PREFIX = "shadow_installed_plugin_db";
+    final static String DB_NAME_PREFIX = "shadow_installed_plugin_db";
     /**
      * 表名称
      */
@@ -100,7 +100,6 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 2) {
-            //todo #59 查询COLUMN_TYPE是Interface的uuid，然后删除这些uuid的记录。
             db.beginTransaction();
             try {
                 Cursor cursor = db.query(
