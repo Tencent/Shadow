@@ -8,14 +8,14 @@ import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Pair;
-import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 
 import com.tencent.shadow.runtime.container.HostActivityDelegator;
 import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider;
 
-public class ShadowContext extends ContextThemeWrapper {
+public class ShadowContext extends SubDirContextThemeWrapper {
     PluginComponentLauncher mPluginComponentLauncher;
     ClassLoader mPluginClassLoader;
     ShadowApplication mShadowApplication;
@@ -25,6 +25,7 @@ public class ShadowContext extends ContextThemeWrapper {
     String mLibrarySearchPath;
     String mDexPath;
     protected String mPartKey;
+    private String mBusinessName;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
 
     public ShadowContext() {
@@ -56,6 +57,13 @@ public class ShadowContext extends ContextThemeWrapper {
 
     public void setDexPath(String dexPath) {
         mDexPath = dexPath;
+    }
+
+    public void setBusinessName(String businessName) {
+        if (TextUtils.isEmpty(businessName)) {
+            businessName = null;
+        }
+        this.mBusinessName = businessName;
     }
 
     public void setPluginPartKey(String partKey) {
@@ -209,5 +217,14 @@ public class ShadowContext extends ContextThemeWrapper {
 
     public PluginComponentLauncher getPendingIntentConverter() {
         return mPluginComponentLauncher;
+    }
+
+    @Override
+    String getSubDirName() {
+        if (mBusinessName == null) {
+            return null;
+        } else {
+            return "ShadowPlugin_" + mBusinessName;
+        }
     }
 }

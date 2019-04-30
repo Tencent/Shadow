@@ -60,6 +60,8 @@ shadow {
                         //这里因为单元测试时，会把项目根目录设置成case1的根目录
                         projectPath = '/plugin2'
                         dependsOn = ['Core', 'Base']
+                        hostWhiteList = ["androidx.test.espresso",
+                                         "com.tencent.shadow.demo.interfaces"]
                     }
                 }
             }

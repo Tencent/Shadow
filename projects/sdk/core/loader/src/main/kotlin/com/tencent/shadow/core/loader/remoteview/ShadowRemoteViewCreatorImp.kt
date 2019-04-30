@@ -27,6 +27,7 @@ internal class ShadowRemoteViewCreatorImp(private val context: Context, private 
                 val shadowContext = ShadowContext(context, 0)
                 shadowContext.setPluginClassLoader(pluginParts.classLoader)
                 shadowContext.setPluginComponentLauncher(shadowPluginLoader.mComponentManager)
+                shadowContext.setBusinessName(pluginParts.businessName)
                 shadowContext.setPluginPartKey(partKey)
                 shadowContext.setPluginResources(pluginParts.resources)
                 shadowContext.setShadowApplication(pluginParts.application)

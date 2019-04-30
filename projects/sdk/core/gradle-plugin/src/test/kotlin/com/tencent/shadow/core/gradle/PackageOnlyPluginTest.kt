@@ -78,6 +78,9 @@ class PackageOnlyPluginTest {
         val dependsOnJson = pluginJson["dependsOn"] as JSONArray
         Assert.assertEquals(2, dependsOnJson.size)
         Assert.assertNotNull(pluginJson["hash"])
+
+        val hostWhiteList = pluginJson["hostWhiteList"] as JSONArray
+        Assert.assertEquals(2, hostWhiteList.size)
     }
 
     companion object {

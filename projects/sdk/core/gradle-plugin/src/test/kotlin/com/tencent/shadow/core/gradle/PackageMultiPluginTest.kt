@@ -98,6 +98,9 @@ class PackageMultiPluginTest {
         Assert.assertEquals(2, dependsOnJson.size)
         Assert.assertNotNull(pluginJson["hash"])
 
+        val hostWhiteListJson = pluginJson["hostWhiteList"] as JSONArray
+        Assert.assertEquals(2, hostWhiteListJson.size)
+
         val case2JsonFile = File(PLUGIN2_PROJECT_DIR, "/build/intermediates/generatePluginConfig/plugin2Debug/config.json")
         val case2Json = JSONParser().parse(case2JsonFile.bufferedReader()) as JSONObject
         Assert.assertEquals(case2Json["UUID"], json["UUID"])

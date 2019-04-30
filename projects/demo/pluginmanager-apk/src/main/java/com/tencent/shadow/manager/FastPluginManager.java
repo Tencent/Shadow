@@ -81,27 +81,6 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
                 futures.add(odexPlugin);
             }
         }
-        for (Map.Entry<String, InstalledPlugin.Part> plugin : installedPlugin.interfaces.entrySet()) {
-            final String partKey = plugin.getKey();
-            Future extractSo = mFixedPool.submit(new Callable() {
-                @Override
-                public Object call() throws Exception {
-                    extractSo(installedPlugin.UUID, partKey);
-                    return null;
-                }
-            });
-            futures.add(extractSo);
-            if (odex) {
-                Future odexPlugin = mFixedPool.submit(new Callable() {
-                    @Override
-                    public Object call() throws Exception {
-                        oDexPlugin(installedPlugin.UUID, partKey);
-                        return null;
-                    }
-                });
-                futures.add(odexPlugin);
-            }
-        }
 
         for (Future future : futures) {
             future.get();

@@ -18,6 +18,7 @@ import android.view.*
 import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.loader.infos.PluginActivityInfo
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_ACTIVITY_INFO_KEY
+import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_BUSINESS_NAME_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CALLING_ACTIVITY_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CLASS_NAME_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_EXTRAS_BUNDLE_KEY
@@ -43,6 +44,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
     private lateinit var mHostActivityDelegator: HostActivityDelegator
     private lateinit var mPluginActivity: PluginActivity
+    private lateinit var mBusinessName: String
     private lateinit var mPartKey: String
     private lateinit var mBundleForPluginLoader: Bundle
     private var mRawIntentExtraBundle: Bundle? = null
@@ -70,6 +72,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         val pluginInitBundle = if (savedInstanceState == null) mHostActivityDelegator.intent.extras else savedInstanceState
 
         mCallingActivity = pluginInitBundle.getParcelable(CM_CALLING_ACTIVITY_KEY)
+        mBusinessName = pluginInitBundle.getString(CM_BUSINESS_NAME_KEY, "")
         val partKey = pluginInitBundle.getString(CM_PART_KEY)!!
         mPartKey = partKey
         mDI.inject(this, partKey)
@@ -136,6 +139,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.setShadowApplication(mPluginApplication)
         pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
         pluginActivity.setDexPath(mPluginClassLoader.getDexPath())
+        pluginActivity.setBusinessName(mBusinessName)
         pluginActivity.setPluginPartKey(mPartKey)
         pluginActivity.remoteViewCreatorProvider = mRemoteViewCreatorProvider
     }

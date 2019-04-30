@@ -4,6 +4,7 @@ import android.content.pm.Signature
 import android.os.Bundle
 
 class PluginInfo(
+        val businessName: String?,
         val partKey: String,
         val packageName: String,
         val applicationClassName: String?,

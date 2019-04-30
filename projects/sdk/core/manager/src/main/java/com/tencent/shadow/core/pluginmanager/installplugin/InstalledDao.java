@@ -93,29 +93,14 @@ public class InstalledDao {
                 } else if (type == InstalledType.TYPE_PLUGIN_RUNTIME) {
                     installedPlugin.runtimeFile = new InstalledPlugin.Part(type, pluginFile, oDexDir, libDir);
                 } else {
+                    String businessName = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_BUSINESS_NAME));
+
                     String partKey = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_PARTKEY));
 
                     if (type == InstalledType.TYPE_PLUGIN) {
-                        int columnIndex = cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_DEPENDSON);
-                        boolean hasDependencies = !cursor.isNull(columnIndex);
-                        String[] dependsOn;
-                        if (hasDependencies) {
-                            String string = cursor.getString(columnIndex);
-                            try {
-                                JSONArray jsonArray = new JSONArray(string);
-                                dependsOn = new String[jsonArray.length()];
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    dependsOn[i] = jsonArray.getString(i);
-                                }
-                            } catch (JSONException e) {
-                                throw new RuntimeException(e);
-                            }
-                        } else {
-                            dependsOn = null;
-                        }
-                        installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(type,pluginFile, oDexDir, libDir, dependsOn));
-                    } else if (type == InstalledType.TYPE_INTERFACE) {
-                        installedPlugin.interfaces.put(partKey, new InstalledPlugin.Part(type, pluginFile, oDexDir, libDir));
+                        String[] dependsOn = getArrayStringByColumnName(InstalledPluginDBHelper.COLUMN_DEPENDSON, cursor);
+                        String[] hostWhiteList = getArrayStringByColumnName(InstalledPluginDBHelper.COLUMN_HOST_WHITELIST, cursor);
+                        installedPlugin.plugins.put(partKey, new InstalledPlugin.PluginPart(type, businessName, pluginFile, oDexDir, libDir, dependsOn, hostWhiteList));
                     } else {
                         throw new RuntimeException("出现不认识的type==" + type);
                     }
@@ -124,6 +109,27 @@ public class InstalledDao {
         }
         cursor.close();
         return installedPlugin;
+    }
+
+    private String[] getArrayStringByColumnName(String columnName, Cursor cursor) {
+        int columnIndex = cursor.getColumnIndex(columnName);
+        boolean hasColumn = !cursor.isNull(columnIndex);
+        String[] arrayString;
+        if (hasColumn) {
+            String string = cursor.getString(columnIndex);
+            try {
+                JSONArray jsonArray = new JSONArray(string);
+                arrayString = new String[jsonArray.length()];
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    arrayString[i] = jsonArray.getString(i);
+                }
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            arrayString = null;
+        }
+        return arrayString;
     }
 
     /**
@@ -199,20 +205,30 @@ public class InstalledDao {
             Map<String, InstalledPlugin.PluginPart> map = new HashMap<>();
             for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : plugins) {
                 PluginConfig.PluginFileInfo fileInfo = plugin.getValue();
-                map.put(plugin.getKey(), new InstalledPlugin.PluginPart(InstalledType.TYPE_PLUGIN,fileInfo.file, null, null, fileInfo.dependsOn));
-                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.dependsOn, fileInfo.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN));
+                map.put(plugin.getKey(),
+                        new InstalledPlugin.PluginPart(
+                                InstalledType.TYPE_PLUGIN,
+                                fileInfo.businessName,
+                                fileInfo.file,
+                                null,
+                                null,
+                                fileInfo.dependsOn,
+                                fileInfo.hostWhiteList
+                        )
+                );
+                installedRows.add(
+                        new InstalledRow(
+                                fileInfo.hash,
+                                fileInfo.businessName,
+                                plugin.getKey(),
+                                fileInfo.dependsOn,
+                                fileInfo.file.getAbsolutePath(),
+                                InstalledType.TYPE_PLUGIN,
+                                fileInfo.hostWhiteList
+                        )
+                );
             }
             installedPlugin.plugins = map;
-        }
-        if (pluginConfig.interfaces != null) {
-            Set<Map.Entry<String, PluginConfig.FileInfo>> plugins = pluginConfig.interfaces.entrySet();
-            Map<String, InstalledPlugin.Part> map = new HashMap<>();
-            for (Map.Entry<String, PluginConfig.FileInfo> plugin : plugins) {
-                PluginConfig.FileInfo fileInfo = plugin.getValue();
-                map.put(plugin.getKey(), new InstalledPlugin.Part(InstalledType.TYPE_INTERFACE, fileInfo.file, null, null));
-                installedRows.add(new InstalledRow(fileInfo.hash, plugin.getKey(), fileInfo.file.getAbsolutePath(), InstalledType.TYPE_INTERFACE));
-            }
-            installedPlugin.interfaces = map;
         }
         InstalledRow uuidRow = new InstalledRow();
         uuidRow.type = InstalledType.TYPE_UUID;

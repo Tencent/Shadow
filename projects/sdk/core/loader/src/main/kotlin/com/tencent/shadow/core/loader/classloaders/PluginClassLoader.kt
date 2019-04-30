@@ -23,16 +23,31 @@ class PluginClassLoader(
         optimizedDirectory: File?,
         private val librarySearchPath: String?,
         parent: ClassLoader,
-        private val specialClassLoader: ClassLoader?
+        private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
+
+    /**
+     * 宿主的白名单包名
+     * 在白名单包里面的宿主类，插件才可以访问
+     */
+    private val allHostWhiteList: Array<String>
+
+    init {
+        val defaultWhiteList = arrayOf("com.tencent.shadow.runtime",
+                               "org.apache.commons.logging"//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
+        )
+        if (hostWhiteList != null) {
+            allHostWhiteList = defaultWhiteList.plus(hostWhiteList)
+        }else {
+            allHostWhiteList = defaultWhiteList
+        }
+    }
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
         if (specialClassLoader == null //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
-                || className.startsWith("com.tencent.shadow.runtime")
-                || className.startsWith("androidx.test.espresso")//todo #24 需要将这些需要访问宿主ClassLoader的包名弄成一个配置文件，由业务方自行配置
-                || className.startsWith("org.apache.commons.logging")//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
-                || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的
+                || className.startWith(allHostWhiteList)
+                || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的) {
             return super.loadClass(className, resolve)
         } else {
             var clazz: Class<*>? = findLoadedClass(className)
@@ -48,14 +63,10 @@ class PluginClassLoader(
                     try {
                         clazz = specialClassLoader.loadClass(className)!!
                     } catch (e: ClassNotFoundException) {
-                        if (className.startsWith("com.tencent")) {
-                            throw suppressed!!
-                        } else {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                e.addSuppressed(suppressed)
-                            }
-                            throw e
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                            e.addSuppressed(suppressed)
                         }
+                        throw e
                     }
 
                 }
@@ -66,6 +77,16 @@ class PluginClassLoader(
     }
 
     fun getLibrarySearchPath() = librarySearchPath
+
+
+    private fun String.startWith(array: Array<String>): Boolean {
+        for (str in array) {
+            if (startsWith(str)) {
+                return true
+            }
+        }
+        return false
+    }
 
     fun getDexPath() = dexPath
 }

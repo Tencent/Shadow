@@ -2,15 +2,19 @@ package com.tencent.shadow.core.pluginmanager.installplugin;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class InstalledPluginDBHelper extends SQLiteOpenHelper {
 
     /**
      * 数据库名称
      */
-    private final static String DB_NAME_PREFIX = "shadow_installed_plugin_db";
+    final static String DB_NAME_PREFIX = "shadow_installed_plugin_db";
     /**
      * 表名称
      */
@@ -32,6 +36,10 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
      * 插件的路径
      */
     public final static String COLUMN_PATH = "filePath";
+    /**
+     * 插件的businessName
+     */
+    public final static String COLUMN_BUSINESS_NAME = "businessName";
     /**
      * 插件的名称
      */
@@ -61,9 +69,13 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
      */
     public final static String COLUMN_PLUGIN_LIB = "libPath";
     /**
+     * 插件的依赖
+     */
+    public final static String COLUMN_HOST_WHITELIST = "hostWhiteList";
+    /**
      * 数据库的版本号
      */
-    private final static int VERSION = 1;
+    private final static int VERSION = 4;
 
 
     public InstalledPluginDBHelper(Context context, String name) {
@@ -77,19 +89,70 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 + COLUMN_HASH + " VARCHAR , "
                 + COLUMN_PATH + " VARCHAR, "
                 + COLUMN_TYPE + " INTEGER, "
+                + COLUMN_BUSINESS_NAME + " VARCHAR, "
                 + COLUMN_PARTKEY + " VARCHAR, "
                 + COLUMN_DEPENDSON + " VARCHAR, "
                 + COLUMN_UUID + " VARCHAR, "
                 + COLUMN_VERSION + " VARCHAR, "
                 + COLUMN_INSTALL_TIME + " INTEGER ,"
                 + COLUMN_PLUGIN_ODEX + " VARCHAR ,"
-                + COLUMN_PLUGIN_LIB + " VARCHAR "
+                + COLUMN_PLUGIN_LIB + " VARCHAR ,"
+                + COLUMN_HOST_WHITELIST + " VARCHAR "
                 + ");";
         db.execSQL(sql);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        if (oldVersion < 2) {
+            db.beginTransaction();
+            try {
+                Cursor cursor = db.query(
+                        true,
+                        TABLE_NAME_MANAGER,
+                        new String[]{COLUMN_UUID, COLUMN_TYPE},
+                        COLUMN_TYPE + " = ?",
+                        new String[]{"2"},//Interface Type
+                        null, null, null, null
+                );
+                List<String> uuids = new ArrayList<>();
+                while (cursor.moveToNext()) {
+                    String uuid = cursor.getString(cursor.getColumnIndex(COLUMN_UUID));
+                    uuids.add(uuid);
+                }
+                cursor.close();
 
+                for (String uuid : uuids) {
+                    db.delete(TABLE_NAME_MANAGER, COLUMN_UUID + " = ?", new String[]{uuid});
+                }
+
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+        }
+        if(oldVersion < 3){
+            db.beginTransaction();
+            try {
+                //添加列COLUMN_HOST_WHITELIST
+                db.execSQL("ALTER TABLE " + TABLE_NAME_MANAGER + " ADD " + COLUMN_HOST_WHITELIST + " VARCHAR");
+
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+
+        }
+        if (oldVersion < 4) {
+            db.beginTransaction();
+            try {
+                //添加列COLUMN_BUSINESS_NAME。所有旧行保持空值即可，表示同宿主相同业务。
+                db.execSQL("ALTER TABLE " + TABLE_NAME_MANAGER + " ADD " + COLUMN_BUSINESS_NAME + " VARCHAR");
+
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+        }
     }
 }

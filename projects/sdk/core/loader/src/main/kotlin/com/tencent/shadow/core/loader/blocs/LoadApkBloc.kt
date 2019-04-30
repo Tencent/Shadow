@@ -37,7 +37,8 @@ object LoadApkBloc {
                     odexDir,
                     installedApk.libraryPath,
                     hostClassLoader,
-                    hostParentClassLoader
+                    hostParentClassLoader,
+                    loadParameters.hostWhiteList
             )
         } else if (dependsOn.size == 1) {
             val partKey = dependsOn[0]
@@ -50,7 +51,8 @@ object LoadApkBloc {
                         odexDir,
                         installedApk.libraryPath,
                         pluginParts.classLoader,
-                        null
+                        null,
+                        loadParameters.hostWhiteList
                 )
             }
         } else {
@@ -68,7 +70,8 @@ object LoadApkBloc {
                     odexDir,
                     installedApk.libraryPath,
                     combineClassLoader,
-                    null
+                    null,
+                    loadParameters.hostWhiteList
             )
         }
     }

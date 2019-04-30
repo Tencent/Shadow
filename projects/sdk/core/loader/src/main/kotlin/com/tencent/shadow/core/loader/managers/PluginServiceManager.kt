@@ -202,6 +202,7 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
 
 
     private fun newServiceInstance(componentName: ComponentName): ShadowService {
+        val businessName = mPluginLoader.mComponentManager.getComponentBusinessName(componentName)
         val partKey = mPluginLoader.mComponentManager.getComponentPartKey(componentName)
         val className = componentName.className
 
@@ -217,6 +218,7 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
         service.setPluginComponentLauncher(tmpShadowDelegate.getComponentManager())
         service.setLibrarySearchPath(tmpShadowDelegate.getPluginClassLoader().getLibrarySearchPath())
         service.setDexPath(tmpShadowDelegate.getPluginClassLoader().getDexPath())
+        service.setBusinessName(businessName)
         service.setPluginPartKey(partKey)
 
         return service
