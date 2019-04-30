@@ -19,6 +19,10 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import static android.os.Environment.DIRECTORY_MUSIC;
 import static android.os.Environment.DIRECTORY_PODCASTS;
@@ -228,8 +232,26 @@ abstract class SubDirContextThemeWrapperTestActivity extends BaseActivity {
         Context hostContext = getApplication().getBaseContext();
         hostContext.openOrCreateDatabase("foo", MODE_PRIVATE, null);
         testContext.openOrCreateDatabase("bar", MODE_PRIVATE, null);
+        String[] databaseListArray = testContext.databaseList();
+        List<String> databaseList = new LinkedList<>();
+        Collections.addAll(databaseList, databaseListArray);
+        Iterator<String> iterator = databaseList.iterator();
+        String s;
+        while (iterator.hasNext()) {
+            s = iterator.next();
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                if (s.endsWith("-wal") || s.endsWith("-shm")) {
+                    iterator.remove();
+                }
+            } else {
+                if (s.endsWith("-journal")) {
+                    iterator.remove();
+                }
+            }
+        }
+
         makeItem("databaseList()", "TAG_DATABASE_LIST",
-                Arrays.toString(testContext.databaseList())
+                Arrays.toString(databaseList.toArray())
         );
         hostContext.deleteDatabase("foo");
         testContext.deleteDatabase("bar");
