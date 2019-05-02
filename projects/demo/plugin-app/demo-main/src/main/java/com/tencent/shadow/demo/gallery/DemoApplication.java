@@ -1,10 +1,10 @@
 package com.tencent.shadow.demo.gallery;
 
-import android.support.multidex.MultiDexApplication;
+import android.app.Application;
 
 import com.tencent.shadow.demo.gallery.cases.UseCaseManager;
 
-public class DemoApplication extends MultiDexApplication {
+public class DemoApplication extends Application {
 
     private static DemoApplication sInstence;
 

@@ -1,2 +1,0 @@
--keep class android.support.multidex.**
--keep class * extends android.content.ContentProvider
