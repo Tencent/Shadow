@@ -4,7 +4,7 @@ import android.content.Intent;
 
 import androidx.test.core.app.ApplicationProvider;
 
-public class ActivityContextSubDirTest extends SubDirContextThemeWrapperTest {
+public class ActivityContextSubDirTest extends DemoBaseTest {
     @Override
     Intent getLaunchIntent() {
         Intent pluginIntent = new Intent();

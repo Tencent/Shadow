@@ -37,6 +37,7 @@ public class PluginLoadActivity extends Activity {
 
                 Bundle bundle = new Bundle();
                 bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, PluginHelper.getInstance().pluginZipFile.getAbsolutePath());
+                bundle.putString(Constant.KEY_PLUGIN_PART_KEY, Constant.PART_KEY_DEMO_MAIN);
 
                 HostApplication.getApp().getPluginManager()
                         .enter(PluginLoadActivity.this, Constant.FROM_ID_ENTRY_START_DEMO_PLUGIN, bundle, new EnterCallback() {

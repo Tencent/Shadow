@@ -9,14 +9,13 @@ import android.view.View;
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
 import com.tencent.shadow.demo.pluginmanager.R;
 import com.tencent.shadow.demo.testutil.Constant;
-import com.tencent.shadow.demo.testutil.TestPluginManager;
 import com.tencent.shadow.dynamic.host.EnterCallback;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class DemoPluginManager extends FastPluginManager implements TestPluginManager {
+public class DemoPluginManager extends FastPluginManager {
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -66,6 +65,7 @@ public class DemoPluginManager extends FastPluginManager implements TestPluginMa
 
     private void onStartDemoPlugin(final Context context, Bundle bundle, final EnterCallback callback) {
         final String pluginZipPath = bundle.getString(Constant.KEY_PLUGIN_ZIP_PATH);
+        final String partKey = bundle.getString(Constant.KEY_PLUGIN_PART_KEY);
 
         if (callback != null) {
             final View view = LayoutInflater.from(mCurrentContext).inflate(R.layout.activity_load_plugin, null);
@@ -77,7 +77,6 @@ public class DemoPluginManager extends FastPluginManager implements TestPluginMa
             public void run() {
                 try {
                     InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, true);
-                    String partKey = Constant.PART_KEY_DEMO_MAIN;
                     Intent pluginIntent = new Intent();
                     pluginIntent.setClassName(
                             context.getPackageName(),
@@ -98,6 +97,7 @@ public class DemoPluginManager extends FastPluginManager implements TestPluginMa
 
     private void onStartActivity(final Context context, Bundle bundle, final EnterCallback callback) {
         final String pluginZipPath = bundle.getString(Constant.KEY_PLUGIN_ZIP_PATH);
+        final String partKey = bundle.getString(Constant.KEY_PLUGIN_PART_KEY);
         final String className = bundle.getString(Constant.KEY_ACTIVITY_CLASSNAME);
         if (className == null) {
             throw new NullPointerException("className == null");
@@ -114,7 +114,6 @@ public class DemoPluginManager extends FastPluginManager implements TestPluginMa
             public void run() {
                 try {
                     InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, true);
-                    String partKey = Constant.PART_KEY_DEMO_MAIN;
                     Intent pluginIntent = new Intent();
                     pluginIntent.setClassName(
                             context.getPackageName(),
@@ -126,23 +125,12 @@ public class DemoPluginManager extends FastPluginManager implements TestPluginMa
 
                     startPluginActivity(context, installedPlugin, partKey, pluginIntent);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
                 if (callback != null) {
                     callback.onCloseLoadingView();
                 }
             }
         });
-    }
-
-    @Override
-    public Intent convertPluginIntent(String pluginApkPath, Intent pluginIntent) {
-        try {
-            String partKey = Constant.PART_KEY_DEMO_MAIN;
-            InstalledPlugin installedPlugin = installPlugin(pluginApkPath, null, true);
-            return convertActivityIntent(installedPlugin, partKey, pluginIntent);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -16,7 +16,7 @@ import static android.content.Context.MODE_PRIVATE;
 import static android.os.Environment.DIRECTORY_MUSIC;
 import static android.os.Environment.DIRECTORY_PODCASTS;
 
-abstract class SubDirContextThemeWrapperTest extends BaseTest {
+abstract class SubDirContextThemeWrapperTest extends DemoBaseTest {
 
     private static final String PREFIX = "ShadowPlugin";
     private static final String BUSINESS_NAME = "demo";

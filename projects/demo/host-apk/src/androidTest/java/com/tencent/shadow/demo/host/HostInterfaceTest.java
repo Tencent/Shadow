@@ -8,12 +8,11 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 
 import com.tencent.shadow.demo.interfaces.HostTestInterface;
-import com.tencent.shadow.demo.other.HostOtherInterface;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-public class HostInterfaceTest extends BaseTest {
+public class HostInterfaceTest extends DemoBaseTest {
 
     @Override
     Intent getLaunchIntent() {

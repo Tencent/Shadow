@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class PluginServiceTest extends BaseTest {
+public class PluginServiceTest extends DemoBaseTest {
 
     @Override
     Intent getLaunchIntent() {
