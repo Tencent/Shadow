@@ -29,6 +29,7 @@ dependencies {
     implementation 'com.tencent.shadow.core:loader'
     implementation 'com.tencent.shadow.dynamic:dynamic-loader'
     implementation 'com.tencent.shadow.dynamic:dynamic-loader-impl'
+    implementation project(':projects:demo:test-util')
 
     compileOnly 'com.tencent.shadow.core:runtime-debug'
     compileOnly 'com.tencent.shadow.core:common-debug'

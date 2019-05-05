@@ -37,10 +37,11 @@ public class PluginLoadActivity extends Activity {
 
                 Bundle bundle = new Bundle();
                 bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, PluginHelper.getInstance().pluginZipFile.getAbsolutePath());
-                bundle.putString(Constant.KEY_PLUGIN_PART_KEY, Constant.PART_KEY_DEMO_MAIN);
+                bundle.putString(Constant.KEY_PLUGIN_PART_KEY, getIntent().getStringExtra(Constant.KEY_PLUGIN_PART_KEY));
+                bundle.putString(Constant.KEY_ACTIVITY_CLASSNAME, getIntent().getStringExtra(Constant.KEY_ACTIVITY_CLASSNAME));
 
                 HostApplication.getApp().getPluginManager()
-                        .enter(PluginLoadActivity.this, Constant.FROM_ID_ENTRY_START_DEMO_PLUGIN, bundle, new EnterCallback() {
+                        .enter(PluginLoadActivity.this, Constant.FROM_ID_START_ACTIVITY, bundle, new EnterCallback() {
                     @Override
                     public void onShowLoadingView(final View view) {
                         mHandler.post(new Runnable() {

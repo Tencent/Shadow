@@ -54,45 +54,11 @@ public class DemoPluginManager extends FastPluginManager {
     public void enter(final Context context, long fromId, Bundle bundle, final EnterCallback callback) {
         if (fromId == Constant.FROM_ID_NOOP) {
             //do nothing.
-        } else if (fromId == Constant.FROM_ID_ENTRY_START_DEMO_PLUGIN) {
-            onStartDemoPlugin(context, bundle, callback);
         } else if (fromId == Constant.FROM_ID_START_ACTIVITY) {
             onStartActivity(context, bundle, callback);
         } else {
             throw new IllegalArgumentException("不认识的fromId==" + fromId);
         }
-    }
-
-    private void onStartDemoPlugin(final Context context, Bundle bundle, final EnterCallback callback) {
-        final String pluginZipPath = bundle.getString(Constant.KEY_PLUGIN_ZIP_PATH);
-        final String partKey = bundle.getString(Constant.KEY_PLUGIN_PART_KEY);
-
-        if (callback != null) {
-            final View view = LayoutInflater.from(mCurrentContext).inflate(R.layout.activity_load_plugin, null);
-            callback.onShowLoadingView(view);
-        }
-
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, true);
-                    Intent pluginIntent = new Intent();
-                    pluginIntent.setClassName(
-                            context.getPackageName(),
-                            "com.tencent.shadow.demo.gallery.splash.SplashActivity"
-                    );
-
-                    startPluginActivity(context, installedPlugin, partKey, pluginIntent);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                if (callback != null) {
-                    callback.onCloseLoadingView();
-                }
-            }
-        });
-
     }
 
     private void onStartActivity(final Context context, Bundle bundle, final EnterCallback callback) {
