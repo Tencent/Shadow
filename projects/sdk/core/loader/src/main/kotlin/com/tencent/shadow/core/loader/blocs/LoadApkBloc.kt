@@ -1,6 +1,5 @@
 package com.tencent.shadow.core.loader.blocs
 
-import android.content.Context
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.Logger
 import com.tencent.shadow.core.load_parameters.LoadParameters
@@ -24,7 +23,7 @@ object LoadApkBloc {
      * @return 加载了插件的ClassLoader
      */
     @Throws(LoadApkException::class)
-    fun loadPlugin(hostAppContext: Context, installedApk: InstalledApk, loadParameters: LoadParameters, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
+    fun loadPlugin(installedApk: InstalledApk, loadParameters: LoadParameters, pluginPartsMap: MutableMap<String, PluginParts>): PluginClassLoader {
         val apk = File(installedApk.apkFilePath)
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
         val dependsOn = loadParameters.dependsOn

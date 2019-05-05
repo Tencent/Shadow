@@ -38,7 +38,7 @@ object LoadPluginBloc {
         } else {
             val buildClassLoader = executorService.submit(Callable {
                 lock.withLock {
-                    LoadApkBloc.loadPlugin(hostAppContext, installedApk, loadParameters, pluginPartsMap)
+                    LoadApkBloc.loadPlugin(installedApk, loadParameters, pluginPartsMap)
                 }
             })
 
