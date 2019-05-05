@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class BasicTest extends BaseTest {
+public class BasicTest extends DemoBaseTest {
 
     @Override
     Intent getLaunchIntent() {

@@ -16,3 +16,7 @@ include ':projects:demo:plugin-app:pinnedheaderexpandablelistview'
 include ':projects:demo:plugin-app:demo-main'
 include ':projects:demo:plugin-app:demo-install'
 include ':projects:demo:plugin-app:demo-plugin'
+
+include ':projects:demo:plugin-multidex:plugin-multidex-main'
+include ':projects:demo:plugin-multidex:plugin-multidex-v1_0_2'
+include ':projects:demo:plugin-multidex:plugin-multidex-v2_0_1'

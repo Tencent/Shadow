@@ -23,6 +23,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
     Resources mMixResources;
     LayoutInflater mLayoutInflater;
     String mLibrarySearchPath;
+    String mDexPath;
     protected String mPartKey;
     private String mBusinessName;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
@@ -52,6 +53,10 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     public void setLibrarySearchPath(String mLibrarySearchPath) {
         this.mLibrarySearchPath = mLibrarySearchPath;
+    }
+
+    public void setDexPath(String dexPath) {
+        mDexPath = dexPath;
     }
 
     public void setBusinessName(String businessName) {
@@ -206,6 +211,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
     public ApplicationInfo getApplicationInfo() {
         final ApplicationInfo applicationInfo = super.getApplicationInfo();
         applicationInfo.nativeLibraryDir = mLibrarySearchPath;
+        applicationInfo.sourceDir = mDexPath;
         return applicationInfo;
     }
 

@@ -1,8 +1,6 @@
 package com.tencent.shadow.core.loader.classloaders
 
-import android.content.Context
 import android.os.Build
-import com.tencent.shadow.core.loader.classloaders.multidex.MultiDex
 import dalvik.system.BaseDexClassLoader
 import java.io.File
 
@@ -21,7 +19,10 @@ import java.io.File
  *
 */
 class PluginClassLoader(
-        hostAppContext: Context, dexPath: String, optimizedDirectory: File?, private val librarySearchPath: String?, parent: ClassLoader,
+        private val dexPath: String,
+        optimizedDirectory: File?,
+        private val librarySearchPath: String?,
+        parent: ClassLoader,
         private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
@@ -32,10 +33,6 @@ class PluginClassLoader(
     private val allHostWhiteList: Array<String>
 
     init {
-        if (Build.VERSION.SDK_INT <= MultiDex.MAX_SUPPORTED_SDK_VERSION) {
-            val pluginLoaderMultiDex = hostAppContext.getSharedPreferences("com.tencent.shadow.multidex", Context.MODE_PRIVATE)
-            MultiDex.install(this, dexPath, optimizedDirectory, pluginLoaderMultiDex)
-        }
         val defaultWhiteList = arrayOf("com.tencent.shadow.runtime",
                                "org.apache.commons.logging"//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
         )
@@ -91,4 +88,5 @@ class PluginClassLoader(
         return false
     }
 
+    fun getDexPath() = dexPath
 }

@@ -138,6 +138,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.setPluginApplication(mPluginApplication)
         pluginActivity.setShadowApplication(mPluginApplication)
         pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
+        pluginActivity.setDexPath(mPluginClassLoader.getDexPath())
         pluginActivity.setBusinessName(mBusinessName)
         pluginActivity.setPluginPartKey(mPartKey)
         pluginActivity.remoteViewCreatorProvider = mRemoteViewCreatorProvider

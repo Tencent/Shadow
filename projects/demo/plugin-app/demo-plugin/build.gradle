@@ -46,6 +46,20 @@ shadow {
                         hostWhiteList = ["androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
                                          "com.tencent.shadow.demo.interfaces"]//测试插件访问宿主白名单类
                     }
+                    pluginApk2 {
+                        businessName = 'plugin-multidex'
+                        partKey = 'plugin-multidex-v1_0_2'
+                        buildTask = 'assembleDebug'
+                        apkName = 'plugin-multidex-v1_0_2-debug.apk'
+                        projectPath = 'projects/demo/plugin-multidex/plugin-multidex-v1_0_2'
+                    }
+                    pluginApk3 {
+                        businessName = 'plugin-multidex'
+                        partKey = 'plugin-multidex-v2_0_1'
+                        buildTask = 'assembleDebug'
+                        apkName = 'plugin-multidex-v2_0_1-debug.apk'
+                        projectPath = 'projects/demo/plugin-multidex/plugin-multidex-v2_0_1'
+                    }
                 }
             }
 

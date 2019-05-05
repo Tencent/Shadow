@@ -74,24 +74,41 @@ def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
     }.dependsOn("${projectName}:${taskName}")
 }
 
+def generateAssets(generateAssetsTask, buildType) {
+
+    def moduleName = 'pluginmanager-apk'
+    def pluginManagerApkFile = file(
+            "${project(":projects:demo:pluginmanager-apk").getBuildDir()}" +
+                    "/outputs/apk/${buildType}/" +
+                    "${moduleName}-${buildType}.apk"
+    )
+    generateAssetsTask.dependsOn createCopyTask(
+            ':projects:demo:pluginmanager-apk',
+            buildType,
+            moduleName,
+            'pluginmanager.apk',
+            pluginManagerApkFile,
+            "assemble${buildType.capitalize()}"
+    )
+
+    def demoPluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
+    generateAssetsTask.dependsOn createCopyTask(
+            ':projects:demo:plugin-app:demo-plugin',
+            buildType,
+            'plugin-zip',
+            "plugin-${buildType}.zip",
+            demoPluginZip,
+            "package${buildType.capitalize()}Plugin"
+    )
+
+
+}
 
 tasks.whenTaskAdded { task ->
     if (task.name == "generateDebugAssets") {
-        def buildType = 'debug'
-        def moduleName = 'pluginmanager-apk'
-        def inputFile = file("${project(":projects:demo:pluginmanager-apk").getBuildDir()}/outputs/apk/${buildType}/${moduleName}-${buildType}.apk")
-        task.dependsOn createCopyTask(':projects:demo:pluginmanager-apk', buildType, moduleName, 'pluginmanager.apk', inputFile, 'assembleDebug')
-
-        def zipFile =file("${getRootProject().getBuildDir()}/plugin-debug.zip")
-        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin', buildType, 'plugin-zip', 'plugin-debug.zip', zipFile, 'packageDebugPlugin')
+        generateAssets(task, 'debug')
     }
     if (task.name == "generateReleaseAssets") {
-        def buildType = 'release'
-        def moduleName = 'pluginmanager-apk'
-        def inputFile = file("${project(":projects:demo:pluginmanager-apk").getBuildDir()}/outputs/apk/${buildType}/${moduleName}-${buildType}.apk")
-        task.dependsOn createCopyTask(':projects:demo:pluginmanager-apk', buildType, moduleName, 'pluginmanager.apk', inputFile, 'assembleRelease')
-
-        def zipFile =file("${getRootProject().getBuildDir()}/plugin-release.zip")
-        task.dependsOn createCopyTask(':projects:demo:plugin-app:demo-plugin', buildType, 'plugin-zip', 'plugin-release.zip', zipFile, 'packageReleasePlugin')
+        generateAssets(task, 'release')
     }
 }

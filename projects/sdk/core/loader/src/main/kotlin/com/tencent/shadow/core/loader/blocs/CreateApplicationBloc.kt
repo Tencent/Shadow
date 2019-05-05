@@ -40,6 +40,7 @@ object CreateApplicationBloc {
             shadowApplication.setHostApplicationContextAsBase(hostAppContext)
             shadowApplication.setBroadcasts(componentManager.getBroadcastsByPartKey(partKey))
             shadowApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
+            shadowApplication.setDexPath(pluginClassLoader.getDexPath())
             shadowApplication.setBusinessName(pluginPackageManager.pluginInfo.businessName)
             shadowApplication.setPluginPartKey(partKey)
             shadowApplication.remoteViewCreatorProvider = remoteViewCreatorProvider

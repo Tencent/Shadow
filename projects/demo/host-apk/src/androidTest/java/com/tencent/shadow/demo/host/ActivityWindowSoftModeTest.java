@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class ActivityWindowSoftModeTest extends BaseTest {
+public class ActivityWindowSoftModeTest extends DemoBaseTest {
 
     @Override
     Intent getLaunchIntent() {

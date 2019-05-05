@@ -7,6 +7,15 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import com.tencent.shadow.demo.testutil.Constant;
+
+import test.TestViewConstructorCacheView;
 
 
 public class MainActivity extends Activity {
@@ -15,7 +24,52 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTheme(R.style.TestHostTheme);
-        setContentView(R.layout.activity_main);
+
+        LinearLayout rootView = new LinearLayout(this);
+        rootView.setOrientation(LinearLayout.VERTICAL);
+
+        TextView infoTextView = new TextView(this);
+        infoTextView.setText(R.string.main_activity_info);
+        rootView.addView(infoTextView);
+
+        final Spinner partKeySpinner = new Spinner(this);
+        ArrayAdapter<String> partKeysAdapter = new ArrayAdapter<>(this, R.layout.part_key_adapter);
+        partKeysAdapter.addAll(
+                Constant.PART_KEY_DEMO_MAIN,
+                Constant.PART_KEY_MULTIDEX_V1_0_2,
+                Constant.PART_KEY_MULTIDEX_V2_0_1
+        );
+        partKeySpinner.setAdapter(partKeysAdapter);
+
+        rootView.addView(partKeySpinner);
+
+        Button startPluginButton = new Button(this);
+        startPluginButton.setText(R.string.start_plugin);
+        startPluginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String partKey = (String) partKeySpinner.getSelectedItem();
+                Intent intent = new Intent(MainActivity.this, PluginLoadActivity.class);
+                intent.putExtra(Constant.KEY_PLUGIN_PART_KEY, partKey);
+                switch (partKey) {
+                    case Constant.PART_KEY_DEMO_MAIN:
+                        intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.demo.gallery.splash.SplashActivity");
+                        break;
+                    case Constant.PART_KEY_MULTIDEX_V1_0_2:
+                        intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.demo.plugin.multidex.v1_0_2.PluginMultidexV1_0_2Activity");
+                        break;
+                    case Constant.PART_KEY_MULTIDEX_V2_0_1:
+                        intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.demo.plugin.multidex.v2_0_1.PluginMultidexV2_0_1Activity");
+                        break;
+                }
+                startActivity(intent);
+            }
+        });
+        rootView.addView(startPluginButton);
+
+        rootView.addView(new TestViewConstructorCacheView(this));
+
+        setContentView(rootView);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -38,13 +92,5 @@ public class MainActivity extends Activity {
             }
         }
     }
-
-
-    public void startDemoPlugin(View view) {
-
-        startActivity(new Intent(this, PluginLoadActivity.class));
-
-    }
-
 
 }

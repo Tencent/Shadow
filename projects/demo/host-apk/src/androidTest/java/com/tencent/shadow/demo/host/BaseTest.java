@@ -21,6 +21,11 @@ public abstract class BaseTest {
     abstract Intent getLaunchIntent();
 
     /**
+     * 要启动的插件的PartKey
+     */
+    abstract String getPartKey();
+
+    /**
      * 检测view
      * @param tag  view的tag
      * @param text view上的文字
@@ -34,7 +39,7 @@ public abstract class BaseTest {
     public void launchActivity() {
         SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
         IdlingRegistry.getInstance().register(idlingResource);
-        PluginActivityScenario.launch(getLaunchIntent());
+        PluginActivityScenario.launch(getPartKey(), getLaunchIntent());
 
         Espresso.onView(ViewMatchers.withId(R.id.jump)).perform(ViewActions.click());
     }

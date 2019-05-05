@@ -10,7 +10,7 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
-public class GetCallingActivityTest extends BaseTest {
+public class GetCallingActivityTest extends DemoBaseTest {
 
     @Override
     Intent getLaunchIntent() {
