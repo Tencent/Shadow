@@ -32,7 +32,7 @@ task testSdk() {
     dependsOn gradle.includedBuild('core').task(':transform:test')
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:test')
     dependsOn gradle.includedBuild('core').task(':manager:connectedDebugAndroidTest')
-    dependsOn ':projects:demo:host-apk:connectedDebugAndroidTest'
+    dependsOn ':dynamic-host-app:connectedDebugAndroidTest'
 }
 
 apply plugin: 'maven-publish'
