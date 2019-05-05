@@ -1,2 +1,3 @@
 -keep class android.support.multidex.**
 -keep class androidx.multidex.**
+-keep class * extends com.tencent.shadow.runtime.ShadowApplication

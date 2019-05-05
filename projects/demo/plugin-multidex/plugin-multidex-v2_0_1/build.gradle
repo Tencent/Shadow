@@ -2,6 +2,7 @@ apply from: '../apk-module-common.gradle'
 
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
+    compileOnly 'com.tencent.shadow.core:runtime-debug'
 }
 
 buildscript {
