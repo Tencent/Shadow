@@ -2,5 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tencent.shadow.demo.plugin.multidex.v1_0_2">
 
-    <application android:name="android.support.multidex.MultiDexApplication" />
+    <application android:name="android.support.multidex.MultiDexApplication">
+        <activity android:name=".PluginMultidexV1_0_2Activity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
 </manifest>

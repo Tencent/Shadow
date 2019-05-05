@@ -1,1 +1,2 @@
 -keep class android.support.multidex.**
+-keep class androidx.multidex.**
