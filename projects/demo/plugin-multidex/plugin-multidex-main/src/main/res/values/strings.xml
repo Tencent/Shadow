@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="info">此Activity构建时应在第2个Dex中，能启动就是正常的。</string>
+</resources>
