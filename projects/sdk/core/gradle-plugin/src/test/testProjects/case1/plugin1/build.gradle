@@ -58,9 +58,9 @@ shadow {
                     pluginApk1 {
                         businessName = 'demo'
                         partKey = 'demo_main'
-                        buildTask = 'assembleDebug'
+                        buildTask = ':plugin1:assembleDebug'
                         apkName = 'plugin1-debug.apk'
-                        projectPath = 'plugin1'
+                        apkPath = 'plugin1/build/outputs/apk/debug/plugin1-debug.apk'
                         dependsOn = ['Core', 'Base']
                         hostWhiteList = ["androidx.test.espresso",
                                          "com.tencent.shadow.demo.interfaces"]
@@ -72,9 +72,9 @@ shadow {
                 pluginApks {
                     pluginApk1 {
                         partKey = 'demo_main'
-                        buildTask = 'assembleDebug'
+                        buildTask = ':plugin1:assembleDebug'
                         apkName = 'plugin1-debug.apk'
-                        projectPath = 'plugin1'
+                        apkPath = 'plugin1/build/outputs/apk/debug/plugin1-debug.apk'
                         dependsOn = ['Core', 'Base']
                         hostWhiteList = ["androidx.test.espresso",
                                          "com.tencent.shadow.demo.interfaces"]

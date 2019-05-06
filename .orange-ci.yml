@@ -9,8 +9,8 @@
           script: ./gradlew buildSdk
         - name: Lint全部SDK模块
           script: ./gradlew lintSdk
-        - name: 构建Demo模块
-          script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
+        - name: 构建Test模块
+          script: ./gradlew :dynamic-host-app:assemble :none-dynamic-host-app:assemble
         - name: 确定虚拟机端口号
           script: echo -n `bash /opt/tools/get-free-port-for-emulator.sh`
           envExport:
@@ -38,8 +38,8 @@
           script: ./gradlew buildSdk
         - name: Lint全部SDK模块
           script: ./gradlew lintSdk
-        - name: 构建Demo模块
-          script: ./gradlew :projects:demo:host-apk:assemble :projects:demo-none-dynamic:host-apk-none-dynamic:assemble
+        - name: 构建Test模块
+          script: ./gradlew :dynamic-host-app:assemble :none-dynamic-host-app:assemble
         - name: 确定虚拟机端口号
           script: echo -n `bash /opt/tools/get-free-port-for-emulator.sh`
           envExport:

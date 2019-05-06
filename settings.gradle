@@ -4,19 +4,39 @@ includeBuild 'projects/sdk/coding'
 includeBuild 'projects/sdk/core'
 includeBuild 'projects/sdk/dynamic'
 
-include ':projects:demo-none-dynamic:host-apk-none-dynamic', ':projects:demo:host_interface'
+//host
+include 'dynamic-host-app'
+project(':dynamic-host-app').projectDir = file('projects/test/host/dynamic/dynamic-host-app')
+include 'dynamic-loader'
+project(':dynamic-loader').projectDir = file('projects/test/host/dynamic/dynamic-loader')
+include 'dynamic-manager'
+project(':dynamic-manager').projectDir = file('projects/test/host/dynamic/dynamic-manager')
+include 'dynamic-runtime'
+project(':dynamic-runtime').projectDir = file('projects/test/host/dynamic/dynamic-runtime')
+include 'none-dynamic-host-app'
+project(':none-dynamic-host-app').projectDir = file('projects/test/host/none-dynamic/none-dynamic-host-app')
 
-include ':projects:demo:host-apk'
-include ':projects:demo:runtime-apk'
-include ':projects:demo:loader-apk'
-include ':projects:demo:pluginmanager-apk'
-include ':projects:demo:test-util'
-include ':projects:demo:plugin-app:slidingmenu'
-include ':projects:demo:plugin-app:pinnedheaderexpandablelistview'
-include ':projects:demo:plugin-app:demo-main'
-include ':projects:demo:plugin-app:demo-install'
-include ':projects:demo:plugin-app:demo-plugin'
+//lib
+include 'constant'
+project(':constant').projectDir = file('projects/test/lib/constant')
+include 'plugin-use-host-code-lib'
+project(':plugin-use-host-code-lib').projectDir = file('projects/test/lib/plugin-use-host-code-lib')
 
-include ':projects:demo:plugin-multidex:plugin-multidex-main'
-include ':projects:demo:plugin-multidex:plugin-multidex-v1_0_2'
-include ':projects:demo:plugin-multidex:plugin-multidex-v2_0_1'
+//plugin
+include 'plugin-main-app'
+project(':plugin-main-app').projectDir = file('projects/test/plugin/plugin-main/plugin-main-app')
+include 'plugin-main-app-no-shadow'
+project(':plugin-main-app-no-shadow').projectDir = file('projects/test/plugin/plugin-main/plugin-main-app-no-shadow')
+include 'plugin-main-lib'
+project(':plugin-main-lib').projectDir = file('projects/test/plugin/plugin-main/plugin-main-lib')
+include 'pinnedheaderexpandablelistview'
+project(':pinnedheaderexpandablelistview').projectDir = file('projects/test/plugin/plugin-main/third-party/pinnedheaderexpandablelistview')
+include 'slidingmenu'
+project(':slidingmenu').projectDir = file('projects/test/plugin/plugin-main/third-party/slidingmenu')
+
+include 'plugin-multidex-main'
+project(':plugin-multidex-main').projectDir = file('projects/test/plugin/plugin-multidex/plugin-multidex-main')
+include 'plugin-multidex-v1_0_2'
+project(':plugin-multidex-v1_0_2').projectDir = file('projects/test/plugin/plugin-multidex/plugin-multidex-v1_0_2')
+include 'plugin-multidex-v2_0_1'
+project(':plugin-multidex-v2_0_1').projectDir = file('projects/test/plugin/plugin-multidex/plugin-multidex-v2_0_1')
