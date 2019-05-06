@@ -1,4 +1,4 @@
-package test;
+package com.tencent.shadow.test.lib.custom_view;
 
 import android.content.Context;
 import android.util.AttributeSet;

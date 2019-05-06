@@ -57,6 +57,7 @@ dependencies {
     androidTestImplementation "androidx.test:runner:1.1.2-alpha02"
 
     implementation project(':plugin-use-host-code-lib')
+    implementation project(':custom-view')
 }
 
 def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {

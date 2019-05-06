@@ -14,8 +14,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.tencent.shadow.demo.testutil.Constant;
-
-import test.TestViewConstructorCacheView;
+import com.tencent.shadow.test.lib.custom_view.TestViewConstructorCacheView;
 
 
 public class MainActivity extends Activity {

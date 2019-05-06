@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <test.TestViewConstructorCacheView
+    <com.tencent.shadow.test.lib.custom_view.TestViewConstructorCacheView
         android:id="@+id/testView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

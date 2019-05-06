@@ -19,6 +19,8 @@ project(':none-dynamic-host-app').projectDir = file('projects/test/host/none-dyn
 //lib
 include 'constant'
 project(':constant').projectDir = file('projects/test/lib/constant')
+include 'custom-view'
+project(':custom-view').projectDir = file('projects/test/lib/custom-view')
 include 'plugin-use-host-code-lib'
 project(':plugin-use-host-code-lib').projectDir = file('projects/test/lib/plugin-use-host-code-lib')
 
