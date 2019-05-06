@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.tencent.shadow.demo.host">
+    package="com.tencent.shadow.test.host.dynamic.app">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -88,7 +88,7 @@
             android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"
             />
 
-        <service android:name="com.tencent.shadow.demo.host.DemoPluginProcessService"
+        <service android:name=".MainPluginProcessService"
             />
 
         <activity android:name=".PluginLoadActivity"

@@ -47,7 +47,7 @@ public class DemoPluginManager extends FastPluginManager {
      */
     @Override
     protected String getPluginProcessServiceName() {
-        return "com.tencent.shadow.demo.host.DemoPluginProcessService";
+        return "com.tencent.shadow.test.host.dynamic.app.MainPluginProcessService";
     }
 
     @Override

@@ -57,7 +57,7 @@ shadow {
                 pluginApks {
                     pluginApk1 {
                         businessName = 'demo'
-                        partKey = 'demo_main'
+                        partKey = 'plugin1'
                         buildTask = ':plugin1:assembleDebug'
                         apkName = 'plugin1-debug.apk'
                         apkPath = 'plugin1/build/outputs/apk/debug/plugin1-debug.apk'
@@ -71,7 +71,7 @@ shadow {
             onlyApk {
                 pluginApks {
                     pluginApk1 {
-                        partKey = 'demo_main'
+                        partKey = 'plugin1'
                         buildTask = ':plugin1:assembleDebug'
                         apkName = 'plugin1-debug.apk'
                         apkPath = 'plugin1/build/outputs/apk/debug/plugin1-debug.apk'
