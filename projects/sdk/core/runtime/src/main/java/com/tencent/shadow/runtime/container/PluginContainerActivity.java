@@ -69,7 +69,7 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toolbar;
 
-import com.tencent.shadow.lint.BuildConfig;
+import com.tencent.shadow.runtime.BuildConfig;
 import com.tencent.shadow.runtime.ShadowActivity;
 
 import java.io.File;
