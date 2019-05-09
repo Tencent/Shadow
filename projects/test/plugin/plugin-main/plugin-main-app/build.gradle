@@ -39,7 +39,7 @@ shadow {
                 pluginApks {
                     pluginApk1 {
                         businessName = 'demo'
-                        partKey = 'demo_main'
+                        partKey = 'plugin-main-app'
                         buildTask = ':plugin-main-app:assembleDebug'
                         apkName = 'plugin-main-app-debug.apk'
                         apkPath = 'projects/test/plugin/plugin-main/plugin-main-app/build/outputs/apk/debug/plugin-main-app-debug.apk'
@@ -69,7 +69,7 @@ shadow {
                 pluginApks {
                     pluginApk1 {
                         businessName = 'demo'
-                        partKey = 'demo_main'
+                        partKey = 'plugin-main-app'
                         buildTask = ':plugin-main-app:assembleRelease'
                         apkName = 'plugin-main-app-release.apk'
                         apkPath = 'projects/test/plugin/plugin-main/plugin-main-app/build/outputs/apk/release/plugin-main-app-release.apk'

@@ -55,7 +55,7 @@ public class DemoComponentManager extends ComponentManager {
     @Override
     public List<BroadcastInfo> getBroadcastInfoList(String partKey) {
         List<ComponentManager.BroadcastInfo> broadcastInfos = new ArrayList<>();
-        if (partKey.equals(Constant.PART_KEY_DEMO_MAIN)) {
+        if (partKey.equals(Constant.PART_KEY_PLUGIN_MAIN_APP)) {
             broadcastInfos.add(
                     new ComponentManager.BroadcastInfo(
                             "com.tencent.shadow.demo.usecases.receiver.MyReceiver",

@@ -6,9 +6,9 @@ import android.support.annotation.Nullable;
 
 import com.tencent.shadow.demo.gallery.R;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
+import com.tencent.shadow.test.lib.custom_view.TestViewConstructorCacheView;
 
 import dalvik.system.PathClassLoader;
-import test.TestViewConstructorCacheView;
 
 public class TestViewConstructorCache extends Activity {
 
