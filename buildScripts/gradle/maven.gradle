@@ -240,7 +240,7 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'common', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
