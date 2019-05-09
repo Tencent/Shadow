@@ -102,6 +102,7 @@ publishing {
                 dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform-kit', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
