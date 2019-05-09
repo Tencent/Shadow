@@ -288,7 +288,7 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'manager', publicationVersion))
-                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'loader', dynamicGroupId))
+                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'loader', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
 
