@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.widget.EditText;
 
 import com.tencent.shadow.demo.gallery.BaseActivity;
 import com.tencent.shadow.demo.gallery.R;
@@ -30,11 +31,15 @@ public class TestActivityWindowSoftMode extends BaseActivity {
         }
     }
 
+    private EditText mEditText;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_softmode);
+
+        mEditText = findViewById(R.id.edit_view);
+        mEditText.requestFocus();
 
         //是否来自单元测试的中转Activity
         final boolean isFromJump = getIntent().getBooleanExtra(WindowSoftModeJumpActivity.KEY_FROM_JUMP, false);
