@@ -1,4 +1,4 @@
-package com.tencent.shadow.sdk.pluginloader;
+package com.tencent.shadow.test.dynamic.loader;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,18 +10,18 @@ import com.tencent.shadow.demo.testutil.Constant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DemoComponentManager extends ComponentManager {
+public class TestComponentManager extends ComponentManager {
 
     /**
      * dynamic-runtime-apk 模块中定义的壳子Activity，需要在宿主AndroidManifest.xml注册
      */
-    private static final String DEFAULT_ACTIVITY = "com.tencent.shadow.runtime.container.PluginDefaultProxyActivity";
-    private static final String SINGLE_INSTANCE_ACTIVITY = "com.tencent.shadow.runtime.container.PluginSingleInstance1ProxyActivity";
-    private static final String SINGLE_TASK_ACTIVITY = "com.tencent.shadow.runtime.container.PluginSingleTask1ProxyActivity";
+    private static final String DEFAULT_ACTIVITY = "com.tencent.shadow.test.dynamic.runtime.container.PluginDefaultProxyActivity";
+    private static final String SINGLE_INSTANCE_ACTIVITY = "com.tencent.shadow.test.dynamic.runtime.container.PluginSingleInstance1ProxyActivity";
+    private static final String SINGLE_TASK_ACTIVITY = "com.tencent.shadow.test.dynamic.runtime.container.PluginSingleTask1ProxyActivity";
 
     private Context context;
 
-    public DemoComponentManager(Context context) {
+    public TestComponentManager(Context context) {
         this.context = context;
     }
 

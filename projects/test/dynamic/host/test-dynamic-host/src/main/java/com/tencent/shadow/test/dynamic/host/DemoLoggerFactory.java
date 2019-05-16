@@ -1,4 +1,4 @@
-package com.tencent.shadow.test.host.dynamic.app;
+package com.tencent.shadow.test.dynamic.host;
 
 import android.util.Log;
 

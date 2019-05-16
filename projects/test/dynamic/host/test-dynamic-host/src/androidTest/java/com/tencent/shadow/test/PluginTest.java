@@ -11,10 +11,10 @@ import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
 
 import com.tencent.shadow.demo.testutil.Constant;
-import com.tencent.shadow.test.host.dynamic.app.HostApplication;
-import com.tencent.shadow.test.host.dynamic.app.JumpToPluginActivity;
+import com.tencent.shadow.test.dynamic.host.HostApplication;
+import com.tencent.shadow.test.dynamic.host.JumpToPluginActivity;
+import com.tencent.shadow.test.dynamic.host.SimpleIdlingResource;
 import com.tencent.shadow.test.host.dynamic.app.R;
-import com.tencent.shadow.test.host.dynamic.app.SimpleIdlingResource;
 
 import org.hamcrest.Matchers;
 import org.junit.After;

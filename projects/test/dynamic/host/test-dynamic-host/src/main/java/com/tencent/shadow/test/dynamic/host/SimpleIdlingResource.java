@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tencent.shadow.test.host.dynamic.app;
+package com.tencent.shadow.test.dynamic.host;
 
 import androidx.test.espresso.IdlingResource;
 

@@ -1,4 +1,4 @@
-package com.tencent.shadow.test.host.dynamic.app;
+package com.tencent.shadow.test.dynamic.host;
 
 import android.app.Application;
 import android.os.Build;
@@ -7,7 +7,7 @@ import android.os.StrictMode;
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.dynamic.host.DynamicRuntime;
 import com.tencent.shadow.dynamic.host.PluginManager;
-import com.tencent.shadow.test.host.dynamic.app.manager.Shadow;
+import com.tencent.shadow.test.dynamic.host.manager.Shadow;
 
 import java.io.File;
 

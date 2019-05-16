@@ -1,4 +1,4 @@
-package com.tencent.shadow.manager;
+package com.tencent.shadow.test.dynamic.manager;
 
 import android.app.Activity;
 import android.content.Context;

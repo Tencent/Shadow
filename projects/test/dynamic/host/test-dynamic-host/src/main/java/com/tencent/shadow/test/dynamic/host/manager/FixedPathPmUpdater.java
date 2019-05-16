@@ -1,4 +1,4 @@
-package com.tencent.shadow.test.host.dynamic.app.manager;
+package com.tencent.shadow.test.dynamic.host.manager;
 
 import com.tencent.shadow.dynamic.host.PluginManagerUpdater;
 

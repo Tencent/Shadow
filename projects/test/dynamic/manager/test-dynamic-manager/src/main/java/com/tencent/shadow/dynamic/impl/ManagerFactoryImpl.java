@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.tencent.shadow.dynamic.host.ManagerFactory;
 import com.tencent.shadow.dynamic.host.PluginManagerImpl;
-import com.tencent.shadow.manager.DemoPluginManager;
+import com.tencent.shadow.test.dynamic.manager.TestDynamicPluginManager;
 
 /**
  * 此类包名及类名固定
@@ -12,6 +12,6 @@ import com.tencent.shadow.manager.DemoPluginManager;
 public final class ManagerFactoryImpl implements ManagerFactory {
     @Override
     public PluginManagerImpl buildManager(Context context) {
-        return new DemoPluginManager(context);
+        return new TestDynamicPluginManager(context);
     }
 }

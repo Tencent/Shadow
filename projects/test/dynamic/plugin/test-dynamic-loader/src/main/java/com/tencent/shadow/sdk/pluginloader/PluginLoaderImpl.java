@@ -5,6 +5,7 @@ import android.content.Context;
 import com.tencent.shadow.core.loader.Reporter;
 import com.tencent.shadow.core.loader.ShadowPluginLoader;
 import com.tencent.shadow.core.loader.managers.ComponentManager;
+import com.tencent.shadow.test.dynamic.loader.TestComponentManager;
 
 /**
  * 这里的类名和包名需要固定
@@ -18,7 +19,7 @@ public class PluginLoaderImpl extends ShadowPluginLoader {
 
     public PluginLoaderImpl(Context hostAppContext) {
         super(hostAppContext);
-        componentManager = new DemoComponentManager(hostAppContext);
+        componentManager = new TestComponentManager(hostAppContext);
     }
 
     @Override

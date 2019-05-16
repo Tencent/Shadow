@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.tencent.shadow.test.host.dynamic.app">
+    package="com.tencent.shadow.test.dynamic.host">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
@@ -87,7 +87,7 @@
             android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"
             />
 
-        <service android:name=".MainPluginProcessService"
+        <service android:name=".PluginProcessPPS"
             />
 
         <activity android:name=".PluginLoadActivity"
@@ -102,7 +102,8 @@
           注意configChanges需要全注册
           theme需要注册成透明
           -->
-        <activity android:name="com.tencent.shadow.runtime.container.PluginDefaultProxyActivity"
+        <activity
+            android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginDefaultProxyActivity"
             android:launchMode="standard"
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
@@ -110,7 +111,8 @@
             android:theme="@style/troop_Transparent"
             />
 
-        <activity android:name="com.tencent.shadow.runtime.container.PluginSingleInstance1ProxyActivity"
+        <activity
+            android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginSingleInstance1ProxyActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
@@ -118,7 +120,8 @@
             android:theme="@style/troop_Transparent"
             />
 
-        <activity android:name="com.tencent.shadow.runtime.container.PluginSingleTask1ProxyActivity"
+        <activity
+            android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginSingleTask1ProxyActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"

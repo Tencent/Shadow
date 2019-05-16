@@ -1,4 +1,4 @@
-package com.tencent.shadow.manager;
+package com.tencent.shadow.test.dynamic.manager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
-import com.tencent.shadow.demo.pluginmanager.R;
 import com.tencent.shadow.demo.testutil.Constant;
 import com.tencent.shadow.dynamic.host.EnterCallback;
 
@@ -15,13 +14,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class DemoPluginManager extends FastPluginManager {
+public class TestDynamicPluginManager extends FastPluginManager {
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private Context mCurrentContext;
 
-    public DemoPluginManager(Context context) {
+    public TestDynamicPluginManager(Context context) {
         super(context);
         mCurrentContext = context;
     }
@@ -47,7 +46,7 @@ public class DemoPluginManager extends FastPluginManager {
      */
     @Override
     protected String getPluginProcessServiceName() {
-        return "com.tencent.shadow.test.host.dynamic.app.MainPluginProcessService";
+        return "com.tencent.shadow.test.dynamic.host.PluginProcessPPS";
     }
 
     @Override
