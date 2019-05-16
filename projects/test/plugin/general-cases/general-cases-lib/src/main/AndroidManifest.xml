@@ -90,7 +90,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.tencent.shadow.demo_install.fileprovider"
+            android:authorities="com.tencent.shadow.test.plugin.general_cases.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.host;
+package com.tencent.shadow.test.none_dynamic.host;
 
 import com.tencent.shadow.core.common.ILoggerFactory;
 import com.tencent.shadow.core.common.Logger;

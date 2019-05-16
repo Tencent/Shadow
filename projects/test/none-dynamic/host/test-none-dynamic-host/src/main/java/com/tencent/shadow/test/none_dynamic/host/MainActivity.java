@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.host;
+package com.tencent.shadow.test.none_dynamic.host;
 
 import android.Manifest;
 import android.app.Activity;
@@ -8,36 +8,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
-public class TestLoadingActivity extends Activity {
+import static com.tencent.shadow.test.none_dynamic.host.HostApplication.PART_MAIN;
 
-    public static View content;
-    public static Activity activity;
-
-    public static void startActivity(Activity activity, Bundle bundle, View viewContent) {
-        Intent intent = new Intent(activity, TestLoadingActivity.class);
-        intent.putExtras(bundle);
-        content = viewContent;
-        activity.startActivity(intent);
-    }
-
-    public static void finishSelf() {
-        if (activity != null) {
-            activity.finish();
-        }
-    }
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(content);
+        setTheme(R.style.TestHostTheme);
+        setContentView(R.layout.activity_main);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             }
         }
-        activity = this;
-
     }
 
     @Override
@@ -53,5 +38,15 @@ public class TestLoadingActivity extends Activity {
         }
     }
 
+    public void startDemoPlugin(View view) {
+        HostApplication application = (HostApplication) getApplication();
+        application.loadPlugin(PART_MAIN);
+
+        Intent pluginIntent = new Intent();
+        pluginIntent.setClassName(getPackageName(), "com.tencent.shadow.demo.gallery.splash.SplashActivity");
+
+        Intent intent = application.getPluginLoader().getMComponentManager().convertPluginActivityIntent(pluginIntent);
+        startActivity(intent);
+    }
 
 }

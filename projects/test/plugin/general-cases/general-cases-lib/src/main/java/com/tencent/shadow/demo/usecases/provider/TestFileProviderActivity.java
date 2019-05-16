@@ -66,9 +66,9 @@ public class TestFileProviderActivity extends Activity {
                 Uri contentUri;
                 if (targetSdkVersion() >= Build.VERSION_CODES.N) {
                     contentUri = FileProvider.getUriForFile(TestFileProviderActivity.this,
-                            "com.tencent.shadow.demo_install.fileprovider", mFile);
-//                    contentUri = Uri.parse("content://com.tencent.shadow.contentprovider.authority/com.tencent.shadow.demo_install.fileprovider" +
-//                            "/name/data/data/com.tencent.shadow.demo_host/files/images/1548417832706.jpg");
+                            "com.tencent.shadow.test.plugin.general_cases.fileprovider", mFile);
+//                    contentUri = Uri.parse("content://com.tencent.shadow.contentprovider.authority/com.tencent.shadow.demo.gallery.fileprovider" +
+//                            "/name/data/data/com.tencent.shadow.test.hostapp/files/images/1548417832706.jpg");
                 } else {
                     contentUri = Uri.fromFile(mFile);
                 }

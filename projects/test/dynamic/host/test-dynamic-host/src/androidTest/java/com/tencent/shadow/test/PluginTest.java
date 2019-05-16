@@ -13,8 +13,8 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import com.tencent.shadow.demo.testutil.Constant;
 import com.tencent.shadow.test.dynamic.host.HostApplication;
 import com.tencent.shadow.test.dynamic.host.JumpToPluginActivity;
+import com.tencent.shadow.test.dynamic.host.R;
 import com.tencent.shadow.test.dynamic.host.SimpleIdlingResource;
-import com.tencent.shadow.test.host.dynamic.app.R;
 
 import org.hamcrest.Matchers;
 import org.junit.After;

@@ -9,6 +9,8 @@ import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.tencent.shadow.test.none_dynamic.host.HostApplication;
+
 import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;

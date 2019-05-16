@@ -21,6 +21,7 @@ allprojects {
         ext.VERSION_SUFFIX = "-${gitShortRev()}-SNAPSHOT"
     }
     ext.ARTIFACT_VERSION = ext.VERSION_NAME + ext.VERSION_SUFFIX
+    ext.HOST_APP_APPLICATION_ID = 'com.tencent.shadow.test.hostapp'
     repositories {
         maven {
             url "http://maven.oa.com/nexus/content/repositories/google-maven/"

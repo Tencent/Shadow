@@ -4,11 +4,11 @@ android {
     compileSdkVersion project.COMPILE_SDK_VERSION
 
     defaultConfig {
-        applicationId "com.tencent.shadow.demo_install"
-        minSdkVersion 16
-        targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
+        applicationId project.HOST_APP_APPLICATION_ID
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        versionCode project.VERSION_CODE
+        versionName project.VERSION_NAME
     }
 
     buildTypes {

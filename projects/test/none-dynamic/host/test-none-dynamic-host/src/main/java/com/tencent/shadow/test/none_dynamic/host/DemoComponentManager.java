@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.host;
+package com.tencent.shadow.test.none_dynamic.host;
 
 import android.content.ComponentName;
 
@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DemoComponentManager extends ComponentManager {
-    final private static ComponentName sDefaultContainer = new ComponentName("com.tencent.shadow.demo_host", "com.tencent.shadow.demo.host.DefaultContainerActivity");
-    final private static ComponentName sSingleTaskContainer = new ComponentName("com.tencent.shadow.demo_host", "com.tencent.shadow.demo.host.SingleTaskContainerActivity");
+    final private static ComponentName sDefaultContainer = new ComponentName(BuildConfig.APPLICATION_ID, "com.tencent.shadow.demo.host.DefaultContainerActivity");
+    final private static ComponentName sSingleTaskContainer = new ComponentName(BuildConfig.APPLICATION_ID, "com.tencent.shadow.demo.host.SingleTaskContainerActivity");
 
 
     @Override

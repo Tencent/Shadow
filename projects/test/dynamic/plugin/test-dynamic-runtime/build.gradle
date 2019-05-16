@@ -5,7 +5,7 @@ android {
     defaultConfig {
         applicationId "com.tencent.shadow.demo.runtime"
         minSdkVersion project.MIN_SDK_VERSION
-        targetSdkVersion 28
+        targetSdkVersion project.TARGET_SDK_VERSION
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
     }

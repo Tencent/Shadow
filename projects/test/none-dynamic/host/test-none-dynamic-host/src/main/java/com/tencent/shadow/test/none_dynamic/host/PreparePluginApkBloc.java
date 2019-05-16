@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.host;
+package com.tencent.shadow.test.none_dynamic.host;
 
 import android.content.Context;
 

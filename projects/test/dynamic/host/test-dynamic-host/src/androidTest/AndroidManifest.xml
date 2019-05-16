@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tencent.shadow.demo_host.test">
+    package="comcom.tencent.shadow.test.hostapp.test">
 
     <!-- Multi-Process Espresso only works on API level 26 and above-->
     <uses-sdk
@@ -15,7 +15,7 @@
 
     <instrumentation
         android:name="com.tencent.shadow.demo.host.CustomAndroidJUnitRunner"
-        android:targetPackage="com.tencent.shadow.demo_host"
+        android:targetPackage="com.tencent.shadow.test.hostapp"
         android:targetProcesses="*"> <!-- The instrumentation attribute introduced in O -->
 
         <!--

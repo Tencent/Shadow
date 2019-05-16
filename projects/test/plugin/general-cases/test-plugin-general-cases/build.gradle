@@ -2,7 +2,7 @@ apply from: "../general-cases-app/build.gradle"
 
 android {
     defaultConfig {
-        applicationId "com.tencent.shadow.demo_host"
+        applicationId project.HOST_APP_APPLICATION_ID
     }
 }
 
