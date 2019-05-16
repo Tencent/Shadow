@@ -4,17 +4,15 @@ includeBuild 'projects/sdk/coding'
 includeBuild 'projects/sdk/core'
 includeBuild 'projects/sdk/dynamic'
 
-//host
-include 'dynamic-host-app'
-project(':dynamic-host-app').projectDir = file('projects/test/host/dynamic/dynamic-host-app')
-include 'dynamic-loader'
-project(':dynamic-loader').projectDir = file('projects/test/host/dynamic/dynamic-loader')
-include 'dynamic-manager'
-project(':dynamic-manager').projectDir = file('projects/test/host/dynamic/dynamic-manager')
-include 'dynamic-runtime'
-project(':dynamic-runtime').projectDir = file('projects/test/host/dynamic/dynamic-runtime')
-include 'none-dynamic-host-app'
-project(':none-dynamic-host-app').projectDir = file('projects/test/host/none-dynamic/none-dynamic-host-app')
+//dynamic
+include 'test-dynamic-host'
+project(':test-dynamic-host').projectDir = file('projects/test/dynamic/host/test-dynamic-host')
+include 'test-dynamic-manager'
+project(':test-dynamic-manager').projectDir = file('projects/test/dynamic/manager/test-dynamic-manager')
+include 'test-dynamic-loader'
+project(':test-dynamic-loader').projectDir = file('projects/test/dynamic/plugin/test-dynamic-loader')
+include 'test-dynamic-runtime'
+project(':test-dynamic-runtime').projectDir = file('projects/test/dynamic/plugin/test-dynamic-runtime')
 
 //lib
 include 'constant'
@@ -25,20 +23,29 @@ include 'plugin-use-host-code-lib'
 project(':plugin-use-host-code-lib').projectDir = file('projects/test/lib/plugin-use-host-code-lib')
 
 //plugin
-include 'plugin-main-app'
-project(':plugin-main-app').projectDir = file('projects/test/plugin/plugin-main/plugin-main-app')
-include 'plugin-main-app-no-shadow'
-project(':plugin-main-app-no-shadow').projectDir = file('projects/test/plugin/plugin-main/plugin-main-app-no-shadow')
-include 'plugin-main-lib'
-project(':plugin-main-lib').projectDir = file('projects/test/plugin/plugin-main/plugin-main-lib')
-include 'pinnedheaderexpandablelistview'
-project(':pinnedheaderexpandablelistview').projectDir = file('projects/test/plugin/plugin-main/third-party/pinnedheaderexpandablelistview')
-include 'slidingmenu'
-project(':slidingmenu').projectDir = file('projects/test/plugin/plugin-main/third-party/slidingmenu')
 
-include 'plugin-multidex-main'
-project(':plugin-multidex-main').projectDir = file('projects/test/plugin/plugin-multidex/plugin-multidex-main')
-include 'plugin-multidex-v1_0_2'
-project(':plugin-multidex-v1_0_2').projectDir = file('projects/test/plugin/plugin-multidex/plugin-multidex-v1_0_2')
-include 'plugin-multidex-v2_0_1'
-project(':plugin-multidex-v2_0_1').projectDir = file('projects/test/plugin/plugin-multidex/plugin-multidex-v2_0_1')
+//general-cases
+include 'general-cases-lib'
+project(':general-cases-lib').projectDir = file('projects/test/plugin/general-cases/general-cases-lib')
+include 'test-plugin-general-cases'
+project(':test-plugin-general-cases').projectDir = file('projects/test/plugin/general-cases/test-plugin-general-cases')
+include 'general-cases-app'
+project(':general-cases-app').projectDir = file('projects/test/plugin/general-cases/general-cases-app')
+include 'pinnedheaderexpandablelistview'
+project(':pinnedheaderexpandablelistview').projectDir = file('projects/test/plugin/general-cases/third-party/pinnedheaderexpandablelistview')
+include 'slidingmenu'
+project(':slidingmenu').projectDir = file('projects/test/plugin/general-cases/third-party/slidingmenu')
+
+//particular-cases
+
+//multidex
+include 'test-multidex-lib'
+project(':test-multidex-lib').projectDir = file('projects/test/plugin/particular-cases/multidex/test-multidex-lib')
+include 'test-plugin-multidex-v1_0_2'
+project(':test-plugin-multidex-v1_0_2').projectDir = file('projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v1_0_2')
+include 'test-plugin-multidex-v2_0_1'
+project(':test-plugin-multidex-v2_0_1').projectDir = file('projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1')
+
+//none-dynamic
+include 'test-none-dynamic-host'
+project(':test-none-dynamic-host').projectDir = file('projects/test/none-dynamic/host/test-none-dynamic-host')

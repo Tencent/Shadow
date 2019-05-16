@@ -1,0 +1,105 @@
+apply from: "../general-cases-app/build.gradle"
+
+android {
+    defaultConfig {
+        applicationId "com.tencent.shadow.demo_host"
+    }
+}
+
+buildscript {
+    repositories {
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/jcenter"
+        }
+        maven {
+            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
+        }
+    }
+
+    dependencies {
+        classpath 'com.tencent.shadow.core:runtime-debug'
+        classpath 'com.tencent.shadow.core:gradle-plugin'
+        classpath 'org.javassist:javassist:3.22.0-GA'
+    }
+}
+
+apply plugin: 'com.tencent.shadow.plugin'
+
+
+shadow {
+    transform {
+//        useHostContext = ['abc']
+    }
+
+    packagePlugin {
+        pluginTypes {
+            debug {
+                loaderApkConfig = new Tuple2('test-dynamic-loader-debug.apk', ':test-dynamic-loader:assembleDebug')
+                runtimeApkConfig = new Tuple2('test-dynamic-runtime-debug.apk', ':test-dynamic-runtime:assembleDebug')
+                pluginApks {
+                    pluginApk1 {
+                        businessName = 'demo'
+                        partKey = 'test-plugin-general-cases'
+                        buildTask = ':test-plugin-general-cases:assembleDebug'
+                        apkName = 'test-plugin-general-cases-debug.apk'
+                        apkPath = 'projects/test/plugin/general-cases/test-plugin-general-cases/build/outputs/apk/debug/test-plugin-general-cases-debug.apk'
+                        hostWhiteList = ["androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
+                                         "com.tencent.shadow.demo.interfaces"]//测试插件访问宿主白名单类
+                    }
+                    pluginApk2 {
+                        businessName = 'plugin-multidex'
+                        partKey = 'test-plugin-multidex-v1_0_2'
+                        buildTask = ':test-plugin-multidex-v1_0_2:assembleDebug'
+                        apkName = 'test-plugin-multidex-v1_0_2-debug.apk'
+                        apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v1_0_2/build/outputs/apk/debug/test-plugin-multidex-v1_0_2-debug.apk'
+                    }
+                    pluginApk3 {
+                        businessName = 'plugin-multidex'
+                        partKey = 'test-plugin-multidex-v2_0_1'
+                        buildTask = ':test-plugin-multidex-v2_0_1:assembleDebug'
+                        apkName = 'test-plugin-multidex-v2_0_1-debug.apk'
+                        apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1/build/outputs/apk/debug/test-plugin-multidex-v2_0_1-debug.apk'
+                    }
+                }
+            }
+
+            release {
+                loaderApkConfig = new Tuple2('test-dynamic-loader-release.apk', ':test-dynamic-loader:assembleRelease')
+                runtimeApkConfig = new Tuple2('test-dynamic-runtime-release.apk', ':test-dynamic-runtime:assembleRelease')
+                pluginApks {
+                    pluginApk1 {
+                        businessName = 'demo'
+                        partKey = 'test-plugin-general-cases'
+                        buildTask = ':test-plugin-general-cases:assembleRelease'
+                        apkName = 'test-plugin-general-cases-release.apk'
+                        apkPath = 'projects/test/plugin/general-cases/test-plugin-general-cases/build/outputs/apk/release/test-plugin-general-cases-release.apk'
+                        hostWhiteList = ["androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
+                                         "com.tencent.shadow.demo.interfaces"]//测试插件访问宿主白名单类
+                    }
+                    pluginApk2 {
+                        businessName = 'plugin-multidex'
+                        partKey = 'test-plugin-multidex-v1_0_2'
+                        buildTask = ':test-plugin-multidex-v1_0_2:assembleRelease'
+                        apkName = 'test-plugin-multidex-v1_0_2-release.apk'
+                        apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v1_0_2/build/outputs/apk/release/test-plugin-multidex-v1_0_2-release-unsigned.apk'
+                    }
+                    pluginApk3 {
+                        businessName = 'plugin-multidex'
+                        partKey = 'test-plugin-multidex-v2_0_1'
+                        buildTask = ':test-plugin-multidex-v2_0_1:assembleRelease'
+                        apkName = 'test-plugin-multidex-v2_0_1-release.apk'
+                        apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1/build/outputs/apk/release/test-plugin-multidex-v2_0_1-release-unsigned.apk'
+                    }
+                }
+            }
+        }
+
+        loaderApkProjectPath = 'projects/test/dynamic/plugin/test-dynamic-loader'
+
+        runtimeApkProjectPath = 'projects/test/dynamic/plugin/test-dynamic-runtime'
+
+        version = 4
+        compactVersion = [1, 2, 3]
+        uuidNickName = "1.1.5"
+    }
+}

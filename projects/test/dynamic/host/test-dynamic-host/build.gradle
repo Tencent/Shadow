@@ -26,11 +26,11 @@ android {
     }
     sourceSets {
         debug {
-            assets.srcDir('build/generated/assets/dynamic-manager/debug/')
+            assets.srcDir('build/generated/assets/test-dynamic-manager/debug/')
             assets.srcDir('build/generated/assets/plugin-zip/debug/')
         }
         release {
-            assets.srcDir('build/generated/assets/dynamic-manager/release/')
+            assets.srcDir('build/generated/assets/test-dynamic-manager/release/')
             assets.srcDir('build/generated/assets/plugin-zip/release/')
         }
     }
@@ -77,14 +77,14 @@ def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
 
 def generateAssets(generateAssetsTask, buildType) {
 
-    def moduleName = 'dynamic-manager'
+    def moduleName = 'test-dynamic-manager'
     def pluginManagerApkFile = file(
-            "${project(":dynamic-manager").getBuildDir()}" +
+            "${project(":test-dynamic-manager").getBuildDir()}" +
                     "/outputs/apk/${buildType}/" +
                     "${moduleName}-${buildType}.apk"
     )
     generateAssetsTask.dependsOn createCopyTask(
-            ':dynamic-manager',
+            ':test-dynamic-manager',
             buildType,
             moduleName,
             'pluginmanager.apk',
@@ -94,7 +94,7 @@ def generateAssets(generateAssetsTask, buildType) {
 
     def demoPluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
     generateAssetsTask.dependsOn createCopyTask(
-            ':plugin-main-app',
+            ':test-plugin-general-cases',
             buildType,
             'plugin-zip',
             "plugin-${buildType}.zip",

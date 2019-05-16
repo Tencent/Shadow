@@ -26,10 +26,10 @@ android {
     }
     sourceSets {
         debug {
-            assets.srcDir('build/generated/assets/plugin-main-app/debug/')
+            assets.srcDir('build/generated/assets/test-plugin-general-cases/debug/')
         }
         release {
-            assets.srcDir('build/generated/assets/plugin-main-app/release/')
+            assets.srcDir('build/generated/assets/test-plugin-general-cases/release/')
         }
     }
     lintOptions {
@@ -74,9 +74,9 @@ def createCopyTask(projectName, buildType, name, apkName) {
 
 tasks.whenTaskAdded { task ->
     if (task.name == "generateDebugAssets") {
-        task.dependsOn createCopyTask(':plugin-main-app', 'debug', 'plugin-main-app', 'plugin.apk')
+        task.dependsOn createCopyTask(':test-plugin-general-cases', 'debug', 'test-plugin-general-cases', 'plugin.apk')
     }
     if (task.name == "generateReleaseAssets") {
-        task.dependsOn createCopyTask(':plugin-main-app', 'release', 'plugin-main-app', 'plugin.apk')
+        task.dependsOn createCopyTask(':test-plugin-general-cases', 'release', 'test-plugin-general-cases', 'plugin.apk')
     }
 }

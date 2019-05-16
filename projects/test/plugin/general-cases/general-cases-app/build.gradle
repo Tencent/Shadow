@@ -27,6 +27,6 @@ android {
 }
 
 dependencies {
-    implementation project(':plugin-main-lib')
+    implementation project(':general-cases-lib')
 }
 
