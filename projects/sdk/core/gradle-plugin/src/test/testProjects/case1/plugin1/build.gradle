@@ -56,14 +56,14 @@ shadow {
                 runtimeApkConfig = new Tuple2('runtime-debug.apk', ':runtime:assembleDebug')
                 pluginApks {
                     pluginApk1 {
-                        businessName = 'demo'
+                        businessName = 'plugin1'
                         partKey = 'plugin1'
                         buildTask = ':plugin1:assembleDebug'
                         apkName = 'plugin1-debug.apk'
                         apkPath = 'plugin1/build/outputs/apk/debug/plugin1-debug.apk'
                         dependsOn = ['Core', 'Base']
                         hostWhiteList = ["androidx.test.espresso",
-                                         "com.tencent.shadow.demo.interfaces"]
+                                         "com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces"]
                     }
                 }
             }
@@ -77,7 +77,7 @@ shadow {
                         apkPath = 'plugin1/build/outputs/apk/debug/plugin1-debug.apk'
                         dependsOn = ['Core', 'Base']
                         hostWhiteList = ["androidx.test.espresso",
-                                         "com.tencent.shadow.demo.interfaces"]
+                                         "com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces"]
                     }
                 }
             }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_activity_info">
+        这是一个全动态的测试程序，插件管理（test-dynamic-manager）,
+        插件框架（test-dynamic-loader及test-dynamic-runtime），
+        以及插件本身,都是动态加载的
+    </string>
+
+    <string name="start_plugin">
+        启动插件
+    </string>
+</resources>
