@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.host;
+package com.tencent.shadow.test.none_dynamic.host;
 
 import android.os.Bundle;
 import android.support.test.runner.AndroidJUnitRunner;

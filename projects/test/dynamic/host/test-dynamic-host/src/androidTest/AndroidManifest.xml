@@ -14,7 +14,7 @@
     -->
 
     <instrumentation
-        android:name="com.tencent.shadow.demo.host.CustomAndroidJUnitRunner"
+        android:name="com.tencent.shadow.test.CustomAndroidJUnitRunner"
         android:targetPackage="com.tencent.shadow.test.hostapp"
         android:targetProcesses="*"> <!-- The instrumentation attribute introduced in O -->
 

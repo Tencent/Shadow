@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.host;
+package com.tencent.shadow.test.none_dynamic.host;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.support.test.runner.intercepting.SingleActivityFactory;
 
 import com.tencent.shadow.core.loader.ShadowPluginLoader;
 import com.tencent.shadow.core.loader.managers.ComponentManager;
-import com.tencent.shadow.test.none_dynamic.host.HostApplication;
 
 public class PluginActivityTestRule<T extends Activity> extends ActivityTestRule<T> {
     final private Intent mStartIntent;
