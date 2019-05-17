@@ -89,7 +89,7 @@ private fun createGenerateConfigTask(project: Project, buildType: PluginBuildTyp
 
     val pluginApkTasks: MutableList<String> = mutableListOf()
     for (i in buildType.pluginApks) {
-        val task = ":" + (i.projectPath.replace("/", ":") + ":${i.buildTask}")
+        val task = i.buildTask
         println("pluginApkProjects task = $task")
         pluginApkTasks.add(task)
     }

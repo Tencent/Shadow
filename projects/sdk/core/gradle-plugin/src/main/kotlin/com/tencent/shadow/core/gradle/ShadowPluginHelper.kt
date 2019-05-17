@@ -92,10 +92,7 @@ open class ShadowPluginHelper {
         }
 
         fun getPluginFile(project: Project, pluginConfig: PluginApkConfig, checkExist: Boolean): File {
-            val pluginFileParent = pluginConfig.buildTask.replace("assemble", "").toLowerCase()
-            val pluginApk = "${project.rootDir}/${pluginConfig.projectPath}/build" +
-                    "/outputs/apk/$pluginFileParent/${pluginConfig.apkName}"
-            val pluginFile = File(pluginApk)
+            val pluginFile = File(project.rootDir, pluginConfig.apkPath)
             if (checkExist && !pluginFile.exists()) {
                 throw IllegalArgumentException(pluginFile.absolutePath + " , plugin file not exist...")
             }

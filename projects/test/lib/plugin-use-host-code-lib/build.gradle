@@ -1,0 +1,10 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.test.lib.plugin-use-host-code-lib'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+sourceCompatibility = "7"
+targetCompatibility = "7"

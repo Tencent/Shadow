@@ -92,7 +92,7 @@ class PackageMultiPluginTest {
 
         val pluginsJson = json["plugins"] as JSONArray
         val pluginJson = pluginsJson[0] as JSONObject
-        Assert.assertEquals("demo_main", pluginJson["partKey"])
+        Assert.assertEquals("plugin1", pluginJson["partKey"])
         Assert.assertEquals("plugin1-debug.apk", pluginJson["apkName"])
         val dependsOnJson = pluginJson["dependsOn"] as JSONArray
         Assert.assertEquals(2, dependsOnJson.size)

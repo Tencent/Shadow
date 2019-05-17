@@ -32,7 +32,7 @@ task testSdk() {
     dependsOn gradle.includedBuild('core').task(':transform:test')
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:test')
     dependsOn gradle.includedBuild('core').task(':manager:connectedDebugAndroidTest')
-    dependsOn ':projects:demo:host-apk:connectedDebugAndroidTest'
+    dependsOn ':dynamic-host-app:connectedDebugAndroidTest'
 }
 
 apply plugin: 'maven-publish'
@@ -102,6 +102,7 @@ publishing {
                 dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform-kit', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -240,7 +241,7 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
-                dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'common', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -288,6 +289,7 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'manager', publicationVersion))
+                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'loader', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
 

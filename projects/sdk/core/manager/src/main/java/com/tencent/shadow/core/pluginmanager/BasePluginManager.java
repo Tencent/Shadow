@@ -45,7 +45,7 @@ public abstract class BasePluginManager {
     /**
      * UI线程的handler
      */
-    protected Handler mHandler = new Handler(Looper.getMainLooper());
+    protected Handler mUiHandler = new Handler(Looper.getMainLooper());
 
 
     public BasePluginManager(Context context) {
