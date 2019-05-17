@@ -9,6 +9,6 @@ public interface WhiteList {
     String[] sWhiteList = new String[]
             {
                     "com.tencent.host.shadow",
-                    "com.tencent.shadow.demo.testutil",
+                    "com.tencent.shadow.test.lib.constant",
             };
 }
