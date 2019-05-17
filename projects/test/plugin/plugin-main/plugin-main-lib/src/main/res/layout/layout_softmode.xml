@@ -38,6 +38,7 @@
 
 
    <EditText
+       android:id="@+id/edit_view"
        android:layout_gravity="bottom"
        android:hint="请输入"
        android:layout_width="match_parent"
