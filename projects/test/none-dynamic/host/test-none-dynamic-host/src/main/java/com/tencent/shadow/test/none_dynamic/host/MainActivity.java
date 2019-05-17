@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void startDemoPlugin(View view) {
+    public void startPlugin(View view) {
         HostApplication application = (HostApplication) getApplication();
         application.loadPlugin(PART_MAIN);
 

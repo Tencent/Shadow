@@ -30,11 +30,11 @@ public class TestDynamicPluginManager extends FastPluginManager {
      */
     @Override
     protected String getName() {
-        return "dynamic_demo";
+        return "test-dynamic-manager";
     }
 
     /**
-     * @return demo插件so的abi
+     * @return 宿主so的ABI。插件必须和宿主使用相同的ABI。
      */
     @Override
     public String getAbi() {

@@ -56,7 +56,7 @@ shadow {
                 runtimeApkConfig = new Tuple2('runtime-debug.apk', ':runtime:assembleDebug')
                 pluginApks {
                     pluginApk1 {
-                        businessName = 'demo'
+                        businessName = 'plugin1'
                         partKey = 'plugin1'
                         buildTask = ':plugin1:assembleDebug'
                         apkName = 'plugin1-debug.apk'

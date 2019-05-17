@@ -24,11 +24,11 @@ public class PluginLoadActivity extends Activity {
 
         mViewGroup = findViewById(R.id.container);
 
-        startDemoPlugin();
+        startPlugin();
     }
 
 
-    public void startDemoPlugin() {
+    public void startPlugin() {
 
         PluginHelper.getInstance().singlePool.execute(new Runnable() {
             @Override

@@ -4,9 +4,9 @@ import android.app.Application;
 
 import com.tencent.shadow.test.plugin.general_cases.lib.gallery.cases.UseCaseManager;
 
-public class DemoApplication extends Application {
+public class TestApplication extends Application {
 
-    private static DemoApplication sInstence;
+    private static TestApplication sInstence;
 
     public boolean isOnCreate;
 
@@ -18,7 +18,7 @@ public class DemoApplication extends Application {
         UseCaseManager.initCase();
     }
 
-    public static DemoApplication getInstance(){
+    public static TestApplication getInstance() {
         return sInstence;
     }
 }

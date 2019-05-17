@@ -22,7 +22,7 @@ public class HostApplication extends Application {
 
     public final static String PART_MAIN = "partMain";
 
-    private static final PreparePluginApkBloc sDemoPluginPrepareBloc
+    private static final PreparePluginApkBloc sPluginPrepareBloc
             = new PreparePluginApkBloc(
             "plugin.apk"
     );
@@ -73,12 +73,12 @@ public class HostApplication extends Application {
         super.onCreate();
         sApp = this;
 
-        ShadowPluginLoader loader = mPluginLoader = new DemoPluginLoader(getApplicationContext());
+        ShadowPluginLoader loader = mPluginLoader = new TestPluginLoader(getApplicationContext());
         loader.onCreate();
         DelegateProviderHolder.setDelegateProvider(loader);
         ContentProviderDelegateProviderHolder.setContentProviderDelegateProvider(loader);
 
-        InstalledApk installedApk = sDemoPluginPrepareBloc.preparePlugin(this.getApplicationContext());
+        InstalledApk installedApk = sPluginPrepareBloc.preparePlugin(this.getApplicationContext());
         mPluginMap.put(PART_MAIN, installedApk);
     }
 

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="start_demo_plugin">启动demo-plugin插件</string>
-    <string name="start_groupvideo_plugin">启动群视频插件</string>
-    <string name="preload_demo_plugin">预加载demo插件</string>
+    <string name="start_plugin">启动插件</string>
 </resources>

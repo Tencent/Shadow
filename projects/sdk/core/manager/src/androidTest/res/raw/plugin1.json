@@ -8,8 +8,8 @@
   },
   "plugins": [
     {
-      "partKey": "demo_main",
-      "apkName": "demo-plugin-debug.apk",
+      "partKey": "test_main",
+      "apkName": "test-plugin-debug.apk",
       "hash": "DAC0234D1BE7F363A66263A01595DA64"
     }
   ],

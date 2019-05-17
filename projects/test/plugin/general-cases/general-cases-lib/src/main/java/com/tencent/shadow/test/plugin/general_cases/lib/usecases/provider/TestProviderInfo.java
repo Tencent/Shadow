@@ -18,7 +18,7 @@ public class TestProviderInfo {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        protected static final String TABLE_NAME = "ShadowProviderDemoDB";
+        protected static final String TABLE_NAME = "TestProviderInfo";
 
         public static final String COLUMN_NAME = "name";
     }

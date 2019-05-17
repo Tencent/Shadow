@@ -19,7 +19,7 @@ import static android.os.Environment.DIRECTORY_PODCASTS;
 abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
 
     private static final String PREFIX = "ShadowPlugin";
-    private static final String BUSINESS_NAME = "demo";
+    private static final String BUSINESS_NAME = "general-cases";
     private static final String EXPECT_NAME = PREFIX + "_" + BUSINESS_NAME;
 
     @Test

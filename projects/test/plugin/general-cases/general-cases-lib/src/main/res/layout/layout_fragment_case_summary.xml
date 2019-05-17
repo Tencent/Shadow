@@ -22,7 +22,7 @@
             android:paddingLeft="6dp"
             android:textColor="@android:color/black"
             android:textSize="16sp"
-            android:text="Shadow 测试Demo"
+            android:text="Shadow主测试用例集合"
             />
 
         <Button

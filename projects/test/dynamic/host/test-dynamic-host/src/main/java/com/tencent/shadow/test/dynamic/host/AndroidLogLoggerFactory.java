@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class DemoLoggerFactory implements ILoggerFactory {
+public class AndroidLogLoggerFactory implements ILoggerFactory {
 
     private static final int LOG_LEVEL_TRACE = 5;
     private static final int LOG_LEVEL_DEBUG = 4;
@@ -18,7 +18,7 @@ public class DemoLoggerFactory implements ILoggerFactory {
     private static final int LOG_LEVEL_WARN = 2;
     private static final int LOG_LEVEL_ERROR = 1;
 
-    private static DemoLoggerFactory sInstance = new DemoLoggerFactory();
+    private static AndroidLogLoggerFactory sInstance = new AndroidLogLoggerFactory();
 
     public static ILoggerFactory getInstance() {
         return sInstance;
