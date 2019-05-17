@@ -7,8 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
-import com.tencent.shadow.demo.testutil.Constant;
 import com.tencent.shadow.dynamic.host.EnterCallback;
+import com.tencent.shadow.test.lib.constant.Constant;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

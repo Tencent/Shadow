@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.tencent.shadow.demo.testutil.Constant;
+import com.tencent.shadow.test.lib.constant.Constant;
 import com.tencent.shadow.test.lib.custom_view.TestViewConstructorCacheView;
 
 

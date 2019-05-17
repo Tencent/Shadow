@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.tencent.shadow.demo.testutil.Constant;
 import com.tencent.shadow.dynamic.host.EnterCallback;
+import com.tencent.shadow.test.lib.constant.Constant;
 
 public class JumpToPluginActivity extends Activity {
 

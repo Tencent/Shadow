@@ -6,8 +6,8 @@ import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.tencent.shadow.demo.testutil.Constant;
 import com.tencent.shadow.dynamic.host.EnterCallback;
+import com.tencent.shadow.test.lib.constant.Constant;
 
 
 public class PluginLoadActivity extends Activity {

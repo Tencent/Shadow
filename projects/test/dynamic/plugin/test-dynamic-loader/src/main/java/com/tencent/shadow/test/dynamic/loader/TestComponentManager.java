@@ -5,7 +5,7 @@ import android.content.Context;
 
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo;
 import com.tencent.shadow.core.loader.managers.ComponentManager;
-import com.tencent.shadow.demo.testutil.Constant;
+import com.tencent.shadow.test.lib.constant.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
