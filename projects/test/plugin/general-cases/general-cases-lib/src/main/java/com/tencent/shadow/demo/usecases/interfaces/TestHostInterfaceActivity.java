@@ -7,9 +7,9 @@ import android.widget.TextView;
 
 import com.tencent.shadow.demo.gallery.R;
 import com.tencent.shadow.demo.gallery.cases.entity.UseCase;
-import com.tencent.shadow.demo.interfaces.HostTestInterface;
-import com.tencent.shadow.demo.other.HostOtherInterface;
 import com.tencent.shadow.demo.usecases.BaseAndroidTestActivity;
+import com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces.HostTestInterface;
+import com.tencent.shadow.test.lib.plugin_use_host_code_lib.other.HostOtherInterface;
 
 public class TestHostInterfaceActivity extends BaseAndroidTestActivity {
 

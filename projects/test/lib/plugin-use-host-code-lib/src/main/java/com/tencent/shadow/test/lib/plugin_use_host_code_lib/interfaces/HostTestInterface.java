@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.interfaces;
+package com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces;
 
 public class HostTestInterface {
 

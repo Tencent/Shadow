@@ -7,7 +7,7 @@ import androidx.test.espresso.Espresso;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 
-import com.tencent.shadow.demo.interfaces.HostTestInterface;
+import com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces.HostTestInterface;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;

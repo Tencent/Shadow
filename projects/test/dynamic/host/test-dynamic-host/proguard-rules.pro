@@ -28,6 +28,6 @@
 -keep class com.tencent.shadow.runtime.container.**{*;}
 
 #--start 下面是为了keep 插件访问宿主的白名单类--
--keep class com.tencent.shadow.demo.interfaces.**{*;}
--keep class com.tencent.shadow.demo.other.**{*;}
+-keep class com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces.**{*;}
+-keep class com.tencent.shadow.test.lib.plugin_use_host_code_lib.other.**{*;}
 #--end--

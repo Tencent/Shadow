@@ -44,7 +44,7 @@ shadow {
                         apkName = 'test-plugin-general-cases-debug.apk'
                         apkPath = 'projects/test/plugin/general-cases/test-plugin-general-cases/build/outputs/apk/debug/test-plugin-general-cases-debug.apk'
                         hostWhiteList = ["androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
-                                         "com.tencent.shadow.demo.interfaces"]//测试插件访问宿主白名单类
+                                         "com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces"]//测试插件访问宿主白名单类
                     }
                     pluginApk2 {
                         businessName = 'plugin-multidex'
@@ -74,7 +74,7 @@ shadow {
                         apkName = 'test-plugin-general-cases-release.apk'
                         apkPath = 'projects/test/plugin/general-cases/test-plugin-general-cases/build/outputs/apk/release/test-plugin-general-cases-release.apk'
                         hostWhiteList = ["androidx.test.espresso",//这个包添加是为了插件demo中可以访问测试框架的类
-                                         "com.tencent.shadow.demo.interfaces"]//测试插件访问宿主白名单类
+                                         "com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces"]//测试插件访问宿主白名单类
                     }
                     pluginApk2 {
                         businessName = 'plugin-multidex'
