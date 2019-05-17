@@ -58,7 +58,7 @@ public class TestComponentManager extends ComponentManager {
         if (partKey.equals(Constant.PART_KEY_PLUGIN_MAIN_APP)) {
             broadcastInfos.add(
                     new ComponentManager.BroadcastInfo(
-                            "com.tencent.shadow.demo.usecases.receiver.MyReceiver",
+                            "com.tencent.shadow.test.plugin.general_cases.lib.usecases.receiver.MyReceiver",
                             new String[]{"com.tencent.test.action"}
                     )
             );

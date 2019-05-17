@@ -8,7 +8,7 @@
 
 
     <fragment
-        android:name="com.tencent.shadow.demo.usecases.fragment.TestFragment"
+        android:name="com.tencent.shadow.test.plugin.general_cases.lib.usecases.fragment.TestFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

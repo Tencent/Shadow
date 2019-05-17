@@ -20,7 +20,7 @@ public class HostInterfaceTest extends PluginMainAppTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.interfaces.TestHostInterfaceActivity"
+                "com.tencent.shadow.test.plugin.general_cases.lib.usecases.interfaces.TestHostInterfaceActivity"
         );
         return pluginIntent;
     }

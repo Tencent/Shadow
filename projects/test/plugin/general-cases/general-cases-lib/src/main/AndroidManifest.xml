@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tencent.shadow.demo.gallery">
+    package="com.tencent.shadow.test.plugin.general_cases.lib">
 
     <uses-feature android:glEsVersion="0x00020000" />
 
     <application
-        android:name="com.tencent.shadow.demo.gallery.DemoApplication"
+        android:name=".gallery.DemoApplication"
         android:icon="@android:drawable/sym_def_app_icon"
         android:theme="@android:style/Theme.NoTitleBar"
         android:label="@string/app_name">
         <activity
-            android:name="com.tencent.shadow.demo.gallery.splash.SplashActivity"
+            android:name=".gallery.splash.SplashActivity"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="singleTask"
             >
@@ -23,70 +23,72 @@
 
         <meta-data android:name="test_meta" android:value="test_value" />
 
-        <activity android:name="com.tencent.shadow.demo.gallery.MainActivity" />
+        <activity android:name=".gallery.MainActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityReCreate" />
+        <activity android:name=".usecases.activity.TestActivityReCreate" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate" />
+        <activity android:name=".usecases.activity.TestActivityOnCreate" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityOrientation"
+        <activity
+            android:name=".usecases.activity.TestActivityOrientation"
             android:configChanges="orientation|screenSize|fontScale"
             android:windowSoftInputMode="adjustResize"
             />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityWindowSoftMode"
+        <activity
+            android:name=".usecases.activity.TestActivityWindowSoftMode"
             android:windowSoftInputMode="stateVisible"
             />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.activity.WindowSoftModeJumpActivity" />
+        <activity android:name=".usecases.activity.WindowSoftModeJumpActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.provider.TestDBContentProviderActivity"/>
+        <activity android:name=".usecases.provider.TestDBContentProviderActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.activity.TestActivityReCreateBySystem" />
+        <activity android:name=".usecases.activity.TestActivityReCreateBySystem" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.service.TestStartServiceActivity" />
+        <activity android:name=".usecases.service.TestStartServiceActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.receiver.TestReceiverActivity" />
+        <activity android:name=".usecases.receiver.TestReceiverActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.receiver.TestDynamicReceiverActivity" />
+        <activity android:name=".usecases.receiver.TestDynamicReceiverActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.fragment.TestDynamicFragmentActivity" />
+        <activity android:name=".usecases.fragment.TestDynamicFragmentActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.fragment.TestXmlFragmentActivity" />
+        <activity android:name=".usecases.fragment.TestXmlFragmentActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.dialog.TestDialogActivity" />
+        <activity android:name=".usecases.dialog.TestDialogActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.view.TestViewConstructorCache" />
+        <activity android:name=".usecases.view.TestViewConstructorCache" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.packagemanager.TestPackageManagerActivity" />
+        <activity android:name=".usecases.packagemanager.TestPackageManagerActivity" />
 
-        <service android:name="com.tencent.shadow.demo.usecases.service.TestService"/>
+        <service android:name=".usecases.service.TestService" />
 
-        <receiver android:name="com.tencent.shadow.demo.usecases.receiver.MyReceiver">
+        <receiver android:name=".usecases.receiver.MyReceiver">
             <intent-filter>
                 <action android:name="com.tencent.test.action"/>
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.tencent.shadow.demo.usecases.provider.TestFileProviderActivity" />
+        <activity android:name=".usecases.provider.TestFileProviderActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.activity.JumpActivity" />
+        <activity android:name=".usecases.activity.JumpActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.activity.TestCallingActivity" />
+        <activity android:name=".usecases.activity.TestCallingActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.application.TestApplicationActivity" />
+        <activity android:name=".usecases.application.TestApplicationActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.interfaces.TestHostInterfaceActivity" />
+        <activity android:name=".usecases.interfaces.TestHostInterfaceActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.context.ActivityContextSubDirTestActivity" />
+        <activity android:name=".usecases.context.ActivityContextSubDirTestActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.context.ServiceContextSubDirTestActivity" />
+        <activity android:name=".usecases.context.ServiceContextSubDirTestActivity" />
 
-        <activity android:name="com.tencent.shadow.demo.usecases.context.ApplicationContextSubDirTestActivity" />
+        <activity android:name=".usecases.context.ApplicationContextSubDirTestActivity" />
 
         <provider
             android:authorities="com.tencent.shadow.provider.test"
-            android:name="com.tencent.shadow.demo.usecases.provider.TestProvider"/>
+            android:name=".usecases.provider.TestProvider" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

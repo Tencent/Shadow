@@ -29,7 +29,7 @@ public class BasicTest {
         Intent pluginIntent = new Intent();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate"
+                "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestActivityOnCreate"
         );
         return PluginActivityTestRule.build(pluginIntent);
     }

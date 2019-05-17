@@ -11,7 +11,7 @@ public class ServiceContextSubDirTest extends SubDirContextThemeWrapperTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.context.ServiceContextSubDirTestActivity"
+                "com.tencent.shadow.test.plugin.general_cases.lib.usecases.context.ServiceContextSubDirTestActivity"
         );
         return pluginIntent;
     }

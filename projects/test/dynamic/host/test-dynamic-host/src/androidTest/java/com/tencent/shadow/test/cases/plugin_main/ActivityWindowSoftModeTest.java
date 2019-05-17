@@ -40,7 +40,7 @@ public class ActivityWindowSoftModeTest extends PluginMainAppTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.activity.WindowSoftModeJumpActivity"
+                "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.WindowSoftModeJumpActivity"
         );
         return pluginIntent;
     }

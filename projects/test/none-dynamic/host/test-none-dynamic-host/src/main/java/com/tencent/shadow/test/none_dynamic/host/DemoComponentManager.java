@@ -17,7 +17,7 @@ public class DemoComponentManager extends ComponentManager {
 
     @Override
     public ComponentName onBindContainerActivity(ComponentName componentName) {
-        if(componentName.getClassName().equals("com.tencent.shadow.demo.usecases.activity.TestActivityOrientation")){
+        if (componentName.getClassName().equals("com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestActivityOrientation")) {
             return sSingleTaskContainer;
         }
         return sDefaultContainer;
@@ -33,7 +33,7 @@ public class DemoComponentManager extends ComponentManager {
     @Override
     public List<BroadcastInfo> getBroadcastInfoList(String partKey) {
         List<ComponentManager.BroadcastInfo> broadcastInfos = new ArrayList<>();
-        broadcastInfos.add(new ComponentManager.BroadcastInfo("com.tencent.shadow.demo.usecases.receiver.MyReceiver",
+        broadcastInfos.add(new ComponentManager.BroadcastInfo("com.tencent.shadow.test.plugin.general_cases.lib.usecases.receiver.MyReceiver",
                 new String[]{"com.tencent.test.action"}));
         return broadcastInfos;
     }

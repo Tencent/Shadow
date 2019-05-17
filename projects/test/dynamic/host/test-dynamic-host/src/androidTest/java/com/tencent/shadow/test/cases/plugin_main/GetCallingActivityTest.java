@@ -18,9 +18,9 @@ public class GetCallingActivityTest extends PluginMainAppTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.activity.JumpActivity"
+                "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.JumpActivity"
         );
-        pluginIntent.putExtra("targetClassName", "com.tencent.shadow.demo.usecases.activity.TestCallingActivity");
+        pluginIntent.putExtra("targetClassName", "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestCallingActivity");
         return pluginIntent;
     }
 
@@ -28,6 +28,6 @@ public class GetCallingActivityTest extends PluginMainAppTest {
     public void testGetCallingActivity() {
         Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button"))).perform(ViewActions.click());
 
-        matchTextWithViewTag("text", "com.tencent.shadow.demo.usecases.activity.JumpActivity");
+        matchTextWithViewTag("text", "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.JumpActivity");
     }
 }

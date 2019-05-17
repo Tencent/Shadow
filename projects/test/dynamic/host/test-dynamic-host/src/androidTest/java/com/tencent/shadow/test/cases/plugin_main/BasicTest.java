@@ -36,7 +36,7 @@ public class BasicTest extends PluginMainAppTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.activity.TestActivityOnCreate"
+                "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestActivityOnCreate"
         );
         return pluginIntent;
     }

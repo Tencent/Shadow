@@ -11,7 +11,7 @@ public class ActivityContextSubDirTest extends PluginMainAppTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.demo.usecases.context.ActivityContextSubDirTestActivity"
+                "com.tencent.shadow.test.plugin.general_cases.lib.usecases.context.ActivityContextSubDirTestActivity"
         );
         return pluginIntent;
     }

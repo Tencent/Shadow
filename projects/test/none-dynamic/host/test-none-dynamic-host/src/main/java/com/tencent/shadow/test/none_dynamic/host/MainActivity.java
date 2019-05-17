@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
         application.loadPlugin(PART_MAIN);
 
         Intent pluginIntent = new Intent();
-        pluginIntent.setClassName(getPackageName(), "com.tencent.shadow.demo.gallery.splash.SplashActivity");
+        pluginIntent.setClassName(getPackageName(), "com.tencent.shadow.test.plugin.general_cases.lib.gallery.splash.SplashActivity");
 
         Intent intent = application.getPluginLoader().getMComponentManager().convertPluginActivityIntent(pluginIntent);
         startActivity(intent);
