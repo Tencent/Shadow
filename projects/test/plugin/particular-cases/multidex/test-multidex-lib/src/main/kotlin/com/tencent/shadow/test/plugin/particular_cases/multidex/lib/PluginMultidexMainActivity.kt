@@ -1,4 +1,4 @@
-package com.tencent.shadow.demo.plugin.multidex.main
+package com.tencent.shadow.test.plugin.particular_cases.multidex.lib
 
 import android.app.Activity
 import android.os.Bundle

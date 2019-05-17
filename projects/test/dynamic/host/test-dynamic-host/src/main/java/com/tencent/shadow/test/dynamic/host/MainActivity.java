@@ -55,10 +55,10 @@ public class MainActivity extends Activity {
                         intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.test.plugin.general_cases.lib.gallery.splash.SplashActivity");
                         break;
                     case Constant.PART_KEY_MULTIDEX_V1_0_2:
-                        intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.demo.plugin.multidex.v1_0_2.PluginMultidexV1_0_2Activity");
+                        intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.test.plugin.particular_cases.multidex.v1_0_2.PluginMultidexV1_0_2Activity");
                         break;
                     case Constant.PART_KEY_MULTIDEX_V2_0_1:
-                        intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.demo.plugin.multidex.v2_0_1.PluginMultidexV2_0_1Activity");
+                        intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.test.plugin.particular_cases.multidex.v2_0_1.PluginMultidexV2_0_1Activity");
                         break;
                 }
                 startActivity(intent);
