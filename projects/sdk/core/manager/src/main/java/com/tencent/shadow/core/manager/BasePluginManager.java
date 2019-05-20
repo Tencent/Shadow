@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.pluginmanager;
+package com.tencent.shadow.core.manager;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,16 +7,16 @@ import android.os.Looper;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
-import com.tencent.shadow.core.pluginmanager.installplugin.AppCacheFolderManager;
-import com.tencent.shadow.core.pluginmanager.installplugin.CopySoBloc;
-import com.tencent.shadow.core.pluginmanager.installplugin.InstallPluginException;
-import com.tencent.shadow.core.pluginmanager.installplugin.InstalledDao;
-import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
-import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPluginDBHelper;
-import com.tencent.shadow.core.pluginmanager.installplugin.InstalledType;
-import com.tencent.shadow.core.pluginmanager.installplugin.ODexBloc;
-import com.tencent.shadow.core.pluginmanager.installplugin.PluginConfig;
-import com.tencent.shadow.core.pluginmanager.installplugin.UnpackManager;
+import com.tencent.shadow.core.manager.installplugin.AppCacheFolderManager;
+import com.tencent.shadow.core.manager.installplugin.CopySoBloc;
+import com.tencent.shadow.core.manager.installplugin.InstallPluginException;
+import com.tencent.shadow.core.manager.installplugin.InstalledDao;
+import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
+import com.tencent.shadow.core.manager.installplugin.InstalledPluginDBHelper;
+import com.tencent.shadow.core.manager.installplugin.InstalledType;
+import com.tencent.shadow.core.manager.installplugin.ODexBloc;
+import com.tencent.shadow.core.manager.installplugin.PluginConfig;
+import com.tencent.shadow.core.manager.installplugin.UnpackManager;
 
 import org.json.JSONException;
 

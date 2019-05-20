@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.pluginmanager.installplugin;
+package com.tencent.shadow.core.manager.installplugin;
 
 import java.io.File;
 import java.io.IOException;
