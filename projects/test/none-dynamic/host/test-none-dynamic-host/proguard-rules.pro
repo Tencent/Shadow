@@ -25,4 +25,4 @@
 
 -keep class com.tencent.shadow.dynamic.host.**{*;}
 -keep class com.tencent.shadow.core.common.**{*;}
--keep class com.tencent.shadow.runtime.**{*;}
+-keep class com.tencent.shadow.core.runtime.**{*;}

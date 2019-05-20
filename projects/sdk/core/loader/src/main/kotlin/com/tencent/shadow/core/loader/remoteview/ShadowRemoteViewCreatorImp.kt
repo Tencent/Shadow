@@ -3,10 +3,10 @@ package com.tencent.shadow.core.loader.remoteview
 import android.content.Context
 import android.view.View
 import com.tencent.shadow.core.loader.ShadowPluginLoader
-import com.tencent.shadow.runtime.ShadowContext
-import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreateCallback
-import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreateException
-import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator
+import com.tencent.shadow.core.runtime.ShadowContext
+import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreateCallback
+import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreateException
+import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreator
 
 internal class ShadowRemoteViewCreatorImp(private val context: Context, private val shadowPluginLoader: ShadowPluginLoader) : ShadowRemoteViewCreator {
 

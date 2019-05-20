@@ -12,13 +12,13 @@ import java.util.*
 class PackageManagerTransform : SpecificTransform() {
     companion object {
         const val AndroidPackageManagerClassname = "android.content.pm.PackageManager"
-        const val ShadowAndroidPackageManagerClassname = "com.tencent.shadow.runtime.ShadowPackageManager"
+        const val ShadowAndroidPackageManagerClassname = "com.tencent.shadow.core.runtime.ShadowPackageManager"
         const val AndroidProviderInfo = "android.content.pm.ProviderInfo"
         const val AndroidActivityInfo = "android.content.pm.ActivityInfo"
         const val AndroidApplicationInfo = "android.content.pm.ApplicationInfo"
         const val AndroidServiceInfo = "android.content.pm.ServiceInfo"
         const val AndroidPackageItemInfo = "android.content.pm.PackageItemInfo"
-        const val ShadowAndroidPackageItemInfo = "com.tencent.shadow.runtime.ShadowPackageItemInfo"
+        const val ShadowAndroidPackageItemInfo = "com.tencent.shadow.core.runtime.ShadowPackageItemInfo"
     }
 
     private fun setup(

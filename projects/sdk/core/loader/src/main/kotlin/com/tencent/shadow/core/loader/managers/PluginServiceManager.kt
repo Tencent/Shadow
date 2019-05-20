@@ -10,8 +10,8 @@ import android.os.IBinder
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.delegates.ShadowDelegate
-import com.tencent.shadow.runtime.ShadowApplication
-import com.tencent.shadow.runtime.ShadowService
+import com.tencent.shadow.core.runtime.ShadowApplication
+import com.tencent.shadow.core.runtime.ShadowService
 
 /**
  * 插件service管理类，负责插件框架内所有service启动，销毁，生命周期管理

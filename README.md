@@ -49,7 +49,7 @@ Shadow（Shadow框架分为Core和Dynamic两部分）
 ## 首次打开工程时遇到SDK location not found.
 https://git.oa.com/shadow/shadow/issues/14
 
-## 编译失败遇到`Failed to find byte code for com/tencent/shadow/runtime/....`
+## 编译失败遇到`Failed to find byte code for com/tencent/shadow/core/runtime/....`
 请关闭Android Studio的Instant Run功能。
 
 ## 代码结构

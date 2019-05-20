@@ -12,7 +12,7 @@ final class LoaderImplLoader extends ImplLoader {
     private static final String[] sInterfaces = new String[]{
             //当runtime是动态加载的时候，runtime的ClassLoader是PathClassLoader的parent，
             // 所以不需要写在这个白名单里。但是写在这里不影响，也可以兼容runtime打包在宿主的情况。
-            "com.tencent.shadow.runtime.container",
+            "com.tencent.shadow.core.runtime.container",
             "com.tencent.shadow.dynamic.host",
             "com.tencent.shadow.core.common"
     };

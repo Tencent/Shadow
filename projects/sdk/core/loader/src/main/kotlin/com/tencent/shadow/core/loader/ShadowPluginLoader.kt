@@ -19,17 +19,17 @@ import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.core.loader.managers.PluginServiceManager
 import com.tencent.shadow.core.loader.remoteview.ShadowRemoteViewCreatorImp
-import com.tencent.shadow.runtime.UriParseDelegate
-import com.tencent.shadow.runtime.container.*
-import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator
-import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
+import com.tencent.shadow.core.runtime.UriParseDelegate
+import com.tencent.shadow.core.runtime.container.*
+import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreator
+import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, DI ,ContentProviderDelegateProvider {
+abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, DI, ContentProviderDelegateProvider {
 
     private val mExecutorService = Executors.newCachedThreadPool()
 

@@ -25,7 +25,7 @@
 
 -keep class com.tencent.shadow.dynamic.host.**{*;}
 -keep class com.tencent.shadow.core.common.**{*;}
--keep class com.tencent.shadow.runtime.container.**{*;}
+-keep class com.tencent.shadow.core.runtime.container.**{*;}
 
 #--start 下面是为了keep 插件访问宿主的白名单类--
 -keep class com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces.**{*;}

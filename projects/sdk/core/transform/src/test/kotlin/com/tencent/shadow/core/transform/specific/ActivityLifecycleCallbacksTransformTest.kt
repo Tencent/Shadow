@@ -45,7 +45,7 @@ class ActivityLifecycleCallbacksTransformTest : AbstractTransformTest() {
 
             Assert.assertTrue("transform后应该能找到新的" + "get" + "方法",
                     try {
-                        it.getMethod("get", "()Lcom/tencent/shadow/runtime/ShadowActivityLifecycleCallbacks;")
+                        it.getMethod("get", "()Lcom/tencent/shadow/core/runtime/ShadowActivityLifecycleCallbacks;")
                         true
                     } catch (e: NotFoundException) {
                         false
@@ -54,7 +54,7 @@ class ActivityLifecycleCallbacksTransformTest : AbstractTransformTest() {
 
             Assert.assertEquals(
                     "ActivityLifecycleCallbacks接口应该都变为了ShadowActivityLifecycleCallbacks",
-                    "com.tencent.shadow.runtime.ShadowActivityLifecycleCallbacks",
+                    "com.tencent.shadow.core.runtime.ShadowActivityLifecycleCallbacks",
                     it.classFile.interfaces[0]
             )
         }
