@@ -14,20 +14,19 @@ import com.tencent.shadow.runtime.container.DelegateProviderHolder
 import java.util.concurrent.CountDownLatch
 
 internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
+    companion object {
+        private const val CORE_LOADER_FACTORY_IMPL_NAME =
+                "com.tencent.shadow.dynamic.loader.impl.CoreLoaderFactoryImpl"
+    }
     fun setUuidManager(p0: UuidManager?) {
         if (p0 != null)
             mUuidManager = p0
         //todo #30 兼容mUuidManager为null时的逻辑
     }
 
-    companion object {
-
-        private val CLASSS_PLUGIN_LOADER_IMPL = "com.tencent.shadow.sdk.pluginloader.PluginLoaderImpl"//todo #31 这个类名的包名不规范
-    }
-
     private val mPluginLoader: ShadowPluginLoader
 
-    private val mApkClassLoader = DynamicPluginLoader::class.java.classLoader
+    private val mDynamicLoaderClassLoader: ClassLoader = DynamicPluginLoader::class.java.classLoader!!
 
     private var mContext: Context;
 
@@ -44,9 +43,11 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     init {
         try {
-            val parameterTypes: Array<Class<*>> = arrayOf(Context::class.java)
-            val parameters: Array<Any> = arrayOf(hostContext)
-            mPluginLoader = mApkClassLoader.getInterface(ShadowPluginLoader::class.java, CLASSS_PLUGIN_LOADER_IMPL, parameterTypes, parameters)
+            val coreLoaderFactory = mDynamicLoaderClassLoader.getInterface(
+                    CoreLoaderFactory::class.java,
+                    CORE_LOADER_FACTORY_IMPL_NAME
+            )
+            mPluginLoader = coreLoaderFactory.build(hostContext)
             DelegateProviderHolder.setDelegateProvider(mPluginLoader)
             ContentProviderDelegateProviderHolder.setContentProviderDelegateProvider(mPluginLoader)
             mPluginLoader.onCreate()
@@ -206,34 +207,6 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
         } catch (e: IllegalAccessException) {
             throw Exception(e)
         }
-    }
-
-    /**
-     * 从apk中读取接口的实现
-     *
-     * @param clazz     接口类
-     * @param className 实现类的类名
-     * @param <T>       接口类型
-     * @return 所需接口
-     * @throws Exception
-    </T> */
-    @Throws(Exception::class)
-    fun <T> ClassLoader.getInterface(clazz: Class<T>, className: String, parameterTypes: Array<Class<*>>, parameters: Array<Any>): T {
-        try {
-            val interfaceImplementClass = loadClass(className)
-            val constructor = interfaceImplementClass.getConstructor(*parameterTypes)
-            val interfaceImplement = constructor.newInstance(*parameters)
-            return clazz.cast(interfaceImplement)
-        } catch (e: ClassNotFoundException) {
-            throw Exception(e)
-        } catch (e: InstantiationException) {
-            throw Exception(e)
-        } catch (e: ClassCastException) {
-            throw Exception(e)
-        } catch (e: IllegalAccessException) {
-            throw Exception(e)
-        }
-
     }
 
 }
