@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 
-import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
+import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.EnterCallback;
 import com.tencent.shadow.test.lib.constant.Constant;
 

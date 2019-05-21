@@ -7,8 +7,8 @@ import android.os.RemoteException;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
-import com.tencent.shadow.core.pluginmanager.installplugin.InstalledPlugin;
-import com.tencent.shadow.core.pluginmanager.installplugin.InstalledType;
+import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
+import com.tencent.shadow.core.manager.installplugin.InstalledType;
 import com.tencent.shadow.dynamic.host.FailedException;
 import com.tencent.shadow.dynamic.manager.PluginManagerThatUseDynamicLoader;
 

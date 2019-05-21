@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.pluginmanager.installplugin;
+package com.tencent.shadow.core.manager.installplugin;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.tencent.shadow.core.pluginmanager.installplugin;
+package com.tencent.shadow.core.manager.installplugin;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.tencent.shadow.core.pluginmanager.installplugin.InstalledPluginDBHelper.DB_NAME_PREFIX;
-import static com.tencent.shadow.core.pluginmanager.test.R.raw;
+import static com.tencent.shadow.core.manager.installplugin.InstalledPluginDBHelper.DB_NAME_PREFIX;
+import static com.tencent.shadow.core.manager.test.R.raw;
 
 /**
  * 数据库兼容性测试

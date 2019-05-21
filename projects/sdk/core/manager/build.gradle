@@ -12,7 +12,7 @@ android {
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
 
-        testInstrumentationRunner "com.tencent.shadow.core.pluginmanager.CustomAndroidJUnitRunner"
+        testInstrumentationRunner "com.tencent.shadow.core.manager.CustomAndroidJUnitRunner"
 
     }
     buildTypes {
