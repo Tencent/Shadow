@@ -9,12 +9,12 @@ import com.tencent.shadow.core.loader.BuildConfig
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginComponentInfo
 import com.tencent.shadow.core.loader.infos.PluginInfo
-import com.tencent.shadow.runtime.ShadowContext
-import com.tencent.shadow.runtime.ShadowContext.PluginComponentLauncher
-import com.tencent.shadow.runtime.container.DelegateProvider.LOADER_VERSION_KEY
-import com.tencent.shadow.runtime.container.DelegateProvider.PROCESS_ID_KEY
-import com.tencent.shadow.runtime.container.DelegateProviderHolder
-import com.tencent.shadow.runtime.container.HostActivityDelegator
+import com.tencent.shadow.core.runtime.ShadowContext
+import com.tencent.shadow.core.runtime.ShadowContext.PluginComponentLauncher
+import com.tencent.shadow.core.runtime.container.DelegateProvider.LOADER_VERSION_KEY
+import com.tencent.shadow.core.runtime.container.DelegateProvider.PROCESS_ID_KEY
+import com.tencent.shadow.core.runtime.container.DelegateProviderHolder
+import com.tencent.shadow.core.runtime.container.HostActivityDelegator
 
 /**
  * 插件组件管理
@@ -231,7 +231,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         containerIntent.putExtra(CM_PART_KEY, partKey)
         containerIntent.putExtra(CM_LOADER_BUNDLE_KEY, bundleForPluginLoader)
         containerIntent.putExtra(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME)
-        containerIntent.putExtra(PROCESS_ID_KEY,DelegateProviderHolder.sCustomPid)
+        containerIntent.putExtra(PROCESS_ID_KEY, DelegateProviderHolder.sCustomPid)
         return containerIntent
     }
 

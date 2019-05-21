@@ -8,9 +8,9 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import com.tencent.shadow.core.loader.ShadowPluginLoader
+import com.tencent.shadow.core.runtime.container.ContentProviderDelegateProviderHolder
+import com.tencent.shadow.core.runtime.container.DelegateProviderHolder
 import com.tencent.shadow.dynamic.host.UuidManager
-import com.tencent.shadow.runtime.container.ContentProviderDelegateProviderHolder
-import com.tencent.shadow.runtime.container.DelegateProviderHolder
 import java.util.concurrent.CountDownLatch
 
 internal class DynamicPluginLoader(hostContext: Context, uuid: String) {

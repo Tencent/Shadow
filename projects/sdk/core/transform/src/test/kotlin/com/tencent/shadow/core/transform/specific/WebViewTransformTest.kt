@@ -11,11 +11,11 @@ import org.junit.Test
 class WebViewTransformTest : AbstractTransformTest() {
 
     val webViewClazz = sLoader["android.webkit.WebView"]
-    val shadowWebViewClazz = sLoader["com.tencent.shadow.runtime.ShadowWebView"]
+    val shadowWebViewClazz = sLoader["com.tencent.shadow.core.runtime.ShadowWebView"]
 
     @Test
     fun testWebViewTransform() {
-        val allInputClass = setOf(sLoader["test.TestWebView"], sLoader["com.tencent.shadow.runtime.ShadowWebView"])
+        val allInputClass = setOf(sLoader["test.TestWebView"], sLoader["com.tencent.shadow.core.runtime.ShadowWebView"])
 
         val webViewTransform = WebViewTransform()
         webViewTransform.mClassPool = sLoader
@@ -48,7 +48,7 @@ class WebViewTransformTest : AbstractTransformTest() {
         if (clazz.classFile.name == "test.TestWebView") {
             Assert.assertEquals(
                     "WebView父类应该都变为了ShadowWebView",
-                    "com.tencent.shadow.runtime.ShadowWebView",
+                    "com.tencent.shadow.core.runtime.ShadowWebView",
                     clazz.classFile.superclass
             )
 

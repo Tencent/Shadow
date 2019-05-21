@@ -7,7 +7,7 @@ import android.os.Bundle
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.infos.PluginProviderInfo
-import com.tencent.shadow.runtime.UriParseDelegate
+import com.tencent.shadow.core.runtime.UriParseDelegate
 import java.util.HashMap
 import kotlin.collections.HashSet
 import kotlin.collections.set

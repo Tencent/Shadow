@@ -84,7 +84,7 @@
 
         <provider
             android:authorities="com.tencent.shadow.contentprovider.authority.dynamic"
-            android:name="com.tencent.shadow.runtime.container.PluginContainerContentProvider"
+            android:name="com.tencent.shadow.core.runtime.container.PluginContainerContentProvider"
             />
 
         <service android:name=".PluginProcessPPS"

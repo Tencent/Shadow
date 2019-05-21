@@ -33,7 +33,7 @@ class PluginClassLoader(
     private val allHostWhiteList: Array<String>
 
     init {
-        val defaultWhiteList = arrayOf("com.tencent.shadow.runtime",
+        val defaultWhiteList = arrayOf("com.tencent.shadow.core.runtime",
                                "org.apache.commons.logging"//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
         )
         if (hostWhiteList != null) {

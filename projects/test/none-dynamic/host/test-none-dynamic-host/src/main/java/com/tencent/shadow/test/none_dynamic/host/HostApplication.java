@@ -9,8 +9,8 @@ import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.core.load_parameters.LoadParameters;
 import com.tencent.shadow.core.loader.ShadowPluginLoader;
-import com.tencent.shadow.runtime.container.ContentProviderDelegateProviderHolder;
-import com.tencent.shadow.runtime.container.DelegateProviderHolder;
+import com.tencent.shadow.core.runtime.container.ContentProviderDelegateProviderHolder;
+import com.tencent.shadow.core.runtime.container.DelegateProviderHolder;
 
 import java.util.HashMap;
 import java.util.Map;

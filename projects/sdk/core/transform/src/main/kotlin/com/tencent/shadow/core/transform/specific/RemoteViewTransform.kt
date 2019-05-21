@@ -14,13 +14,13 @@ class RemoteViewTransform : SpecificTransform() {
         const val RemoteLocalSdkPackageName = "com.tencent.shadow.remoteview.localsdk"
         val RemoteViewRenameMap = mapOf(
                 "com.tencent.shadow.remoteview.localsdk.RemoteViewCreator"
-                        to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreator",
+                        to "com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreator",
                 "com.tencent.shadow.remoteview.localsdk.RemoteViewCreatorFactory"
-                        to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorFactory",
+                        to "com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorFactory",
                 "com.tencent.shadow.remoteview.localsdk.RemoteViewCreateCallback"
-                        to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreateCallback",
+                        to "com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreateCallback",
                 "com.tencent.shadow.remoteview.localsdk.RemoteViewCreateException"
-                        to "com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreateException"
+                        to "com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreateException"
         )
     }
 

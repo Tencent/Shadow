@@ -7,11 +7,11 @@ import java.io.File
 class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : SpecificTransform() {
     companion object {
         const val FragmentClassname = "android.app.Fragment"
-        const val ShadowFragmentClassname = "com.tencent.shadow.runtime.ShadowFragment"
+        const val ShadowFragmentClassname = "com.tencent.shadow.core.runtime.ShadowFragment"
         const val DialogFragmentClassname = "android.app.DialogFragment"
-        const val ShadowDialogFragmentClassname = "com.tencent.shadow.runtime.ShadowDialogFragment"
-        const val ContainerFragmentClassname = "com.tencent.shadow.runtime.ContainerFragment"
-        const val ContainerDialogFragmentClassname = "com.tencent.shadow.runtime.ContainerDialogFragment"
+        const val ShadowDialogFragmentClassname = "com.tencent.shadow.core.runtime.ShadowDialogFragment"
+        const val ContainerFragmentClassname = "com.tencent.shadow.core.runtime.ContainerFragment"
+        const val ContainerDialogFragmentClassname = "com.tencent.shadow.core.runtime.ContainerDialogFragment"
     }
 
     val RenameMap = mapOf(
@@ -22,10 +22,10 @@ class FragmentTransform(val mCtClassInputMap: Map<CtClass, InputClass>) : Specif
                     to ShadowDialogFragmentClassname
             ,
             "android.app.FragmentManager"
-                    to "com.tencent.shadow.runtime.PluginFragmentManager"
+                    to "com.tencent.shadow.core.runtime.PluginFragmentManager"
             ,
             "android.app.FragmentTransaction"
-                    to "com.tencent.shadow.runtime.PluginFragmentTransaction"
+                    to "com.tencent.shadow.core.runtime.PluginFragmentTransaction"
     )
 
     val mAppFragments: MutableSet<CtClass> = mutableSetOf()

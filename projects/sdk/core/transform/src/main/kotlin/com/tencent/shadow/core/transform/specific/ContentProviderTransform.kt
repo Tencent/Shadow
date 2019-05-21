@@ -10,7 +10,7 @@ import javassist.bytecode.Descriptor
 
 class ContentProviderTransform : SpecificTransform() {
     companion object {
-        const val ShadowUriClassname = "com.tencent.shadow.runtime.UriConverter"
+        const val ShadowUriClassname = "com.tencent.shadow.core.runtime.UriConverter"
         const val AndroidUriClassname = "android.net.Uri"
         const val uriBuilderName = "android.net.Uri\$Builder"
         const val resolverName = "android.content.ContentResolver"

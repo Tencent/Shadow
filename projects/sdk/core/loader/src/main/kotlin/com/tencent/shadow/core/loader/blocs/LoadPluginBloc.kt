@@ -9,9 +9,9 @@ import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
-import com.tencent.shadow.runtime.PluginPartInfo
-import com.tencent.shadow.runtime.PluginPartInfoManager
-import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
+import com.tencent.shadow.core.runtime.PluginPartInfo
+import com.tencent.shadow.core.runtime.PluginPartInfoManager
+import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService

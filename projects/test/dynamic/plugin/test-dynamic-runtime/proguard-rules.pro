@@ -23,4 +23,4 @@
 -keep class org.slf4j.**{*;}
 -dontwarn org.slf4j.impl.**
 
--keep class com.tencent.shadow.runtime.**{*;}
+-keep class com.tencent.shadow.core.runtime.**{*;}

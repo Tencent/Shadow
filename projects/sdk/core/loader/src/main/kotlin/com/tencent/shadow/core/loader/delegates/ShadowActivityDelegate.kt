@@ -24,11 +24,11 @@ import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CLA
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_EXTRAS_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_LOADER_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_PART_KEY
-import com.tencent.shadow.runtime.MixResources
-import com.tencent.shadow.runtime.PluginActivity
-import com.tencent.shadow.runtime.ShadowLayoutInflater
-import com.tencent.shadow.runtime.container.HostActivityDelegate
-import com.tencent.shadow.runtime.container.HostActivityDelegator
+import com.tencent.shadow.core.runtime.MixResources
+import com.tencent.shadow.core.runtime.PluginActivity
+import com.tencent.shadow.core.runtime.ShadowLayoutInflater
+import com.tencent.shadow.core.runtime.container.HostActivityDelegate
+import com.tencent.shadow.core.runtime.container.HostActivityDelegator
 
 /**
  * 壳子Activity与插件Activity转调关系的实现类

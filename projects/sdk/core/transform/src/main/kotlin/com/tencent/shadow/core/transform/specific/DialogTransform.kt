@@ -10,7 +10,7 @@ import javassist.CtMethod
 class DialogTransform : SpecificTransform() {
     companion object {
         const val AndroidDialogClassname = "android.app.Dialog"
-        const val ShadowDialogClassname = "com.tencent.shadow.runtime.ShadowDialog"
+        const val ShadowDialogClassname = "com.tencent.shadow.core.runtime.ShadowDialog"
     }
 
     private lateinit var codeConverter: CodeConverter

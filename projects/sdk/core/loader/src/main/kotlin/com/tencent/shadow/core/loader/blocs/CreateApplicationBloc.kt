@@ -6,8 +6,8 @@ import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.CreateApplicationException
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
-import com.tencent.shadow.runtime.ShadowApplication
-import com.tencent.shadow.runtime.remoteview.ShadowRemoteViewCreatorProvider
+import com.tencent.shadow.core.runtime.ShadowApplication
+import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider
 
 /**
  * 初始化插件Application类

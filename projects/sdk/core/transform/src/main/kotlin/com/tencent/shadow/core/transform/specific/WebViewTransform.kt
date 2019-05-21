@@ -8,7 +8,7 @@ import javassist.CtClass
 class WebViewTransform : SpecificTransform() {
     companion object {
         const val AndroidWebViewClassname = "android.webkit.WebView"
-        const val ShadowWebViewClassname = "com.tencent.shadow.runtime.ShadowWebView"
+        const val ShadowWebViewClassname = "com.tencent.shadow.core.runtime.ShadowWebView"
     }
 
     val codeConverter = CodeConverter()
