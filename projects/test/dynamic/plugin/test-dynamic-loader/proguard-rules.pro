@@ -40,14 +40,12 @@
 -keep class org.slf4j.**{*;}
 -dontwarn org.slf4j.impl.**
 
--keep class com.tencent.shadow.sdk.pluginloader.**{*;}
 -keep class com.tencent.shadow.dynamic.host.**{*;}
 -keep class com.tencent.shadow.dynamic.impl.**{*;}
 -keep class com.tencent.shadow.dynamic.loader.**{*;}
 -keep class com.tencent.shadow.core.common.**{*;}
 -keep class com.tencent.shadow.core.loader.**{*;}
 
--dontwarn  com.tencent.shadow.sdk.pluginloader.**
 -dontwarn  com.tencent.shadow.dynamic.host.**
 -dontwarn  com.tencent.shadow.dynamic.impl.**
 -dontwarn  com.tencent.shadow.dynamic.loader.**
