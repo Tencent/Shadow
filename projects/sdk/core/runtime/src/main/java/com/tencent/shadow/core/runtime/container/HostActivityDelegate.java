@@ -122,4 +122,8 @@ public interface HostActivityDelegate {
     void recreate();
 
     ComponentName getCallingActivity();
+
+    void onMultiWindowModeChanged(boolean isInMultiWindowMode);
+
+    void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig);
 }

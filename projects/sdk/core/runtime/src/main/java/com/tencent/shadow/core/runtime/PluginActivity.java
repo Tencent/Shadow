@@ -300,4 +300,12 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
     public void recreate() {
         mHostActivityDelegator.recreate();
     }
+
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        mHostActivityDelegator.superOnMultiWindowModeChanged(isInMultiWindowMode);
+    }
+
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        mHostActivityDelegator.superOnMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+    }
 }

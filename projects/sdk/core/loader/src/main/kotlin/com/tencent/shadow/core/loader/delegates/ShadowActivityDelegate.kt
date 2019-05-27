@@ -362,4 +362,12 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun getCallingActivity(): ComponentName? {
         return mCallingActivity
     }
+
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean) {
+        mPluginActivity.onMultiWindowModeChanged(isInMultiWindowMode)
+    }
+
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration?) {
+        mPluginActivity.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
+    }
 }
