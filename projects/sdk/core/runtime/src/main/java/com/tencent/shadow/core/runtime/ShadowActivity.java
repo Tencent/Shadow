@@ -296,4 +296,12 @@ public abstract class ShadowActivity extends PluginActivity {
         return mHostActivityDelegator.getCallingActivity();
     }
 
+    public final void setVolumeControlStream(int streamType) {
+        mHostActivityDelegator.setVolumeControlStream(streamType);
+    }
+
+    public final int getVolumeControlStream() {
+        return mHostActivityDelegator.getVolumeControlStream();
+    }
+
 }
