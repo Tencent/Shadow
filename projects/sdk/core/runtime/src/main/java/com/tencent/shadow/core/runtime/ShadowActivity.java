@@ -304,4 +304,7 @@ public abstract class ShadowActivity extends PluginActivity {
         return mHostActivityDelegator.getVolumeControlStream();
     }
 
+    public boolean isInMultiWindowMode() {
+        return mHostActivityDelegator.isInMultiWindowMode();
+    }
 }

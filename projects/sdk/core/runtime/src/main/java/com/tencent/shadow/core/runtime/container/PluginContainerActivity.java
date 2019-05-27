@@ -2132,4 +2132,20 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             return super.getCallingActivity();
         }
     }
+
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onMultiWindowModeChanged(isInMultiWindowMode);
+        } else {
+            super.onMultiWindowModeChanged(isInMultiWindowMode);
+        }
+    }
+
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+        } else {
+            super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
+        }
+    }
 }
