@@ -2,18 +2,14 @@ apply from: "../general-cases-app/build.gradle"
 
 android {
     defaultConfig {
-        applicationId project.HOST_APP_APPLICATION_ID
+        applicationId project.TEST_HOST_APP_APPLICATION_ID
     }
 }
 
 buildscript {
     repositories {
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/jcenter"
-        }
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
-        }
+        google()
+        jcenter()
     }
 
     dependencies {

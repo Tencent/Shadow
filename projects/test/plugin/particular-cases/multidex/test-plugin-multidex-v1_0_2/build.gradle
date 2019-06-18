@@ -7,12 +7,8 @@ dependencies {
 
 buildscript {
     repositories {
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/jcenter"
-        }
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
-        }
+        google()
+        jcenter()
     }
 
     dependencies {

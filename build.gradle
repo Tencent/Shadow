@@ -12,12 +12,8 @@ buildscript {
     ext.kotlin_version = '1.2.51'
     ext.build_gradle_version = '3.2.0'
     repositories {
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/jcenter"
-        }
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
-        }
+        google()
+        jcenter()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$build_gradle_version"

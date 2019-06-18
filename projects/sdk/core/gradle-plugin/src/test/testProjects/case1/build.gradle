@@ -1,12 +1,8 @@
 buildscript {
     ext.build_gradle_version = '3.2.0'
     repositories {
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/jcenter"
-        }
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
-        }
+        google()
+        jcenter()
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$build_gradle_version"
@@ -24,12 +20,8 @@ allprojects {
     ext.VERSION_CODE = 1
     ext.VERSION_NAME = "local"
     repositories {
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/google-maven/"
-        }
-        maven {
-            url "http://maven.oa.com/nexus/content/repositories/jcenter"
-        }
+        google()
+        jcenter()
     }
 }
 

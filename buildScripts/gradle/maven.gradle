@@ -56,7 +56,7 @@ def gitShortRev() {
 }
 
 def setScm(scm) {
-    scm.appendNode('connection', 'http://git.code.oa.com/shadow/shadow.git')
+    scm.appendNode('connection', 'https://github.com/Tencent/Shadow.git')
 
     def commit
     if ("${System.env.ORANGE}".equalsIgnoreCase("true")) {
@@ -64,7 +64,7 @@ def setScm(scm) {
     } else {
         commit = gitShortRev()
     }
-    scm.appendNode('url', "https://git.code.oa.com/shadow/shadow/commit/$commit")
+    scm.appendNode('url', "https://github.com/Tencent/Shadow/commit/$commit")
 }
 
 def setGeneratePomFileAndDepends(publicationName) {
@@ -75,10 +75,6 @@ def setGeneratePomFileAndDepends(publicationName) {
             dependsOn(lintSdk)
         }
     }
-}
-
-static def isPublishRelease() {
-    return "${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")
 }
 
 def publicationVersion = project.ARTIFACT_VERSION
@@ -299,17 +295,7 @@ publishing {
         }
     }
     repositories {
-        maven {
-            credentials {
-                username "rdm"
-                password "rdm"
-            }
-            if (isPublishRelease()) {
-                url "http://maven.oa.com/nexus/content/repositories/thirdparty/"
-            } else {
-                url "http://maven.oa.com/nexus/content/repositories/thirdparty-snapshots"
-            }
-        }
+        mavenLocal()
     }
 }
 

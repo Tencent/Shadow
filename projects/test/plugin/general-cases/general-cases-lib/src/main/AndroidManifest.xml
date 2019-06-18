@@ -9,21 +9,8 @@
         android:icon="@android:drawable/sym_def_app_icon"
         android:theme="@android:style/Theme.NoTitleBar"
         android:label="@string/app_name">
-        <activity
-            android:name=".gallery.splash.SplashActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:launchMode="singleTask"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <meta-data android:name="test_meta" android:value="test_value" />
-
-        <activity android:name=".gallery.MainActivity" />
 
         <activity android:name=".usecases.activity.TestActivityReCreate" />
 
@@ -72,7 +59,7 @@
 
         <activity android:name=".usecases.provider.TestFileProviderActivity" />
 
-        <activity android:name=".usecases.activity.JumpActivity" />
+        <activity android:name=".usecases.activity.PrintActivityResultActivity" />
 
         <activity android:name=".usecases.activity.TestCallingActivity" />
 
