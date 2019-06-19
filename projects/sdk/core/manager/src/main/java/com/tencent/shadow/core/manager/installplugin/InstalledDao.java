@@ -75,14 +75,16 @@ public class InstalledDao {
      * @return 影响的数据行数
      */
     public int deleteByUUID(String UUID) {
+        int row ;
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            return db.delete(InstalledPluginDBHelper.TABLE_NAME_MANAGER, InstalledPluginDBHelper.COLUMN_UUID + " =?", new String[]{UUID});
+            row = db.delete(InstalledPluginDBHelper.TABLE_NAME_MANAGER, InstalledPluginDBHelper.COLUMN_UUID + " =?", new String[]{UUID});
+            db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
-            db.close();
         }
+        return row;
     }
 
     /**
