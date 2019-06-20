@@ -34,6 +34,7 @@ public class SampleComponentManager extends ComponentManager {
      * dynamic-runtime-apk 模块中定义的壳子Activity，需要在宿主AndroidManifest.xml注册
      */
     private static final String DEFAULT_ACTIVITY = "com.tencent.shadow.sample.plugin.runtime.PluginDefaultProxyActivity";
+    private static final String DEFAULT_NO_TRANSPARENT_ACTIVITY = "com.tencent.shadow.sample.plugin.runtime.PluginDefaultNoTransparentProxyActivity";
     private static final String SINGLE_INSTANCE_ACTIVITY = "com.tencent.shadow.sample.plugin.runtime.PluginSingleInstance1ProxyActivity";
     private static final String SINGLE_TASK_ACTIVITY = "com.tencent.shadow.sample.plugin.runtime.PluginSingleTask1ProxyActivity";
 
@@ -56,6 +57,8 @@ public class SampleComponentManager extends ComponentManager {
             /**
              * 这里配置对应的对应关系
              */
+            case "com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOrientation":
+                return new ComponentName(context, DEFAULT_NO_TRANSPARENT_ACTIVITY);
         }
         return new ComponentName(context, DEFAULT_ACTIVITY);
     }

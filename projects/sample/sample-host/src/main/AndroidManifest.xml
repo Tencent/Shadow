@@ -98,7 +98,6 @@
         <activity
             android:name="com.tencent.shadow.sample.host.PluginLoadActivity"
             android:launchMode="standard"
-            android:screenOrientation="portrait"
             android:theme="@style/troop_Transparent" />
 
         <!--dynamic activity注册
@@ -112,6 +111,15 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
             android:theme="@style/troop_Transparent"
+            android:process=":plugin"
+            />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.runtime.PluginDefaultNoTransparentProxyActivity"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
+            android:hardwareAccelerated="true"
             android:process=":plugin"
             />
 
