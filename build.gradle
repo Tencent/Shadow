@@ -1,11 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
-if (!System.getenv().containsKey("ANDROID_HOME")) {
-    throw new RuntimeException("未定义ANDROID_HOME环境变量。" +
-            "原因：Android Studio目前不支持自动为复合构建中的子构建自动创建local.properties文件。" +
-            "注意：新增环境变量后，一般不会立即生效，最简单的办法是重启电脑。")
-}
-
 //buildscript不能从其他gradle文件中apply，所以这段buildscript脚本存在于多个子构建中。
 //请更新buildscript时同步更新。
 buildscript {
