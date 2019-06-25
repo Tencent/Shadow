@@ -49,6 +49,7 @@ class ChangeApkContextWrapper extends ContextWrapper {
         PackageManager packageManager = base.getPackageManager();
         PackageInfo packageArchiveInfo = packageManager.getPackageArchiveInfo(apkPath, GET_META_DATA);
         packageArchiveInfo.applicationInfo.publicSourceDir = apkPath;
+        packageArchiveInfo.applicationInfo.sourceDir = apkPath;
         try {
             return packageManager.getResourcesForApplication(packageArchiveInfo.applicationInfo);
         } catch (PackageManager.NameNotFoundException e) {
