@@ -1,5 +1,7 @@
 # Shadow
 
+Shadow的设计细节将在掘金持续分享:https://juejin.im/user/5d12faee6fb9a07ed8425178/posts
+
 ## 介绍
 Shadow是一个腾讯自主研发的Android插件框架，经过线上亿级用户量检验。
 Shadow不仅开源分享了插件技术的关键代码，还完整的分享了上线部署所需要的所有设计。
