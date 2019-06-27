@@ -126,12 +126,10 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
         fun realAction() {
             val pluginParts = getPluginParts(partKey)
             pluginParts?.let {
-                mPluginContentProviderManager.createContentProviderAndCallOnCreate(
-                        pluginParts.application, partKey, pluginParts)
-            }
-            pluginParts?.let {
                 val application = pluginParts.application
                 application.attachBaseContext(mHostAppContext)
+                mPluginContentProviderManager.createContentProviderAndCallOnCreate(
+                        application, partKey, pluginParts)
                 application.onCreate()
             }
         }
