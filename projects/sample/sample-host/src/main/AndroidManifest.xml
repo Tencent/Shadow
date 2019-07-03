@@ -98,7 +98,7 @@
             android:name="com.tencent.shadow.sample.host.PluginLoadActivity"
             android:launchMode="standard"
             android:screenOrientation="portrait"
-            android:theme="@style/troop_Transparent" />
+            />
 
         <!--dynamic activity注册
           注意configChanges需要全注册
