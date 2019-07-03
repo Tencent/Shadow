@@ -30,6 +30,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.view.View;
 import android.widget.ImageView;
+import android.util.Log;
 
 import com.tencent.shadow.sample.plugin.app.lib.R;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
@@ -37,7 +38,8 @@ import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import java.io.File;
 
 public class TestFileProviderActivity extends Activity {
-
+    private static final String TAG = "TestFileProviderActivity";
+    
     public static class Case extends UseCase {
         @Override
         public String getName() {
@@ -110,6 +112,10 @@ public class TestFileProviderActivity extends Activity {
     }
 
     private void setPic() {
+        if (mFile == null ||  !mFile.exists()) {
+            Log.w(TAG, "setPic: file don't exist");
+            return;
+        }
         // Get the dimensions of the View
         int targetW = mImageView.getWidth();
         int targetH = mImageView.getHeight();
