@@ -46,7 +46,7 @@ import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
 
 import java.util.List;
 
-public abstract class PluginActivity extends ShadowContext implements Window.Callback{
+public abstract class PluginActivity extends ShadowContext implements Window.Callback {
     HostActivityDelegator mHostActivityDelegator;
 
     ShadowApplication mPluginApplication;
@@ -117,6 +117,11 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         mHostActivityDelegator.superOnRestoreInstanceState(savedInstanceState);
+    }
+
+
+    public boolean isChangingConfigurations() {
+        return mHostActivityDelegator.superIsChangingConfigurations();
     }
 
     public void onPostCreate(Bundle savedInstanceState) {
