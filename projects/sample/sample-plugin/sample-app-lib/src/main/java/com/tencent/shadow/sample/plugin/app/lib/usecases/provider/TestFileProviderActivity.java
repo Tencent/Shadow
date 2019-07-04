@@ -19,6 +19,7 @@
 package com.tencent.shadow.sample.plugin.app.lib.usecases.provider;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -28,7 +29,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.tencent.shadow.sample.plugin.app.lib.R;
@@ -36,7 +40,10 @@ import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 
 import java.io.File;
 
+
 public class TestFileProviderActivity extends Activity {
+    private static final String TAG = "TestFileProviderActivity";
+    private static final String KEY_FILE_PATH = "filePath";
 
     public static class Case extends UseCase {
         @Override
@@ -61,9 +68,9 @@ public class TestFileProviderActivity extends Activity {
     private File mFile;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.d(TAG, "onCreate: ");
         setContentView(R.layout.activity_test_file_provider);
         mImageView = findViewById(R.id.photo);
 
@@ -97,6 +104,21 @@ public class TestFileProviderActivity extends Activity {
         });
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_FILE_PATH, mFile.getAbsolutePath());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String filePath = savedInstanceState.getString(KEY_FILE_PATH);
+        if (!TextUtils.isEmpty(filePath)) {
+            mFile = new File(filePath);
+        }
+    }
+    
     private int targetSdkVersion() {
         return getApplicationContext().getApplicationInfo().targetSdkVersion;
     }
@@ -109,27 +131,39 @@ public class TestFileProviderActivity extends Activity {
         }
     }
 
+    @SuppressLint("LongLogTag")
     private void setPic() {
-        // Get the dimensions of the View
-        int targetW = mImageView.getWidth();
-        int targetH = mImageView.getHeight();
+        if (mFile == null || !mFile.exists()) {
+            Log.w(TAG, "setPic: file don't exist");
+            return;
+        }
 
-        // Get the dimensions of the bitmap
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mFile.getAbsolutePath(), bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
+        mImageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                // Get the dimensions of the View
+                int targetW = mImageView.getWidth();
+                int targetH = mImageView.getHeight();
+                mImageView.getViewTreeObserver().removeOnPreDrawListener(this);
+                // Get the dimensions of the bitmap
+                BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+                bmOptions.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(mFile.getAbsolutePath(), bmOptions);
+                int photoW = bmOptions.outWidth;
+                int photoH = bmOptions.outHeight;
 
-        // Determine how much to scale down the image
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+                // Determine how much to scale down the image
+                int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
-        // Decode the image file into a Bitmap sized to fill the View
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
-        bmOptions.inPurgeable = true;
+                // Decode the image file into a Bitmap sized to fill the View
+                bmOptions.inJustDecodeBounds = false;
+                bmOptions.inSampleSize = scaleFactor;
+                bmOptions.inPurgeable = true;
 
-        Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(), bmOptions);
-        mImageView.setImageBitmap(bitmap);
+                Bitmap bitmap = BitmapFactory.decodeFile(mFile.getAbsolutePath(), bmOptions);
+                mImageView.setImageBitmap(bitmap);
+                return false;
+            }
+        });
     }
 }
