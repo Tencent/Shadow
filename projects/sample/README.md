@@ -38,6 +38,12 @@ Shadow实现了完整的Maven发布脚本，支持方便的Maven依赖。
 甚至**3个工程中依赖的Shadow版本都是独立配置的**，
 使用时请注意这一点。
 
+***
+特别注意，这3个工程中以maven方式引用的SDK，都是需要自行发布到`mavenLocal()`才能使用的。
+因为，对于业务来说，不太可能会跟其他业务使用完全一致的二进制实现。所以Shadow直接发布一份二进制意义不大。
+建议真正接入时按下面介绍，将二进制发布到自己的maven仓库中。
+***
+
 在`buildScripts/gradle/maven.gradle`文件中配置了Shadow的Maven发布脚本。
 正式使用时，请修改其中的两个GroupID变量：`coreGroupId`、`dynamicGroupId`，
 以及`setScm`方法中的两个URL到自己的版本库地址上。
