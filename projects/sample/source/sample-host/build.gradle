@@ -1,0 +1,105 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion project.COMPILE_SDK_VERSION
+    defaultConfig {
+        applicationId project.SAMPLE_HOST_APP_APPLICATION_ID
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        versionCode project.VERSION_CODE
+        versionName project.VERSION_NAME
+        testInstrumentationRunner "com.tencent.shadow.test.CustomAndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.create("release")
+            signingConfig.initWith(buildTypes.debug.signingConfig)
+        }
+    }
+    sourceSets {
+        debug {
+            assets.srcDir('build/generated/assets/sample-manager/debug/')
+            assets.srcDir('build/generated/assets/plugin-zip/debug/')
+        }
+        release {
+            assets.srcDir('build/generated/assets/sample-manager/release/')
+            assets.srcDir('build/generated/assets/plugin-zip/release/')
+        }
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'commons-io:commons-io:2.5'//sample-host从assets中复制插件用的
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+
+    implementation 'com.tencent.shadow.core:common'
+    implementation 'com.tencent.shadow.dynamic:dynamic-host'
+    implementation project(':sample-constant')
+    implementation project(':sample-host-lib')
+}
+
+def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
+    def outputFile = file("${getBuildDir()}/generated/assets/${name}/${buildType}/${apkName}")
+    outputFile.getParentFile().mkdirs()
+    return tasks.create("copy${buildType.capitalize()}${name.capitalize()}Task", Copy) {
+        group = 'build'
+        description = "复制${name}到assets中."
+        from(inputFile.getParent()) {
+            include(inputFile.name)
+            rename { outputFile.name }
+        }
+        into(outputFile.getParent())
+
+    }.dependsOn("${projectName}:${taskName}")
+}
+
+def generateAssets(generateAssetsTask, buildType) {
+
+    def moduleName = 'sample-manager'
+    def pluginManagerApkFile = file(
+            "${project(":sample-manager").getBuildDir()}" +
+                    "/outputs/apk/${buildType}/" +
+                    "${moduleName}-${buildType}.apk"
+    )
+    generateAssetsTask.dependsOn createCopyTask(
+            ':sample-manager',
+            buildType,
+            moduleName,
+            'pluginmanager.apk',
+            pluginManagerApkFile,
+            "assemble${buildType.capitalize()}"
+    )
+
+    def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
+    generateAssetsTask.dependsOn createCopyTask(
+            ':sample-plugin-app',
+            buildType,
+            'plugin-zip',
+            "plugin-${buildType}.zip",
+            pluginZip,
+            "package${buildType.capitalize()}Plugin"
+    )
+
+
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == "generateDebugAssets") {
+        generateAssets(task, 'debug')
+    }
+    if (task.name == "generateReleaseAssets") {
+        generateAssets(task, 'release')
+    }
+}
