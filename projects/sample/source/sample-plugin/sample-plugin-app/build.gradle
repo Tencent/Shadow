@@ -38,7 +38,7 @@ shadow {
                         partKey = 'sample-plugin-app'
                         buildTask = ':sample-plugin-app:assembleDebug'
                         apkName = 'sample-plugin-app-debug.apk'
-                        apkPath = 'projects/sample/sample-plugin/sample-plugin-app/build/outputs/apk/debug/sample-plugin-app-debug.apk'
+                        apkPath = 'projects/sample/source/sample-plugin/sample-plugin-app/build/outputs/apk/debug/sample-plugin-app-debug.apk'
                     }
                 }
             }
@@ -52,15 +52,15 @@ shadow {
                         partKey = 'sample-plugin-app'
                         buildTask = ':sample-plugin-app:assembleRelease'
                         apkName = 'sample-plugin-app-release.apk'
-                        apkPath = 'projects/sample/sample-plugin/sample-plugin-app/build/outputs/apk/release/sample-plugin-app-release.apk'
+                        apkPath = 'projects/sample/source/sample-plugin/sample-plugin-app/build/outputs/apk/release/sample-plugin-app-release.apk'
                     }
                 }
             }
         }
 
-        loaderApkProjectPath = 'projects/sample/sample-plugin/sample-loader'
+        loaderApkProjectPath = 'projects/sample/source/sample-plugin/sample-loader'
 
-        runtimeApkProjectPath = 'projects/sample/sample-plugin/sample-runtime'
+        runtimeApkProjectPath = 'projects/sample/source/sample-plugin/sample-runtime'
 
         version = 4
         compactVersion = [1, 2, 3]
