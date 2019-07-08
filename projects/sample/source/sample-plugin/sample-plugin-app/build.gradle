@@ -39,6 +39,7 @@ shadow {
                         buildTask = ':sample-plugin-app:assembleDebug'
                         apkName = 'sample-plugin-app-debug.apk'
                         apkPath = 'projects/sample/source/sample-plugin/sample-plugin-app/build/outputs/apk/debug/sample-plugin-app-debug.apk'
+                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
                     }
                 }
             }
@@ -53,6 +54,7 @@ shadow {
                         buildTask = ':sample-plugin-app:assembleRelease'
                         apkName = 'sample-plugin-app-release.apk'
                         apkPath = 'projects/sample/source/sample-plugin/sample-plugin-app/build/outputs/apk/release/sample-plugin-app-release.apk'
+                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
                     }
                 }
             }

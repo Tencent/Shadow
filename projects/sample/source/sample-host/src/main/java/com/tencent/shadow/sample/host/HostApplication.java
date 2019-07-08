@@ -25,6 +25,7 @@ import android.os.StrictMode;
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.dynamic.host.DynamicRuntime;
 import com.tencent.shadow.dynamic.host.PluginManager;
+import com.tencent.shadow.sample.host.lib.HostUiLayerProvider;
 import com.tencent.shadow.sample.host.manager.Shadow;
 
 import java.io.File;
@@ -50,6 +51,7 @@ public class HostApplication extends Application {
 
         PluginHelper.getInstance().init(this);
 
+        HostUiLayerProvider.init(this);
     }
 
     private static void detectNonSdkApiUsageOnAndroidP() {

@@ -47,6 +47,7 @@ def includeTest() {
 def includeSample() {
     include 'sample-constant',
             'sample-host',
+            'sample-host-lib',
             'sample-manager',
             'sample-loader',
             'sample-runtime',
@@ -57,6 +58,7 @@ def includeSample() {
             'sample-plugin-app'
     project(':sample-constant').projectDir = file('projects/sample/source/sample-constant')
     project(':sample-host').projectDir = file('projects/sample/source/sample-host')
+    project(':sample-host-lib').projectDir = file('projects/sample/source/sample-host-lib')
     project(':sample-manager').projectDir = file('projects/sample/source/sample-manager')
     project(':sample-loader').projectDir = file('projects/sample/source/sample-plugin/sample-loader')
     project(':sample-runtime').projectDir = file('projects/sample/source/sample-plugin/sample-runtime')

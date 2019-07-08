@@ -20,7 +20,6 @@ package com.tencent.shadow.sample.plugin.app.lib.gallery.cases;
 
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCaseCategory;
-import com.tencent.shadow.sample.plugin.app.lib.gallery.util.PluginChecker;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOnCreate;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOrientation;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreate;
@@ -31,6 +30,7 @@ import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ApplicationCont
 import com.tencent.shadow.sample.plugin.app.lib.usecases.dialog.TestDialogActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.fragment.TestXmlFragmentActivity;
+import com.tencent.shadow.sample.plugin.app.lib.usecases.host_communication.PluginUseHostClassActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.packagemanager.TestPackageManagerActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestDBContentProviderActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestFileProviderActivity;
@@ -99,6 +99,11 @@ public class UseCaseManager {
                 new ApplicationContextSubDirTestActivity.Case(),
         });
         useCases.add(contextCategory);
+
+        UseCaseCategory communicationCategory = new UseCaseCategory("插件和宿主通信相关测试用例", new UseCase[]{
+                new PluginUseHostClassActivity.Case(),
+        });
+        useCases.add(communicationCategory);
     }
 
 

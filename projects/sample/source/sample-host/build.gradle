@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.tencent.shadow.core:common'
     implementation 'com.tencent.shadow.dynamic:dynamic-host'
     implementation project(':sample-constant')
+    implementation project(':sample-host-lib')
 }
 
 def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
