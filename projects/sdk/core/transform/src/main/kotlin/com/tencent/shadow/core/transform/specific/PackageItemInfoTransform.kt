@@ -27,10 +27,14 @@ import javassist.CtNewMethod
 import javassist.Modifier
 import java.util.*
 
-class PackageManagerTransform : SpecificTransform() {
+class PackageItemInfoTransform : SpecificTransform() {
     companion object {
-        const val AndroidPackageManagerClassname = "android.content.pm.PackageManager"
-        const val ShadowAndroidPackageManagerClassname = "com.tencent.shadow.core.runtime.ShadowPackageManager"
+        const val AndroidProviderInfo = "android.content.pm.ProviderInfo"
+        const val AndroidActivityInfo = "android.content.pm.ActivityInfo"
+        const val AndroidApplicationInfo = "android.content.pm.ApplicationInfo"
+        const val AndroidServiceInfo = "android.content.pm.ServiceInfo"
+        const val AndroidPackageItemInfo = "android.content.pm.PackageItemInfo"
+        const val ShadowAndroidPackageItemInfo = "com.tencent.shadow.core.runtime.ShadowPackageItemInfo"
     }
 
     private fun setup(
@@ -100,19 +104,6 @@ class PackageManagerTransform : SpecificTransform() {
         }
     }
 
-    override fun setup(allInputClass: Set<CtClass>) {
-        setup(
-                arrayOf(AndroidPackageManagerClassname),
-                arrayOf(
-                        "getApplicationInfo",
-                        "getActivityInfo",
-                        "getPackageInfo",
-                        "resolveContentProvider"
-                ),
-                AndroidPackageManagerClassname to ShadowAndroidPackageManagerClassname
-        )
-    }
-
     /**
      * 查找目标class对象的目标method
      */
@@ -126,5 +117,18 @@ class PackageManagerTransform : SpecificTransform() {
             method_targets.addAll(methods.filter { targetMethodName.contains(it.name) })
         }
         return method_targets
+    }
+
+    override fun setup(allInputClass: Set<CtClass>) {
+        setup(
+                arrayOf(
+                        AndroidProviderInfo,
+                        AndroidServiceInfo,
+                        AndroidApplicationInfo,
+                        AndroidActivityInfo
+                ),
+                arrayOf("loadXmlMetaData"),
+                AndroidPackageItemInfo to ShadowAndroidPackageItemInfo
+        )
     }
 }
