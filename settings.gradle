@@ -21,6 +21,7 @@ def includeTest() {
             'constant',
             'custom-view',
             'plugin-use-host-code-lib',
+            'test-manager',
             'general-cases-lib',
             'test-plugin-general-cases',
             'general-cases-app',
@@ -35,6 +36,7 @@ def includeTest() {
     project(':constant').projectDir = file('projects/test/lib/constant')
     project(':custom-view').projectDir = file('projects/test/lib/custom-view')
     project(':plugin-use-host-code-lib').projectDir = file('projects/test/lib/plugin-use-host-code-lib')
+    project(':test-manager').projectDir = file('projects/test/lib/test-manager')
     project(':general-cases-lib').projectDir = file('projects/test/plugin/general-cases/general-cases-lib')
     project(':test-plugin-general-cases').projectDir = file('projects/test/plugin/general-cases/test-plugin-general-cases')
     project(':general-cases-app').projectDir = file('projects/test/plugin/general-cases/general-cases-app')
