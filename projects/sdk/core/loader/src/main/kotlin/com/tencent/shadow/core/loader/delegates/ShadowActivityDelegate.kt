@@ -245,6 +245,11 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         mPluginActivity.onRestart()
     }
 
+    override fun isChangingConfigurations(): Boolean {
+       return mPluginActivity.isChangingConfigurations()
+    }
+
+
     override fun onUserLeaveHint() {
         mPluginActivity.onUserLeaveHint()
     }

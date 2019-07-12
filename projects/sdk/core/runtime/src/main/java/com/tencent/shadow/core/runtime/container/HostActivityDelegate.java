@@ -65,6 +65,8 @@ public interface HostActivityDelegate {
 
     void onConfigurationChanged(Configuration newConfig);
 
+    boolean isChangingConfigurations();
+
     boolean dispatchKeyEvent(KeyEvent event);
 
     void finish();
