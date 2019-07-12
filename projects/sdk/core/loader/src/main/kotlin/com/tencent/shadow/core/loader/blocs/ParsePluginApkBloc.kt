@@ -73,10 +73,6 @@ object ParsePluginApkBloc {
                 , partKey
                 , packageArchiveInfo.applicationInfo.packageName
                 , packageArchiveInfo.applicationInfo.className
-                , packageArchiveInfo.applicationInfo.metaData
-                , packageArchiveInfo.versionCode
-                , packageArchiveInfo.versionName
-                , packageArchiveInfo.signatures
         )
         packageArchiveInfo.activities?.forEach {
             pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource, it))

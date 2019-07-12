@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.loader
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.os.Handler
 import android.os.Looper
 import android.os.Parcel
@@ -32,7 +33,6 @@ import com.tencent.shadow.core.loader.delegates.ShadowContentProviderDelegate
 import com.tencent.shadow.core.loader.delegates.ShadowDelegate
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
-import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.core.loader.managers.PluginServiceManager
@@ -75,7 +75,10 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     abstract val mExceptionReporter: Reporter
 
-    private val mCommonPluginPackageManager = CommonPluginPackageManager()
+    /**
+     * @GuardedBy("mLock")
+     */
+    private val mPluginPackageInfoSet: MutableSet<PackageInfo> = hashSetOf()
 
     private lateinit var mPluginServiceManager: PluginServiceManager
 
@@ -164,8 +167,8 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
         return LoadPluginBloc.loadPlugin(
                 mExecutorService,
-                mAbi,
-                mCommonPluginPackageManager,
+                mPluginPackageInfoSet,
+                ::allPluginPackageInfo,
                 mComponentManager,
                 mLock,
                 mPluginPartsMap,
@@ -173,6 +176,12 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                 installedApk,
                 loadParameters,
                 mShadowRemoteViewCreatorProvider)
+    }
+
+    private fun allPluginPackageInfo(): Array<PackageInfo> {
+        mLock.withLock {
+            return mPluginPackageInfoSet.toTypedArray()
+        }
     }
 
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {

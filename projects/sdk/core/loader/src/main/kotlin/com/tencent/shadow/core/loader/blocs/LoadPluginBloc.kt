@@ -19,12 +19,12 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
-import com.tencent.shadow.core.loader.managers.CommonPluginPackageManager
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
 import com.tencent.shadow.core.runtime.PluginPartInfo
@@ -41,8 +41,8 @@ object LoadPluginBloc {
     @Throws(LoadPluginException::class)
     fun loadPlugin(
             executorService: ExecutorService,
-            abi: String,
-            commonPluginPackageManager: CommonPluginPackageManager,
+            pluginPackageInfoSet: MutableSet<PackageInfo>,
+            allPluginPackageInfo: () -> (Array<PackageInfo>),
             componentManager: ComponentManager,
             lock: ReentrantLock,
             pluginPartsMap: MutableMap<String, PluginParts>,
@@ -63,6 +63,7 @@ object LoadPluginBloc {
             val getPackageInfo = executorService.submit(Callable {
                 val archiveFilePath = installedApk.apkFilePath
                 val packageManager = hostAppContext.packageManager
+
                 val packageArchiveInfo = packageManager.getPackageArchiveInfo(
                         archiveFilePath,
                         PackageManager.GET_ACTIVITIES
@@ -72,6 +73,9 @@ object LoadPluginBloc {
                                 or PackageManager.GET_SIGNATURES
                 )
                         ?: throw NullPointerException("getPackageArchiveInfo return null.archiveFilePath==$archiveFilePath")
+                packageArchiveInfo.applicationInfo.nativeLibraryDir = installedApk.libraryPath
+
+                lock.withLock { pluginPackageInfoSet.add(packageArchiveInfo) }
                 packageArchiveInfo
             })
 
@@ -81,8 +85,9 @@ object LoadPluginBloc {
             })
 
             val buildPackageManager = executorService.submit(Callable {
-                val pluginInfo = buildPluginInfo.get()
-                PluginPackageManager(commonPluginPackageManager, pluginInfo)
+                val packageInfo = getPackageInfo.get()
+                val hostPackageManager = hostAppContext.packageManager
+                PluginPackageManager(hostPackageManager, packageInfo, allPluginPackageInfo)
             })
 
             val buildResources = executorService.submit(Callable {
@@ -94,6 +99,7 @@ object LoadPluginBloc {
                 val pluginClassLoader = buildClassLoader.get()
                 val resources = buildResources.get()
                 val pluginInfo = buildPluginInfo.get()
+                val packageInfo = getPackageInfo.get()
 
                 CreateApplicationBloc.createShadowApplication(
                         pluginClassLoader,
@@ -101,7 +107,8 @@ object LoadPluginBloc {
                         resources,
                         hostAppContext,
                         componentManager,
-                        remoteViewCreatorProvider
+                        remoteViewCreatorProvider,
+                        packageInfo.applicationInfo
                 )
             })
 

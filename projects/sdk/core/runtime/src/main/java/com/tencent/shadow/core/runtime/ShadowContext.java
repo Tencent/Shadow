@@ -40,8 +40,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
     Resources mPluginResources;
     Resources mMixResources;
     LayoutInflater mLayoutInflater;
-    String mLibrarySearchPath;
-    String mDexPath;
+    ApplicationInfo mApplicationInfo;
     protected String mPartKey;
     private String mBusinessName;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
@@ -69,12 +68,10 @@ public class ShadowContext extends SubDirContextThemeWrapper {
         mShadowApplication = shadowApplication;
     }
 
-    public void setLibrarySearchPath(String mLibrarySearchPath) {
-        this.mLibrarySearchPath = mLibrarySearchPath;
-    }
-
-    public void setDexPath(String dexPath) {
-        mDexPath = dexPath;
+    public void setApplicationInfo(ApplicationInfo applicationInfo) {
+        ApplicationInfo copy = new ApplicationInfo(applicationInfo);
+        copy.metaData = null;//正常通过Context获得的ApplicationInfo就没有metaData
+        mApplicationInfo = copy;
     }
 
     public void setBusinessName(String businessName) {
@@ -227,10 +224,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     @Override
     public ApplicationInfo getApplicationInfo() {
-        final ApplicationInfo applicationInfo = super.getApplicationInfo();
-        applicationInfo.nativeLibraryDir = mLibrarySearchPath;
-        applicationInfo.sourceDir = mDexPath;
-        return applicationInfo;
+        return mApplicationInfo;
     }
 
     public PluginComponentLauncher getPendingIntentConverter() {

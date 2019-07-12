@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.core.loader.managers
 
+import android.annotation.TargetApi
 import android.content.ComponentName
 import android.content.Intent
 import android.content.IntentFilter
@@ -26,39 +27,59 @@ import android.content.res.Resources
 import android.content.res.XmlResourceParser
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.UserHandle
 import com.tencent.shadow.core.loader.ImplementLater
-import com.tencent.shadow.core.loader.infos.PluginInfo
 
-class PluginPackageManager(private val commonPluginPackageManager: CommonPluginPackageManager,
-                           private val pluginInfo: PluginInfo) : PackageManager() {
-    override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo {
-        val applicationInfo = ApplicationInfo()
-        applicationInfo.metaData = pluginInfo.metaData
-        applicationInfo.className = pluginInfo.applicationClassName
-        return applicationInfo
-    }
+class PluginPackageManager(private val hostPackageManager: PackageManager,
+                           private val packageInfo: PackageInfo,
+                           private val allPluginPackageInfo: () -> (Array<PackageInfo>))
+    : PackageManager() {
+    override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo =
+            if (packageInfo.applicationInfo.packageName == packageName) {
+                packageInfo.applicationInfo
+            } else {
+                hostPackageManager.getApplicationInfo(packageName, flags)
+            }
 
-    override fun getPackageInfo(packageName: String?, flags: Int): PackageInfo? {
-        if (pluginInfo.packageName == packageName) {
-            val info = PackageInfo()
-            info.versionCode = pluginInfo.versionCode
-            info.versionName = pluginInfo.versionName
-            info.signatures = pluginInfo.signatures
-            return info;
-        }
-        return null;
-    }
+    override fun getPackageInfo(packageName: String?, flags: Int): PackageInfo? =
+            if (packageInfo.applicationInfo.packageName == packageName) {
+                packageInfo
+            } else {
+                hostPackageManager.getPackageInfo(packageName, flags)
+            }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    override fun getPackageInfo(versionedPackage: VersionedPackage?, flags: Int): PackageInfo? =
+            if (packageInfo.applicationInfo.packageName == versionedPackage?.packageName) {
+                packageInfo
+            } else {
+                hostPackageManager.getPackageInfo(versionedPackage, flags)
+            }
 
     override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo {
-        val find = pluginInfo.mActivities.find {
-            it.className == component.className
+        if (component.packageName == packageInfo.applicationInfo.packageName) {
+            val pluginActivityInfo = allPluginPackageInfo()
+                    .flatMap { it.activities.asIterable() }.find {
+                        it.name == component.className
+                    }
+            if (pluginActivityInfo != null) {
+                return pluginActivityInfo
+            }
         }
-        if (find == null) {
-            return commonPluginPackageManager.getActivityInfo(component, flags)
-        } else {
-            return find.activityInfo
+        return hostPackageManager.getActivityInfo(component, flags)
+    }
+
+    override fun resolveContentProvider(name: String?, flags: Int): ProviderInfo? {
+        val pluginProviderInfo = allPluginPackageInfo()
+                .flatMap { it.providers.asIterable() }.find {
+                    it.authority == name
+                }
+        if (pluginProviderInfo != null) {
+            return pluginProviderInfo
         }
+
+        return hostPackageManager.resolveContentProvider(name, flags)
     }
 
     override fun canonicalToCurrentPackageNames(names: Array<out String>?): Array<String> {
@@ -123,13 +144,6 @@ class PluginPackageManager(private val commonPluginPackageManager: CommonPluginP
 
     override fun getText(packageName: String?, resid: Int, appInfo: ApplicationInfo?): CharSequence {
         ImplementLater()
-    }
-
-    override fun resolveContentProvider(name: String?, flags: Int): ProviderInfo? {
-        val find = pluginInfo.mProviders.find {
-            it.authority == name
-        }
-        return find?.providerInfo
     }
 
     override fun getApplicationEnabledSetting(packageName: String?): Int {
@@ -237,10 +251,6 @@ class PluginPackageManager(private val commonPluginPackageManager: CommonPluginP
     }
 
     override fun getXml(packageName: String?, resid: Int, appInfo: ApplicationInfo?): XmlResourceParser {
-        ImplementLater()
-    }
-
-    override fun getPackageInfo(versionedPackage: VersionedPackage?, flags: Int): PackageInfo {
         ImplementLater()
     }
 

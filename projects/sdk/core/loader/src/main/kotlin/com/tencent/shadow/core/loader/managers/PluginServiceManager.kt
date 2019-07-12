@@ -234,8 +234,7 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
         service.setPluginClassLoader(tmpShadowDelegate.getPluginClassLoader())
         service.setShadowApplication(tmpShadowDelegate.getPluginApplication())
         service.setPluginComponentLauncher(tmpShadowDelegate.getComponentManager())
-        service.setLibrarySearchPath(tmpShadowDelegate.getPluginClassLoader().getLibrarySearchPath())
-        service.setDexPath(tmpShadowDelegate.getPluginClassLoader().getDexPath())
+        service.applicationInfo = tmpShadowDelegate.getPluginApplication().applicationInfo
         service.setBusinessName(businessName)
         service.setPluginPartKey(partKey)
 
