@@ -22,8 +22,8 @@ import android.content.Context
 import android.content.res.Resources
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.CreateApplicationException
+import com.tencent.shadow.core.loader.infos.PluginInfo
 import com.tencent.shadow.core.loader.managers.ComponentManager
-import com.tencent.shadow.core.loader.managers.PluginPackageManager
 import com.tencent.shadow.core.runtime.ShadowApplication
 import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider
 
@@ -36,14 +36,14 @@ object CreateApplicationBloc {
     @Throws(CreateApplicationException::class)
     fun createShadowApplication(
             pluginClassLoader: PluginClassLoader,
-            appClassName: String?,
-            pluginPackageManager: PluginPackageManager,
+            pluginInfo: PluginInfo,
             resources: Resources,
             hostAppContext: Context,
             componentManager: ComponentManager,
             remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
     ): ShadowApplication {
         try {
+            val appClassName = pluginInfo.applicationClassName
             val shadowApplication : ShadowApplication;
             shadowApplication = if (appClassName != null) {
                 val appClass = pluginClassLoader.loadClass(appClassName)
@@ -51,7 +51,7 @@ object CreateApplicationBloc {
             } else {
                 object : ShadowApplication(){}
             }
-            val partKey = pluginPackageManager.pluginInfo.partKey
+            val partKey = pluginInfo.partKey
             shadowApplication.setPluginResources(resources)
             shadowApplication.setPluginClassLoader(pluginClassLoader)
             shadowApplication.setPluginComponentLauncher(componentManager)
@@ -59,7 +59,7 @@ object CreateApplicationBloc {
             shadowApplication.setBroadcasts(componentManager.getBroadcastsByPartKey(partKey))
             shadowApplication.setLibrarySearchPath(pluginClassLoader.getLibrarySearchPath())
             shadowApplication.setDexPath(pluginClassLoader.getDexPath())
-            shadowApplication.setBusinessName(pluginPackageManager.pluginInfo.businessName)
+            shadowApplication.setBusinessName(pluginInfo.businessName)
             shadowApplication.setPluginPartKey(partKey)
             shadowApplication.remoteViewCreatorProvider = remoteViewCreatorProvider
             return shadowApplication

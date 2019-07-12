@@ -75,9 +75,13 @@ object LoadPluginBloc {
                 packageArchiveInfo
             })
 
-            val buildPackageManager = executorService.submit(Callable {
+            val buildPluginInfo = executorService.submit(Callable {
                 val packageInfo = getPackageInfo.get()
-                val pluginInfo = ParsePluginApkBloc.parse(packageInfo, loadParameters, hostAppContext)
+                ParsePluginApkBloc.parse(packageInfo, loadParameters, hostAppContext)
+            })
+
+            val buildPackageManager = executorService.submit(Callable {
+                val pluginInfo = buildPluginInfo.get()
                 PluginPackageManager(commonPluginPackageManager, pluginInfo)
             })
 
@@ -88,14 +92,12 @@ object LoadPluginBloc {
 
             val buildApplication = executorService.submit(Callable {
                 val pluginClassLoader = buildClassLoader.get()
-                val pluginPackageManager = buildPackageManager.get()
                 val resources = buildResources.get()
-                val pluginInfo = pluginPackageManager.pluginInfo
+                val pluginInfo = buildPluginInfo.get()
 
                 CreateApplicationBloc.createShadowApplication(
                         pluginClassLoader,
-                        pluginInfo.applicationClassName,
-                        pluginPackageManager,
+                        pluginInfo,
                         resources,
                         hostAppContext,
                         componentManager,
@@ -110,7 +112,7 @@ object LoadPluginBloc {
                 val pluginPackageManager = buildPackageManager.get()
                 val pluginClassLoader = buildClassLoader.get()
                 val resources = buildResources.get()
-                val pluginInfo = pluginPackageManager.pluginInfo
+                val pluginInfo = buildPluginInfo.get()
                 val shadowApplication = buildApplication.get()
                 lock.withLock {
                     componentManager.addPluginApkInfo(pluginInfo)

@@ -30,8 +30,8 @@ import android.os.UserHandle
 import com.tencent.shadow.core.loader.ImplementLater
 import com.tencent.shadow.core.loader.infos.PluginInfo
 
-class PluginPackageManager(val commonPluginPackageManager: CommonPluginPackageManager,
-                           val pluginInfo: PluginInfo) : PackageManager() {
+class PluginPackageManager(private val commonPluginPackageManager: CommonPluginPackageManager,
+                           private val pluginInfo: PluginInfo) : PackageManager() {
     override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo {
         val applicationInfo = ApplicationInfo()
         applicationInfo.metaData = pluginInfo.metaData
