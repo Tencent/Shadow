@@ -14,6 +14,10 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 在这个Sample目录下，提供了两种示例工程：
 
 ## 源码依赖SDK的Sample(`projects/sample/source`)
+***
+要测试这个Sample请用Android Studio直接打开clone版本库的根目录。
+***
+
 * `sample-host`是宿主应用
 * `sample-manager`是插件管理器的动态实现
 * `sample-plugin/sample-loader`是loader的动态实现，业务主要在这里定义插件组件和壳子代理组件的配对关系等。
@@ -29,6 +33,10 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 `sample-host`在构建中会自动打包manager和"插件"到assets中，在运行时自动释放模拟下载过程。
 
 ## 二进制Maven依赖SDK的Sample(`projects/sample/maven`)
+***
+要测试这个Sample请用Android Studio *分别* 打开`projects/sample/maven/host-project`,`projects/sample/maven/manager-project`,`projects/sample/maven/plugin-project`三个目录。
+***
+
 源码依赖SDK的Sample中对Shadow SDK的依赖配置不适用于正式业务接入。
 Shadow实现了完整的Maven发布脚本，支持方便的Maven依赖。
 
@@ -65,6 +73,7 @@ Shadow实现了完整的Maven发布脚本，支持方便的Maven依赖。
 编译插件，在`plugin-project`目录中运行：
 ```
 ./gradlew packageDebugPlugin
+
 adb push build/plugin-debug.zip /data/local/tmp
 ```
 
