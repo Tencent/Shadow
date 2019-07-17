@@ -21,6 +21,7 @@ package com.tencent.shadow.core.loader.blocs
 import android.content.Context
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.os.Build
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
@@ -29,6 +30,7 @@ import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManager
 import com.tencent.shadow.core.runtime.PluginPartInfo
 import com.tencent.shadow.core.runtime.PluginPartInfoManager
+import com.tencent.shadow.core.runtime.ShadowContext
 import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.io.File
 import java.util.concurrent.Callable
@@ -73,7 +75,18 @@ object LoadPluginBloc {
                                 or PackageManager.GET_SIGNATURES
                 )
                         ?: throw NullPointerException("getPackageArchiveInfo return null.archiveFilePath==$archiveFilePath")
+
+                val tempContext = ShadowContext(hostAppContext, 0).apply {
+                    setBusinessName(loadParameters.businessName)
+                }
+                val dataDir = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    tempContext.dataDir
+                } else {
+                    File(tempContext.filesDir, "dataDir")
+                }
+
                 packageArchiveInfo.applicationInfo.nativeLibraryDir = installedApk.libraryPath
+                packageArchiveInfo.applicationInfo.dataDir = dataDir.absolutePath
 
                 lock.withLock { pluginPackageInfoSet.add(packageArchiveInfo) }
                 packageArchiveInfo
