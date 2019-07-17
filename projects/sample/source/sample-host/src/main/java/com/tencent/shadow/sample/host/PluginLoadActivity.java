@@ -21,11 +21,13 @@ package com.tencent.shadow.sample.host;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.tencent.shadow.dynamic.host.EnterCallback;
 import com.tencent.shadow.sample.constant.Constant;
+import com.tencent.shadow.sample.host.lib.HostCallbackProvider;
 
 
 public class PluginLoadActivity extends Activity {
@@ -43,6 +45,14 @@ public class PluginLoadActivity extends Activity {
         mViewGroup = findViewById(R.id.container);
 
         startPlugin();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("test", "start....");
+                HostCallbackProvider.getInstance().call();
+            }
+        }, 15000);
     }
 
 

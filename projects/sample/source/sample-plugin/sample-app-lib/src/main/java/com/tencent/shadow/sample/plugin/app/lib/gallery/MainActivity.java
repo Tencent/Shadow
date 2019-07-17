@@ -59,6 +59,7 @@ public class MainActivity extends Activity implements
     private ExpandableListAdapter adapter;
     private UseCaseSummaryFragment caseSummaryFragment;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,7 +85,6 @@ public class MainActivity extends Activity implements
 
         stickyLayout.setOnGiveUpTouchEventListener(this);
         slidingMenu.showMenu();
-
     }
 
 
