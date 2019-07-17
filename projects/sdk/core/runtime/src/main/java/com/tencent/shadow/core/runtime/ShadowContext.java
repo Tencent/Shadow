@@ -147,7 +147,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
          * @return <code>true</code>表示该Intent是为了启动插件内Activity的,已经被正确消费了.
          * <code>false</code>表示该Intent不是插件内的Activity.
          */
-        boolean startActivity(ShadowContext shadowContext, Intent intent);
+        boolean startActivity(ShadowContext shadowContext, Intent intent, Bundle options);
 
         /**
          * 启动Activity
@@ -174,16 +174,21 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     @Override
     public void startActivity(Intent intent) {
+        startActivity(intent, null);
+    }
+
+    @Override
+    public void startActivity(Intent intent, Bundle options) {
         final Intent pluginIntent = new Intent(intent);
         pluginIntent.setExtrasClassLoader(mPluginClassLoader);
-        final boolean success = mPluginComponentLauncher.startActivity(this, pluginIntent);
+        final boolean success = mPluginComponentLauncher.startActivity(this, pluginIntent, options);
         if (!success) {
-            super.startActivity(intent);
+            super.startActivity(intent, options);
         }
     }
 
-    public void superStartActivity(Intent intent) {
-        super.startActivity(intent);
+    public void superStartActivity(Intent intent, Bundle options) {
+        super.startActivity(intent, options);
     }
 
     @Override
