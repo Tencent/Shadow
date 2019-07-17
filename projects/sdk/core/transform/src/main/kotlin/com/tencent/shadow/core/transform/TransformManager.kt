@@ -41,6 +41,7 @@ class TransformManager(ctClassInputMap: Map<CtClass, InputClass>,
             WebViewTransform(),
             ContentProviderTransform(),
             PackageManagerTransform(),
+            PackageItemInfoTransform(),
             KeepHostContextTransform(useHostContext())
     )
 }

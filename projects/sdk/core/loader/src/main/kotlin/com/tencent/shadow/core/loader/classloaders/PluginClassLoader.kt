@@ -37,9 +37,9 @@ import java.io.File
  *
 */
 class PluginClassLoader(
-        private val dexPath: String,
+        dexPath: String,
         optimizedDirectory: File?,
-        private val librarySearchPath: String?,
+        librarySearchPath: String?,
         parent: ClassLoader,
         private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
@@ -94,9 +94,6 @@ class PluginClassLoader(
         }
     }
 
-    fun getLibrarySearchPath() = librarySearchPath
-
-
     private fun String.startWith(array: Array<String>): Boolean {
         for (str in array) {
             if (startsWith(str)) {
@@ -105,6 +102,5 @@ class PluginClassLoader(
         }
         return false
     }
-
-    fun getDexPath() = dexPath
 }
+

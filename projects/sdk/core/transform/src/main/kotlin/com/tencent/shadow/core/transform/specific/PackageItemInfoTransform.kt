@@ -27,25 +27,35 @@ import javassist.CtNewMethod
 import javassist.Modifier
 import java.util.*
 
-class PackageManagerTransform : SpecificTransform() {
+class PackageItemInfoTransform : SpecificTransform() {
     companion object {
-        const val AndroidPackageManagerClassname = "android.content.pm.PackageManager"
-        const val ShadowAndroidPackageManagerClassname = "com.tencent.shadow.core.runtime.PackageManagerInvokeRedirect"
+        const val AndroidProviderInfo = "android.content.pm.ProviderInfo"
+        const val AndroidActivityInfo = "android.content.pm.ActivityInfo"
+        const val AndroidApplicationInfo = "android.content.pm.ApplicationInfo"
+        const val AndroidServiceInfo = "android.content.pm.ServiceInfo"
+        const val AndroidPackageItemInfo = "android.content.pm.PackageItemInfo"
+        const val ShadowAndroidPackageItemInfo = "com.tencent.shadow.core.runtime.ShadowPackageItemInfo"
     }
 
-    private fun setupPackageManagerTransform(targetMethodName: Array<String>) {
-        val targetMethods = getTargetMethods(arrayOf(AndroidPackageManagerClassname), targetMethodName)
+    private fun setup(
+            targetClassNames: Array<String>,
+            targetMethodName: Array<String>,
+            redirectRule: Pair<String, String>
+    ) {
+        val targetMethods = getTargetMethods(targetClassNames, targetMethodName)
         targetMethods.forEach { targetMethod ->
             newStep(object : TransformStep {
                 override fun filter(allInputClass: Set<CtClass>) =
                         allCanRecompileAppClass(
                                 allInputClass,
-                                listOf(AndroidPackageManagerClassname)
+                                targetClassNames.asList()
                         ).filter { matchMethodCallInClass(targetMethod, it) }.toSet()
 
                 override fun transform(ctClass: CtClass) {
+                    System.out.println(ctClass.name + " matchMethodCallInClass :" + targetMethod.methodInfo.name + "  =================")
                     try {
-                        val targetClass = mClassPool[AndroidPackageManagerClassname]
+                        val targetClass = mClassPool[redirectRule.first]
+                        val redirectClassName = redirectRule.second
                         val parameterTypes: Array<CtClass> =
                                 Array(targetMethod.parameterTypes.size + 1) { index ->
                                     if (index == 0) {
@@ -66,16 +76,14 @@ class PackageManagerTransform : SpecificTransform() {
                         val newBodyBuilder = StringBuilder()
                         newBodyBuilder
                                 .append("return ")
-                                .append(ShadowAndroidPackageManagerClassname)
+                                .append(redirectClassName)
                                 .append(".")
                                 .append(targetMethod.methodInfo.name)
                                 .append("(")
                                 .append(ctClass.name)
                                 .append(".class.getClassLoader(),")
-                        //下面放弃第0个和第1个参数，第0个是this，
-                        //第1个是redirectMethodCallToStaticMethodCall时原本被调用的PackageManager对象。
-                        for (i in 2..newMethod.parameterTypes.size) {
-                            if (i > 2) {
+                        for (i in 1..newMethod.parameterTypes.size) {
+                            if (i > 1) {
                                 newBodyBuilder.append(',')
                             }
                             newBodyBuilder.append("\$${i}")
@@ -96,17 +104,6 @@ class PackageManagerTransform : SpecificTransform() {
         }
     }
 
-    override fun setup(allInputClass: Set<CtClass>) {
-        setupPackageManagerTransform(
-                arrayOf(
-                        "getApplicationInfo",
-                        "getActivityInfo",
-                        "getPackageInfo",
-                        "resolveContentProvider"
-                )
-        )
-    }
-
     /**
      * 查找目标class对象的目标method
      */
@@ -120,5 +117,18 @@ class PackageManagerTransform : SpecificTransform() {
             method_targets.addAll(methods.filter { targetMethodName.contains(it.name) })
         }
         return method_targets
+    }
+
+    override fun setup(allInputClass: Set<CtClass>) {
+        setup(
+                arrayOf(
+                        AndroidProviderInfo,
+                        AndroidServiceInfo,
+                        AndroidApplicationInfo,
+                        AndroidActivityInfo
+                ),
+                arrayOf("loadXmlMetaData"),
+                AndroidPackageItemInfo to ShadowAndroidPackageItemInfo
+        )
     }
 }

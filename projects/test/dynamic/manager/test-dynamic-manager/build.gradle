@@ -36,6 +36,7 @@ dependencies {
 
     compileOnly 'com.tencent.shadow.core:common-debug'
     compileOnly 'com.tencent.shadow.dynamic:dynamic-host-debug'
+    compileOnly project(':test-manager')
 }
 
 afterEvaluate {

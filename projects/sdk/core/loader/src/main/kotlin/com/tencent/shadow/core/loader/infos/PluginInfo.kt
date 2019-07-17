@@ -18,18 +18,11 @@
 
 package com.tencent.shadow.core.loader.infos
 
-import android.content.pm.Signature
-import android.os.Bundle
-
 class PluginInfo(
         val businessName: String?,
         val partKey: String,
         val packageName: String,
-        val applicationClassName: String?,
-        val metaData: Bundle?,
-        val versionCode: Int,
-        val versionName: String,
-        val signatures: Array<Signature>
+        val applicationClassName: String?
 ) {
     private val _mActivities: MutableSet<PluginActivityInfo> = HashSet()
     private val _mServices: MutableSet<PluginServiceInfo> = HashSet()

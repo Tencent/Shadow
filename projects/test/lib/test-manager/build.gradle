@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.test.lib.test-manager'
+
+dependencies {
+    compileOnly 'com.tencent.shadow.dynamic:dynamic-host-debug'
+}
+sourceCompatibility = "7"
+targetCompatibility = "7"
