@@ -35,7 +35,7 @@ import android.os.Build;
  */
 public class PackageManagerInvokeRedirect {
 
-    private static PackageManager getPluginPackageManager(ClassLoader classLoaderOfInvokeCode) {
+    private static PluginPackageManager getPluginPackageManager(ClassLoader classLoaderOfInvokeCode) {
         return PluginPartInfoManager.getPluginInfo(classLoaderOfInvokeCode).packageManager;
     }
 
