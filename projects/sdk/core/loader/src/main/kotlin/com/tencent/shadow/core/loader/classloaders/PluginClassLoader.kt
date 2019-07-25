@@ -64,7 +64,7 @@ class PluginClassLoader(
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
         if (specialClassLoader == null //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
-                || className.startWith(allHostWhiteList)
+                || className.inPackage(allHostWhiteList)
                 || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的) {
             return super.loadClass(className, resolve)
         } else {
@@ -94,13 +94,15 @@ class PluginClassLoader(
         }
     }
 
-    private fun String.startWith(array: Array<String>): Boolean {
-        for (str in array) {
-            if (startsWith(str)) {
-                return true
-            }
+    private fun String.inPackage(packageNames: Array<String>): Boolean {
+        val packageName: String
+        val dot = lastIndexOf('.')
+        packageName = if (dot != -1) {
+            substring(0, dot)
+        } else {
+            ""
         }
-        return false
+        return packageNames.any { packageName == it }
     }
 }
 
