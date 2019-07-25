@@ -73,8 +73,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
      */
     abstract fun getComponentManager():ComponentManager
 
-    abstract val mExceptionReporter: Reporter
-
     /**
      * @GuardedBy("mLock")
      */
@@ -201,7 +199,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                 delegate.inject(pluginParts.application)
                 delegate.inject(pluginParts.classLoader)
                 delegate.inject(pluginParts.resources)
-                delegate.inject(mExceptionReporter)
                 delegate.inject(mComponentManager)
                 delegate.inject(mShadowRemoteViewCreatorProvider)
             }
