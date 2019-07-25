@@ -5,7 +5,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.ProviderInfo;
-import android.content.pm.VersionedPackage;
 
 public interface PluginPackageManager {
     ApplicationInfo getApplicationInfo(String packageName, int flags);
@@ -13,8 +12,6 @@ public interface PluginPackageManager {
     ActivityInfo getActivityInfo(ComponentName component, int flags);
 
     PackageInfo getPackageInfo(String packageName, int flags);
-
-    PackageInfo getPackageInfo(VersionedPackage versionedPackage, int flags);
 
     ProviderInfo resolveContentProvider(String name, int flags);
 }
