@@ -54,7 +54,7 @@ public class PackageManagerInvokeRedirect {
     @TargetApi(Build.VERSION_CODES.O)
     public static PackageInfo getPackageInfo(ClassLoader classLoaderOfInvokeCode, VersionedPackage versionedPackage,
                                              int flags) throws PackageManager.NameNotFoundException{
-        return getPluginPackageManager(classLoaderOfInvokeCode).getPackageInfo(versionedPackage, flags);
+        return getPluginPackageManager(classLoaderOfInvokeCode).getPackageInfo(versionedPackage.getPackageName(), flags);
     }
 
     public static ProviderInfo resolveContentProvider(ClassLoader classLoaderOfInvokeCode, String name, int flags) {

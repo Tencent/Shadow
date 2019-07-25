@@ -18,10 +18,8 @@
 
 package com.tencent.shadow.core.loader.managers
 
-import android.annotation.TargetApi
 import android.content.ComponentName
 import android.content.pm.*
-import android.os.Build
 import com.tencent.shadow.core.runtime.PluginPackageManager
 
 internal class PluginPackageManagerImpl(private val hostPackageManager: PackageManager,
@@ -40,14 +38,6 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
                 packageInfo
             } else {
                 hostPackageManager.getPackageInfo(packageName, flags)
-            }
-
-    @TargetApi(Build.VERSION_CODES.O)
-    override fun getPackageInfo(versionedPackage: VersionedPackage?, flags: Int): PackageInfo? =
-            if (packageInfo.applicationInfo.packageName == versionedPackage?.packageName) {
-                packageInfo
-            } else {
-                hostPackageManager.getPackageInfo(versionedPackage, flags)
             }
 
     override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo {
