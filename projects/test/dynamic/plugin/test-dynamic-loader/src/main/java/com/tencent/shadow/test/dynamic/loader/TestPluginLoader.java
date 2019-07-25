@@ -55,8 +55,4 @@ public class TestPluginLoader extends ShadowPluginLoader {
         };
     }
 
-    @Override
-    public String getMAbi() {
-        return "";
-    }
 }

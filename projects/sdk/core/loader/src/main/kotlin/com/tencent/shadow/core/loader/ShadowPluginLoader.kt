@@ -85,11 +85,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
     private val mPluginContentProviderManager: PluginContentProviderManager = PluginContentProviderManager()
 
     private val mPluginServiceManagerLock = ReentrantLock()
-    /**
-     * 插件将要使用的so的ABI，Loader会将其从apk中解压出来。
-     * 如果插件不需要so，则返回""空字符串。
-     */
-    abstract val mAbi: String
 
     private val  mShadowRemoteViewCreatorProvider: ShadowRemoteViewCreatorProvider = ShadowRemoteViewCreatorProviderImpl()
 

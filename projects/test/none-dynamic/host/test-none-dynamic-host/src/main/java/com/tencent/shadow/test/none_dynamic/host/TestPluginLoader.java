@@ -36,11 +36,6 @@ public class TestPluginLoader extends ShadowPluginLoader {
     }
 
     @Override
-    public String getMAbi() {
-        return "armeabi";
-    }
-
-    @Override
     public ComponentManager getComponentManager() {
         return mCM;
     }
