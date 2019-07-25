@@ -84,10 +84,7 @@ object LoadPluginBloc {
                 } else {
                     File(tempContext.filesDir, "dataDir")
                 }
-
-                if (!dataDir.exists()) {
-                    dataDir.mkdirs()
-                }
+                dataDir.mkdirs()
 
                 packageArchiveInfo.applicationInfo.nativeLibraryDir = installedApk.libraryPath
                 packageArchiveInfo.applicationInfo.dataDir = dataDir.absolutePath
