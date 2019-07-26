@@ -201,6 +201,11 @@ public class DbCompatibilityTest {
         if (timeout) {
             throw new TimeoutException("exec超时");
         }
+        int exitValue = p.exitValue();
+        if (exitValue != 0) {
+            String errorOutput = IOUtils.toString(p.getErrorStream(), Charset.defaultCharset());
+            throw new Error("exitValue==" + exitValue + " errorOutput==" + errorOutput);
+        }
     }
 
     /**
@@ -230,6 +235,12 @@ public class DbCompatibilityTest {
 
         if (timeout) {
             throw new TimeoutException("exec超时");
+        }
+
+        int exitValue = p.exitValue();
+        if (exitValue != 0) {
+            String errorOutput = IOUtils.toString(p.getErrorStream(), Charset.defaultCharset());
+            throw new Error("exitValue==" + exitValue + " errorOutput==" + errorOutput);
         }
 
         Assert.assertTrue(dumpSqlFile.exists() && dumpSqlFile.length() > 0);
