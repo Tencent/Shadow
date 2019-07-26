@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.manager.installplugin;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -26,6 +27,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,6 +65,11 @@ public class DbCompatibilityTest {
 
     @Before
     public void setUp() {
+        //因为sqlite3本身的bug和版本不一致导致dump结果不一致，这个单元测试只能在Android P上完整正常运行
+        //Android 4.4系统在init时会出现内部错误
+        //Android 7.0系统dump出的sql对表名加了额外的双引号，兼容略麻烦
+        Assume.assumeTrue(Build.VERSION.SDK_INT == Build.VERSION_CODES.P);
+
         context = InstrumentationRegistry.getTargetContext();
         databasePath = context.getDatabasePath(
                 InstalledPluginDBHelper.DB_NAME_PREFIX + TEST_DB_NAME
