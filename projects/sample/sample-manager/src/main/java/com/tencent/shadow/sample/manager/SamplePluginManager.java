@@ -63,7 +63,7 @@ public class SamplePluginManager extends FastPluginManager {
      * @return 宿主中注册的PluginProcessService实现的类名
      */
     @Override
-    protected String getPluginProcessServiceName() {
+    protected String getPluginProcessServiceName(String partKey) {
         return "com.tencent.shadow.sample.host.PluginProcessPPS";
     }
 

@@ -125,9 +125,9 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
         return mPluginLoader.convertActivityIntent(pluginIntent);
     }
 
-    private void loadPluginLoaderAndRuntime(String uuid) throws RemoteException, TimeoutException, FailedException {
+    private void loadPluginLoaderAndRuntime(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
         if (mPpsController == null) {
-            bindPluginProcessService(getPluginProcessServiceName());
+            bindPluginProcessService(getPluginProcessServiceName(partKey));
             waitServiceConnected(10, TimeUnit.SECONDS);
         }
         loadRunTime(uuid);
@@ -135,7 +135,7 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
     }
 
     private void loadPlugin(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
-        loadPluginLoaderAndRuntime(uuid);
+        loadPluginLoaderAndRuntime(uuid, partKey);
         Map map = mPluginLoader.getLoadedPlugin();
         if (!map.containsKey(partKey)) {
             mPluginLoader.loadPlugin(partKey);
@@ -143,6 +143,6 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
     }
 
 
-    protected abstract String getPluginProcessServiceName();
+    protected abstract String getPluginProcessServiceName(String partKey);
 
 }
