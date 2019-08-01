@@ -19,7 +19,10 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.util.Log
 import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
@@ -54,6 +57,8 @@ object LoadPluginBloc {
         if (installedApk.apkFilePath == null) {
             throw LoadPluginException("apkFilePath==null")
         } else {
+            beforeLoadPlugin(loadParameters.businessName, loadParameters.partKey)
+
             val buildClassLoader = executorService.submit(Callable {
                 lock.withLock {
                     LoadApkBloc.loadPlugin(installedApk, loadParameters, pluginPartsMap)
@@ -123,12 +128,33 @@ object LoadPluginBloc {
                     PluginPartInfoManager.addPluginInfo(pluginClassLoader, PluginPartInfo(shadowApplication, resources,
                             pluginClassLoader, pluginPackageManager))
                 }
+
+                val applicationInfo = ApplicationInfo(shadowApplication.applicationInfo)
+                applicationInfo.metaData = pluginInfo.metaData
+                afterLoadPlugin(loadParameters.businessName, loadParameters.partKey, resources, pluginClassLoader, applicationInfo)
             }
 
             return buildRunningPlugin
         }
     }
 
+    fun beforeLoadPlugin(arg0: String, arg1: String) {
+        try {
+            val callback = this.javaClass.classLoader.loadClass("com.tencent.shadow.core.loader.inhost.LoadPluginCallback")
+            val beforeLoadPlugin = callback.getDeclaredMethod("beforeLoadPlugin", String::class.java, String::class.java)
+            beforeLoadPlugin.invoke(null, arg0, arg1)
+        } catch (e: Throwable) {
+            Log.e("LoadPlugin", e.toString())
+        }
+    }
 
-
+    fun afterLoadPlugin(arg0: String, arg1: String, arg2: Resources, arg3: ClassLoader, arg4: ApplicationInfo) {
+        try {
+            val callback = this.javaClass.classLoader.loadClass("com.tencent.shadow.core.loader.inhost.LoadPluginCallback")
+            val afterLoadPlugin = callback.getDeclaredMethod("afterLoadPlugin", String::class.java, String::class.java, ApplicationInfo::class.java, ClassLoader::class.java, Resources::class.java)
+            afterLoadPlugin.invoke(null, arg0, arg1, arg4, arg3, arg2)
+        } catch (e: Throwable) {
+            Log.e("LoadPlugin", e.toString())
+        }
+    }
 }
