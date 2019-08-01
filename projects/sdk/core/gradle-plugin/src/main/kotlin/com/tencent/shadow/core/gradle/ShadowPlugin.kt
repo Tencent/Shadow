@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.gradle
 
 import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.BaseExtension
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import com.tencent.shadow.core.transform.ShadowTransform
 import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
@@ -30,12 +31,32 @@ import java.io.File
 
 class ShadowPlugin : Plugin<Project> {
 
+    fun getPluginExtension(plugin: Plugin<Project>): BaseExtension {
+        var cl : Class<Any>? = plugin.javaClass
+        while(cl != null && cl != Object::class.java) {
+            try {
+                System.err.println("ShadowPlugin: cl = " + cl)
+                val mt = cl.getDeclaredMethod("getExtension")
+                System.err.println("ShadowPlugin: mt = " + mt)
+                if(mt != null) {
+                    mt.isAccessible = true
+                    return mt.invoke(plugin) as BaseExtension
+                }
+            } catch(e: NoSuchMethodException) {
+                System.err.println("ShadowPlugin: e = " + e)
+            }
+            cl = cl.superclass as Class<Any>?
+        }
+        throw RuntimeException()
+    }
+
     override fun apply(project: Project) {
         System.err.println("ShadowPlugin project.name==" + project.name)
 
         val plugin = project.plugins.getPlugin(AppPlugin::class.java)
-        val sdkDirectory = plugin.extension.sdkDirectory
-        val androidJarPath = "platforms/${plugin.extension.compileSdkVersion}/android.jar"
+        val pluginExtension = getPluginExtension(plugin)
+        val sdkDirectory = pluginExtension.sdkDirectory
+        val androidJarPath = "platforms/${pluginExtension.compileSdkVersion}/android.jar"
         val androidJar = File(sdkDirectory, androidJarPath)
 
         //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
@@ -45,7 +66,7 @@ class ShadowPlugin : Plugin<Project> {
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
         if (!project.hasProperty("disable_shadow_transform")) {
-            plugin.extension.registerTransform(ShadowTransform(
+            pluginExtension.registerTransform(ShadowTransform(
                     project,
                     classPoolBuilder,
                     { shadowExtension.transformConfig.useHostContext }
