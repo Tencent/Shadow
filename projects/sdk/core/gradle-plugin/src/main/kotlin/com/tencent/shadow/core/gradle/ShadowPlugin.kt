@@ -27,36 +27,19 @@ import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.plugins.BasePlugin
 import java.io.File
+import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.jvm.isAccessible
 
 class ShadowPlugin : Plugin<Project> {
-
-    fun getPluginExtension(plugin: Plugin<Project>): BaseExtension {
-        var cl : Class<Any>? = plugin.javaClass
-        while(cl != null && cl != Object::class.java) {
-            try {
-                System.err.println("ShadowPlugin: cl = " + cl)
-                val mt = cl.getDeclaredMethod("getExtension")
-                System.err.println("ShadowPlugin: mt = " + mt)
-                if(mt != null) {
-                    mt.isAccessible = true
-                    return mt.invoke(plugin) as BaseExtension
-                }
-            } catch(e: NoSuchMethodException) {
-                System.err.println("ShadowPlugin: e = " + e)
-            }
-            cl = cl.superclass as Class<Any>?
-        }
-        throw RuntimeException()
-    }
 
     override fun apply(project: Project) {
         System.err.println("ShadowPlugin project.name==" + project.name)
 
         val plugin = project.plugins.getPlugin(AppPlugin::class.java)
-        val pluginExtension = getPluginExtension(plugin)
-        val sdkDirectory = pluginExtension.sdkDirectory
-        val androidJarPath = "platforms/${pluginExtension.compileSdkVersion}/android.jar"
+        val sdkDirectory = plugin.baseExtension.sdkDirectory
+        val androidJarPath = "platforms/${plugin.baseExtension.compileSdkVersion}/android.jar"
         val androidJar = File(sdkDirectory, androidJarPath)
 
         //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
@@ -66,7 +49,7 @@ class ShadowPlugin : Plugin<Project> {
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
         if (!project.hasProperty("disable_shadow_transform")) {
-            pluginExtension.registerTransform(ShadowTransform(
+            plugin.baseExtension.registerTransform(ShadowTransform(
                     project,
                     classPoolBuilder,
                     { shadowExtension.transformConfig.useHostContext }
@@ -105,4 +88,15 @@ class ShadowPlugin : Plugin<Project> {
     class TransformConfig {
         var useHostContext: Array<String> = emptyArray()
     }
+
+    private val AppPlugin.baseExtension: BaseExtension
+        get() {
+            return if (com.android.builder.model.Version.ANDROID_GRADLE_PLUGIN_VERSION == "3.0.0") {
+                val method = BasePlugin::class.declaredFunctions.first { it.name == "getExtension" }
+                method.isAccessible = true
+                method.call(this) as BaseExtension
+            } else {
+                extension
+            }
+        }
 }
