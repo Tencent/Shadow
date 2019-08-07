@@ -22,4 +22,6 @@ import android.os.IBinder;
 
 public interface PluginLoaderImpl extends IBinder {
     void setUuidManager(UuidManager uuidManager);
+
+    void setLoadPluginCallback(LoadPluginCallback callback);
 }

@@ -18,7 +18,25 @@
 
 package com.tencent.shadow.sample.host;
 
+import android.content.pm.ApplicationInfo;
+import android.content.res.Resources;
+import android.util.Log;
+
+import com.tencent.shadow.dynamic.host.LoadPluginCallback;
 import com.tencent.shadow.dynamic.host.PluginProcessService;
 
 public class PluginProcessPPS extends PluginProcessService {
+	public PluginProcessPPS() {
+		setLoadPluginCallback(new LoadPluginCallback() {
+			@Override
+			public void beforeLoadPlugin(String partKey) {
+				Log.d("PluginProcessPPS", "beforeLoadPlugin(" + partKey + ")");
+			}
+
+			@Override
+			public void afterLoadPlugin(String partKey, ApplicationInfo applicationInfo, ClassLoader pluginClassLoader, Resources pluginResources) {
+				Log.d("LoadPluginCallback", "afterLoadPlugin(" + partKey + "," + applicationInfo.className + "{metaData=" + applicationInfo.metaData + "}" + "," + pluginClassLoader + ")");
+			}
+		});
+	}
 }

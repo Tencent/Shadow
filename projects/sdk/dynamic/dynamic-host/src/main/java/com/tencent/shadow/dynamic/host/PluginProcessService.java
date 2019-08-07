@@ -107,6 +107,7 @@ public class PluginProcessService extends Service {
     }
 
     private UuidManager mUuidManager;
+    private LoadPluginCallback mLoadPluginCallback = null;
 
     private PluginLoaderImpl mPluginLoader;
 
@@ -197,6 +198,7 @@ public class PluginProcessService extends Service {
 
             PluginLoaderImpl pluginLoader = new LoaderImplLoader().load(installedApk, uuid, getApplicationContext());
             pluginLoader.setUuidManager(mUuidManager);
+            pluginLoader.setLoadPluginCallback(mLoadPluginCallback);
             mPluginLoader = pluginLoader;
         } catch (RuntimeException e) {
             if (mLogger.isErrorEnabled()) {
@@ -221,6 +223,19 @@ public class PluginProcessService extends Service {
                 mLogger.info("更新mPluginLoader的uuidManager");
             }
             mPluginLoader.setUuidManager(uuidManager);
+        }
+    }
+
+    public void setLoadPluginCallback(LoadPluginCallback callback) {
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info("setUuidManager loadPluginCallback==" + callback);
+        }
+        mLoadPluginCallback = callback;
+        if (mPluginLoader != null) {
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("更新mPluginLoader的loadPluginCallback");
+            }
+            mPluginLoader.setLoadPluginCallback(callback);
         }
     }
 

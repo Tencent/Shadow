@@ -20,6 +20,7 @@ package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
 import android.content.res.Resources
+import android.os.Bundle
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.CreateApplicationException
 import com.tencent.shadow.core.loader.managers.ComponentManager
@@ -41,7 +42,8 @@ object CreateApplicationBloc {
             resources: Resources,
             hostAppContext: Context,
             componentManager: ComponentManager,
-            remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
+            remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?,
+            pluginMetaData: Bundle?
     ): ShadowApplication {
         try {
             val shadowApplication : ShadowApplication;
@@ -62,6 +64,7 @@ object CreateApplicationBloc {
             shadowApplication.setBusinessName(pluginPackageManager.pluginInfo.businessName)
             shadowApplication.setPluginPartKey(partKey)
             shadowApplication.remoteViewCreatorProvider = remoteViewCreatorProvider
+            shadowApplication.setPluginMetaData(pluginMetaData)
             return shadowApplication
         } catch (e: Exception) {
             throw CreateApplicationException(e)

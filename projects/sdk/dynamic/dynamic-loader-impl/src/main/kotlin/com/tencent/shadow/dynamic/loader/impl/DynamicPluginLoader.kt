@@ -28,6 +28,7 @@ import android.os.Looper
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.runtime.container.ContentProviderDelegateProviderHolder
 import com.tencent.shadow.core.runtime.container.DelegateProviderHolder
+import com.tencent.shadow.dynamic.host.LoadPluginCallback
 import com.tencent.shadow.dynamic.host.UuidManager
 import java.util.concurrent.CountDownLatch
 
@@ -54,6 +55,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     private val mUiHandler = Handler(Looper.getMainLooper())
 
+    private var mLoadPluginCallback: LoadPluginCallback? = null
+
     /**
      * 同一个IServiceConnection只会对应一个ServiceConnection对象，此Map就是保存这种对应关系
      */
@@ -77,9 +80,16 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     }
 
     fun loadPlugin(partKey: String) {
+        mLoadPluginCallback?.beforeLoadPlugin(partKey)
         val installedApk = mUuidManager.getPlugin(mUuid, partKey)
         val future = mPluginLoader.loadPlugin(installedApk)
-        future.get()
+        val result = future.get()
+        if (result != null && result is Context) {
+            val applicationInfo = result.applicationInfo
+            val pluginClassLoader = result.classLoader
+            val pluginResources = result.resources
+            mLoadPluginCallback?.afterLoadPlugin(partKey, applicationInfo, pluginClassLoader, pluginResources)
+        }
     }
 
     fun getLoadedPlugin(): MutableMap<String, Boolean> {
@@ -227,4 +237,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
         }
     }
 
+    fun setLoadPluginCallback(p0: LoadPluginCallback?) {
+        if (p0 != null)
+            mLoadPluginCallback = p0
+    }
 }

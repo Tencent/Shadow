@@ -25,8 +25,10 @@ import android.content.ComponentCallbacks;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.os.Build;
+import android.os.Bundle;
 
 import java.util.HashMap;
 import java.util.List;
@@ -42,6 +44,8 @@ public abstract class ShadowApplication extends ShadowContext {
     private Map<String, List<String>> mBroadcasts;
 
     public boolean isCallOnCreate;
+
+    private Bundle mPluginMetaData;
 
     @Override
     public Context getApplicationContext() {
@@ -157,5 +161,23 @@ public abstract class ShadowApplication extends ShadowContext {
 
     public void attachBaseContext(Context base) {
         //do nothing.
+    }
+
+    public void setPluginMetaData(Bundle metaData) {
+        mPluginMetaData = metaData;
+    }
+
+    @Override
+    public ApplicationInfo getApplicationInfo() {
+        final ApplicationInfo applicationInfo = super.getApplicationInfo();
+        if (mPluginMetaData != null) {
+            Bundle metaData = mPluginMetaData;
+            if (applicationInfo.metaData != null) {
+                metaData = new Bundle(applicationInfo.metaData);
+                metaData.putAll(mPluginMetaData);
+            }
+            applicationInfo.metaData = metaData;
+        }
+        return applicationInfo;
     }
 }
