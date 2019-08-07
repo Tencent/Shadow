@@ -33,6 +33,7 @@ open class PackagePluginExtension {
     var runtimeApkProjectPath = ""
 
     var archivePrefix = ""
+    var archiveSuffix = ""
     var destinationDir = ""
 
     var uuid = ""

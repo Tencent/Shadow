@@ -73,9 +73,9 @@ internal fun createPackagePluginTask(project: Project, buildType: PluginBuildTyp
         val packagePlugin = project.extensions.findByName("packagePlugin")
         val extension = packagePlugin as PackagePluginExtension
 
-        val suffix: String? = System.getenv("PluginSuffix")
+        val suffix = if (extension.archiveSuffix.isEmpty()) "" else extension.archiveSuffix
         val prefix = if (extension.archivePrefix.isEmpty()) "plugin" else extension.archivePrefix
-        if (suffix == null) {
+        if (suffix.isEmpty()) {
             it.archiveName = "$prefix-${buildType.name}.zip"
         } else {
             it.archiveName = "$prefix-${buildType.name}-$suffix.zip"
