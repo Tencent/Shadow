@@ -64,7 +64,14 @@ public class SamplePluginManager extends FastPluginManager {
      */
     @Override
     protected String getPluginProcessServiceName(String partKey) {
-        return "com.tencent.shadow.sample.host.PluginProcessPPS";
+        if ("sample-plugin-app".equals(partKey)) {
+            return "com.tencent.shadow.sample.host.PluginProcessPPS";
+        //} else if ("another-plugin-app".equals(partKey)) {
+        //    return "";//在这里支持多个插件
+        } else {
+            //如果有默认PPS，可用return代替throw
+            throw new IllegalArgumentException("unexpected plugin load request: " + partKey);
+        }
     }
 
     @Override
