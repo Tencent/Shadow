@@ -61,7 +61,7 @@ public class ResolverHook {
             String[] selectionArgs, String sortOrder,
             CancellationSignal cancellationSignal) {
         Uri containerUri = UriConverter.parse(uri.toString());
-        if (Build.VERSION.SDK_INT >= 16) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return resolver.query(containerUri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
         } else {
             return null;

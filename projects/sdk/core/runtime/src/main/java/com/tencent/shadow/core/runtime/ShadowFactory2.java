@@ -113,7 +113,7 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
             args[1] = attrs;
 
             final View view = constructor.newInstance(args);
-            if (view instanceof ViewStub && Build.VERSION.SDK_INT >= 16) {
+            if (view instanceof ViewStub && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 // Use the same context when inflating ViewStub later.
                 final ViewStub viewStub = (ViewStub) view;
                 viewStub.setLayoutInflater(mLayoutInflater.cloneInContext((Context) args[0]));
