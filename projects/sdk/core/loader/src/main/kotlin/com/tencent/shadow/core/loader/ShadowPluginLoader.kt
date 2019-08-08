@@ -49,7 +49,7 @@ import kotlin.concurrent.withLock
 
 abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, DI, ContentProviderDelegateProvider {
 
-    private val mExecutorService = Executors.newCachedThreadPool()
+    protected val mExecutorService = Executors.newCachedThreadPool()
 
     /**
      * loadPlugin方法是在子线程被调用的。而getHostActivityDelegate方法是在主线程被调用的。
@@ -142,7 +142,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
     }
 
     @Throws(LoadPluginException::class)
-    fun loadPlugin(
+    open fun loadPlugin(
             installedApk: InstalledApk
     ): Future<*> {
         val loadParameters = installedApk.getLoadParameters()
@@ -212,7 +212,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     }
 
-    private fun InstalledApk.getLoadParameters(): LoadParameters {
+    fun InstalledApk.getLoadParameters(): LoadParameters {
         val parcel = Parcel.obtain()
         parcel.unmarshall(parcelExtras, 0, parcelExtras.size)
         parcel.setDataPosition(0)
