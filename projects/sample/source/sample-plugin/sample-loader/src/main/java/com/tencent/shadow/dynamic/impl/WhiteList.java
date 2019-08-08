@@ -16,16 +16,16 @@
  *
  */
 
-package com.tencent.shadow.core.loader.infos
+package com.tencent.shadow.dynamic.impl;
 
-import android.content.res.Resources
-import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
-import com.tencent.shadow.core.runtime.PluginPackageManager
-import com.tencent.shadow.core.runtime.ShadowApplication
-
-class PluginParts(val application: ShadowApplication,
-                  val classLoader: PluginClassLoader,
-                  val resources: Resources,
-                  val businessName: String?,
-                  val pluginPackageManager: PluginPackageManager
-)
+/**
+ * 此类包名及类名固定
+ * classLoader的白名单
+ * PluginLoader可以加载宿主中位于白名单内的类
+ */
+public interface WhiteList {
+    String[] sWhiteList = new String[]
+            {
+                    "com.tencent.shadow.sample.host.lib",
+            };
+}
