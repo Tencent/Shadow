@@ -33,6 +33,8 @@ import com.tencent.shadow.sample.host.lib.LoadPluginCallback;
 
 import java.util.concurrent.Future;
 
+import static android.content.pm.PackageManager.GET_META_DATA;
+
 public class SamplePluginLoader extends ShadowPluginLoader {
 
     private final static String TAG = "shadow";
@@ -64,7 +66,8 @@ public class SamplePluginLoader extends ShadowPluginLoader {
                 try {
                     future.get();
                     PluginParts pluginParts = getPluginParts(partKey);
-                    ApplicationInfo applicationInfo = pluginParts.getApplication().getApplicationInfo();
+                    String packageName = pluginParts.getApplication().getPackageName();
+                    ApplicationInfo applicationInfo = pluginParts.getPluginPackageManager().getApplicationInfo(packageName, GET_META_DATA);
                     PluginClassLoader classLoader = pluginParts.getClassLoader();
                     Resources resources = pluginParts.getResources();
 
