@@ -25,6 +25,7 @@ import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOr
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityWindowSoftMode;
+import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivitySetTheme;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ActivityContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ApplicationContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.dialog.TestDialogActivity;
@@ -60,6 +61,7 @@ public class UseCaseManager {
                 new TestActivityReCreateBySystem.Case(),
                 new TestActivityOrientation.Case(),
                 new TestActivityWindowSoftMode.Case(),
+                new TestActivitySetTheme.Case(),
         });
         useCases.add(activityCategory);
 

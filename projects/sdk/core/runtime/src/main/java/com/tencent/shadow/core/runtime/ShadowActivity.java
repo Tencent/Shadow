@@ -325,4 +325,9 @@ public abstract class ShadowActivity extends PluginActivity {
     public boolean isInMultiWindowMode() {
         return mHostActivityDelegator.isInMultiWindowMode();
     }
+
+    @Override
+    public void setTheme(int resid) {
+        mHostActivityDelegator.setTheme(resid);
+    }
 }
