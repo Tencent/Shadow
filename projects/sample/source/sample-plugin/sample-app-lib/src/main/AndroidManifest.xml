@@ -28,6 +28,7 @@
 
         <activity android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreate" />
         <activity android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivitySetTheme" />
+        <activity android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOptionMenu" />
 
         <activity android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOnCreate" />
 
