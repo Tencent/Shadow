@@ -177,15 +177,23 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
     }
 
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
-        return mHostActivityDelegator.superOnCreatePanelMenu(featureId, menu);
+        if (featureId == Window.FEATURE_OPTIONS_PANEL) {
+            return onCreateOptionsMenu(menu);
+        } else {
+            return mHostActivityDelegator.superOnCreatePanelMenu(featureId, menu);
+        }
     }
 
     public boolean onPreparePanel(int featureId, View view, Menu menu) {
-        return false;
+        return mHostActivityDelegator.superOnPreparePanel(featureId, view, menu);
     }
 
     public void onPanelClosed(int featureId, Menu menu) {
         mHostActivityDelegator.superOnPanelClosed(featureId, menu);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return mHostActivityDelegator.superOnCreateOptionsMenu(menu);
     }
 
     public Dialog onCreateDialog(int id) {
