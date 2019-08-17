@@ -21,11 +21,12 @@ package com.tencent.shadow.sample.plugin.app.lib.gallery.cases;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOnCreate;
+import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOptionMenu;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOrientation;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreate;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreateBySystem;
-import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityWindowSoftMode;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivitySetTheme;
+import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityWindowSoftMode;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ActivityContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ApplicationContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.dialog.TestDialogActivity;
@@ -62,6 +63,7 @@ public class UseCaseManager {
                 new TestActivityOrientation.Case(),
                 new TestActivityWindowSoftMode.Case(),
                 new TestActivitySetTheme.Case(),
+                new TestActivityOptionMenu.Case(),
         });
         useCases.add(activityCategory);
 
