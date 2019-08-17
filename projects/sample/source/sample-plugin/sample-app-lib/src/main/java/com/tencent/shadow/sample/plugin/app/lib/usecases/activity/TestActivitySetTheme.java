@@ -48,7 +48,7 @@ public class TestActivitySetTheme extends Activity {
     }
 
     int currentTheme = 0;
-    
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         int currentTheme = getIntent().getIntExtra("theme", 0);
