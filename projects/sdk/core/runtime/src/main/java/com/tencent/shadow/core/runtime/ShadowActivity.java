@@ -32,7 +32,6 @@ import android.os.Bundle;
 import android.view.DragAndDropPermissions;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -330,9 +329,5 @@ public abstract class ShadowActivity extends PluginActivity {
     @Override
     public void setTheme(int resid) {
         mHostActivityDelegator.setTheme(resid);
-    }
-
-    public boolean OnCreateOptionsMenu(Menu menu) {
-        return mHostActivityDelegator.superOnCreateOptionsMenu(menu);
     }
 }
