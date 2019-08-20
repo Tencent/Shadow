@@ -61,8 +61,11 @@ shadow {
         }
 
         loaderApkProjectPath = 'projects/sample/source/sample-plugin/sample-loader'
-
         runtimeApkProjectPath = 'projects/sample/source/sample-plugin/sample-runtime'
+
+        archiveSuffix = System.getenv("PluginSuffix") ?: ""
+        archivePrefix = 'sample'
+        destinationDir = "${project.buildDir}/outputs/plugin"
 
         version = 4
         compactVersion = [1, 2, 3]
