@@ -18,38 +18,56 @@
 
 package com.tencent.shadow.test.plugin.general_cases.lib.usecases.interfaces;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.View;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
-import com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces.HostTestInterface;
-import com.tencent.shadow.test.lib.plugin_use_host_code_lib.other.HostOtherInterface;
-import com.tencent.shadow.test.plugin.general_cases.lib.R;
-import com.tencent.shadow.test.plugin.general_cases.lib.usecases.WithIdlingResourceActivity;
+import com.tencent.shadow.test.plugin.general_cases.lib.gallery.util.UiUtil;
 
-public class TestHostInterfaceActivity extends WithIdlingResourceActivity {
+public class TestHostInterfaceActivity extends Activity {
+
+    private static final String BASE_PACKAGE = "com.tencent.shadow.test.lib.plugin_use_host_code_lib";
+    private ViewGroup mItemViewGroup;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_host_interface);
+        mItemViewGroup = UiUtil.setActivityContentView(this);
 
+        loadClass("in_whitelist",//直接在白名单中的类
+                BASE_PACKAGE + ".interfaces.HostTestInterface");
+
+        loadClass("not_in_whitelist_other_package",//不再白名单中的其他包中的类
+                BASE_PACKAGE + ".other.HostOtherInterface");
+
+        loadClass("not_in_whitelist_sub_package",//属于白名单中包的子包中的类
+                BASE_PACKAGE + ".interfaces.subpackage.Foo");
     }
 
-    public void doClick(View view){
-        TextView textView = findViewById(R.id.text);
-        textView.setText(HostTestInterface.getText());
-    }
+    private void loadClass(String tag, String className) {
 
-    public void doClick1(View view){
-        String str = "";
+        ClassLoader classLoader = TestHostInterfaceActivity.class.getClassLoader();
+
+        boolean loadSuccess;
         try {
-            str = HostOtherInterface.getText();
-        } catch (NoClassDefFoundError e) {
-            str = "ClassNotFound";
+            classLoader.loadClass(className);
+            loadSuccess = true;
+        } catch (ClassNotFoundException e) {
+            loadSuccess = false;
         }
-        TextView textView = findViewById(R.id.text);
-        textView.setText(str);
+
+        makeItem("loadClass:" + className, "TAG_loadClass_" + tag,
+                Boolean.toString(loadSuccess)
+        );
+    }
+
+    private void makeItem(
+            String labelText,
+            final String viewTag,
+            String value
+    ) {
+        ViewGroup item = UiUtil.makeItem(this, labelText, viewTag, value);
+        mItemViewGroup.addView(item);
     }
 }

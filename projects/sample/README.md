@@ -13,7 +13,11 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 
 在这个Sample目录下，提供了两种示例工程：
 
-## 源码依赖SDK的Sample
+## 源码依赖SDK的Sample(`projects/sample/source`)
+***
+要测试这个Sample请用Android Studio直接打开clone版本库的根目录。
+***
+
 * `sample-host`是宿主应用
 * `sample-manager`是插件管理器的动态实现
 * `sample-plugin/sample-loader`是loader的动态实现，业务主要在这里定义插件组件和壳子代理组件的配对关系等。
@@ -28,7 +32,11 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 使用时可以直接在Android Studio中选择运行`sample-host`模块。
 `sample-host`在构建中会自动打包manager和"插件"到assets中，在运行时自动释放模拟下载过程。
 
-## 二进制Maven依赖SDK的Sample
+## 二进制Maven依赖SDK的Sample(`projects/sample/maven`)
+***
+要测试这个Sample请用Android Studio *分别* 打开`projects/sample/maven/host-project`,`projects/sample/maven/manager-project`,`projects/sample/maven/plugin-project`三个目录。
+***
+
 源码依赖SDK的Sample中对Shadow SDK的依赖配置不适用于正式业务接入。
 Shadow实现了完整的Maven发布脚本，支持方便的Maven依赖。
 
@@ -37,6 +45,12 @@ Shadow实现了完整的Maven发布脚本，支持方便的Maven依赖。
 因此，在这个演示中没有试图做着3个工程间的任何依赖关系，
 甚至**3个工程中依赖的Shadow版本都是独立配置的**，
 使用时请注意这一点。
+
+***
+特别注意，这3个工程中以maven方式引用的SDK，都是需要自行发布到`mavenLocal()`才能使用的。
+因为，对于业务来说，不太可能会跟其他业务使用完全一致的二进制实现。所以Shadow直接发布一份二进制意义不大。
+建议真正接入时按下面介绍，将二进制发布到自己的maven仓库中。
+***
 
 在`buildScripts/gradle/maven.gradle`文件中配置了Shadow的Maven发布脚本。
 正式使用时，请修改其中的两个GroupID变量：`coreGroupId`、`dynamicGroupId`，
@@ -59,6 +73,7 @@ Shadow实现了完整的Maven发布脚本，支持方便的Maven依赖。
 编译插件，在`plugin-project`目录中运行：
 ```
 ./gradlew packageDebugPlugin
+
 adb push build/plugin-debug.zip /data/local/tmp
 ```
 

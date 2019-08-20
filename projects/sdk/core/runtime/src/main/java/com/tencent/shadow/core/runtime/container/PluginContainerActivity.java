@@ -265,6 +265,15 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     @Override
+    public boolean isChangingConfigurations() {
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.isChangingConfigurations();
+        } else {
+            return super.isChangingConfigurations();
+        }
+    }
+
+    @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (hostActivityDelegate != null) {
             return hostActivityDelegate.dispatchKeyEvent(event);
@@ -1068,6 +1077,7 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         return super.isDestroyed();
     }
 
+    @Override
     public boolean superIsChangingConfigurations() {
         return super.isChangingConfigurations();
     }

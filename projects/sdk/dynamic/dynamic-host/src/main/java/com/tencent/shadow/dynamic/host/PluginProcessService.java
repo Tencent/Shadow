@@ -50,6 +50,14 @@ public class PluginProcessService extends Service {
 
     static final ActivityHolder sActivityHolder = new ActivityHolder();
 
+    /**
+     * PPS应该代表插件进程的生命周期。插件进程应该由PPS启动而启动。
+     * 所以不应该出现在同一个插件进程有两个PPS对象的情况。
+     * 如果出现，将会重复加载Loader、Runtime、业务等插件，进而出现非常奇怪的异常。
+     * 因此，用这样一个静态变量检测出这种情况。PPS不能死后重新创建。需要在上层合理设计保持PPS始终存活。
+     */
+    private static Object sSingleInstanceFlag = null;
+
     public static Application.ActivityLifecycleCallbacks getActivityHolder() {
         return sActivityHolder;
     }
@@ -60,6 +68,11 @@ public class PluginProcessService extends Service {
 
     @Override
     public void onCreate() {
+        if (sSingleInstanceFlag == null) {
+            sSingleInstanceFlag = new Object();
+        } else {
+            throw new IllegalStateException("PPS出现多实例");
+        }
         super.onCreate();
         if (mLogger.isInfoEnabled()) {
             mLogger.info("onCreate:" + this);

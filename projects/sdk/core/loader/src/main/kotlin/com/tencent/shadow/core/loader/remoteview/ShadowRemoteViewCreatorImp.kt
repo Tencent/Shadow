@@ -49,8 +49,7 @@ internal class ShadowRemoteViewCreatorImp(private val context: Context, private 
                 shadowContext.setPluginPartKey(partKey)
                 shadowContext.setPluginResources(pluginParts.resources)
                 shadowContext.setShadowApplication(pluginParts.application)
-                shadowContext.setLibrarySearchPath(pluginParts.classLoader.getLibrarySearchPath())
-                shadowContext.setDexPath(pluginParts.classLoader.getDexPath())
+                shadowContext.applicationInfo = pluginParts.application.applicationInfo
 
                 val view = View::class.java.cast(constructor.newInstance(shadowContext))
 

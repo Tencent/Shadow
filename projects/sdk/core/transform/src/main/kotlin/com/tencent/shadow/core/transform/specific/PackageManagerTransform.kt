@@ -30,34 +30,22 @@ import java.util.*
 class PackageManagerTransform : SpecificTransform() {
     companion object {
         const val AndroidPackageManagerClassname = "android.content.pm.PackageManager"
-        const val ShadowAndroidPackageManagerClassname = "com.tencent.shadow.core.runtime.ShadowPackageManager"
-        const val AndroidProviderInfo = "android.content.pm.ProviderInfo"
-        const val AndroidActivityInfo = "android.content.pm.ActivityInfo"
-        const val AndroidApplicationInfo = "android.content.pm.ApplicationInfo"
-        const val AndroidServiceInfo = "android.content.pm.ServiceInfo"
-        const val AndroidPackageItemInfo = "android.content.pm.PackageItemInfo"
-        const val ShadowAndroidPackageItemInfo = "com.tencent.shadow.core.runtime.ShadowPackageItemInfo"
+        const val ShadowAndroidPackageManagerClassname = "com.tencent.shadow.core.runtime.PackageManagerInvokeRedirect"
     }
 
-    private fun setup(
-            targetClassNames: Array<String>,
-            targetMethodName: Array<String>,
-            redirectRule: Pair<String, String>
-    ) {
-        val targetMethods = getTargetMethods(targetClassNames, targetMethodName)
+    private fun setupPackageManagerTransform(targetMethodName: Array<String>) {
+        val targetMethods = getTargetMethods(arrayOf(AndroidPackageManagerClassname), targetMethodName)
         targetMethods.forEach { targetMethod ->
             newStep(object : TransformStep {
                 override fun filter(allInputClass: Set<CtClass>) =
                         allCanRecompileAppClass(
                                 allInputClass,
-                                targetClassNames.asList()
+                                listOf(AndroidPackageManagerClassname)
                         ).filter { matchMethodCallInClass(targetMethod, it) }.toSet()
 
                 override fun transform(ctClass: CtClass) {
-                    System.out.println(ctClass.name + " matchMethodCallInClass :" + targetMethod.methodInfo.name + "  =================")
                     try {
-                        val targetClass = mClassPool[redirectRule.first]
-                        val redirectClassName = redirectRule.second
+                        val targetClass = mClassPool[AndroidPackageManagerClassname]
                         val parameterTypes: Array<CtClass> =
                                 Array(targetMethod.parameterTypes.size + 1) { index ->
                                     if (index == 0) {
@@ -78,14 +66,16 @@ class PackageManagerTransform : SpecificTransform() {
                         val newBodyBuilder = StringBuilder()
                         newBodyBuilder
                                 .append("return ")
-                                .append(redirectClassName)
+                                .append(ShadowAndroidPackageManagerClassname)
                                 .append(".")
                                 .append(targetMethod.methodInfo.name)
                                 .append("(")
                                 .append(ctClass.name)
                                 .append(".class.getClassLoader(),")
-                        for (i in 1..newMethod.parameterTypes.size) {
-                            if (i > 1) {
+                        //下面放弃第0个和第1个参数，第0个是this，
+                        //第1个是redirectMethodCallToStaticMethodCall时原本被调用的PackageManager对象。
+                        for (i in 2..newMethod.parameterTypes.size) {
+                            if (i > 2) {
                                 newBodyBuilder.append(',')
                             }
                             newBodyBuilder.append("\$${i}")
@@ -107,25 +97,13 @@ class PackageManagerTransform : SpecificTransform() {
     }
 
     override fun setup(allInputClass: Set<CtClass>) {
-        setup(
-                arrayOf(AndroidPackageManagerClassname),
+        setupPackageManagerTransform(
                 arrayOf(
                         "getApplicationInfo",
                         "getActivityInfo",
                         "getPackageInfo",
                         "resolveContentProvider"
-                ),
-                AndroidPackageManagerClassname to ShadowAndroidPackageManagerClassname
-        )
-        setup(
-                arrayOf(
-                        AndroidProviderInfo,
-                        AndroidServiceInfo,
-                        AndroidApplicationInfo,
-                        AndroidActivityInfo
-                ),
-                arrayOf("loadXmlMetaData"),
-                AndroidPackageItemInfo to ShadowAndroidPackageItemInfo
+                )
         )
     }
 

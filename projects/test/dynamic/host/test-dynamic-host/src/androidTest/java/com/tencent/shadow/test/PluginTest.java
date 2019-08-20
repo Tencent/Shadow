@@ -61,6 +61,11 @@ public abstract class PluginTest {
                 .check(ViewAssertions.matches(ViewMatchers.withText(text)));
     }
 
+    public void matchSubstringWithViewTag(String tag, String text) {
+        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is(tag)))
+                .check(ViewAssertions.matches(ViewMatchers.withSubstring(text)));
+    }
+
     @Before
     public void launchActivity() {
         SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;

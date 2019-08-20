@@ -19,7 +19,6 @@
 package com.tencent.shadow.core.loader.delegates
 
 import android.content.res.Resources
-import com.tencent.shadow.core.loader.Reporter
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.runtime.ShadowApplication
@@ -39,10 +38,6 @@ abstract class ShadowDelegate() {
         _pluginResources = resources
     }
 
-    fun inject(reporter: Reporter) {
-        _exceptionReporter = reporter
-    }
-
     fun inject(componentManager: ComponentManager) {
         _componentManager = componentManager
     }
@@ -54,7 +49,6 @@ abstract class ShadowDelegate() {
     private lateinit var _pluginApplication: ShadowApplication
     private lateinit var _pluginClassLoader: PluginClassLoader
     private lateinit var _pluginResources: Resources
-    private lateinit var _exceptionReporter: Reporter
     private lateinit var _componentManager: ComponentManager
     private lateinit var _remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider
 
@@ -64,8 +58,6 @@ abstract class ShadowDelegate() {
         get() = _pluginClassLoader
     protected val mPluginResources: Resources
         get() = _pluginResources
-    protected val mExceptionReporter: Reporter
-        get() = _exceptionReporter
     protected val mComponentManager: ComponentManager
         get() = _componentManager
 

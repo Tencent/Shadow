@@ -32,6 +32,10 @@ open class PackagePluginExtension {
     var loaderApkProjectPath = ""
     var runtimeApkProjectPath = ""
 
+    var archivePrefix = ""
+    var archiveSuffix = ""
+    var destinationDir = ""
+
     var uuid = ""
     var version: Int = 0
     var uuidNickName = ""

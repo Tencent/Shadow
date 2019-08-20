@@ -46,7 +46,7 @@ import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
 
 import java.util.List;
 
-public abstract class PluginActivity extends ShadowContext implements Window.Callback{
+public abstract class PluginActivity extends ShadowContext implements Window.Callback {
     HostActivityDelegator mHostActivityDelegator;
 
     ShadowApplication mPluginApplication;
@@ -119,6 +119,11 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
         mHostActivityDelegator.superOnRestoreInstanceState(savedInstanceState);
     }
 
+
+    public boolean isChangingConfigurations() {
+        return mHostActivityDelegator.superIsChangingConfigurations();
+    }
+
     public void onPostCreate(Bundle savedInstanceState) {
         mHostActivityDelegator.superOnPostCreate(savedInstanceState);
     }
@@ -172,15 +177,23 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
     }
 
     public boolean onCreatePanelMenu(int featureId, Menu menu) {
-        return mHostActivityDelegator.superOnCreatePanelMenu(featureId, menu);
+        if (featureId == Window.FEATURE_OPTIONS_PANEL) {
+            return onCreateOptionsMenu(menu);
+        } else {
+            return mHostActivityDelegator.superOnCreatePanelMenu(featureId, menu);
+        }
     }
 
     public boolean onPreparePanel(int featureId, View view, Menu menu) {
-        return false;
+        return mHostActivityDelegator.superOnPreparePanel(featureId, view, menu);
     }
 
     public void onPanelClosed(int featureId, Menu menu) {
         mHostActivityDelegator.superOnPanelClosed(featureId, menu);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return mHostActivityDelegator.superOnCreateOptionsMenu(menu);
     }
 
     public Dialog onCreateDialog(int id) {
