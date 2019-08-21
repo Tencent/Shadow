@@ -118,8 +118,9 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
 
     public PluginContainerActivity() {
         HostActivityDelegate delegate;
-        if (DelegateProviderHolder.delegateProvider != null) {
-            delegate = DelegateProviderHolder.delegateProvider.getHostActivityDelegate(this.getClass());
+        DelegateProvider delegateProvider = DelegateProviderHolder.getDelegateProvider();
+        if (delegateProvider != null) {
+            delegate = delegateProvider.getHostActivityDelegate(this.getClass());
             delegate.setDelegator(this);
         } else {
             Log.e(TAG, "PluginContainerActivity: DelegateProviderHolder没有初始化");
