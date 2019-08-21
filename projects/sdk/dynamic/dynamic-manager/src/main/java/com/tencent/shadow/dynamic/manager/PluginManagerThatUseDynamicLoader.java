@@ -122,12 +122,14 @@ public abstract class PluginManagerThatUseDynamicLoader extends BasePluginManage
                             if (mLogger.isErrorEnabled()) {
                                 mLogger.error("onServiceConnected RemoteException:" + e);
                             }
-                        } catch (TransactionTooLargeException e) {
-                            if (mLogger.isErrorEnabled()) {
-                                mLogger.error("onServiceConnected TransactionTooLargeException:" + e);
-                            }
                         } catch (RemoteException e) {
-                            throw new RuntimeException(e);
+                            if (e.getClass().getSimpleName().equals("TransactionTooLargeException")) {
+                                if (mLogger.isErrorEnabled()) {
+                                    mLogger.error("onServiceConnected TransactionTooLargeException:" + e);
+                                }
+                            } else {
+                                throw new RuntimeException(e);
+                            }
                         }
 
                         try {

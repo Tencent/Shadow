@@ -142,7 +142,11 @@ public class ResourcesWrapper extends Resources {
 
     @Override
     public Drawable getDrawableForDensity(int id, int density) throws NotFoundException {
-        return mBase.getDrawableForDensity(id, density);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            return mBase.getDrawableForDensity(id, density);
+        } else {
+            return null;
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -225,7 +229,9 @@ public class ResourcesWrapper extends Resources {
 
     @Override
     public void getValueForDensity(int id, int density, TypedValue outValue, boolean resolveRefs) throws NotFoundException {
-        mBase.getValueForDensity(id, density, outValue, resolveRefs);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+            mBase.getValueForDensity(id, density, outValue, resolveRefs);
+        }
     }
 
     @Override
