@@ -24,7 +24,7 @@ public class TestGetApplicationInfoActivity extends Activity {
             parseApplicationInfo("PackageManagerGetSelf",
                     getPackageManager().getApplicationInfo(getPackageName(), GET_META_DATA));
             parseApplicationInfo("PackageManagerGetOtherInstalled",
-                    getPackageManager().getApplicationInfo("com.android.webview", GET_META_DATA));
+                    getPackageManager().getApplicationInfo("com.android.shell", GET_META_DATA));
         } catch (PackageManager.NameNotFoundException e) {
             throw new RuntimeException(e);
         }

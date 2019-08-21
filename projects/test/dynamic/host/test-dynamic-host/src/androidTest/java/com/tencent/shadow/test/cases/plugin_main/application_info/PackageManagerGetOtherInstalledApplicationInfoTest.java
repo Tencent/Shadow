@@ -21,7 +21,7 @@ public class PackageManagerGetOtherInstalledApplicationInfoTest extends CommonAp
 
     private ApplicationInfo getApplicationInfoFromHost() throws PackageManager.NameNotFoundException {
         PackageManager packageManager = ApplicationProvider.getApplicationContext().getPackageManager();
-        return packageManager.getApplicationInfo("com.android.webview", GET_META_DATA);
+        return packageManager.getApplicationInfo("com.android.shell", GET_META_DATA);
     }
 
     @Override
@@ -44,7 +44,11 @@ public class PackageManagerGetOtherInstalledApplicationInfoTest extends CommonAp
     @Override
     public void testClassName() throws Exception {
         ApplicationInfo applicationInfoFromHost = getApplicationInfoFromHost();
+        String className = applicationInfoFromHost.className;
+        if (className == null) {
+            className = "";
+        }
         matchTextWithViewTag("TAG_className_" + getTag(),
-                applicationInfoFromHost.className);
+                className);
     }
 }
