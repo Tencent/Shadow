@@ -42,7 +42,7 @@ public class ActivityWindowSoftModeTest extends PluginMainAppTest {
         String packageName = ApplicationProvider.getApplicationContext().getPackageName();
         pluginIntent.setClassName(
                 packageName,
-                "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.WindowSoftModeJumpActivity"
+                "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestActivityWindowSoftMode"
         );
         return pluginIntent;
     }
@@ -50,9 +50,7 @@ public class ActivityWindowSoftModeTest extends PluginMainAppTest {
     @Test
     public void testBasicUsage() {
 
-        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button"))).perform(ViewActions.click());;
-
-        matchTextWithViewTag("text","show");
+        matchTextWithViewTag("TAG_SOFT_MODE","SOFT_INPUT_STATE_VISIBLE:true");
     }
 
 }
