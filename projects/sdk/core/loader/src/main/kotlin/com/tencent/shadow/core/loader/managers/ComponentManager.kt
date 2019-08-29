@@ -62,9 +62,9 @@ abstract class ComponentManager : PluginComponentLauncher {
 
     abstract fun getBroadcastInfoList(partKey: String): List<BroadcastInfo>?
 
-    override fun startActivity(shadowContext: ShadowContext, pluginIntent: Intent): Boolean {
+    override fun startActivity(shadowContext: ShadowContext, pluginIntent: Intent, option: Bundle?): Boolean {
         return if (pluginIntent.isPluginComponent()) {
-            shadowContext.superStartActivity(pluginIntent.toActivityContainerIntent())
+            shadowContext.superStartActivity(pluginIntent.toActivityContainerIntent(), option)
             true
         } else {
             false

@@ -61,7 +61,11 @@ public class ResolverHook {
             String[] selectionArgs, String sortOrder,
             CancellationSignal cancellationSignal) {
         Uri containerUri = UriConverter.parse(uri.toString());
-        return resolver.query(containerUri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            return resolver.query(containerUri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
+        } else {
+            return null;
+        }
     }
 
     public static Bundle call(ContentResolver resolver, Uri uri, String method, String arg, Bundle extras) {

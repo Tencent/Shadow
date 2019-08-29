@@ -18,7 +18,6 @@
 
 package com.tencent.shadow.core.runtime;
 
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 
 public class PluginPartInfo {
@@ -29,10 +28,10 @@ public class PluginPartInfo {
 
     public ClassLoader classLoader;
 
-    public PackageManager packageManager;
+    PluginPackageManager packageManager;
 
 
-    public PluginPartInfo(ShadowApplication application, Resources resources, ClassLoader classLoader, PackageManager packageManager) {
+    public PluginPartInfo(ShadowApplication application, Resources resources, ClassLoader classLoader, PluginPackageManager packageManager) {
         this.application = application;
         this.resources = resources;
         this.classLoader = classLoader;

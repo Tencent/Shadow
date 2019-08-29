@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="PluginAppThemeLight" parent="@android:style/Theme.Material.Light">
+        <item name="android:colorPrimary">@color/primary_color_purple</item>
+        <item name="android:colorPrimaryDark">@color/primary_color_purple_dark</item>
+        <item name="android:colorAccent">@color/accent_color_purple</item>
+        <item name="android:navigationBarColor">@color/primary_color_purple_dark</item>
+        <item name="android:colorButtonNormal">@color/accent_color_purple</item>
+    </style>
+    <color name="primary_color_purple">#9c27b0</color>
+    <color name="primary_color_purple_dark">#7b1fa2</color>
+    <color name="accent_color_purple">#e040fb</color>
+</resources>

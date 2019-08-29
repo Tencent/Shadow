@@ -155,8 +155,7 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.setPluginComponentLauncher(mComponentManager)
         pluginActivity.setPluginApplication(mPluginApplication)
         pluginActivity.setShadowApplication(mPluginApplication)
-        pluginActivity.setLibrarySearchPath(mPluginClassLoader.getLibrarySearchPath())
-        pluginActivity.setDexPath(mPluginClassLoader.getDexPath())
+        pluginActivity.applicationInfo = mPluginApplication.applicationInfo
         pluginActivity.setBusinessName(mBusinessName)
         pluginActivity.setPluginPartKey(mPartKey)
         pluginActivity.remoteViewCreatorProvider = mRemoteViewCreatorProvider
@@ -244,6 +243,11 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun onRestart() {
         mPluginActivity.onRestart()
     }
+
+    override fun isChangingConfigurations(): Boolean {
+       return mPluginActivity.isChangingConfigurations()
+    }
+
 
     override fun onUserLeaveHint() {
         mPluginActivity.onUserLeaveHint()

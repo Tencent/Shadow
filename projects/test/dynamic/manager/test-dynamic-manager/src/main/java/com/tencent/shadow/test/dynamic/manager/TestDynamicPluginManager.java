@@ -27,6 +27,7 @@ import android.view.View;
 import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.EnterCallback;
 import com.tencent.shadow.test.lib.constant.Constant;
+import com.tencent.shadow.test.lib.test_manager.TestManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -97,6 +98,9 @@ public class TestDynamicPluginManager extends FastPluginManager {
             public void run() {
                 try {
                     InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, true);
+
+                    TestManager.uuid = installedPlugin.UUID;
+
                     Intent pluginIntent = new Intent();
                     pluginIntent.setClassName(
                             context.getPackageName(),

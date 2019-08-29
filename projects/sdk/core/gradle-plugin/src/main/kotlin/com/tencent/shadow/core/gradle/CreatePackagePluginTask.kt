@@ -69,13 +69,18 @@ internal fun createPackagePluginTask(project: Project, buildType: PluginBuildTyp
             pluginFiles.add(loaderFile)
         }
         it.from(pluginFiles, targetConfigFile)
-        val suffix: String? = System.getenv("PluginSuffix")
-        if (suffix == null) {
-            it.archiveName = "plugin-${buildType.name}.zip"
+
+        val packagePlugin = project.extensions.findByName("packagePlugin")
+        val extension = packagePlugin as PackagePluginExtension
+
+        val suffix = if (extension.archiveSuffix.isEmpty()) "" else extension.archiveSuffix
+        val prefix = if (extension.archivePrefix.isEmpty()) "plugin" else extension.archivePrefix
+        if (suffix.isEmpty()) {
+            it.archiveName = "$prefix-${buildType.name}.zip"
         } else {
-            it.archiveName = "plugin-${buildType.name}-$suffix.zip"
+            it.archiveName = "$prefix-${buildType.name}-$suffix.zip"
         }
-        it.destinationDir = File("${project.rootDir}/build")
+        it.destinationDir = File(if (extension.destinationDir.isEmpty()) "${project.rootDir}/build" else extension.destinationDir)
     }.dependsOn(createGenerateConfigTask(project, buildType))
 }
 

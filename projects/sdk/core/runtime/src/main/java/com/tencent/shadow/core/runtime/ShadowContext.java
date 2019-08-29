@@ -40,8 +40,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
     Resources mPluginResources;
     Resources mMixResources;
     LayoutInflater mLayoutInflater;
-    String mLibrarySearchPath;
-    String mDexPath;
+    ApplicationInfo mApplicationInfo;
     protected String mPartKey;
     private String mBusinessName;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
@@ -69,12 +68,10 @@ public class ShadowContext extends SubDirContextThemeWrapper {
         mShadowApplication = shadowApplication;
     }
 
-    public void setLibrarySearchPath(String mLibrarySearchPath) {
-        this.mLibrarySearchPath = mLibrarySearchPath;
-    }
-
-    public void setDexPath(String dexPath) {
-        mDexPath = dexPath;
+    public void setApplicationInfo(ApplicationInfo applicationInfo) {
+        ApplicationInfo copy = new ApplicationInfo(applicationInfo);
+        copy.metaData = null;//正常通过Context获得的ApplicationInfo就没有metaData
+        mApplicationInfo = copy;
     }
 
     public void setBusinessName(String businessName) {
@@ -147,7 +144,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
          * @return <code>true</code>表示该Intent是为了启动插件内Activity的,已经被正确消费了.
          * <code>false</code>表示该Intent不是插件内的Activity.
          */
-        boolean startActivity(ShadowContext shadowContext, Intent intent);
+        boolean startActivity(ShadowContext shadowContext, Intent intent, Bundle options);
 
         /**
          * 启动Activity
@@ -174,16 +171,21 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     @Override
     public void startActivity(Intent intent) {
+        startActivity(intent, null);
+    }
+
+    @Override
+    public void startActivity(Intent intent, Bundle options) {
         final Intent pluginIntent = new Intent(intent);
         pluginIntent.setExtrasClassLoader(mPluginClassLoader);
-        final boolean success = mPluginComponentLauncher.startActivity(this, pluginIntent);
+        final boolean success = mPluginComponentLauncher.startActivity(this, pluginIntent, options);
         if (!success) {
-            super.startActivity(intent);
+            super.startActivity(intent, options);
         }
     }
 
-    public void superStartActivity(Intent intent) {
-        super.startActivity(intent);
+    public void superStartActivity(Intent intent, Bundle options) {
+        super.startActivity(intent, options);
     }
 
     @Override
@@ -227,10 +229,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     @Override
     public ApplicationInfo getApplicationInfo() {
-        final ApplicationInfo applicationInfo = super.getApplicationInfo();
-        applicationInfo.nativeLibraryDir = mLibrarySearchPath;
-        applicationInfo.sourceDir = mDexPath;
-        return applicationInfo;
+        return mApplicationInfo;
     }
 
     public PluginComponentLauncher getPendingIntentConverter() {

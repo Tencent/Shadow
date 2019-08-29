@@ -21,15 +21,12 @@ package com.tencent.shadow.test.cases.plugin_main;
 import android.content.Intent;
 
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.matcher.ViewMatchers;
 
-import com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces.HostTestInterface;
-
-import org.hamcrest.Matchers;
 import org.junit.Test;
 
+/**
+ * 插件访问宿主类的白名单机制测试用例
+ */
 public class HostInterfaceTest extends PluginMainAppTest {
 
     @Override
@@ -44,13 +41,20 @@ public class HostInterfaceTest extends PluginMainAppTest {
     }
 
     @Test
-    public void testHostInterfaceTest() {
-        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button"))).perform(ViewActions.click());
+    public void testInWhitelist() {
+        matchTextWithViewTag("TAG_loadClass_in_whitelist",
+                Boolean.toString(true));
+    }
 
-        matchTextWithViewTag("text", HostTestInterface.getText());
+    @Test
+    public void testNotInWhitelistOtherPackage() {
+        matchTextWithViewTag("TAG_loadClass_not_in_whitelist_other_package",
+                Boolean.toString(false));
+    }
 
-        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button1"))).perform(ViewActions.click());
-
-        matchTextWithViewTag("text", "ClassNotFound");
+    @Test
+    public void testNotInWhitelistSubPackage() {
+        matchTextWithViewTag("TAG_loadClass_not_in_whitelist_sub_package",
+                Boolean.toString(false));
     }
 }

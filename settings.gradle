@@ -21,6 +21,7 @@ def includeTest() {
             'constant',
             'custom-view',
             'plugin-use-host-code-lib',
+            'test-manager',
             'general-cases-lib',
             'test-plugin-general-cases',
             'general-cases-app',
@@ -35,6 +36,7 @@ def includeTest() {
     project(':constant').projectDir = file('projects/test/lib/constant')
     project(':custom-view').projectDir = file('projects/test/lib/custom-view')
     project(':plugin-use-host-code-lib').projectDir = file('projects/test/lib/plugin-use-host-code-lib')
+    project(':test-manager').projectDir = file('projects/test/lib/test-manager')
     project(':general-cases-lib').projectDir = file('projects/test/plugin/general-cases/general-cases-lib')
     project(':test-plugin-general-cases').projectDir = file('projects/test/plugin/general-cases/test-plugin-general-cases')
     project(':general-cases-app').projectDir = file('projects/test/plugin/general-cases/general-cases-app')
@@ -47,6 +49,7 @@ def includeTest() {
 def includeSample() {
     include 'sample-constant',
             'sample-host',
+            'sample-host-lib',
             'sample-manager',
             'sample-loader',
             'sample-runtime',
@@ -55,14 +58,15 @@ def includeSample() {
             'sample-app-lib',
             'sample-normal-app',
             'sample-plugin-app'
-    project(':sample-constant').projectDir = file('projects/sample/sample-constant')
-    project(':sample-host').projectDir = file('projects/sample/sample-host')
-    project(':sample-manager').projectDir = file('projects/sample/sample-manager')
-    project(':sample-loader').projectDir = file('projects/sample/sample-plugin/sample-loader')
-    project(':sample-runtime').projectDir = file('projects/sample/sample-plugin/sample-runtime')
-    project(':pinnedheaderexpandablelistview').projectDir = file('projects/sample/sample-plugin/third-party/pinnedheaderexpandablelistview')
-    project(':slidingmenu').projectDir = file('projects/sample/sample-plugin/third-party/slidingmenu')
-    project(':sample-app-lib').projectDir = file('projects/sample/sample-plugin/sample-app-lib')
-    project(':sample-normal-app').projectDir = file('projects/sample/sample-plugin/sample-normal-app')
-    project(':sample-plugin-app').projectDir = file('projects/sample/sample-plugin/sample-plugin-app')
+    project(':sample-constant').projectDir = file('projects/sample/source/sample-constant')
+    project(':sample-host').projectDir = file('projects/sample/source/sample-host')
+    project(':sample-host-lib').projectDir = file('projects/sample/source/sample-host-lib')
+    project(':sample-manager').projectDir = file('projects/sample/source/sample-manager')
+    project(':sample-loader').projectDir = file('projects/sample/source/sample-plugin/sample-loader')
+    project(':sample-runtime').projectDir = file('projects/sample/source/sample-plugin/sample-runtime')
+    project(':pinnedheaderexpandablelistview').projectDir = file('projects/sample/source/sample-plugin/third-party/pinnedheaderexpandablelistview')
+    project(':slidingmenu').projectDir = file('projects/sample/source/sample-plugin/third-party/slidingmenu')
+    project(':sample-app-lib').projectDir = file('projects/sample/source/sample-plugin/sample-app-lib')
+    project(':sample-normal-app').projectDir = file('projects/sample/source/sample-plugin/sample-normal-app')
+    project(':sample-plugin-app').projectDir = file('projects/sample/source/sample-plugin/sample-plugin-app')
 }

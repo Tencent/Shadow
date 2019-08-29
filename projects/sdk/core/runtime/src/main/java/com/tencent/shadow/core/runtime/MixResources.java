@@ -118,7 +118,11 @@ public class MixResources extends ResourcesWrapper {
         try {
             return super.getDrawableForDensity(id, density);
         } catch (NotFoundException e) {
-            return mHostResources.getDrawableForDensity(id,density);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                return mHostResources.getDrawableForDensity(id, density);
+            } else {
+                return null;
+            }
         }
     }
 
