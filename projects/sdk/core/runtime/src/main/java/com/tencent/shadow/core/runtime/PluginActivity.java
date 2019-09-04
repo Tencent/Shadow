@@ -46,7 +46,7 @@ import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
 
 import java.util.List;
 
-public abstract class PluginActivity extends ShadowContext implements Window.Callback {
+public abstract class PluginActivity extends ShadowContext implements Window.Callback,KeyEvent.Callback {
     HostActivityDelegator mHostActivityDelegator;
 
     ShadowApplication mPluginApplication;
@@ -247,6 +247,21 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return mHostActivityDelegator.superOnKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return mHostActivityDelegator.superOnKeyLongPress(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return mHostActivityDelegator.superOnKeyUp(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyMultiple(int keyCode, int count, KeyEvent event) {
+        return mHostActivityDelegator.superOnKeyMultiple(keyCode, count, event);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
