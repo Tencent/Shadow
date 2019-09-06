@@ -19,14 +19,13 @@
 package com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 
-import com.tencent.shadow.test.plugin.general_cases.lib.R;
-import com.tencent.shadow.test.plugin.general_cases.lib.usecases.util.SoftKeyBoardListener;
+import com.tencent.shadow.test.plugin.general_cases.lib.gallery.util.UiUtil;
 
 
 public class TestActivityWindowSoftMode extends Activity {
@@ -36,49 +35,22 @@ public class TestActivityWindowSoftMode extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_softmode);
 
-        mEditText = findViewById(R.id.edit_view);
-        mEditText.requestFocus();
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        boolean is_state_visible = layoutParams.softInputMode == WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
 
-        //是否来自单元测试的中转Activity
-        final boolean isFromJump = getIntent().getBooleanExtra(WindowSoftModeJumpActivity.KEY_FROM_JUMP, false);
+        ViewGroup viewGroup = UiUtil.setActivityContentView(this);
 
-        final Handler handler = new Handler();
-
-        if (isFromJump) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setResult("hide");
-                }
-            }, 3000);
-        }
-
-
-        SoftKeyBoardListener.setListener(this, new SoftKeyBoardListener.OnSoftKeyBoardChangeListener() {
-            @Override
-            public void keyBoardShow(int height) {
-                if (isFromJump) {
-                    handler.removeCallbacksAndMessages(null);
-
-                    setResult("show");
-                }
-            }
-
-            @Override
-            public void keyBoardHide(int height) {
-
-            }
-        });
+        viewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "测试WindowSoftMode",
+                        "TAG_SOFT_MODE",
+                        "SOFT_INPUT_STATE_VISIBLE:"+is_state_visible
+                )
+        );
 
     }
 
-    private void setResult(String result){
-        Intent intent = new Intent();
-        intent.putExtra("result", result);
-        setResult(0, intent);
-        finish();
-    }
 
 }

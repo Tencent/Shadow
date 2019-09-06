@@ -64,8 +64,8 @@ shadow {
         runtimeApkProjectPath = 'projects/sample/source/sample-plugin/sample-runtime'
 
         archiveSuffix = System.getenv("PluginSuffix") ?: ""
-        archivePrefix = 'sample'
-        destinationDir = "${project.buildDir}/outputs/plugin"
+        archivePrefix = 'plugin'
+        destinationDir = "${getRootProject().getBuildDir()}"
 
         version = 4
         compactVersion = [1, 2, 3]
