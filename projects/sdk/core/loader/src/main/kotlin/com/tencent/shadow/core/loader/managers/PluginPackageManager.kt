@@ -60,7 +60,8 @@ class PluginPackageManager(private val hostPackageManager: PackageManager,
     override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo {
         if (component.packageName == packageInfo.applicationInfo.packageName) {
             val pluginActivityInfo = allPluginPackageInfo()
-                    .flatMap { it.activities.asIterable() }.find {
+                    .mapNotNull { it.activities }
+                    .flatMap { it.asIterable() }.find {
                         it.name == component.className
                     }
             if (pluginActivityInfo != null) {
