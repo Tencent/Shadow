@@ -284,6 +284,24 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.onKeyDown(keyCode, event);
+        } else {
+            return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.onKeyUp(keyCode, event);
+        } else {
+            return super.onKeyUp(keyCode, event);
+        }
+    }
+
+    @Override
     public void finish() {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.finish();
