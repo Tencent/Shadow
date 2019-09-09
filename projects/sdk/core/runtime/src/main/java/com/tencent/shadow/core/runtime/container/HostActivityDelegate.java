@@ -69,6 +69,10 @@ public interface HostActivityDelegate {
 
     boolean dispatchKeyEvent(KeyEvent event);
 
+    boolean onKeyUp(int keyCode, KeyEvent event);
+
+    boolean onKeyDown(int keyCode, KeyEvent event);
+
     void finish();
 
     void onActivityResult(int requestCode, int resultCode, Intent data);

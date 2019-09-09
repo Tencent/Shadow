@@ -249,6 +249,10 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
         return mHostActivityDelegator.superOnKeyDown(keyCode, event);
     }
 
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return mHostActivityDelegator.superOnKeyUp(keyCode, event);
+    }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         return mHostActivityDelegator.superOnOptionsItemSelected(item);
     }
