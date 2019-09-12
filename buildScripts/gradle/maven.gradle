@@ -77,6 +77,17 @@ def setGeneratePomFileAndDepends(publicationName) {
     }
 }
 
+def sourceJar(String name, String path) {
+    return tasks.create("source${name.capitalize()}Jar", Jar) {
+        group = "publishing"
+        description = "package ${name} source to jar"
+        from "$path/src/main/java"
+        from "$path/src/main/kotlin"
+        destinationDir = file("$path/build/libs/")
+        classifier = 'sources'
+    }
+}
+
 def publicationVersion = project.ARTIFACT_VERSION
 def coreGroupId = 'com.tencent.shadow.core'
 def corePath = 'projects/sdk/core'
@@ -90,6 +101,7 @@ publishing {
             artifactId 'gradle-plugin'
             version publicationVersion
             artifact("$corePath/gradle-plugin/build/libs/gradle-plugin.jar")
+            artifact sourceJar("gradlePlugin", "$corePath/gradle-plugin")
 
             pom.withXml {
                 def root = asNode()
@@ -109,6 +121,7 @@ publishing {
             artifactId 'common'
             version publicationVersion
             artifact("$corePath/common/build/outputs/jar/common-release.jar")
+            artifact sourceJar("common", "$corePath/common")
 
             pom.withXml {
                 def root = asNode()
@@ -122,6 +135,7 @@ publishing {
             artifactId 'load-parameters'
             version publicationVersion
             artifact("$corePath/load-parameters/build/outputs/aar/load-parameters-release.aar")
+            artifact sourceJar("loadParameters", "$corePath/load-parameters")
 
             pom.withXml {
                 def root = asNode()
@@ -135,12 +149,13 @@ publishing {
             artifactId 'loader'
             version publicationVersion
             artifact("$corePath/loader/build/outputs/aar/loader-release.aar")
+            artifact sourceJar("loader", "$corePath/loader")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
-                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'runtime', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'load-parameters', publicationVersion))
 
@@ -153,6 +168,7 @@ publishing {
             artifactId 'manager'
             version publicationVersion
             artifact("$corePath/manager/build/outputs/aar/manager-release.aar")
+            artifact sourceJar("manager", "$corePath/manager")
 
             pom.withXml {
                 def root = asNode()
@@ -169,6 +185,7 @@ publishing {
             artifactId 'runtime'
             version publicationVersion
             artifact("$corePath/runtime/build/outputs/jar/runtime-release.jar")
+            artifact sourceJar("runtime", "$corePath/runtime")
 
             pom.withXml {
                 def root = asNode()
@@ -183,6 +200,7 @@ publishing {
             artifactId 'transform-kit'
             version publicationVersion
             artifact("$corePath/transform-kit/build/libs/transform-kit.jar")
+            artifact sourceJar("transformKit", "$corePath/transform-kit")
 
             pom.withXml {
                 def root = asNode()
@@ -217,6 +235,7 @@ publishing {
             artifactId 'transform'
             version publicationVersion
             artifact("$corePath/transform/build/libs/transform.jar")
+            artifact sourceJar("transform", "$corePath/transform")
 
             pom.withXml {
                 def root = asNode()
@@ -232,11 +251,12 @@ publishing {
             artifactId 'host'
             version publicationVersion
             artifact("$dynamicPath/dynamic-host/build/outputs/jar/dynamic-host-release.jar")
+            artifact sourceJar("dynamicHost", "$dynamicPath/dynamic-host")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'runtime', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'common', publicationVersion))
 
                 def scm = root.appendNode('scm')
@@ -248,6 +268,7 @@ publishing {
             artifactId 'loader'
             version publicationVersion
             artifact("$dynamicPath/dynamic-loader/build/outputs/jar/dynamic-loader-release.jar")
+            artifact sourceJar("dynamicLoader", "$dynamicPath/dynamic-loader")
 
             pom.withXml {
                 def root = asNode()
@@ -260,13 +281,14 @@ publishing {
             artifactId 'loader-impl'
             version publicationVersion
             artifact("$dynamicPath/dynamic-loader-impl/build/outputs/aar/dynamic-loader-impl-release.aar")
+            artifact sourceJar("dynamicLoaderImpl", "$dynamicPath/dynamic-loader-impl")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', publicationVersion))
-                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'runtime', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
                 dependencies.append(getDependencyNode('compile', dynamicGroupId, 'loader', publicationVersion))
@@ -280,6 +302,7 @@ publishing {
             artifactId 'manager'
             version publicationVersion
             artifact("$dynamicPath/dynamic-manager/build/outputs/aar/dynamic-manager-release.aar")
+            artifact sourceJar("dynamicManager", "$dynamicPath/dynamic-manager")
 
             pom.withXml {
                 def root = asNode()
