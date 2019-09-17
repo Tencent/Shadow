@@ -63,7 +63,7 @@ public abstract class ShadowApplication extends ShadowContext {
                      ) {
                     intentFilter.addAction(action);
                 }
-                mHostApplication.registerReceiver(receiver, intentFilter);
+                registerReceiver(receiver, intentFilter);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
