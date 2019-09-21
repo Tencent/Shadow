@@ -34,5 +34,15 @@
         android:layout_marginBottom="8dp"
         android:text="测试静态广播发送" />
 
+    <Button
+        android:id="@+id/button_unregister"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone"
+        android:text="测试反注册广播" />
 
 </LinearLayout>
