@@ -36,8 +36,8 @@ import android.view.LayoutInflater;
 import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
 import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ShadowContext extends SubDirContextThemeWrapper {
     PluginComponentLauncher mPluginComponentLauncher;
@@ -50,7 +50,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
     protected String mPartKey;
     private String mBusinessName;
     private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
-    private Map<BroadcastReceiver, BroadcastReceiverWapper> mBroadcastReceivers = new HashMap<>();
+    private Map<BroadcastReceiver, BroadcastReceiverWapper> mBroadcastReceivers = new ConcurrentHashMap<>();
 
     public ShadowContext() {
     }
