@@ -37,8 +37,6 @@
 
         <activity android:name=".usecases.receiver.TestReceiverActivity" />
 
-        <activity android:name=".usecases.receiver.TestDynamicReceiverActivity" />
-
         <activity android:name=".usecases.fragment.TestDynamicFragmentActivity" />
 
         <activity android:name=".usecases.fragment.TestXmlFragmentActivity" />
@@ -53,7 +51,7 @@
 
         <receiver android:name=".usecases.receiver.MyReceiver">
             <intent-filter>
-                <action android:name="com.tencent.test.action"/>
+                <action android:name="com.tencent.test.normal.action"/>
             </intent-filter>
         </receiver>
 
