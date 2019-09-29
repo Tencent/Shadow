@@ -34,19 +34,32 @@ class DialogTransform : SpecificTransform() {
     private lateinit var codeConverter: CodeConverter
 
     override fun setup(allInputClass: Set<CtClass>) {
-        val dialogMethods = mClassPool[AndroidDialogClassname].methods!!
-        val shadowDialogMethods = mClassPool[ShadowDialogClassname].methods!!
+        val androidDialogCtClass = mClassPool[AndroidDialogClassname]
+
+        val dialogSubclassList = findDialogSubclassList(androidDialogCtClass, allInputClass)
+
+        val dialogSubclassNameList = ArrayList<String>()
+        dialogSubclassList.forEach {
+            dialogSubclassNameList.add(it.name)
+        }
+
         codeConverter = CodeConverter()
 
-        redirectMethodCall(
-            dialogMethods.find { it.name == "getOwnerActivity" }!!,
-            shadowDialogMethods.find { it.name == "getOwnerPluginActivity" }!!
-        )
+        val shadowDialogMethods = mClassPool[ShadowDialogClassname].methods!!
 
-        redirectMethodCall(
-            dialogMethods.find { it.name == "setOwnerActivity" }!!,
-            shadowDialogMethods.find { it.name == "setOwnerPluginActivity" }!!
-        )
+        dialogSubclassList.forEach { subclass ->
+
+            redirectMethodCall(
+                    subclass.methods.find { it.name == "getOwnerActivity" }!!,
+                    shadowDialogMethods.find { it.name == "getOwnerPluginActivity" }!!
+            )
+
+            redirectMethodCall(
+                    subclass.methods.find { it.name == "setOwnerActivity" }!!,
+                    shadowDialogMethods.find { it.name == "setOwnerPluginActivity" }!!
+            )
+
+        }
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) = allInputClass
@@ -59,7 +72,7 @@ class DialogTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>): Set<CtClass> =
-                allCanRecompileAppClass(allInputClass, listOf(AndroidDialogClassname))
+                    allCanRecompileAppClass(allInputClass, dialogSubclassNameList)
 
             override fun transform(ctClass: CtClass) {
                 try {
@@ -71,6 +84,29 @@ class DialogTransform : SpecificTransform() {
             }
 
         })
+    }
+
+    private fun findDialogSubclassList(androidDialogCtClass: CtClass, allInputClass: Set<CtClass>):List<CtClass> {
+        val dialogSubclassList = ArrayList<CtClass>()
+        // 包含自身
+        dialogSubclassList.add(androidDialogCtClass)
+
+        val nextSubclassList = ArrayList<CtClass>()
+        nextSubclassList.add(androidDialogCtClass)
+
+        val temp = ArrayList<CtClass>()
+        while (nextSubclassList.isNotEmpty()) {
+            temp.clear()
+            allInputClass.forEach {
+                if (nextSubclassList.contains(it.superclass)) {
+                    temp.add(it)
+                    dialogSubclassList.add(it)
+                }
+            }
+            nextSubclassList.clear()
+            nextSubclassList.addAll(temp)
+        }
+        return dialogSubclassList
     }
 
     private fun redirectMethodCall(

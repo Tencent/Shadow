@@ -53,10 +53,11 @@ public class TestDialogActivity extends BaseActivity {
         setContentView(R.layout.layout_dialog_activity);
     }
 
-    public void show(View view){
+    public void show(View view) {
         TestDialog dialog = new TestDialog(this);
         dialog.setContentView(R.layout.layout_dialog);
-
+        dialog.setOwnerActivity(this);
+        dialog.getOwnerActivity();
         dialog.show();
     }
 }
