@@ -25,6 +25,7 @@ import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -184,6 +185,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
         }
     }
 
+    @android.annotation.TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void superStartActivity(Intent intent, Bundle options) {
         super.startActivity(intent, options);
     }
