@@ -59,10 +59,11 @@ class DialogTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>): Set<CtClass> =
-                allCanRecompileAppClass(allInputClass, listOf(AndroidDialogClassname))
+                    allCanRecompileAppClass(allInputClass, listOf(ShadowDialogClassname))
 
             override fun transform(ctClass: CtClass) {
                 try {
+                    ctClass.defrost()
                     ctClass.instrument(codeConverter)
                 } catch (e: Exception) {
                     System.err.println("处理" + ctClass.name + "时出错")
