@@ -29,41 +29,23 @@ import org.junit.Test
 class DialogTransformTest : AbstractTransformTest() {
 
     companion object {
-        const val DIALOG_CLASS_NAME = "android.app.Dialog"
         const val SHADOW_DIALOG_CLASS_NAME = "com.tencent.shadow.core.runtime.ShadowDialog"
-        const val TEST_CLASS_FOO_NAME = "test.dialog.Foo"
-        const val TEST_CLASS_BAR_NAME = "test.dialog.BarDialog"
-
-        const val DIALOG_SIG = "Landroid/app/Dialog;"
-        const val SHADOW_DIALOG_SIG = "Lcom/tencent/shadow/core/runtime/ShadowDialog;"
-
         const val SHADOW_ACT_SIG = "Lcom/tencent/shadow/core/runtime/ShadowActivity;"
     }
 
-    val dialogClazz = sLoader[DIALOG_CLASS_NAME]
-    val dialogGetOwnerActivity = dialogClazz.getMethod("getOwnerActivity", "()$SHADOW_ACT_SIG")
-    val dialogSetOwnerActivity = dialogClazz.getMethod("setOwnerActivity", "($SHADOW_ACT_SIG)V")
-
     val shadowDialogClazz = sLoader[SHADOW_DIALOG_CLASS_NAME]
-    val shadowDialogGetOwnerActivity = shadowDialogClazz.getMethod("getOwnerActivity", "()$SHADOW_ACT_SIG")
-    val shadowDialogSetOwnerActivity = shadowDialogClazz.getMethod("setOwnerActivity", "($SHADOW_ACT_SIG)V")
-
     val getOwnerPluginActivity = shadowDialogClazz.getMethod("getOwnerPluginActivity", "()$SHADOW_ACT_SIG")
     val setOwnerPluginActivity = shadowDialogClazz.getMethod("setOwnerPluginActivity", "($SHADOW_ACT_SIG)V")
 
-    val testFooClazz = sLoader[TEST_CLASS_FOO_NAME]
-    val testbarClazz = sLoader[TEST_CLASS_BAR_NAME]
-
-    @Test
-    fun testDialogTransform() {
-        val allInputClass = setOf(testFooClazz, testbarClazz)
-
-        allInputClass.forEach {
-            beforeTransformCheck(it)
-        }
-
+    private fun transform(clazz: CtClass) {
         val dialogTransform = DialogTransform()
         dialogTransform.mClassPool = sLoader
+
+        val allInputClass = setOf(
+                clazz,
+                sLoader["test.dialog.SubDialog"],
+                sLoader["test.dialog.SubSubDialog"]
+        )
         dialogTransform.setup(allInputClass)
 
         dialogTransform.list.forEach { transform ->
@@ -72,100 +54,52 @@ class DialogTransformTest : AbstractTransformTest() {
                 it.writeFile(WRITE_FILE_DIR)
             }
         }
-
-        allInputClass.forEach {
-            afterTransformCheck(dLoader.get(it.name))
-        }
     }
 
-    private fun beforeTransformCheck(clazz: CtClass) {
-        if (clazz.classFile.name == TEST_CLASS_FOO_NAME) {
-            try {
-                clazz.getMethod("foo", "($DIALOG_SIG)$DIALOG_SIG")
-            } catch (e: Exception) {
-                Assert.fail("找不到正确的foo方法")
-            }
-
-            Assert.assertTrue("${dialogGetOwnerActivity}调用应该可以找到",
-                    matchMethodCallInClass(dialogGetOwnerActivity, clazz)
-            )
-
-            Assert.assertTrue("${dialogSetOwnerActivity}调用应该可以找到",
-                    matchMethodCallInClass(dialogSetOwnerActivity, clazz)
-            )
-
+    private fun assertResult(sig: String, clazz: CtClass) {
+        try {
+            clazz.getMethod("test", "($sig)$sig")
+        } catch (e: Exception) {
+            Assert.fail("找不到正确的test方法")
         }
 
-        if (clazz.classFile.name == TEST_CLASS_BAR_NAME) {
-            Assert.assertEquals(
-                    "父类不正确",
-                    DIALOG_CLASS_NAME, clazz.classFile.superclass
-            )
+        Assert.assertTrue("${getOwnerPluginActivity}调用应该可以找到",
+                matchMethodCallInClass(getOwnerPluginActivity, clazz)
+        )
 
-            Assert.assertTrue("${dialogGetOwnerActivity}调用应该可以找到",
-                    matchMethodCallInClass(dialogGetOwnerActivity, clazz)
-            )
-
-            Assert.assertTrue("${dialogSetOwnerActivity}调用应该可以找到",
-                    matchMethodCallInClass(dialogSetOwnerActivity, clazz)
-            )
-        }
+        Assert.assertTrue("${setOwnerPluginActivity}调用应该可以找到",
+                matchMethodCallInClass(setOwnerPluginActivity, clazz)
+        )
     }
 
-    private fun afterTransformCheck(clazz: CtClass) {
-        if (clazz.name == TEST_CLASS_FOO_NAME) {
-            //先检查原来的判断都应该失效了
-            try {
-                clazz.getMethod("foo", "($DIALOG_SIG)$DIALOG_SIG")
-                Assert.fail("应该找不到原来的foo方法才对")
-            } catch (ignored: Exception) {
-            }
+    @Test
+    fun subDialog() {
+        val name = "test.dialog.SubDialog"
+        transform(sLoader[name])
+        Assert.assertEquals(SHADOW_DIALOG_CLASS_NAME, dLoader.get(name).superclass.name)
+    }
 
-            Assert.assertFalse("不应该有调用：${dialogGetOwnerActivity}",
-                    matchMethodCallInClass(dialogGetOwnerActivity, clazz)
-            )
+    @Test
+    fun useDialog() {
+        val name = "test.dialog.UseDialog"
+        transform(sLoader[name])
+        val sig = "Lcom/tencent/shadow/core/runtime/ShadowDialog;"
+        assertResult(sig, dLoader.get(name))
+    }
 
-            Assert.assertFalse("不应该有调用：${dialogSetOwnerActivity}",
-                    matchMethodCallInClass(dialogSetOwnerActivity, clazz)
-            )
+    @Test
+    fun useSubDialog() {
+        val name = "test.dialog.UseSubDialog"
+        transform(sLoader[name])
+        val sig = "Ltest/dialog/SubDialog;"
+        assertResult(sig, dLoader.get(name))
+    }
 
-            Assert.assertFalse("不应该有调用：${shadowDialogGetOwnerActivity}",
-                    matchMethodCallInClass(shadowDialogGetOwnerActivity, clazz)
-            )
-
-            Assert.assertFalse("不应该有调用：${shadowDialogSetOwnerActivity}",
-                    matchMethodCallInClass(shadowDialogSetOwnerActivity, clazz)
-            )
-
-            //再检查新的变化是否都存在
-            try {
-                clazz.getMethod("foo", "($SHADOW_DIALOG_SIG)$SHADOW_DIALOG_SIG")
-            } catch (e: Exception) {
-                Assert.fail("找不到正确的foo方法")
-            }
-
-            Assert.assertTrue("${getOwnerPluginActivity}调用应该可以找到",
-                    matchMethodCallInClass(getOwnerPluginActivity, clazz)
-            )
-
-            Assert.assertTrue("${setOwnerPluginActivity}调用应该可以找到",
-                    matchMethodCallInClass(setOwnerPluginActivity, clazz)
-            )
-        }
-
-        if (clazz.name == TEST_CLASS_BAR_NAME) {
-            Assert.assertEquals(
-                    "父类不正确",
-                    SHADOW_DIALOG_CLASS_NAME, clazz.superclass.name
-            )
-
-            Assert.assertTrue("${getOwnerPluginActivity}调用应该可以找到",
-                    matchMethodCallInClass(getOwnerPluginActivity, clazz)
-            )
-
-            Assert.assertTrue("${setOwnerPluginActivity}调用应该可以找到",
-                    matchMethodCallInClass(setOwnerPluginActivity, clazz)
-            )
-        }
+    @Test
+    fun useSubSubDialog() {
+        val name = "test.dialog.UseSubSubDialog"
+        transform(sLoader[name])
+        val sig = "Ltest/dialog/SubSubDialog;"
+        assertResult(sig, dLoader.get(name))
     }
 }
