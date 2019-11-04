@@ -94,18 +94,37 @@ class PluginClassLoader(
         }
     }
 
-    private fun String.inPackage(packageNames: Array<String>): Boolean {
-        val packageName = substringBeforeLast('.', "")
-        return packageNames.any {
-            if (it.endsWith(".*")) {
-                // because of that it.endsWith(".*"),  ".*" will always exists in it
-                // if packageNames == [".*"], it will always return true
-                // because every string starts with ""
-                val whiteListPackageName = it.substringBeforeLast(".*")
-                return packageName.startsWith(whiteListPackageName)
+}
+
+private fun String.subStringBeforeDot() = substringBeforeLast('.', "")
+
+internal fun String.inPackage(packageNames: Array<String>): Boolean {
+    val packageName = subStringBeforeDot()
+
+    return packageNames.any {
+        return when {
+            it == "" -> false
+            it == ".*" -> false
+            it == ".**" -> false
+            it.endsWith(".*") -> {//只允许一级子包
+                val sub = packageName.subStringBeforeDot()
+                return if (sub.isEmpty()) {
+                    false
+                } else {
+                    sub == it.subStringBeforeDot()
+                }
             }
-            packageName == it
+            it.endsWith(".**") -> {//允许所有子包
+                val sub = packageName.subStringBeforeDot()
+                return if (sub.isEmpty()) {
+                    false
+                } else {
+                    sub.startsWith(it.subStringBeforeDot())
+                }
+            }
+            else -> packageName == it
         }
     }
 }
+
 
