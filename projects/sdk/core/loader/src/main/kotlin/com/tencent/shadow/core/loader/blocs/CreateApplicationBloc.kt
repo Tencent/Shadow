@@ -26,7 +26,6 @@ import com.tencent.shadow.core.loader.exceptions.CreateApplicationException
 import com.tencent.shadow.core.loader.infos.PluginInfo
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.runtime.ShadowApplication
-import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider
 
 /**
  * 初始化插件Application类
@@ -41,7 +40,6 @@ object CreateApplicationBloc {
             resources: Resources,
             hostAppContext: Context,
             componentManager: ComponentManager,
-            remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?,
             applicationInfo: ApplicationInfo
     ): ShadowApplication {
         try {
@@ -62,7 +60,6 @@ object CreateApplicationBloc {
             shadowApplication.applicationInfo = applicationInfo
             shadowApplication.setBusinessName(pluginInfo.businessName)
             shadowApplication.setPluginPartKey(partKey)
-            shadowApplication.remoteViewCreatorProvider = remoteViewCreatorProvider
             return shadowApplication
         } catch (e: Exception) {
             throw CreateApplicationException(e)

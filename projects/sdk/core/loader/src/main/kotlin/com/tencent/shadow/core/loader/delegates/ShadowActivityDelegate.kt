@@ -158,7 +158,6 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.applicationInfo = mPluginApplication.applicationInfo
         pluginActivity.setBusinessName(mBusinessName)
         pluginActivity.setPluginPartKey(mPartKey)
-        pluginActivity.remoteViewCreatorProvider = mRemoteViewCreatorProvider
     }
 
     override fun onResume() {
