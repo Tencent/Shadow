@@ -31,7 +31,6 @@ import com.tencent.shadow.core.loader.managers.PluginPackageManagerImpl
 import com.tencent.shadow.core.runtime.PluginPartInfo
 import com.tencent.shadow.core.runtime.PluginPartInfoManager
 import com.tencent.shadow.core.runtime.ShadowContext
-import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
@@ -50,8 +49,7 @@ object LoadPluginBloc {
             pluginPartsMap: MutableMap<String, PluginParts>,
             hostAppContext: Context,
             installedApk: InstalledApk,
-            loadParameters: LoadParameters,
-            remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?
+            loadParameters: LoadParameters
     ): Future<*> {
         if (installedApk.apkFilePath == null) {
             throw LoadPluginException("apkFilePath==null")
@@ -121,7 +119,6 @@ object LoadPluginBloc {
                         resources,
                         hostAppContext,
                         componentManager,
-                        remoteViewCreatorProvider,
                         packageInfo.applicationInfo
                 )
             })
