@@ -95,14 +95,17 @@ class PluginClassLoader(
     }
 
     private fun String.inPackage(packageNames: Array<String>): Boolean {
-        val packageName: String
-        val dot = lastIndexOf('.')
-        packageName = if (dot != -1) {
-            substring(0, dot)
-        } else {
-            ""
+        val packageName = substringBeforeLast('.', "")
+        return packageNames.any {
+            if (it.endsWith(".*")) {
+                // because of that it.endsWith(".*"),  ".*" will always exists in it
+                // if packageNames == [".*"], it will always return true
+                // because every string starts with ""
+                val whiteListPackageName = it.substringBeforeLast(".*")
+                return packageName.startsWith(whiteListPackageName)
+            }
+            packageName == it
         }
-        return packageNames.any { packageName == it }
     }
 }
 
