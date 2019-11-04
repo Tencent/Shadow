@@ -25,13 +25,13 @@ import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 
 import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
-import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider;
 
 public class ShadowContext extends SubDirContextThemeWrapper {
     PluginComponentLauncher mPluginComponentLauncher;
@@ -43,7 +43,6 @@ public class ShadowContext extends SubDirContextThemeWrapper {
     ApplicationInfo mApplicationInfo;
     protected String mPartKey;
     private String mBusinessName;
-    private ShadowRemoteViewCreatorProvider mRemoteViewCreatorProvider;
 
     public ShadowContext() {
     }
@@ -83,14 +82,6 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     public void setPluginPartKey(String partKey) {
         this.mPartKey = partKey;
-    }
-
-    public final void setRemoteViewCreatorProvider(ShadowRemoteViewCreatorProvider provider) {
-        mRemoteViewCreatorProvider = provider;
-    }
-
-    public final ShadowRemoteViewCreatorProvider getRemoteViewCreatorProvider() {
-        return mRemoteViewCreatorProvider;
     }
 
     @Override
@@ -184,6 +175,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
         }
     }
 
+    @android.annotation.TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void superStartActivity(Intent intent, Bundle options) {
         super.startActivity(intent, options);
     }

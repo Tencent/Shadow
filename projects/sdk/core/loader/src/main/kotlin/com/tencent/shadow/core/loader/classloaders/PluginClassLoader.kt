@@ -94,15 +94,37 @@ class PluginClassLoader(
         }
     }
 
-    private fun String.inPackage(packageNames: Array<String>): Boolean {
-        val packageName: String
-        val dot = lastIndexOf('.')
-        packageName = if (dot != -1) {
-            substring(0, dot)
-        } else {
-            ""
+}
+
+private fun String.subStringBeforeDot() = substringBeforeLast('.', "")
+
+internal fun String.inPackage(packageNames: Array<String>): Boolean {
+    val packageName = subStringBeforeDot()
+
+    return packageNames.any {
+        return when {
+            it == "" -> false
+            it == ".*" -> false
+            it == ".**" -> false
+            it.endsWith(".*") -> {//只允许一级子包
+                val sub = packageName.subStringBeforeDot()
+                return if (sub.isEmpty()) {
+                    false
+                } else {
+                    sub == it.subStringBeforeDot()
+                }
+            }
+            it.endsWith(".**") -> {//允许所有子包
+                val sub = packageName.subStringBeforeDot()
+                return if (sub.isEmpty()) {
+                    false
+                } else {
+                    sub.startsWith(it.subStringBeforeDot())
+                }
+            }
+            else -> packageName == it
         }
-        return packageNames.any { packageName == it }
     }
 }
+
 

@@ -42,7 +42,7 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
     private final Class<?>[] mConstructorSignature = new Class[]{
             Context.class, AttributeSet.class};
 
-    private final HashMap<String, Constructor<? extends View>> sConstructorMap =
+    private final static HashMap<String, Constructor<? extends View>> sConstructorMap =
             new HashMap<String, Constructor<? extends View>>();
 
 

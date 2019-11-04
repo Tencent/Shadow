@@ -158,7 +158,6 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.applicationInfo = mPluginApplication.applicationInfo
         pluginActivity.setBusinessName(mBusinessName)
         pluginActivity.setPluginPartKey(mPartKey)
-        pluginActivity.remoteViewCreatorProvider = mRemoteViewCreatorProvider
     }
 
     override fun onResume() {
@@ -216,6 +215,14 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
         return mPluginActivity.dispatchKeyEvent(event)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        return mPluginActivity.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        return mPluginActivity.onKeyUp(keyCode, event)
     }
 
     override fun finish() {

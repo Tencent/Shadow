@@ -250,13 +250,13 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
     }
 
     @Override
-    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        return mHostActivityDelegator.superOnKeyLongPress(keyCode, event);
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        return mHostActivityDelegator.superOnKeyUp(keyCode, event);
     }
 
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        return mHostActivityDelegator.superOnKeyUp(keyCode, event);
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return mHostActivityDelegator.superOnKeyLongPress(keyCode, event);
     }
 
     @Override

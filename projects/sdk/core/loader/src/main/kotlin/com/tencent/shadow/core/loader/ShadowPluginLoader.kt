@@ -36,11 +36,8 @@ import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.core.loader.managers.PluginServiceManager
-import com.tencent.shadow.core.loader.remoteview.ShadowRemoteViewCreatorImp
 import com.tencent.shadow.core.runtime.UriParseDelegate
 import com.tencent.shadow.core.runtime.container.*
-import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreator
-import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -83,8 +80,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
     private val mPluginContentProviderManager: PluginContentProviderManager = PluginContentProviderManager()
 
     private val mPluginServiceManagerLock = ReentrantLock()
-
-    private val  mShadowRemoteViewCreatorProvider: ShadowRemoteViewCreatorProvider = ShadowRemoteViewCreatorProviderImpl()
 
     private val mHostAppContext: Context = hostAppContext
 
@@ -167,8 +162,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                 mPluginPartsMap,
                 mHostAppContext,
                 installedApk,
-                loadParameters,
-                mShadowRemoteViewCreatorProvider)
+                loadParameters)
     }
 
     private fun allPluginPackageInfo(): Array<PackageInfo> {
@@ -200,16 +194,8 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                 delegate.inject(pluginParts.classLoader)
                 delegate.inject(pluginParts.resources)
                 delegate.inject(mComponentManager)
-                delegate.inject(mShadowRemoteViewCreatorProvider)
             }
         }
-    }
-
-    private inner class ShadowRemoteViewCreatorProviderImpl: ShadowRemoteViewCreatorProvider {
-        override fun createRemoteViewCreator(context: Context): ShadowRemoteViewCreator {
-            return ShadowRemoteViewCreatorImp(context, this@ShadowPluginLoader)
-        }
-
     }
 
     fun InstalledApk.getLoadParameters(): LoadParameters {
