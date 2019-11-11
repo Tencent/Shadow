@@ -73,6 +73,7 @@
 
         <activity android:name=".usecases.context.ApplicationContextSubDirTestActivity" />
         <activity android:name=".usecases.application.TestGetApplicationInfoActivity" />
+        <activity android:name=".usecases.activity.ApplicationContextActivity" />
 
         <provider
             android:authorities="com.tencent.shadow.provider.test"
