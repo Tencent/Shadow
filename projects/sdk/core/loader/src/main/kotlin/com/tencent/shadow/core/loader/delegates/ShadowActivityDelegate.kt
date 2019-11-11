@@ -150,7 +150,6 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     private fun initPluginActivity(pluginActivity: PluginActivity) {
         pluginActivity.setHostActivityDelegator(mHostActivityDelegator)
         pluginActivity.setPluginResources(mPluginResources)
-        pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
         pluginActivity.setPluginClassLoader(mPluginClassLoader)
         pluginActivity.setPluginComponentLauncher(mComponentManager)
         pluginActivity.setPluginApplication(mPluginApplication)
@@ -158,6 +157,13 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         pluginActivity.applicationInfo = mPluginApplication.applicationInfo
         pluginActivity.setBusinessName(mBusinessName)
         pluginActivity.setPluginPartKey(mPartKey)
+
+        //前面的所有set方法都是PluginActivity定义的方法，
+        //业务的Activity子类不会覆盖这些方法。调用它们不会执行业务Activity的任何逻辑。
+        //最后这个setHostContextAsBase会调用插件Activity的attachBaseContext方法，
+        //有可能会执行业务Activity覆盖的逻辑。
+        //所以，这个调用要放在最后。
+        pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
     }
 
     override fun onResume() {
