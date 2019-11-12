@@ -86,3 +86,8 @@ adb push sample-manager/build/outputs/apk/debug/sample-manager-debug.apk /data/l
 最后可以用Android Studio打开`host-project`直接运行`sample-host`模块。
 
 `plugin-project`中的`plugin-normal-apk`模块也可以直接安装运行，演示不使用Shadow时插件的运行情况。
+
+## 演示AndroidX正常工作的Sample(`projects/sample/sunflower`)
+这个Sample和`projects/sample/maven`的组织结构是一样的。
+
+主要是将https://github.com/android/sunflower/改造成插件运行起来。
