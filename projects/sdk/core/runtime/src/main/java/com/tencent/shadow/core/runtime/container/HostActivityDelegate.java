@@ -150,4 +150,6 @@ public interface HostActivityDelegate {
     void onMultiWindowModeChanged(boolean isInMultiWindowMode);
 
     void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig);
+
+    void onPostResume();
 }

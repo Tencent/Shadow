@@ -354,4 +354,8 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
     public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
         mHostActivityDelegator.superOnMultiWindowModeChanged(isInMultiWindowMode, newConfig);
     }
+
+    public void onPostResume() {
+        mHostActivityDelegator.superOnPostResume();
+    }
 }

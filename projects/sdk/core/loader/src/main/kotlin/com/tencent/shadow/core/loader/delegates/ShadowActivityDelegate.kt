@@ -405,4 +405,8 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean, newConfig: Configuration?) {
         mPluginActivity.onMultiWindowModeChanged(isInMultiWindowMode, newConfig)
     }
+
+    override fun onPostResume() {
+        mPluginActivity.onPostResume()
+    }
 }
