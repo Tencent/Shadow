@@ -59,6 +59,20 @@ class PluginClassLoaderTest {
     }
 
     @Test
+    fun case15() {
+        val packageNames = arrayOf("xxxx", "a.b.c")
+        val className = "a.b.c.D"
+        Assert.assertTrue(className.inPackage(packageNames))
+    }
+
+    @Test
+    fun case16() {
+        val packageNames = arrayOf("a.b.c", "xxxx")
+        val className = "a.b.c.D"
+        Assert.assertTrue(className.inPackage(packageNames))
+    }
+
+    @Test
     fun case21() {
         val packageNames = arrayOf("")
         val className = "A"
