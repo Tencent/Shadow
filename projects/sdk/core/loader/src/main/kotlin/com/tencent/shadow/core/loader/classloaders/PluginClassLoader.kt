@@ -102,7 +102,7 @@ internal fun String.inPackage(packageNames: Array<String>): Boolean {
     val packageName = subStringBeforeDot()
 
     return packageNames.any {
-        return when {
+        return@any when {
             it == "" -> false
             it == ".*" -> false
             it == ".**" -> false
