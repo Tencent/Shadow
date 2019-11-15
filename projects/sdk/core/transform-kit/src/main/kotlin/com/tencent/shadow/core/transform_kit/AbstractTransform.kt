@@ -26,6 +26,7 @@ import java.io.*
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.system.measureTimeMillis
 
 abstract class AbstractTransform(
         project: Project,
@@ -33,6 +34,7 @@ abstract class AbstractTransform(
 ) : JavassistTransform(project, classPoolBuilder) {
 
     protected abstract val mTransformManager: AbstractTransformManager
+    private val mOverrideCheck = OverrideCheck()
     private val mDebugClassJar = File(project.buildDir, "transform-temp.jar")
     private lateinit var mDebugClassJarZOS: ZipOutputStream
 
@@ -49,6 +51,8 @@ abstract class AbstractTransform(
     }
 
     override fun onTransform() {
+        mOverrideCheck.prepare(mCtClassInputMap.keys.toSet())
+
         mTransformManager.setupAll()
         mTransformManager.fireAll()
     }
@@ -100,6 +104,21 @@ abstract class AbstractTransform(
         }
         project.logger.info("checkReplacedClassHaveRightMethods完毕，耗时(ms):${System.currentTimeMillis() - start1}")
 
+        val start2 = System.currentTimeMillis()
+        try {
+            val t2 = measureTimeMillis {
+                checkOverrideMethods(debugClassPool, classNames)
+            }
+            System.err.println("t2:$t2")
+        } catch (e: Exception) {
+            if (delayException == null) {
+                delayException = e
+            } else {
+                delayException.addSuppressed(e)
+            }
+        }
+        project.logger.info("checkOverrideMethods完毕，耗时(ms):${System.currentTimeMillis() - start2}")
+
         if (delayException != null) {
             throw delayException
         }
@@ -134,4 +153,23 @@ abstract class AbstractTransform(
             throw IllegalStateException("存在转换后被调用方法未实现的问题，详见${tempFile.absolutePath}")
         }
     }
+
+    private fun checkOverrideMethods(debugClassPool: ClassPool, classNames: List<String>) {
+        val result = mOverrideCheck.check(debugClassPool, classNames)
+        if (result.isNotEmpty()) {
+            val tempFile = File.createTempFile("shadow_override_check", ".txt", project.buildDir)
+            val bw = BufferedWriter(FileWriter(tempFile))
+            result.forEach {
+                bw.appendln("In Class ${it.key} 这些方法不再Override父类了:")
+                it.value.map { "${it.first.name}:${it.first.signature}(转换前定义在${it.second})" }.forEach {
+                    bw.appendln(it)
+                }
+                bw.newLine()
+            }
+            bw.flush()
+            bw.close()
+            throw IllegalStateException("存在Override方法转换后不再Override的情况，详见${tempFile.absolutePath}")
+        }
+    }
+
 }
