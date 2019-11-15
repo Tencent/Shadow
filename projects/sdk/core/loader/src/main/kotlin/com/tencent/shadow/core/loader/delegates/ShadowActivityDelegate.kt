@@ -117,8 +117,11 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
         mHostActivityDelegator.setTheme(pluginActivityInfo.themeResource)
         try {
-            val aClass = mPluginClassLoader.loadClass(pluginActivityClassName)
-            val pluginActivity = PluginActivity::class.java.cast(aClass.newInstance())
+            val pluginActivity = mAppComponentFactory.instantiateActivity(
+                    mPluginClassLoader,
+                    pluginActivityClassName,
+                    mHostActivityDelegator.intent
+            )
             initPluginActivity(pluginActivity)
             mPluginActivity = pluginActivity
 

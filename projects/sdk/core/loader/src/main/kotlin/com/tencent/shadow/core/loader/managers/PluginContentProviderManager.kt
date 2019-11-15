@@ -26,7 +26,7 @@ import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.infos.PluginProviderInfo
 import com.tencent.shadow.core.runtime.UriParseDelegate
-import java.util.HashMap
+import java.util.*
 import kotlin.collections.HashSet
 import kotlin.collections.set
 
@@ -85,8 +85,8 @@ class PluginContentProviderManager() : UriParseDelegate {
     fun createContentProviderAndCallOnCreate(mContext: Context, partKey: String, pluginParts: PluginParts?) {
         pluginProviderInfoMap[partKey]?.forEach {
             try {
-                val clz = pluginParts!!.classLoader.loadClass(it.className)
-                val contentProvider = ContentProvider::class.java.cast(clz.newInstance())
+                val contentProvider = pluginParts!!.appComponentFactory
+                        .instantiateProvider(pluginParts.classLoader, it.className)
                 contentProvider?.attachInfo(mContext, it.providerInfo)
                 providerMap[it.authority] = contentProvider
             } catch (e: Exception) {
