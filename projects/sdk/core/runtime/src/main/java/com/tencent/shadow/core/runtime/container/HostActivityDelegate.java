@@ -158,4 +158,6 @@ public interface HostActivityDelegate {
     void onPictureInPictureModeChanged(boolean isInPictureInPictureMode);
 
     void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig);
+
+    void onStateNotSaved();
 }

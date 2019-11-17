@@ -370,4 +370,8 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
     public void onPictureInPictureModeChanged(boolean inPictureInPictureMode, Configuration newConfig) {
         mHostActivityDelegator.superOnPictureInPictureModeChanged(inPictureInPictureMode, newConfig);
     }
+
+    public void onStateNotSaved() {
+        mHostActivityDelegator.superOnStateNotSaved();
+    }
 }

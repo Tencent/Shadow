@@ -383,6 +383,15 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     @Override
+    public void onStateNotSaved() {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onStateNotSaved();
+        } else {
+            super.onStateNotSaved();
+        }
+    }
+
+    @Override
     protected void onUserLeaveHint() {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.onUserLeaveHint();

@@ -424,4 +424,8 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
         mPluginActivity.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
     }
+
+    override fun onStateNotSaved() {
+        mPluginActivity.onStateNotSaved()
+    }
 }
