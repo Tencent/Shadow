@@ -345,4 +345,12 @@ public abstract class ShadowActivity extends PluginActivity {
     public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
         mHostActivityDelegator.superDump(prefix, fd, writer, args);
     }
+
+    public final <T extends View> T requireViewById(int id) {
+        T view = findViewById(id);
+        if (view == null) {
+            throw new IllegalArgumentException("ID does not reference a View inside this Activity");
+        }
+        return view;
+    }
 }
