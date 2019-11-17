@@ -412,4 +412,8 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun onPostResume() {
         mPluginActivity.onPostResume()
     }
+
+    override fun onTitleChanged(title: CharSequence?, color: Int) {
+        mPluginActivity.onTitleChanged(title, color)
+    }
 }

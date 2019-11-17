@@ -99,6 +99,10 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
         mHostActivityDelegator.superOnConfigurationChanged(newConfig);
     }
 
+    public void onTitleChanged(CharSequence title, int color) {
+        mHostActivityDelegator.superOnTitleChanged(title, color);
+    }
+
     public boolean dispatchKeyEvent(KeyEvent event) {
         return mHostActivityDelegator.superDispatchKeyEvent(event);
     }

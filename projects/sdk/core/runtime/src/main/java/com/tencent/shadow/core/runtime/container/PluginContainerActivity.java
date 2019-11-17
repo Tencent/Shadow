@@ -302,6 +302,15 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     @Override
+    protected void onTitleChanged(CharSequence title, int color) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onTitleChanged(title, color);
+        } else {
+            super.onTitleChanged(title, color);
+        }
+    }
+
+    @Override
     public void finish() {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.finish();

@@ -152,4 +152,6 @@ public interface HostActivityDelegate {
     void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig);
 
     void onPostResume();
+
+    void onTitleChanged(CharSequence title, int color);
 }
