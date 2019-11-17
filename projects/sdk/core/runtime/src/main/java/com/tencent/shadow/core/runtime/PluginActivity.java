@@ -362,4 +362,12 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
     public void onPostResume() {
         mHostActivityDelegator.superOnPostResume();
     }
+
+    public void onPictureInPictureModeChanged(boolean inPictureInPictureMode) {
+        mHostActivityDelegator.superOnPictureInPictureModeChanged(inPictureInPictureMode);
+    }
+
+    public void onPictureInPictureModeChanged(boolean inPictureInPictureMode, Configuration newConfig) {
+        mHostActivityDelegator.superOnPictureInPictureModeChanged(inPictureInPictureMode, newConfig);
+    }
 }

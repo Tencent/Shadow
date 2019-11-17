@@ -311,6 +311,24 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onPictureInPictureModeChanged(isInPictureInPictureMode);
+        } else {
+            super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+        }
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        } else {
+            super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        }
+    }
+
+    @Override
     public void finish() {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.finish();

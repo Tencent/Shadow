@@ -154,4 +154,8 @@ public interface HostActivityDelegate {
     void onPostResume();
 
     void onTitleChanged(CharSequence title, int color);
+
+    void onPictureInPictureModeChanged(boolean isInPictureInPictureMode);
+
+    void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig);
 }

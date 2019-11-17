@@ -416,4 +416,12 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun onTitleChanged(title: CharSequence?, color: Int) {
         mPluginActivity.onTitleChanged(title, color)
     }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        mPluginActivity.onPictureInPictureModeChanged(isInPictureInPictureMode)
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
+        mPluginActivity.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+    }
 }
