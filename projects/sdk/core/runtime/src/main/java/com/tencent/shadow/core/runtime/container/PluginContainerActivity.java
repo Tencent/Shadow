@@ -302,6 +302,33 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
     }
 
     @Override
+    protected void onTitleChanged(CharSequence title, int color) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onTitleChanged(title, color);
+        } else {
+            super.onTitleChanged(title, color);
+        }
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onPictureInPictureModeChanged(isInPictureInPictureMode);
+        } else {
+            super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+        }
+    }
+
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        } else {
+            super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        }
+    }
+
+    @Override
     public void finish() {
         if (hostActivityDelegate != null) {
             hostActivityDelegate.finish();
@@ -352,6 +379,15 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             hostActivityDelegate.onRestart();
         } else {
             super.onRestart();
+        }
+    }
+
+    @Override
+    public void onStateNotSaved() {
+        if (hostActivityDelegate != null) {
+            hostActivityDelegate.onStateNotSaved();
+        } else {
+            super.onStateNotSaved();
         }
     }
 

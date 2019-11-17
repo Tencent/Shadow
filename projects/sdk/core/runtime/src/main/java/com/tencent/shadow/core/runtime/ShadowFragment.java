@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.runtime;
 
 import android.animation.Animator;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
@@ -590,4 +591,9 @@ public class ShadowFragment {
         mContainerFragment.requestPermissions(permissions, requestCode);
     }
 
+    @SuppressLint("NewApi")
+    final public ShadowFragment getParentFragment() {
+        Fragment parentFragment = mContainerFragment.asFragment().getParentFragment();
+        return ((IContainerFragment) parentFragment).getPluginFragment();
+    }
 }

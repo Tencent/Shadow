@@ -190,6 +190,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
             if (pluginParts == null) {
                 throw IllegalStateException("partKey==${partKey}在map中找不到。此时map：${mPluginPartsMap}")
             } else {
+                delegate.inject(pluginParts.appComponentFactory)
                 delegate.inject(pluginParts.application)
                 delegate.inject(pluginParts.classLoader)
                 delegate.inject(pluginParts.resources)

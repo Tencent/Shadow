@@ -23,6 +23,7 @@ import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Build;
+import android.os.Bundle;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,5 +66,10 @@ public class PluginFragmentManager {
             }
         }
         return pluginFragments.size() > 0 ? pluginFragments : Collections.EMPTY_LIST;
+    }
+
+    public ShadowFragment getFragment(Bundle bundle, String key) {
+        Fragment fragment = mBase.getFragment(bundle, key);
+        return ((IContainerFragment) fragment).getPluginFragment();
     }
 }

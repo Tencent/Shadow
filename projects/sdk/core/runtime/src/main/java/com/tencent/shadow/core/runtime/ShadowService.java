@@ -25,6 +25,9 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.IBinder;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+
 /**
  * Created by tracyluo on 2018/6/5.
  */
@@ -120,5 +123,9 @@ public abstract class ShadowService extends ShadowContext {
 
     public final ShadowApplication getApplication() {
         return mShadowApplication;
+    }
+
+    protected void dump(FileDescriptor fd, PrintWriter writer, String[] args) {
+        writer.println("nothing to dump");
     }
 }

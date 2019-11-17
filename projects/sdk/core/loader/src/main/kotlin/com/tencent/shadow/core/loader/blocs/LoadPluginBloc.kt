@@ -30,6 +30,7 @@ import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginPackageManagerImpl
 import com.tencent.shadow.core.runtime.PluginPartInfo
 import com.tencent.shadow.core.runtime.PluginPartInfoManager
+import com.tencent.shadow.core.runtime.ShadowAppComponentFactory
 import com.tencent.shadow.core.runtime.ShadowContext
 import java.io.File
 import java.util.concurrent.Callable
@@ -107,11 +108,21 @@ object LoadPluginBloc {
                 CreateResourceBloc.create(packageInfo, installedApk.apkFilePath, hostAppContext)
             })
 
+            val buildAppComponentFactory = executorService.submit(Callable {
+                val pluginClassLoader = buildClassLoader.get()
+                val pluginInfo = buildPluginInfo.get()
+                if (pluginInfo.appComponentFactory != null) {
+                    val clazz = pluginClassLoader.loadClass(pluginInfo.appComponentFactory)
+                    ShadowAppComponentFactory::class.java.cast(clazz.newInstance())
+                } else ShadowAppComponentFactory()
+            })
+
             val buildApplication = executorService.submit(Callable {
                 val pluginClassLoader = buildClassLoader.get()
                 val resources = buildResources.get()
                 val pluginInfo = buildPluginInfo.get()
                 val packageInfo = getPackageInfo.get()
+                val appComponentFactory = buildAppComponentFactory.get()
 
                 CreateApplicationBloc.createShadowApplication(
                         pluginClassLoader,
@@ -119,7 +130,8 @@ object LoadPluginBloc {
                         resources,
                         hostAppContext,
                         componentManager,
-                        packageInfo.applicationInfo
+                        packageInfo.applicationInfo,
+                        appComponentFactory
                 )
             })
 
@@ -132,9 +144,11 @@ object LoadPluginBloc {
                 val resources = buildResources.get()
                 val pluginInfo = buildPluginInfo.get()
                 val shadowApplication = buildApplication.get()
+                val appComponentFactory = buildAppComponentFactory.get()
                 lock.withLock {
                     componentManager.addPluginApkInfo(pluginInfo)
                     pluginPartsMap[pluginInfo.partKey] = PluginParts(
+                            appComponentFactory,
                             shadowApplication,
                             pluginClassLoader,
                             resources,

@@ -99,6 +99,10 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
         mHostActivityDelegator.superOnConfigurationChanged(newConfig);
     }
 
+    public void onTitleChanged(CharSequence title, int color) {
+        mHostActivityDelegator.superOnTitleChanged(title, color);
+    }
+
     public boolean dispatchKeyEvent(KeyEvent event) {
         return mHostActivityDelegator.superDispatchKeyEvent(event);
     }
@@ -357,5 +361,17 @@ public abstract class PluginActivity extends ShadowContext implements Window.Cal
 
     public void onPostResume() {
         mHostActivityDelegator.superOnPostResume();
+    }
+
+    public void onPictureInPictureModeChanged(boolean inPictureInPictureMode) {
+        mHostActivityDelegator.superOnPictureInPictureModeChanged(inPictureInPictureMode);
+    }
+
+    public void onPictureInPictureModeChanged(boolean inPictureInPictureMode, Configuration newConfig) {
+        mHostActivityDelegator.superOnPictureInPictureModeChanged(inPictureInPictureMode, newConfig);
+    }
+
+    public void onStateNotSaved() {
+        mHostActivityDelegator.superOnStateNotSaved();
     }
 }

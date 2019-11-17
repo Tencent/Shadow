@@ -117,8 +117,11 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
         mHostActivityDelegator.setTheme(pluginActivityInfo.themeResource)
         try {
-            val aClass = mPluginClassLoader.loadClass(pluginActivityClassName)
-            val pluginActivity = PluginActivity::class.java.cast(aClass.newInstance())
+            val pluginActivity = mAppComponentFactory.instantiateActivity(
+                    mPluginClassLoader,
+                    pluginActivityClassName,
+                    mHostActivityDelegator.intent
+            )
             initPluginActivity(pluginActivity)
             mPluginActivity = pluginActivity
 
@@ -408,5 +411,21 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
 
     override fun onPostResume() {
         mPluginActivity.onPostResume()
+    }
+
+    override fun onTitleChanged(title: CharSequence?, color: Int) {
+        mPluginActivity.onTitleChanged(title, color)
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
+        mPluginActivity.onPictureInPictureModeChanged(isInPictureInPictureMode)
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration?) {
+        mPluginActivity.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+    }
+
+    override fun onStateNotSaved() {
+        mPluginActivity.onStateNotSaved()
     }
 }

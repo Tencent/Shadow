@@ -252,10 +252,6 @@ public interface HostActivityDelegator {
 
     void invalidateOptionsMenu();
 
-    void openOptionsMenu();
-
-    void closeOptionsMenu();
-
     void registerForContextMenu(View view);
 
     void unregisterForContextMenu(View view);
