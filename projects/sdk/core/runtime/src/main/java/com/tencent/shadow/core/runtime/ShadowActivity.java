@@ -38,6 +38,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+
 public abstract class ShadowActivity extends PluginActivity {
 
     private int mFragmentManagerHash;
@@ -337,5 +340,9 @@ public abstract class ShadowActivity extends PluginActivity {
 
     public void closeOptionsMenu() {
         mHostActivityDelegator.superCloseOptionsMenu();
+    }
+
+    public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
+        mHostActivityDelegator.superDump(prefix, fd, writer, args);
     }
 }
