@@ -330,4 +330,12 @@ public abstract class ShadowActivity extends PluginActivity {
     public void setTheme(int resid) {
         mHostActivityDelegator.setTheme(resid);
     }
+
+    public void openOptionsMenu() {
+        mHostActivityDelegator.superOpenOptionsMenu();
+    }
+
+    public void closeOptionsMenu() {
+        mHostActivityDelegator.superCloseOptionsMenu();
+    }
 }
