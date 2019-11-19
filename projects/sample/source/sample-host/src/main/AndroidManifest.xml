@@ -73,6 +73,7 @@
         android:label="Shadow Dyanamic测试宿主App"
         android:name="com.tencent.shadow.sample.host.HostApplication"
         android:theme="@android:style/Theme.DeviceDefault"
+        android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name="com.tencent.shadow.sample.host.MainActivity"
             >

@@ -39,6 +39,7 @@ import com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestDBContentP
 import com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestFileProviderActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.TestReceiverActivity;
+import com.tencent.shadow.sample.plugin.app.lib.usecases.webview.WebViewActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +66,8 @@ public class UseCaseManager {
                 new TestActivityWindowSoftMode.Case(),
                 new TestActivitySetTheme.Case(),
                 new TestActivityOptionMenu.Case(),
-                new TestAppCompatActivityOnCreate.Case()
+                new TestAppCompatActivityOnCreate.Case(),
+                new WebViewActivity.Case()
         });
         useCases.add(activityCategory);
 
