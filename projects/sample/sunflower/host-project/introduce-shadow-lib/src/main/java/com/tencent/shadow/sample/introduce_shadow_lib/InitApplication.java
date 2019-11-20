@@ -52,7 +52,7 @@ public class InitApplication {
     }
 
     private static boolean isProcess(Context context, String processName) {
-        String currentProcName = null;
+        String currentProcName = "";
         ActivityManager manager =
                 (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningAppProcessInfo processInfo : manager.getRunningAppProcesses()) {
@@ -61,6 +61,7 @@ public class InitApplication {
                 break;
             }
         }
-        return processName.equals(currentProcName);
+
+        return currentProcName.endsWith(processName);
     }
 }
