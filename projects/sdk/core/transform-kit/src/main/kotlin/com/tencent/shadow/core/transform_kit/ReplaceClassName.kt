@@ -32,6 +32,7 @@ object ReplaceClassName {
     private val errorResult: MutableMap<String, MutableMap<String, MutableSet<String>>> = mutableMapOf()
 
     fun resetErrorCount() {
+        mNewNames.clear()
         errorResult.clear()
     }
 
