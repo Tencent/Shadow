@@ -183,6 +183,13 @@ class PluginClassLoaderTest {
         val className = "A"
         Assert.assertFalse(className.inPackage(packageNames))
     }
+
+    @Test
+    fun case68() {
+        val packageNames = arrayOf("a.b.c.d.**", "a.b.c2.d2.**")
+        val className = "a.b.c2.d2.e2.F"
+        Assert.assertTrue(className.inPackage(packageNames))
+    }
 }
 
 
