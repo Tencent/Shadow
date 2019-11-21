@@ -108,7 +108,7 @@ internal fun String.inPackage(packageNames: Array<String>): Boolean {
             it == ".**" -> false
             it.endsWith(".*") -> {//只允许一级子包
                 val sub = packageName.subStringBeforeDot()
-                return if (sub.isEmpty()) {
+                if (sub.isEmpty()) {
                     false
                 } else {
                     sub == it.subStringBeforeDot()
@@ -116,7 +116,7 @@ internal fun String.inPackage(packageNames: Array<String>): Boolean {
             }
             it.endsWith(".**") -> {//允许所有子包
                 val sub = packageName.subStringBeforeDot()
-                return if (sub.isEmpty()) {
+                if (sub.isEmpty()) {
                     false
                 } else {
                     sub.startsWith(it.subStringBeforeDot())
