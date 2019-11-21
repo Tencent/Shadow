@@ -52,12 +52,14 @@ object CreateApplicationBloc {
             shadowApplication.setPluginResources(resources)
             shadowApplication.setPluginClassLoader(pluginClassLoader)
             shadowApplication.setPluginComponentLauncher(componentManager)
-            shadowApplication.setHostApplicationContextAsBase(hostAppContext)
             shadowApplication.setBroadcasts(componentManager.getBroadcastsByPartKey(partKey))
             shadowApplication.setAppComponentFactory(appComponentFactory)
             shadowApplication.applicationInfo = applicationInfo
             shadowApplication.setBusinessName(pluginInfo.businessName)
             shadowApplication.setPluginPartKey(partKey)
+
+            //和ShadowActivityDelegate.initPluginActivity一样，attachBaseContext放到最后
+            shadowApplication.setHostApplicationContextAsBase(hostAppContext)
             return shadowApplication
         } catch (e: Exception) {
             throw CreateApplicationException(e)

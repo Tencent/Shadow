@@ -230,7 +230,6 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
         val service = tmpShadowDelegate.getAppComponentFactory()
                 .instantiateService(tmpShadowDelegate.getPluginClassLoader(), className, intent)
 
-        service.setHostContextAsBase(mHostContext)
         service.setPluginResources(tmpShadowDelegate.getPluginResources())
         service.setPluginClassLoader(tmpShadowDelegate.getPluginClassLoader())
         service.setShadowApplication(tmpShadowDelegate.getPluginApplication())
@@ -239,6 +238,8 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
         service.setBusinessName(businessName)
         service.setPluginPartKey(partKey)
 
+        //和ShadowActivityDelegate.initPluginActivity一样，attachBaseContext放到最后
+        service.setHostContextAsBase(mHostContext)
         return service
     }
 
