@@ -35,12 +35,14 @@ abstract class AbstractTransform(
 
     protected abstract val mTransformManager: AbstractTransformManager
     private val mOverrideCheck = OverrideCheck()
-    private val mDebugClassJar = File(project.buildDir, "transform-temp.jar")
+    private lateinit var mDebugClassJar: File
     private lateinit var mDebugClassJarZOS: ZipOutputStream
 
 
     private fun cleanDebugClassFileDir() {
-        mDebugClassJar.delete()
+        val transformTempDir = File(project.buildDir, "transform-temp")
+        transformTempDir.mkdirs()
+        mDebugClassJar = File.createTempFile("transform-temp", ".jar", transformTempDir)
         mDebugClassJarZOS = ZipOutputStream(FileOutputStream(mDebugClassJar))
     }
 
