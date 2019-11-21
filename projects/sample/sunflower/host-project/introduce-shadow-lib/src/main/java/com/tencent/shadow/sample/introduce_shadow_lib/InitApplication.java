@@ -25,15 +25,15 @@ public class InitApplication {
     }
 
     public static void onApplicationCreate(Application application) {
+        //Log接口Manager也需要使用，所以主进程也初始化。
+        LoggerFactory.setILoggerFactory(new AndroidLoggerFactory());
+
         if (isProcess(application, ":plugin")) {
             //在全动态架构中，Activity组件没有打包在宿主而是位于被动态加载的runtime，
             //为了防止插件crash后，系统自动恢复crash前的Activity组件，此时由于没有加载runtime而发生classNotFound异常，导致二次crash
             //因此这里恢复加载上一次的runtime
             DynamicRuntime.recoveryRuntime(application);
         }
-
-        //Log接口Manager也需要使用，所以主进程也初始化。
-        LoggerFactory.setILoggerFactory(new AndroidLoggerFactory());
 
         FixedPathPmUpdater fixedPathPmUpdater
                 = new FixedPathPmUpdater(new File("/data/local/tmp/sample-manager-debug.apk"));
