@@ -35,7 +35,7 @@ import java.util.Map;
 /**
  * 用于在plugin-loader中调用假的Application方法的接口
  */
-public abstract class ShadowApplication extends ShadowContext {
+public class ShadowApplication extends ShadowContext {
 
     private Application mHostApplication;
 
