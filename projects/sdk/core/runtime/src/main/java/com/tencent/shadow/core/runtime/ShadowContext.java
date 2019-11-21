@@ -236,4 +236,10 @@ public class ShadowContext extends SubDirContextThemeWrapper {
             return "ShadowPlugin_" + mBusinessName;
         }
     }
+
+    @Override
+    public String getPackageName() {
+        return mApplicationInfo.packageName;
+    }
+
 }
