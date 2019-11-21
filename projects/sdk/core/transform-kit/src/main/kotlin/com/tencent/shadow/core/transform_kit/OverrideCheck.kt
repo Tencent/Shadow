@@ -24,13 +24,17 @@ class OverrideCheck {
      */
     private val ctClassMap: MutableMap<String, CtClass> = hashMapOf()
 
+    private fun String.isKotlinClass(): Boolean {
+        return startsWith("kotlin")
+    }
+
     fun prepare(inputClasses: Set<CtClass>) {
         methodMap.clear()
         ctClassMap.clear()
 
         inputClasses.filter {
             //kotlinx里有一些方法的覆盖检查不出来，反正我们也不改它，就不检查了。
-            it.packageName.startsWith("kotlinx").not()
+            it.packageName.isKotlinClass().not()
         }.filter {
             try {
                 it.methods
@@ -65,7 +69,7 @@ class OverrideCheck {
 
         val errorResult: HashMap<String, MutableList<Method_OriginalDeclaringClass>> = hashMapOf()
         classNames.filter {
-            it.startsWith("kotlinx").not()
+            it.isKotlinClass().not()
         }.filter {
             val clazz = debugClassPool[it]!!
             try {
