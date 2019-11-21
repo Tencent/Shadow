@@ -161,6 +161,7 @@ abstract class ClassTransform(val project: Project) : Transform() {
      */
     open fun beforeTransform(invocation: TransformInvocation) {
         invocation.outputProvider.deleteAll()
+        inputSet.clear()
     }
 
     open fun afterTransform(invocation: TransformInvocation) {
