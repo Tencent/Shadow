@@ -1,9 +1,5 @@
 apply plugin: 'com.android.library'
 
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
-
 group 'com.tencent.shadow.core'
 
 android {
@@ -18,35 +14,9 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
-
-    buildTypes {
-        debug {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            consumerProguardFiles 'plugin-loader-release.pro'
-        }
-
-        release {
-            consumerProguardFiles 'plugin-loader-release.pro'
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
-    }
 }
 
-dependencies {
-    implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
-
-    compileOnly project(':runtime')
-    compileOnly project(':activity-container')
-    compileOnly project(':common')
-    api project(':load-parameters')
+dependencies{
     implementation 'com.tencent.shadow.coding:lint'
 }
 

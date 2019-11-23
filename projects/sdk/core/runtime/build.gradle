@@ -28,6 +28,7 @@ android {
 
 dependencies{
     implementation 'com.tencent.shadow.coding:lint'
+    compileOnly project(':activity-container')
 }
 
 def jarPackage(buildType) {

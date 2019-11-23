@@ -4,6 +4,7 @@ task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':loader:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':runtime:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':activity-container:jarReleasePackage')
     dependsOn gradle.includedBuild('core').task(':transform-kit:assemble')
     dependsOn gradle.includedBuild('core').task(':transform-kit:testJar')
     dependsOn gradle.includedBuild('core').task(':transform:assemble')
@@ -20,6 +21,7 @@ task lintSdk() {
     dependsOn gradle.includedBuild('core').task(':loader:lint')
     dependsOn gradle.includedBuild('core').task(':manager:lint')
     dependsOn gradle.includedBuild('core').task(':runtime:lint')
+    dependsOn gradle.includedBuild('core').task(':activity-container:lint')
     dependsOn gradle.includedBuild('core').task(':load-parameters:lint')
 
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:lint')
@@ -111,6 +113,7 @@ publishing {
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform-kit', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'activity-container', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -156,6 +159,7 @@ publishing {
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'activity-container', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'load-parameters', publicationVersion))
 
@@ -186,6 +190,20 @@ publishing {
             version publicationVersion
             artifact("$corePath/runtime/build/outputs/jar/runtime-release.jar")
             artifact sourceJar("runtime", "$corePath/runtime")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        activityContainer(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'activity-container'
+            version publicationVersion
+            artifact("$corePath/activity-container/build/outputs/jar/activity-container-release.jar")
+            artifact sourceJar("activity-container", "$corePath/activity-container")
 
             pom.withXml {
                 def root = asNode()
@@ -288,6 +306,7 @@ publishing {
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'activity-container', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
                 dependencies.append(getDependencyNode('compile', dynamicGroupId, 'loader', publicationVersion))
@@ -327,6 +346,7 @@ setGeneratePomFileAndDepends('loadParameters')
 setGeneratePomFileAndDepends('coreLoader')
 setGeneratePomFileAndDepends('coreManager')
 setGeneratePomFileAndDepends('runtime')
+setGeneratePomFileAndDepends('activityContainer')
 setGeneratePomFileAndDepends('transformKit')
 setGeneratePomFileAndDepends('transformKitTest')
 setGeneratePomFileAndDepends('transform')
