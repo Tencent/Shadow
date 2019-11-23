@@ -18,9 +18,6 @@
 
 package com.tencent.shadow.core.runtime.container;
 
-
-import com.tencent.shadow.core.runtime.UriParseDelegate;
-
 /**
  * 宿主容器委托提供者
  * <p>
@@ -41,9 +38,5 @@ public interface DelegateProvider {
      */
     HostActivityDelegate getHostActivityDelegate(Class<? extends HostActivityDelegator> delegator);
 
-    /**
-     * 获取UriParse对应的delegate
-     * @return UriParseDelegate
-     */
-    UriParseDelegate getUriParseDelegate();
 }
+
