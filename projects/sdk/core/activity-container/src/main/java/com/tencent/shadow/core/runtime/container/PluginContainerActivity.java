@@ -87,7 +87,7 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toolbar;
 
-import com.tencent.shadow.core.runtime.BuildConfig;
+import com.tencent.shadow.core.container.BuildConfig;
 
 import java.io.File;
 import java.io.FileDescriptor;
