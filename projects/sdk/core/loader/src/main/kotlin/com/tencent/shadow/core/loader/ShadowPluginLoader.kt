@@ -36,7 +36,7 @@ import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.ComponentManager
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.core.loader.managers.PluginServiceManager
-import com.tencent.shadow.core.runtime.UriParseDelegate
+import com.tencent.shadow.core.runtime.UriConverter
 import com.tencent.shadow.core.runtime.container.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -87,6 +87,10 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     companion object {
         private val mLogger = LoggerFactory.getLogger(ShadowPluginLoader::class.java)
+    }
+
+    init {
+        UriConverter.setUriParseDelegate(mPluginContentProviderManager)
     }
 
     fun getPluginServiceManager(): PluginServiceManager {
@@ -178,10 +182,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     override fun getHostContentProviderDelegate(): HostContentProviderDelegate {
         return ShadowContentProviderDelegate(mPluginContentProviderManager)
-    }
-
-    override fun getUriParseDelegate(): UriParseDelegate {
-        return mPluginContentProviderManager
     }
 
     override fun inject(delegate: ShadowDelegate, partKey: String) {

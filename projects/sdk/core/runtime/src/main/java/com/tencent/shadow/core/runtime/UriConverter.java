@@ -25,24 +25,32 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.tencent.shadow.core.runtime.container.DelegateProvider;
-import com.tencent.shadow.core.runtime.container.DelegateProviderHolder;
-
 public class UriConverter {
 
+    private static UriParseDelegate sUriParseDelegate;
+
+    public static void setUriParseDelegate(UriParseDelegate sUriParseDelegate) {
+        UriConverter.sUriParseDelegate = sUriParseDelegate;
+    }
+
+    public interface UriParseDelegate {
+
+        Uri parse(String uriString);
+
+        Uri parseCall(String uriString, Bundle extra);
+    }
+
     public static Uri parse(String uriString) {
-        DelegateProvider delegateProvider = DelegateProviderHolder.getDelegateProvider();
-        if (delegateProvider != null && delegateProvider.getUriParseDelegate() != null) {
-            return delegateProvider.getUriParseDelegate().parse(uriString);
+        if (sUriParseDelegate != null) {
+            return sUriParseDelegate.parse(uriString);
         } else {
             return Uri.parse(uriString);
         }
     }
 
     public static Uri parseCall(String uriString, Bundle bundle) {
-        DelegateProvider delegateProvider = DelegateProviderHolder.getDelegateProvider();
-        if (delegateProvider != null && delegateProvider.getUriParseDelegate() != null) {
-            return delegateProvider.getUriParseDelegate().parseCall(uriString, bundle);
+        if (sUriParseDelegate != null) {
+            return sUriParseDelegate.parseCall(uriString, bundle);
         } else {
             return Uri.parse(uriString);
         }
