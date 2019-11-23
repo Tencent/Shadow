@@ -116,7 +116,7 @@ public class ShadowFragment {
             return (ShadowActivity) mAttachedContext;
         } else {
             final PluginContainerActivity activity = (PluginContainerActivity) mContainerFragment.getActivity();
-            return (ShadowActivity) activity.getPluginActivity();
+            return (ShadowActivity) PluginActivity.get(activity);
         }
     }
 

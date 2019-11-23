@@ -52,7 +52,7 @@ public interface ShadowActivityLifecycleCallbacks {
 
         private ShadowActivity getPluginActivity(Activity activity) {
             if (activity instanceof PluginContainerActivity) {
-                return (ShadowActivity) ((PluginContainerActivity) activity).getPluginActivity();
+                return (ShadowActivity) PluginActivity.get((PluginContainerActivity) activity);
             } else {
                 return null;
             }
