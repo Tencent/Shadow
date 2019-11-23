@@ -43,10 +43,23 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
+import com.tencent.shadow.core.runtime.container.PluginContainerActivity;
 
 import java.util.List;
 
-public abstract class PluginActivity extends ShadowContext implements Window.Callback,KeyEvent.Callback {
+public abstract class PluginActivity extends ShadowContext implements Window.Callback, KeyEvent.Callback {
+
+    static PluginActivity get(PluginContainerActivity pluginContainerActivity) {
+        Object o = pluginContainerActivity.getPluginActivity();
+        if (o != null) {
+            return (PluginActivity) o;
+        } else {
+            //在遇到IllegalIntent时hostActivityDelegate==null。需要返回一个空的Activity避免Crash。
+            return new ShadowActivity() {
+            };
+        }
+    }
+
     HostActivityDelegator mHostActivityDelegator;
 
     ShadowApplication mPluginApplication;
