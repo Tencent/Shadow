@@ -20,4 +20,5 @@
 
 -keep class org.slf4j.**{*;}
 -keep class com.tencent.shadow.loader.**{*;}
+-keep class com.tencent.shadow.runtime.**{*;}
 -dontwarn org.slf4j.impl.**

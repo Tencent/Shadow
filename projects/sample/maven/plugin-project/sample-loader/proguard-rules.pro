@@ -45,6 +45,7 @@
 -keep class com.tencent.shadow.dynamic.loader.**{*;}
 -keep class com.tencent.shadow.core.common.**{*;}
 -keep class com.tencent.shadow.core.loader.**{*;}
+-keep class com.tencent.shadow.core.runtime.**{*;}
 
 -dontwarn  com.tencent.shadow.dynamic.host.**
 -dontwarn  com.tencent.shadow.dynamic.impl.**
