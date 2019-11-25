@@ -428,4 +428,8 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
     override fun onStateNotSaved() {
         mPluginActivity.onStateNotSaved()
     }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return mPluginActivity.onOptionsItemSelected(item)
+    }
 }

@@ -2237,4 +2237,13 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (hostActivityDelegate != null) {
+            return hostActivityDelegate.onOptionsItemSelected(item);
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+    }
 }
