@@ -48,6 +48,7 @@ class HomeViewPagerFragment : Fragment() {
         }.attach()
 
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         return binding.root
     }
