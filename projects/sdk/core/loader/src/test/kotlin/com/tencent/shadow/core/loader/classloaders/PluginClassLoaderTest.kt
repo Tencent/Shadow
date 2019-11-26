@@ -190,6 +190,34 @@ class PluginClassLoaderTest {
         val className = "a.b.c2.d2.e2.F"
         Assert.assertTrue(className.inPackage(packageNames))
     }
+
+    @Test
+    fun case71() {
+        val packageNames = arrayOf("com.tencent.**")
+        val className = "com.tencentshadow.MyClass"
+        Assert.assertFalse(className.inPackage(packageNames))
+    }
+
+    @Test
+    fun case72() {
+        val packageNames = arrayOf("com.tencent.**")
+        val className = "com.tencentshadow.next.MyClass"
+        Assert.assertFalse(className.inPackage(packageNames))
+    }
+
+    @Test
+    fun case73() {
+        val packageNames = arrayOf("com.tencent**")
+        val className = "com.tencentshadow.MyClass"
+        Assert.assertFalse(className.inPackage(packageNames))
+    }
+
+    @Test
+    fun case74() {
+        val packageNames = arrayOf("com.tencent**")
+        val className = "com.tencentshadow.next.MyClass"
+        Assert.assertFalse(className.inPackage(packageNames))
+    }
 }
 
 
