@@ -124,7 +124,7 @@ internal fun String.inPackage(packageNames: Array<String>): Boolean {
                 if (sub.isEmpty()) {
                     false
                 } else {
-                    sub.startsWith(it.subStringBeforeDot())
+                    "$sub.".startsWith(it.subStringBeforeDot() + '.')
                 }
             }
             else -> packageName == it
