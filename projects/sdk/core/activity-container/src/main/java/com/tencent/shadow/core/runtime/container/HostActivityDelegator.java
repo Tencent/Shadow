@@ -623,6 +623,12 @@ public interface HostActivityDelegator {
     Cursor managedQuery(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder);
 
+    void registerActivityLifecycleCallbacks(
+            Application.ActivityLifecycleCallbacks callback);
+
+    void unregisterActivityLifecycleCallbacks(
+            Application.ActivityLifecycleCallbacks callback);
+
     Application superGetApplication();
 
     boolean superIsChild();
