@@ -50,7 +50,9 @@ public class ShadowApplication extends ShadowContext {
         return this;
     }
 
-    private Map<ShadowActivityLifecycleCallbacks, Application.ActivityLifecycleCallbacks> mActivityLifecycleCallbacksMap = new HashMap<>();
+    final private Map<ShadowActivityLifecycleCallbacks,
+            Application.ActivityLifecycleCallbacks>
+            mActivityLifecycleCallbacksMap = new HashMap<>();
 
     public void onCreate() {
 
@@ -122,19 +124,23 @@ public class ShadowApplication extends ShadowContext {
 
 
     public void registerActivityLifecycleCallbacks(ShadowActivityLifecycleCallbacks callback) {
-        final ShadowActivityLifecycleCallbacks.Wrapper wrapper
-                = new ShadowActivityLifecycleCallbacks.Wrapper(callback, this);
-        mActivityLifecycleCallbacksMap.put(callback, wrapper);
-        mHostApplication.registerActivityLifecycleCallbacks(wrapper);
+        synchronized (mActivityLifecycleCallbacksMap) {
+            final ShadowActivityLifecycleCallbacks.Wrapper wrapper
+                    = new ShadowActivityLifecycleCallbacks.Wrapper(callback, this);
+            mActivityLifecycleCallbacksMap.put(callback, wrapper);
+            mHostApplication.registerActivityLifecycleCallbacks(wrapper);
+        }
     }
 
 
     public void unregisterActivityLifecycleCallbacks(ShadowActivityLifecycleCallbacks callback) {
-        final Application.ActivityLifecycleCallbacks activityLifecycleCallbacks
-                = mActivityLifecycleCallbacksMap.get(callback);
-        if (activityLifecycleCallbacks != null) {
-            mHostApplication.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks);
-            mActivityLifecycleCallbacksMap.remove(callback);
+        synchronized (mActivityLifecycleCallbacksMap) {
+            final Application.ActivityLifecycleCallbacks activityLifecycleCallbacks
+                    = mActivityLifecycleCallbacksMap.get(callback);
+            if (activityLifecycleCallbacks != null) {
+                mHostApplication.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks);
+                mActivityLifecycleCallbacksMap.remove(callback);
+            }
         }
     }
 
