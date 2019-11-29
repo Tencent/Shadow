@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.runtime;
 
 import android.app.ActionBar;
+import android.app.Application;
 import android.app.FragmentManager;
 import android.app.SharedElementCallback;
 import android.content.ComponentName;
@@ -40,6 +41,8 @@ import android.view.WindowManager;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class ShadowActivity extends PluginActivity {
 
@@ -353,4 +356,31 @@ public abstract class ShadowActivity extends PluginActivity {
         }
         return view;
     }
+
+    final private Map<ShadowActivityLifecycleCallbacks,
+            Application.ActivityLifecycleCallbacks>
+            mActivityLifecycleCallbacksMap = new HashMap<>();
+
+    public void registerActivityLifecycleCallbacks(
+            ShadowActivityLifecycleCallbacks callback) {
+        synchronized (mActivityLifecycleCallbacksMap) {
+            final ShadowActivityLifecycleCallbacks.Wrapper wrapper
+                    = new ShadowActivityLifecycleCallbacks.Wrapper(callback, this);
+            mActivityLifecycleCallbacksMap.put(callback, wrapper);
+            mHostActivityDelegator.registerActivityLifecycleCallbacks(wrapper);
+        }
+    }
+
+    public void unregisterActivityLifecycleCallbacks(
+            ShadowActivityLifecycleCallbacks callback) {
+        synchronized (mActivityLifecycleCallbacksMap) {
+            final Application.ActivityLifecycleCallbacks activityLifecycleCallbacks
+                    = mActivityLifecycleCallbacksMap.get(callback);
+            if (activityLifecycleCallbacks != null) {
+                mHostActivityDelegator.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks);
+                mActivityLifecycleCallbacksMap.remove(callback);
+            }
+        }
+    }
+
 }
