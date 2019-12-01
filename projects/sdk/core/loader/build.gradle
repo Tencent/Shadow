@@ -35,6 +35,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        main.java.srcDirs += project(':generate-delegate-code').buildDir.path + '/generated/DelegateCode/loader'
         test.java.srcDirs += 'src/test/kotlin'
     }
 }
@@ -72,3 +73,5 @@ afterEvaluate {
         }
     }
 }
+
+preBuild.dependsOn(project(":generate-delegate-code").getTasksByName("generateDelegateCode", false).first())

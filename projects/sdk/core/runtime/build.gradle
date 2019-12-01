@@ -24,6 +24,10 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
+
+    sourceSets {
+        main.java.srcDirs += project(':generate-delegate-code').buildDir.path + '/generated/DelegateCode/runtime'
+    }
 }
 
 dependencies{
@@ -53,3 +57,5 @@ afterEvaluate {
         }
     }
 }
+
+preBuild.dependsOn(project(":generate-delegate-code").getTasksByName("generateDelegateCode", false).first())
