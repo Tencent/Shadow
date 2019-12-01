@@ -38,7 +38,7 @@ public class ShadowDialog extends Dialog {
     }
 
     public final void setOwnerPluginActivity(ShadowActivity activity) {
-        Activity hostActivity = (Activity) activity.mHostActivityDelegator.getHostActivity();
+        Activity hostActivity = (Activity) activity.hostActivityDelegator.getHostActivity();
         setOwnerActivity(hostActivity);
     }
 

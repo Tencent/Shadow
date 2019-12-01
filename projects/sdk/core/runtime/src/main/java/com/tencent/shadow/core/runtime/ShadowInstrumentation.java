@@ -24,7 +24,7 @@ import android.app.Instrumentation;
 public class ShadowInstrumentation extends Instrumentation {
 
     public void callActivityOnDestroy(ShadowActivity activity) {
-        Activity hostActivity = (Activity) activity.mHostActivityDelegator.getHostActivity();
+        Activity hostActivity = (Activity) activity.hostActivityDelegator.getHostActivity();
         super.callActivityOnDestroy(hostActivity);
     }
 }

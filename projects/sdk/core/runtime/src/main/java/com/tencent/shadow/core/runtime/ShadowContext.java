@@ -34,6 +34,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
 
+import com.tencent.shadow.core.runtime.container.GeneratedHostActivityDelegator;
 import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
 
 import java.util.HashMap;
@@ -153,7 +154,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
          * @return <code>true</code>表示该Intent是为了启动插件内Activity的,已经被正确消费了.
          * <code>false</code>表示该Intent不是插件内的Activity.
          */
-        boolean startActivityForResult(HostActivityDelegator delegator, Intent intent, int requestCode, Bundle option,ComponentName callingActivity);
+        boolean startActivityForResult(GeneratedHostActivityDelegator delegator, Intent intent, int requestCode, Bundle option, ComponentName callingActivity);
 
         Pair<Boolean, ComponentName> startService(ShadowContext context, Intent service);
 

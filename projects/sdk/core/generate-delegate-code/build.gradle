@@ -1,0 +1,28 @@
+import com.tencent.shadow.coding.code_generator.ActivityCodeGenerator
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath files("${System.getenv().get('ANDROID_HOME')}/platforms/android-${project.COMPILE_SDK_VERSION}/android.jar")
+        classpath 'com.tencent.shadow.coding:code-generator'
+    }
+}
+
+task('generateDelegateCode') {
+    group = 'build'
+    description = '生成源文件'
+    def outputDir = new File(project.buildDir, "generated/DelegateCode")
+    doFirst {
+        outputDir.deleteDir()
+    }
+    doLast {
+        ActivityCodeGenerator codeGenerator = new ActivityCodeGenerator()
+        codeGenerator.generate(outputDir)
+    }
+}
+
+
