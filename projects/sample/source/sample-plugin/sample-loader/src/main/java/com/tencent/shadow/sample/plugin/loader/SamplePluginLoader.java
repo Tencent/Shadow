@@ -80,4 +80,9 @@ public class SamplePluginLoader extends ShadowPluginLoader {
 
         return future;
     }
+
+    @Override
+    public String getDelegateProviderKey() {
+        return "SAMPLE";
+    }
 }
