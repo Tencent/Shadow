@@ -34,6 +34,7 @@ import android.os.Bundle
 import android.util.AttributeSet
 import android.view.*
 import com.tencent.shadow.core.common.LoggerFactory
+import com.tencent.shadow.core.loader.BuildConfig
 import com.tencent.shadow.core.loader.infos.PluginActivityInfo
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_ACTIVITY_INFO_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_BUSINESS_NAME_KEY
@@ -168,6 +169,8 @@ class ShadowActivityDelegate(private val mDI: DI) : HostActivityDelegate, Shadow
         //所以，这个调用要放在最后。
         pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
     }
+
+    override fun getLoaderVersion() = BuildConfig.VERSION_NAME
 
     override fun onResume() {
         mPluginActivity.onResume()

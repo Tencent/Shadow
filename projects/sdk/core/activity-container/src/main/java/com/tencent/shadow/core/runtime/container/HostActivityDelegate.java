@@ -48,6 +48,8 @@ import android.view.WindowManager;
 public interface HostActivityDelegate {
     void setDelegator(HostActivityDelegator delegator);
 
+    String getLoaderVersion();
+
     Object getPluginActivity();
 
     void onCreate(Bundle savedInstanceState);

@@ -87,8 +87,6 @@ import android.view.WindowManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.widget.Toolbar;
 
-import com.tencent.shadow.core.container.BuildConfig;
-
 import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -184,7 +182,7 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
         try {
             String loaderVersion = bundle.getString(LOADER_VERSION_KEY);
             long processVersion = bundle.getLong(PROCESS_ID_KEY);
-            return !BuildConfig.VERSION_NAME.equals(loaderVersion) || processVersion != DelegateProviderHolder.sCustomPid;
+            return !hostActivityDelegate.getLoaderVersion().equals(loaderVersion) || processVersion != DelegateProviderHolder.sCustomPid;
         } catch (Throwable ignored) {
             //捕获可能的非法Intent中包含我们根本反序列化不了的数据
             return true;
@@ -217,7 +215,7 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             super.onSaveInstanceState(outState);
         }
         //避免插件setIntent清空掉LOADER_VERSION_KEY
-        outState.putString(LOADER_VERSION_KEY, BuildConfig.VERSION_NAME);
+        outState.putString(LOADER_VERSION_KEY, hostActivityDelegate.getLoaderVersion());
         outState.putLong(PROCESS_ID_KEY, DelegateProviderHolder.sCustomPid);
     }
 
