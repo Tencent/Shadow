@@ -93,7 +93,7 @@ public class HostApplication extends Application {
 
         ShadowPluginLoader loader = mPluginLoader = new TestPluginLoader(getApplicationContext());
         loader.onCreate();
-        DelegateProviderHolder.setDelegateProvider(loader);
+        DelegateProviderHolder.setDelegateProvider(loader.getDelegateProviderKey(), loader);
         ContentProviderDelegateProviderHolder.setContentProviderDelegateProvider(loader);
 
         InstalledApk installedApk = sPluginPrepareBloc.preparePlugin(this.getApplicationContext());

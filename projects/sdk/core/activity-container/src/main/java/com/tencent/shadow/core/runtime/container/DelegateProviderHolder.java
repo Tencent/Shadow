@@ -21,6 +21,9 @@ package com.tencent.shadow.core.runtime.container;
 
 import android.os.SystemClock;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * DelegateProvider依赖注入类
  * <p>
@@ -29,7 +32,8 @@ import android.os.SystemClock;
  * @author cubershi
  */
 public class DelegateProviderHolder {
-    private static DelegateProvider delegateProvider;
+    public static final String DEFAULT_KEY = "DEFAULT_KEY";
+    private static Map<String, DelegateProvider> delegateProviderMap = new HashMap<>();
 
     /**
      * 为了防止系统有一定概率出现进程号重启后一致的问题，我们使用开机时间作为进程号来判断进程是否重启
@@ -40,12 +44,11 @@ public class DelegateProviderHolder {
         sCustomPid = SystemClock.elapsedRealtime();
     }
 
-
-    public static void setDelegateProvider(DelegateProvider delegateProvider) {
-        DelegateProviderHolder.delegateProvider = delegateProvider;
+    public static void setDelegateProvider(String key, DelegateProvider delegateProvider) {
+        delegateProviderMap.put(key, delegateProvider);
     }
 
-    public static DelegateProvider getDelegateProvider() {
-        return delegateProvider;
+    public static DelegateProvider getDelegateProvider(String key) {
+        return delegateProviderMap.get(key);
     }
 }

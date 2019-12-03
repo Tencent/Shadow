@@ -48,6 +48,8 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     protected val mExecutorService = Executors.newCachedThreadPool()
 
+    open val delegateProviderKey: String = DelegateProviderHolder.DEFAULT_KEY
+
     /**
      * loadPlugin方法是在子线程被调用的。而getHostActivityDelegate方法是在主线程被调用的。
      * 两个方法需要传递数据（主要是PluginParts），因此需要同步。

@@ -117,7 +117,7 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
 
     public PluginContainerActivity() {
         HostActivityDelegate delegate;
-        DelegateProvider delegateProvider = DelegateProviderHolder.getDelegateProvider();
+        DelegateProvider delegateProvider = DelegateProviderHolder.getDelegateProvider(getDelegateProviderKey());
         if (delegateProvider != null) {
             delegate = delegateProvider.getHostActivityDelegate(this.getClass());
             delegate.setDelegator(this);
@@ -126,6 +126,10 @@ public class PluginContainerActivity extends Activity implements HostActivity, H
             delegate = null;
         }
         hostActivityDelegate = delegate;
+    }
+
+    protected String getDelegateProviderKey() {
+        return DelegateProviderHolder.DEFAULT_KEY;
     }
 
     final public Object getPluginActivity() {
