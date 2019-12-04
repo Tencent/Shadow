@@ -112,7 +112,7 @@ class OverrideCheck {
             val methodsDeclaredInClass = mutableListOf<Pair<CtMethod, String>>()
             declaredMethods.forEach {
                 try {
-                    val methodOfSuperClass = superclass.getMethod(it.name, it.signature)
+                    val methodOfSuperClass = superclass.getMethod(it.name, it.genericSignature)
                     methodsDeclaredInClass.add(it to methodOfSuperClass.declaringClass.name)
                 } catch (ignored: NotFoundException) {
                 }
@@ -122,7 +122,7 @@ class OverrideCheck {
 
         private fun CtClass.hasSameMethod(m: CtMethod) =
                 try {
-                    getMethod(m.name, m.signature)
+                    getMethod(m.name, m.genericSignature)
                     true
                 } catch (ignored: NotFoundException) {
                     false
