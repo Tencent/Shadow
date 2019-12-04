@@ -32,7 +32,9 @@ class OverrideCheck {
         methodMap.clear()
         ctClassMap.clear()
 
-        inputClasses.filter {
+        inputClasses
+                .filter { it.packageName != null }
+                .filter {
             //kotlinx里有一些方法的覆盖检查不出来，反正我们也不改它，就不检查了。
             it.packageName.isKotlinClass().not()
         }.filter {
@@ -68,7 +70,9 @@ class OverrideCheck {
         val newNameToOldName = makeNewNameToOldNameMap()
 
         val errorResult: HashMap<String, MutableList<Method_OriginalDeclaringClass>> = hashMapOf()
-        classNames.filter {
+        classNames
+                .filter { it.contains(".") }
+                .filter {
             it.isKotlinClass().not()
         }.filter {
             val clazz = debugClassPool[it]!!
