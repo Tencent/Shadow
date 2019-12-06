@@ -1,0 +1,56 @@
+apply plugin: 'com.android.library'
+
+group 'com.tencent.shadow.dynamic'
+
+android {
+    compileSdkVersion project.COMPILE_SDK_VERSION
+
+    defaultConfig {
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        versionCode project.VERSION_CODE
+        versionName project.VERSION_NAME
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+
+dependencies {
+    implementation 'com.tencent.shadow.coding:lint'
+    compileOnly 'com.tencent.shadow.core:common'
+    api project(':dynamic-host')
+}
+
+def jarPackage(buildType) {
+    return tasks.create("jar${buildType.capitalize()}Package", Copy) {
+        def aarFile = file(project.buildDir.path + "/outputs/aar/${project.name}-${buildType}.aar")
+        def outputDir = file(project.buildDir.path + "/outputs/jar")
+
+        from zipTree(aarFile)
+        into outputDir
+        include 'classes.jar'
+        rename 'classes.jar', "${project.name}-${buildType}.jar"
+        group = 'build'
+        description = '生成jar包'
+    }.dependsOn(project.getTasksByName("assemble${buildType.capitalize()}", false).first())
+}
+
+afterEvaluate {
+    android {
+        buildTypes.findAll().each { buildType ->
+            def buildTypeName = buildType.getName()
+            jarPackage(buildTypeName)
+        }
+    }
+}

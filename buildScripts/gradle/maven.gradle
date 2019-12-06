@@ -14,6 +14,7 @@ task buildSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:jarReleasePackage')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:assembleRelease')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:assembleRelease')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:jarReleasePackage')
 }
 
 task lintSdk() {
@@ -27,6 +28,7 @@ task lintSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:lint')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:lint')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:lint')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:lint')
 }
 
 task testSdk() {
@@ -280,6 +282,24 @@ publishing {
                 setScm(scm)
             }
         }
+        dynamicHostMultiLoaderExt(MavenPublication) {
+            groupId dynamicGroupId
+            artifactId 'host-multi-loader-ext'
+            version publicationVersion
+            artifact("$dynamicPath/dynamic-host-multi-loader-ext/build/outputs/jar/dynamic-host-multi-loader-ext-release.jar")
+            artifact sourceJar("dynamicHostMultiLoaderExt", "$dynamicPath/dynamic-host-multi-loader-ext")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'common', publicationVersion))
+                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'dynamic-host', publicationVersion))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+
         dynamicLoader(MavenPublication) {
             groupId dynamicGroupId
             artifactId 'loader'
@@ -350,6 +370,7 @@ setGeneratePomFileAndDepends('transformKit')
 setGeneratePomFileAndDepends('transformKitTest')
 setGeneratePomFileAndDepends('transform')
 setGeneratePomFileAndDepends('dynamicHost')
+setGeneratePomFileAndDepends('dynamicHostMultiLoaderExt')
 setGeneratePomFileAndDepends('dynamicLoader')
 setGeneratePomFileAndDepends('dynamicLoaderImpl')
 setGeneratePomFileAndDepends('dynamicManager')
