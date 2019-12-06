@@ -131,7 +131,7 @@ public class DynamicRuntime {
      * @param newParentClassLoader classLoader的新的parent
      * @throws Exception 失败时抛出
      */
-    private static void hackParentClassLoader(ClassLoader classLoader,
+    static void hackParentClassLoader(ClassLoader classLoader,
                                               ClassLoader newParentClassLoader) throws Exception {
         Field field = getParentField();
         if (field == null) {
