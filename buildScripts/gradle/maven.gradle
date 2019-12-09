@@ -15,6 +15,7 @@ task buildSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:assembleRelease')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:assembleRelease')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:jarReleasePackage')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager-multi-loader-ext:assembleRelease')
 }
 
 task lintSdk() {
@@ -29,6 +30,7 @@ task lintSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:lint')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:lint')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:lint')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager-multi-loader-ext:lint')
 }
 
 task testSdk() {
@@ -353,6 +355,27 @@ publishing {
                 setScm(scm)
             }
         }
+
+        dynamicManagerMultiLoaderExt(MavenPublication) {
+            groupId dynamicGroupId
+            artifactId 'manager-multi-loader-ext'
+            version publicationVersion
+            artifact("$dynamicPath/dynamic-manager-multi-loader-ext/build/outputs/aar/dynamic-manager-multi-loader-ext-release.aar")
+            artifact sourceJar("dynamicManagerMultiLoaderExt", "$dynamicPath/dynamic-manager-multi-loader-ext")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'manager', publicationVersion))
+                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'loader', publicationVersion))
+                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'manager', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
+                dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host-multi-loader-ext', publicationVersion))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
     }
     repositories {
         mavenLocal()
@@ -374,3 +397,4 @@ setGeneratePomFileAndDepends('dynamicHostMultiLoaderExt')
 setGeneratePomFileAndDepends('dynamicLoader')
 setGeneratePomFileAndDepends('dynamicLoaderImpl')
 setGeneratePomFileAndDepends('dynamicManager')
+setGeneratePomFileAndDepends('dynamicManagerMultiLoaderExt')
