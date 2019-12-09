@@ -4,5 +4,6 @@ include 'dynamic-manager',
         'dynamic-host',
         'dynamic-loader',
         'dynamic-loader-impl',
-        'dynamic-host-multi-loader-ext'
+        'dynamic-host-multi-loader-ext',
+        'dynamic-manager-multi-loader-ext'
 include ':jar-wrapper:dynamic-host-debug', ':jar-wrapper:dynamic-host-realse'
