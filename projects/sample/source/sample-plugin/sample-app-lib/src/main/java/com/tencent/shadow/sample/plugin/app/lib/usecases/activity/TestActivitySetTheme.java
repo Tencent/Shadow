@@ -53,7 +53,7 @@ public class TestActivitySetTheme extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         int currentTheme = getIntent().getIntExtra("theme", 0);
         currentTheme++;
-        setTheme(currentTheme % 2 == 0 ? R.style.TestPluginTheme : R.style.PluginAppThemeLight);
+        //setTheme(currentTheme % 2 == 0 ? R.style.TestPluginTheme : R.style.PluginAppThemeLight);
         ToastUtil.showToast(TestActivitySetTheme.this, currentTheme % 2 == 0 ? "R.style.TestPluginTheme" : "R.style.PluginAppThemeLight");
         //setTheme必须在super.onCreate之前调用才行
         super.onCreate(savedInstanceState);

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <font
+      app:fontStyle="normal"
+      app:font="@font/dinpro_regular"
+      app:fontWeight="400"/>
+    <font
+      app:fontStyle="normal"
+      app:font="@font/dinpro_bold"
+      app:fontWeight="700" />
+
+</font-family>
