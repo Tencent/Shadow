@@ -65,7 +65,6 @@ public class HostApplication extends Application {
             return;
         }
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        builder.penaltyDeath();
         builder.detectNonSdkApiUsage();
         StrictMode.setVmPolicy(builder.build());
     }
