@@ -53,7 +53,9 @@ abstract class AbstractTransform(
     }
 
     override fun onTransform() {
-        mOverrideCheck.prepare(mCtClassInputMap.keys.toSet())
+        //Fixme: 这里的OverrideCheck.prepare会对mCtClassInputMap产生影响
+        //原本预期是不会产生任何影响的。造成了ApplicationInfoTest失败，测试Activity没有被修改superclass。
+//        mOverrideCheck.prepare(mCtClassInputMap.keys.toSet())
 
         mTransformManager.setupAll()
         mTransformManager.fireAll()
@@ -109,7 +111,7 @@ abstract class AbstractTransform(
         val start2 = System.currentTimeMillis()
         try {
             val t2 = measureTimeMillis {
-                checkOverrideMethods(debugClassPool, classNames)
+                //                checkOverrideMethods(debugClassPool, classNames)
             }
             System.err.println("t2:$t2")
         } catch (e: Exception) {
