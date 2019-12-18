@@ -119,11 +119,14 @@ public class MultiLoaderPluginProcessService extends BasePluginProcessService {
                 mLogger.error("loadPluginLoader发生RuntimeException", e);
             }
             throw new FailedException(e);
+        } catch (FailedException e) {
+            throw e;
         } catch (Exception e) {
             if (mLogger.isErrorEnabled()) {
                 mLogger.error("loadPluginLoader发生Exception", e);
             }
-            throw new FailedException(ERROR_CODE_RUNTIME_EXCEPTION, "加载动态实现失败 cause：" + e.getCause().getMessage());
+            String msg = e.getCause() != null ? e.getCause().getMessage() : e.getMessage();
+            throw new FailedException(ERROR_CODE_RUNTIME_EXCEPTION, "加载动态实现失败 cause：" + msg);
         }
     }
 
