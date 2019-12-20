@@ -12,6 +12,8 @@
 
         <meta-data android:name="test_meta" android:value="test_value" />
 
+        <activity android:name=".usecases.activity.TestListActivity"/>
+
         <activity android:name=".usecases.activity.TestActivityReCreate" />
 
         <activity android:name=".usecases.activity.TestActivityOnCreate" />
