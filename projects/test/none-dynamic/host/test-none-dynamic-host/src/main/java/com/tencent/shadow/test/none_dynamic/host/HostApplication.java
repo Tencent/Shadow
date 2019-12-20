@@ -65,41 +65,44 @@ public class HostApplication extends Application {
             throw new NullPointerException("partKey == " + partKey);
         }
 
-        LoadParameters loadParameters = new LoadParameters(null, partKey, null, null);
+        if (mPluginLoader.getPluginParts(partKey) == null) {
+            LoadParameters loadParameters = new LoadParameters(null, partKey, null, null);
 
-        Parcel parcel = Parcel.obtain();
-        loadParameters.writeToParcel(parcel, 0);
-        final InstalledApk plugin = new InstalledApk(
-                installedApk.apkFilePath,
-                installedApk.oDexPath,
-                installedApk.libraryPath,
-                parcel.marshall()
-        );
-        parcel.recycle();
+            Parcel parcel = Parcel.obtain();
+            loadParameters.writeToParcel(parcel, 0);
+            final InstalledApk plugin = new InstalledApk(
+                    installedApk.apkFilePath,
+                    installedApk.oDexPath,
+                    installedApk.libraryPath,
+                    parcel.marshall()
+            );
+            parcel.recycle();
 
-
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                ShadowPluginLoader pluginLoader = mPluginLoader;
-                Future<?> future = null;
-                try {
-                    future = pluginLoader.loadPlugin(plugin);
-                    future.get(10, TimeUnit.SECONDS);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new RuntimeException("加载失败", e);
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    ShadowPluginLoader pluginLoader = mPluginLoader;
+                    Future<?> future = null;
+                    try {
+                        future = pluginLoader.loadPlugin(plugin);
+                        future.get(10, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException("加载失败", e);
+                    }
+                    return null;
                 }
-                return null;
-            }
 
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                mPluginLoader.callApplicationOnCreate(partKey);
-                completeRunnable.run();
-            }
-        }.execute();
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    mPluginLoader.callApplicationOnCreate(partKey);
+                    completeRunnable.run();
+                }
+            }.execute();
+        } else {
+            completeRunnable.run();
+        }
     }
 
     @Override

@@ -62,8 +62,8 @@ public class MainActivity extends Activity {
             @Override
             public void run() {
                 Intent pluginIntent = new Intent();
-                pluginIntent.setClassName(getPackageName(), "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestActivityOnCreate");
-
+                pluginIntent.setClassName(getPackageName(), "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestListActivity");
+                pluginIntent.putStringArrayListExtra("activities", TestComponentManager.sActivities);
                 Intent intent = application.getPluginLoader().getMComponentManager().convertPluginActivityIntent(pluginIntent);
                 startActivity(intent);
             }
