@@ -27,5 +27,6 @@ android {
 
 dependencies {
     implementation 'com.tencent.shadow.core:activity-container'
+    runtimeOnly "com.tencent.shadow.core:system-class-stub"
 }
 

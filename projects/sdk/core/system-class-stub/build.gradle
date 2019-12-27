@@ -1,0 +1,3 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.core'
