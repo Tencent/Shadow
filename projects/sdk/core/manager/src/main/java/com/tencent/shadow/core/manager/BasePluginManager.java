@@ -18,7 +18,6 @@
 
 package com.tencent.shadow.core.manager;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -82,9 +81,9 @@ public abstract class BasePluginManager {
      * 从文件夹中解压插件
      *
      * @param dir 文件夹路径
-     * @return InstalledPlugin
+     * @return PluginConfig
      */
-    public final InstalledPlugin installPluginFromDir(File dir) {
+    public final PluginConfig installPluginFromDir(File dir) {
         throw new UnsupportedOperationException("TODO");
     }
 
@@ -93,13 +92,25 @@ public abstract class BasePluginManager {
      *
      * @param zip  压缩包路径
      * @param hash 压缩包hash
-     * @return InstalledPlugin
+     * @return PluginConfig
      */
-    public final InstalledPlugin installPluginFromZip(File zip, String hash) throws IOException, JSONException {
-        PluginConfig pluginConfig = mUnpackManager.unpackPlugin(hash, zip);
-        InstalledPlugin installedPlugin = mInstalledDao.insert(pluginConfig);
+    public final PluginConfig installPluginFromZip(File zip, String hash) throws IOException, JSONException {
+        return mUnpackManager.unpackPlugin(hash, zip);
+    }
 
-        return installedPlugin;
+    /**
+     * 安装完成时调用
+     * <p>
+     * 将插件信息持久化到数据库
+     *
+     * @param pluginConfig 插件配置信息
+     */
+    public final void onInstallCompleted(PluginConfig pluginConfig) {
+        File root = mUnpackManager.getAppDir();
+        String soDir = AppCacheFolderManager.getLibDir(root, pluginConfig.UUID).getAbsolutePath();
+        String oDexDir = AppCacheFolderManager.getODexDir(root, pluginConfig.UUID).getAbsolutePath();
+
+        mInstalledDao.insert(pluginConfig, soDir, oDexDir);
     }
 
     protected InstalledPlugin.Part getPluginPartByPartKey(String uuid, String partKey) {
@@ -137,18 +148,11 @@ public abstract class BasePluginManager {
      * @param uuid    插件包的uuid
      * @param partKey 要oDex的插件partkey
      */
-    public final void oDexPlugin(String uuid, String partKey) throws InstallPluginException {
-        InstalledPlugin.Part part = getPluginPartByPartKey(uuid, partKey);
+    public final void oDexPlugin(String uuid, String partKey, File apkFile) throws InstallPluginException {
         try {
             File root = mUnpackManager.getAppDir();
             File oDexDir = AppCacheFolderManager.getODexDir(root, uuid);
-            File oDexPath = ODexBloc.oDexPlugin(part.pluginFile, oDexDir, AppCacheFolderManager.getODexCopiedFile(oDexDir, partKey));
-
-            ContentValues values = new ContentValues();
-            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX, oDexPath.getAbsolutePath());
-            mInstalledDao.updatePlugin(uuid, partKey, values);
-
-            part.oDexDir = oDexPath;
+            ODexBloc.oDexPlugin(apkFile, oDexDir, AppCacheFolderManager.getODexCopiedFile(oDexDir, partKey));
         } catch (InstallPluginException e) {
             if (mLogger.isErrorEnabled()) {
                 mLogger.error("oDexPlugin exception:", e);
@@ -160,23 +164,16 @@ public abstract class BasePluginManager {
 
     /**
      * odex优化
-     *
      * @param uuid 插件包的uuid
      * @param type 要oDex的插件类型 @class IntalledType  loader or runtime
+     * @param apkFile 插件apk文件
      */
-    public final void oDexPluginLoaderOrRunTime(String uuid, int type) throws InstallPluginException {
-        InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
+    public final void oDexPluginLoaderOrRunTime(String uuid, int type, File apkFile) throws InstallPluginException {
         try {
             File root = mUnpackManager.getAppDir();
             File oDexDir = AppCacheFolderManager.getODexDir(root, uuid);
             String key = type == InstalledType.TYPE_PLUGIN_LOADER ? "loader" : "runtime";
-            File oDexPath = ODexBloc.oDexPlugin(part.pluginFile, oDexDir, AppCacheFolderManager.getODexCopiedFile(oDexDir, key));
-
-            ContentValues values = new ContentValues();
-            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_ODEX, oDexPath.getAbsolutePath());
-            mInstalledDao.updatePlugin(uuid, type, values);
-
-            part.oDexDir = oDexPath;
+            ODexBloc.oDexPlugin(apkFile, oDexDir, AppCacheFolderManager.getODexCopiedFile(oDexDir, key));
         } catch (InstallPluginException e) {
             if (mLogger.isErrorEnabled()) {
                 mLogger.error("oDexPluginLoaderOrRunTime exception:", e);
@@ -191,21 +188,15 @@ public abstract class BasePluginManager {
      *
      * @param uuid    插件包的uuid
      * @param partKey 要解压so的插件partkey
+     * @param apkFile 插件apk文件
      */
-    public final void extractSo(String uuid, String partKey) throws InstallPluginException {
-        InstalledPlugin.Part part = getPluginPartByPartKey(uuid, partKey);
+    public final void extractSo(String uuid, String partKey, File apkFile) throws InstallPluginException {
         try {
             File root = mUnpackManager.getAppDir();
             String filter = "lib/" + getAbi() + "/";
             File soDir = AppCacheFolderManager.getLibDir(root, uuid);
-            File soPath = CopySoBloc.copySo(part.pluginFile, soDir
+            CopySoBloc.copySo(apkFile, soDir
                     , AppCacheFolderManager.getLibCopiedFile(soDir, partKey), filter);
-
-            ContentValues values = new ContentValues();
-            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soPath.getAbsolutePath());
-            mInstalledDao.updatePlugin(uuid, partKey, values);
-
-            part.libraryDir = soPath;
         } catch (InstallPluginException e) {
             if (mLogger.isErrorEnabled()) {
                 mLogger.error("extractSo exception:", e);
@@ -219,22 +210,16 @@ public abstract class BasePluginManager {
      *
      * @param uuid 插件包的uuid
      * @param type 要oDex的插件类型 @class IntalledType  loader or runtime
+     * @param apkFile 插件apk文件
      */
-    public final void extractLoaderOrRunTimeSo(String uuid, int type) throws InstallPluginException {
-        InstalledPlugin.Part part = getLoaderOrRunTimePart(uuid, type);
+    public final void extractLoaderOrRunTimeSo(String uuid, int type, File apkFile) throws InstallPluginException {
         try {
             File root = mUnpackManager.getAppDir();
             String key = type == InstalledType.TYPE_PLUGIN_LOADER ? "loader" : "runtime";
             String filter = "lib/" + getAbi() + "/";
             File soDir = AppCacheFolderManager.getLibDir(root, uuid);
-            File soPath = CopySoBloc.copySo(part.pluginFile, soDir
+            CopySoBloc.copySo(apkFile, soDir
                     , AppCacheFolderManager.getLibCopiedFile(soDir, key), filter);
-
-            ContentValues values = new ContentValues();
-            values.put(InstalledPluginDBHelper.COLUMN_PLUGIN_LIB, soPath.getAbsolutePath());
-            mInstalledDao.updatePlugin(uuid, type, values);
-
-            part.libraryDir = soPath;
         } catch (InstallPluginException e) {
             if (mLogger.isErrorEnabled()) {
                 mLogger.error("extractLoaderOrRunTimeSo exception:", e);

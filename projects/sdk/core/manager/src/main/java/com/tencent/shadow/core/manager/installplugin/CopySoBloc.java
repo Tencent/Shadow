@@ -40,7 +40,7 @@ public class CopySoBloc {
 
     private static ConcurrentHashMap<String, Object> sLocks = new ConcurrentHashMap<>();
 
-    public static File copySo(File apkFile, File soDir, File copiedTagFile, String filter) throws InstallPluginException {
+    public static void copySo(File apkFile, File soDir, File copiedTagFile, String filter) throws InstallPluginException {
         String key = apkFile.getAbsolutePath();
         Object lock = sLocks.get(key);
         if (lock == null) {
@@ -51,7 +51,7 @@ public class CopySoBloc {
         synchronized (lock) {
 
             if (TextUtils.isEmpty(filter) || copiedTagFile.exists()) {
-                return soDir;
+                return;
             }
 
             //如果so目录存在但是个文件，不是目录，那超出预料了。删除了也不一定能工作正常。
@@ -108,9 +108,6 @@ public class CopySoBloc {
                 }
             }
         }
-
-
-        return soDir;
     }
 
 

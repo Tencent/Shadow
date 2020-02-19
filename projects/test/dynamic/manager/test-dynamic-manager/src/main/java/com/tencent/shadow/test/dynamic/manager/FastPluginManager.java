@@ -27,6 +27,7 @@ import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.manager.installplugin.InstalledType;
+import com.tencent.shadow.core.manager.installplugin.PluginConfig;
 import com.tencent.shadow.dynamic.host.FailedException;
 import com.tencent.shadow.dynamic.manager.PluginManagerThatUseDynamicLoader;
 
@@ -57,14 +58,15 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
 
 
     public InstalledPlugin installPlugin(String zip, String hash , boolean odex) throws IOException, JSONException, InterruptedException, ExecutionException {
-        final InstalledPlugin installedPlugin = installPluginFromZip(new File(zip), hash);
-
+        final PluginConfig pluginConfig = installPluginFromZip(new File(zip), hash);
+        final String uuid = pluginConfig.UUID;
         List<Future> futures = new LinkedList<>();
-        if (installedPlugin.runtimeFile != null && installedPlugin.pluginLoaderFile != null) {
+        if (pluginConfig.runTime != null && pluginConfig.pluginLoader != null) {
             Future odexRuntime = mFixedPool.submit(new Callable() {
                 @Override
                 public Object call() throws Exception {
-                    oDexPluginLoaderOrRunTime(installedPlugin.UUID, InstalledType.TYPE_PLUGIN_RUNTIME);
+                    oDexPluginLoaderOrRunTime(uuid, InstalledType.TYPE_PLUGIN_RUNTIME,
+                            pluginConfig.runTime.file);
                     return null;
                 }
             });
@@ -72,18 +74,20 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
             Future odexLoader = mFixedPool.submit(new Callable() {
                 @Override
                 public Object call() throws Exception {
-                    oDexPluginLoaderOrRunTime(installedPlugin.UUID, InstalledType.TYPE_PLUGIN_LOADER);
+                    oDexPluginLoaderOrRunTime(uuid, InstalledType.TYPE_PLUGIN_LOADER,
+                            pluginConfig.pluginLoader.file);
                     return null;
                 }
             });
             futures.add(odexLoader);
         }
-        for (Map.Entry<String, InstalledPlugin.PluginPart> plugin : installedPlugin.plugins.entrySet()) {
+        for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : pluginConfig.plugins.entrySet()) {
             final String partKey = plugin.getKey();
+            final File apkFile = plugin.getValue().file;
             Future extractSo = mFixedPool.submit(new Callable() {
                 @Override
                 public Object call() throws Exception {
-                    extractSo(installedPlugin.UUID, partKey);
+                    extractSo(uuid, partKey, apkFile);
                     return null;
                 }
             });
@@ -92,7 +96,7 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
                 Future odexPlugin = mFixedPool.submit(new Callable() {
                     @Override
                     public Object call() throws Exception {
-                        oDexPlugin(installedPlugin.UUID, partKey);
+                        oDexPlugin(uuid, partKey, apkFile);
                         return null;
                     }
                 });
@@ -103,6 +107,8 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
         for (Future future : futures) {
             future.get();
         }
+        onInstallCompleted(pluginConfig);
+
         return getInstalledPlugins(1).get(0);
     }
 
