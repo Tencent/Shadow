@@ -58,7 +58,7 @@ public class InstalledPlugin implements Serializable {
     public Map<String, PluginPart> plugins = new HashMap<>();
 
 
-    public InstalledPlugin() {
+    InstalledPlugin() {
     }
 
 

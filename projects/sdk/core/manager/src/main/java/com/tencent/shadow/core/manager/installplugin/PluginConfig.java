@@ -61,9 +61,9 @@ public class PluginConfig {
      */
     public File storageDir;
 
-    static class FileInfo {
-        File file;
-        String hash;
+    public static class FileInfo {
+        public final File file;
+        public final String hash;
 
         FileInfo(File file, String hash) {
             this.file = file;
@@ -71,7 +71,7 @@ public class PluginConfig {
         }
     }
 
-    static class PluginFileInfo extends FileInfo {
+    public static class PluginFileInfo extends FileInfo {
         final String[] dependsOn;
         final String[] hostWhiteList;
         final String businessName;
