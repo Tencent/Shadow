@@ -91,9 +91,7 @@
             android:process=":plugin"
             />
 
-        <service android:name="com.tencent.shadow.sample.host.PluginProcessPPS"
-            android:process=":plugin"
-            />
+        <service android:name="com.tencent.shadow.sample.host.PluginProcessPPS" />
 
         <activity
             android:name="com.tencent.shadow.sample.host.PluginLoadActivity"
@@ -112,7 +110,6 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
             android:theme="@style/troop_Transparent"
-            android:process=":plugin"
             />
 
         <activity
@@ -122,7 +119,6 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
             android:theme="@style/troop_Transparent"
-            android:process=":plugin"
             />
 
         <activity
@@ -132,7 +128,6 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
             android:theme="@style/troop_Transparent"
-            android:process=":plugin"
             />
         <!--dynamic activity注册 end -->
     </application>
