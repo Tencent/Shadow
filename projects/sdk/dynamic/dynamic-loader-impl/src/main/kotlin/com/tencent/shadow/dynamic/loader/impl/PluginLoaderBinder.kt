@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.dynamic.loader.impl
 
+import android.content.Intent
 import android.os.IBinder
 import com.tencent.shadow.dynamic.host.PluginLoaderImpl
 import com.tencent.shadow.dynamic.host.UuidManager
@@ -126,6 +127,12 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
             PluginLoader.TRANSACTION_unbindService -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 mDynamicPluginLoader.unbindService(data.readStrongBinder())
+                reply!!.writeNoException()
+                return true
+            }
+            PluginLoader.TRANSACTION_startActivityInPluginProcess -> {
+                data.enforceInterface(PluginLoader.DESCRIPTOR)
+                mDynamicPluginLoader.startActivityInPluginProcess(Intent.CREATOR.createFromParcel(data))
                 reply!!.writeNoException()
                 return true
             }

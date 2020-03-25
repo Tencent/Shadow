@@ -200,4 +200,19 @@ class BinderPluginLoader implements PluginLoader {
             _data.recycle();
         }
     }
+
+    @Override
+    public void startActivityInPluginProcess(Intent intent) throws RemoteException {
+        Parcel _data = Parcel.obtain();
+        Parcel _reply = Parcel.obtain();
+        try {
+            _data.writeInterfaceToken(DESCRIPTOR);
+            intent.writeToParcel(_data, 0);
+            mRemote.transact(TRANSACTION_startActivityInPluginProcess, _data, _reply, 0);
+            _reply.readException();
+        } finally {
+            _reply.recycle();
+            _data.recycle();
+        }
+    }
 }
