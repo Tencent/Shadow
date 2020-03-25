@@ -51,7 +51,8 @@ public class MainActivity extends Activity {
         final Spinner partKeySpinner = new Spinner(this);
         ArrayAdapter<String> partKeysAdapter = new ArrayAdapter<>(this, R.layout.part_key_adapter);
         partKeysAdapter.addAll(
-                Constant.PART_KEY_PLUGIN_MAIN_APP
+                Constant.PART_KEY_PLUGIN_MAIN_APP,
+                Constant.PART_KEY_PLUGIN_ANOTHER_APP
         );
         partKeySpinner.setAdapter(partKeysAdapter);
 
@@ -66,9 +67,12 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(MainActivity.this, PluginLoadActivity.class);
                 intent.putExtra(Constant.KEY_PLUGIN_PART_KEY, partKey);
                 switch (partKey) {
+                    //为了演示多进程多插件，其实两个插件内容完全一样，除了所在进程
                     case Constant.PART_KEY_PLUGIN_MAIN_APP:
+                    case Constant.PART_KEY_PLUGIN_ANOTHER_APP:
                         intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.sample.plugin.app.lib.gallery.splash.SplashActivity");
                         break;
+
                 }
                 startActivity(intent);
             }

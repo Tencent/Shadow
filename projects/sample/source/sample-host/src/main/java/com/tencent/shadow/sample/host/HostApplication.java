@@ -23,6 +23,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
+import android.webkit.WebView;
 
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.dynamic.host.DynamicRuntime;
@@ -45,7 +46,7 @@ public class HostApplication extends Application {
         sApp = this;
 
         detectNonSdkApiUsageOnAndroidP();
-
+        setWebViewDataDirectorySuffix();
         LoggerFactory.setILoggerFactory(new AndroidLogLoggerFactory());
 
         if (isProcess(this, ":plugin")) {
@@ -59,7 +60,12 @@ public class HostApplication extends Application {
 
         HostUiLayerProvider.init(this);
     }
-
+    private static void setWebViewDataDirectorySuffix(){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            return;
+        }
+        WebView.setDataDirectorySuffix(Application.getProcessName());
+    }
     private static void detectNonSdkApiUsageOnAndroidP() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             return;
