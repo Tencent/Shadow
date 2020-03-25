@@ -184,6 +184,13 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
         }
     }
 
+    @Synchronized
+    fun startActivityInPluginProcess(intent: Intent) {
+        mUiHandler.post {
+            mContext.startActivity(intent)
+        }
+    }
+
     private class ServiceConnectionWrapper(private val mConnection: BinderPluginServiceConnection) : ServiceConnection {
 
         override fun onServiceDisconnected(name: ComponentName) {
