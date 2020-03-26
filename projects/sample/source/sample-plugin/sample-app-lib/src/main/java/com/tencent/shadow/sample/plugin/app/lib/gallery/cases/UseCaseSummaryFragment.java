@@ -28,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.tencent.shadow.sample.common.ResUtils;
 import com.tencent.shadow.sample.plugin.app.lib.R;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.util.PluginChecker;
@@ -52,8 +53,9 @@ public class UseCaseSummaryFragment extends Fragment {
     public void setCase(final UseCase useCase) {
         mCaseName.setText(useCase.getName());
         mCaseSummary.setText(useCase.getSummary());
-        mStartCase.setVisibility(View.VISIBLE);
+        mCaseSummary.setBackgroundColor(ResUtils.getIdentifier("sample_green", "color"));
 
+        mStartCase.setVisibility(View.VISIBLE);
         mStartCase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

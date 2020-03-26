@@ -45,7 +45,7 @@ import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCaseCate
 
 import java.util.List;
 
-public class MainActivity extends Activity implements
+public class MainActivity extends CommonActivity implements
         ExpandableListView.OnChildClickListener,
         ExpandableListView.OnGroupClickListener,
         OnHeaderUpdateListener, OnGiveUpTouchEventListener {
@@ -60,9 +60,8 @@ public class MainActivity extends Activity implements
     private UseCaseSummaryFragment caseSummaryFragment;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_main);
+    protected void setupView() {
+        super.setupView();
         expandableListView = findViewById(R.id.expandablelist);
         stickyLayout = findViewById(R.id.sticky_layout);
         slidingMenu = findViewById(R.id.slidingmenu);
@@ -85,6 +84,11 @@ public class MainActivity extends Activity implements
         stickyLayout.setOnGiveUpTouchEventListener(this);
         slidingMenu.showMenu();
 
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.layout_main;
     }
 
 
