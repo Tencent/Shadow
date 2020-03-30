@@ -6,14 +6,12 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.FragmentManager
-import android.content.Intent
 import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.Window
 import com.squareup.javapoet.*
 import javassist.ClassMap
 import javassist.ClassPool
-import javassist.CtMethod
 import javassist.bytecode.Descriptor
 import java.io.File
 import java.lang.reflect.Method
@@ -106,16 +104,7 @@ class ActivityCodeGenerator {
                 newClassNames.add(newClassName)
             }
 
-            //因为之前的手工实现中有些方法没有实现，签名也就没有修改，所以暂时保持它们不变
-            //在rename前先remove掉它们，在rename后再添加回去
-            val keepMethods = mutableListOf<CtMethod>()
-
-            keepMethods.addAll(ctClass.getDeclaredMethods("startActivityFromChild").toList())
-
-            keepMethods.forEach { ctClass.removeMethod(it) }
             ctClass.replaceClassName(renameMap)
-            keepMethods.forEach { ctClass.addMethod(it) }
-
             return ctClass.toClass()
         }
 
@@ -148,7 +137,6 @@ class ActivityCodeGenerator {
 
             addMethod("isChangingConfigurations")
             addMethod("finish")
-            addMethod("startActivityFromChild", Activity::class.java, Intent::class.java, Int::class.javaPrimitiveType!!)
             addMethod("getClassLoader")
             addMethod("getLayoutInflater")
             addMethod("getResources")
