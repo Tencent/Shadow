@@ -75,6 +75,7 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
 
         boolean illegalIntent = isIllegalIntent(savedInstanceState);
         if (illegalIntent) {
+            super.hostActivityDelegate = null;
             hostActivityDelegate = null;
             Log.e(TAG, "illegalIntent savedInstanceState==" + savedInstanceState + " getIntent().getExtras()==" + getIntent().getExtras());
         }
