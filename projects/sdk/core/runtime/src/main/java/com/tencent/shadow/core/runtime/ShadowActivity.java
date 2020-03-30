@@ -183,4 +183,30 @@ public abstract class ShadowActivity extends PluginActivity {
     public ComponentName getCallingActivity() {
         return mCallingActivity;
     }
+
+    /**
+     * https://developer.android.com/reference/android/app/Activity#startActivityFromChild(android.app.Activity,%20android.content.Intent,%20int,%20android.os.Bundle)
+     * <p>
+     * This method was deprecated in API level R.
+     * Use androidx.fragment.app.FragmentActivity#startActivityFromFragment( androidx.fragment.app.Fragment,Intent,int,Bundle)
+     * <p>
+     * 不计划支持这个方法了。
+     */
+    @Override
+    public void startActivityFromChild(ShadowActivity arg0, Intent arg1, int arg2) {
+        throw new UnsupportedOperationException("Unsupported");
+    }
+
+    /**
+     * https://developer.android.com/reference/android/app/Activity#startActivityFromChild(android.app.Activity,%20android.content.Intent,%20int,%20android.os.Bundle)
+     * <p>
+     * This method was deprecated in API level R.
+     * Use androidx.fragment.app.FragmentActivity#startActivityFromFragment( androidx.fragment.app.Fragment,Intent,int,Bundle)
+     * <p>
+     * 不计划支持这个方法了。
+     */
+    @Override
+    public void startActivityFromChild(ShadowActivity arg0, Intent arg1, int arg2, Bundle arg3) {
+        throw new UnsupportedOperationException("Unsupported");
+    }
 }
