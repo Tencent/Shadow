@@ -5,7 +5,6 @@ task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':runtime:jarReleasePackage')
     dependsOn gradle.includedBuild('core').task(':activity-container:jarReleasePackage')
-    dependsOn gradle.includedBuild('core').task(':system-class-stub:assemble')
     dependsOn gradle.includedBuild('core').task(':transform-kit:assemble')
     dependsOn gradle.includedBuild('core').task(':transform-kit:testJar')
     dependsOn gradle.includedBuild('core').task(':transform:assemble')
@@ -209,21 +208,6 @@ publishing {
             version publicationVersion
             artifact("$corePath/activity-container/build/outputs/jar/activity-container-release.jar")
             artifact sourceJar("activity-container", "$corePath/activity-container")
-
-            pom.withXml {
-                def root = asNode()
-
-                def scm = root.appendNode('scm')
-                setScm(scm)
-            }
-        }
-
-        systemClassStub(MavenPublication) {
-            groupId coreGroupId
-            artifactId 'system-class-stub'
-            version publicationVersion
-            artifact("$corePath/system-class-stub/build/libs/system-class-stub.jar")
-            artifact sourceJar("system-class-stub", "$corePath/system-class-stub")
 
             pom.withXml {
                 def root = asNode()
