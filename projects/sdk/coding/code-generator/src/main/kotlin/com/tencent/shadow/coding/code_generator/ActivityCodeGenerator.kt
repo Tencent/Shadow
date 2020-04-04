@@ -236,6 +236,89 @@ class ActivityCodeGenerator {
             builder.addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
             return builder.build()
         }
+
+        /**
+         * 这个类集中解决一个问题的逻辑。问题Issue见https://github.com/Tencent/Shadow/issues/230
+         *
+         * 问题描述：
+         * 一般情况下，一个类的方法签名中如果含有找不到的类，在这个类本身被new出来时是不会出错的。
+         * JVM不会去检查一个类的所有方法的签名中涉及到的类是否都存在。只有当调用该方法时才会发现签名上的类找不到。
+         *
+         * 但是在com.tencent.shadow.core.loader.ShadowPluginLoader.getHostActivityDelegate中，
+         * 将实现以接口类型返回时，涉及一种特殊情况，就是实现和接口不是由同一个ClassLoader加载的。
+         * 在这种情况下，JVM会检查实现是否真的实现了接口的每一个方法定义。所以会去尝试加载接口上所有方法签名涉及的类。
+         * 这会导致在低版本系统上尝试加载高版本引入的类，比如android.app.role.RoleManager是API29引入的，
+         * 在API28的手机上就会出现LinkageError。
+         *
+         * 解决方案就是对于高版本API引入的类在生成代理转调相关代码时:在Delegate、ShadowActivityDelegate
+         * 两个生成类中使用Object类型替代原本类型，在PluginContainerActivity中调用Delegate方法时强制类型转换，
+         * 在ShadowActivityDelegate调用PluginActivity方法时也对参数进行强制类型转换。
+         *
+         * 这个方法中定义哪些类型对于低版本API是安全的，不需要采用上述方案。其余类型则采用上述方案。
+         */
+        private fun Class<*>.isSafeForLowApi(): Boolean {
+            val safeType: List<String?> = listOf(
+                    android.app.Activity::class,
+                    android.app.Dialog::class,
+                    android.app.Fragment::class,
+                    android.content.ComponentName::class,
+                    android.content.Context::class,
+                    android.content.Intent::class,
+                    android.content.res.Configuration::class,
+                    android.content.res.Resources.Theme::class,
+                    android.content.res.Resources::class,
+                    android.graphics.Bitmap::class,
+                    android.graphics.Canvas::class,
+                    android.net.Uri::class,
+                    android.os.Bundle::class,
+                    android.util.AttributeSet::class,
+                    android.view.ActionMode.Callback::class,
+                    android.view.ActionMode::class,
+                    android.view.ContextMenu.ContextMenuInfo::class,
+                    android.view.ContextMenu::class,
+                    android.view.KeyEvent::class,
+                    android.view.Menu::class,
+                    android.view.MenuItem::class,
+                    android.view.MotionEvent::class,
+                    android.view.View::class,
+                    android.view.WindowManager.LayoutParams::class,
+                    android.view.accessibility.AccessibilityEvent::class,
+                    android.view.LayoutInflater::class
+            ).map { it.java.canonicalName }
+
+            return isPrimitive or
+                    (isArray && componentType.isSafeForLowApi()) or
+                    (canonicalName.startsWith("java.lang")) or
+                    safeType.contains(canonicalName)
+        }
+
+        fun Method.toMethodSpecBuilderWithObjectType(): MethodSpec.Builder {
+            val methodName = name
+            val builder = MethodSpec.methodBuilder(methodName)
+            parameters.forEach {
+                builder.addParameter(
+                        ParameterSpec.builder(
+                                if (it.type.isSafeForLowApi()) it.parameterizedType else Object::class.java,
+                                it.name)
+                                .build()
+                )
+            }
+            if (exceptionTypes.isNotEmpty()) {
+                builder.addExceptions(listOf(TypeName.get(Throwable::class.java)))
+            }
+            if (returnType.isSafeForLowApi()) {
+                builder.returns(returnType)
+            } else {
+                builder.returns(Object::class.java)
+            }
+            return builder
+        }
+
+        fun Method.toInterfaceMethodSpecWithObjectType(): MethodSpec {
+            val builder = toMethodSpecBuilderWithObjectType()
+            builder.addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            return builder.build()
+        }
     }
 
     val commonJavadoc = "由\n" + "{@link com.tencent.shadow.coding.code_generator.ActivityCodeGenerator}\n" + "自动生成\n"
@@ -309,6 +392,16 @@ class ActivityCodeGenerator {
                             CS_pluginActivity_field
                     )
                     .addJavadoc(commonJavadoc)
+                    .addAnnotation(
+                            AnnotationSpec.builder(SuppressLint::class.java)
+                                    .addMember("value", "\"NewApi\"")
+                                    .build()
+                    )
+                    .addAnnotation(
+                            AnnotationSpec.builder(SuppressWarnings::class.java)
+                                    .addMember("value", "{\"unchecked\", \"JavadocReference\"}")
+                                    .build()
+                    )
 
     fun generate(outputDir: File) {
         val activityContainerOutput = File(outputDir, "activity_container")
@@ -337,7 +430,7 @@ class ActivityCodeGenerator {
 
     fun addMethods() {
         //将系统会调用的方法都定义出来，供转调之用。
-        activityDelegate.addMethods(activityCallbackMethods.map { it.toInterfaceMethodSpec() })
+        activityDelegate.addMethods(activityCallbackMethods.map { it.toInterfaceMethodSpecWithObjectType() })
 
         //将Activity可以被调用的方法都暴露出来
         activityDelegator.addMethods(
@@ -430,7 +523,8 @@ class ActivityCodeGenerator {
         val args = method.parameters.joinToString(separator = ", ") {
             it.name
         }
-        methodBuilder.addStatement("${ret}${CS_delegate_field}.${method.name}($args)")
+        val retCast = if (method.returnType.isSafeForLowApi()) "" else "(${method.returnType.name})"
+        methodBuilder.addStatement("${ret}$retCast${CS_delegate_field}.${method.name}($args)")
         methodBuilder.nextControlFlow("else")
         methodBuilder.addStatement("${ret}super.${method.name}($args)")
         methodBuilder.endControlFlow()
@@ -514,13 +608,13 @@ class ActivityCodeGenerator {
             }
 
     fun implementDelegateMethod(method: Method): MethodSpec {
-        val methodBuilder = method.toMethodSpecBuilder()
+        val methodBuilder = method.toMethodSpecBuilderWithObjectType()
         methodBuilder.addModifiers(Modifier.PUBLIC)
         methodBuilder.addAnnotation(Override::class.java)
 
         val ret = if (method.returnType == Void::class.javaPrimitiveType) "" else "return "
         val args = method.parameters.joinToString(separator = ", ") {
-            it.name
+            (if (it.type.isSafeForLowApi()) CodeBlock.of("\$L", it.name) else CodeBlock.of("(\$T) \$L", it.parameterizedType, it.name)).toString()
         }
         methodBuilder.addStatement("${ret}${CS_pluginActivity_field}.${method.name}($args)")
 
