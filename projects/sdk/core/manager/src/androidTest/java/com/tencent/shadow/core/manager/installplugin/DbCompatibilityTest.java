@@ -140,7 +140,7 @@ public class DbCompatibilityTest {
         InstalledDao installedDao = new InstalledDao(dbHelper);
 
         for (String configJson : configs) {
-            installedDao.insert(PluginConfig.parseFromJson(configJson, context.getCacheDir()));
+            installedDao.insert(PluginConfig.parseFromJson(configJson, context.getCacheDir()), null, null);
         }
 
         dbHelper.close();

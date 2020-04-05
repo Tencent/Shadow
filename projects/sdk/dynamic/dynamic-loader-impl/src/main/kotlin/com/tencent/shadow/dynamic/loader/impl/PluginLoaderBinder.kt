@@ -47,7 +47,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 val _result = mDynamicPluginLoader.getLoadedPlugin()
                 reply!!.writeNoException()
-                reply.writeMap(_result)
+                reply.writeMap(_result as Map<*, *>?)
                 return true
             }
             PluginLoader.TRANSACTION_callApplicationOnCreate -> {

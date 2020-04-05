@@ -43,16 +43,16 @@ public interface ShadowActivityLifecycleCallbacks {
     class Wrapper implements Application.ActivityLifecycleCallbacks {
 
         final ShadowActivityLifecycleCallbacks shadowActivityLifecycleCallbacks;
-        final ShadowApplication shadowApplication;
+        final Object runtimeObject;
 
-        public Wrapper(ShadowActivityLifecycleCallbacks shadowActivityLifecycleCallbacks, ShadowApplication shadowApplication) {
+        public Wrapper(ShadowActivityLifecycleCallbacks shadowActivityLifecycleCallbacks, Object runtimeObject) {
             this.shadowActivityLifecycleCallbacks = shadowActivityLifecycleCallbacks;
-            this.shadowApplication = shadowApplication;
+            this.runtimeObject = runtimeObject;
         }
 
         private ShadowActivity getPluginActivity(Activity activity) {
             if (activity instanceof PluginContainerActivity) {
-                return (ShadowActivity) ((PluginContainerActivity) activity).getPluginActivity();
+                return (ShadowActivity) PluginActivity.get((PluginContainerActivity) activity);
             } else {
                 return null;
             }
@@ -121,7 +121,7 @@ public interface ShadowActivityLifecycleCallbacks {
          * @return 是否属于当前Application所在的插件 true属于
          */
         private boolean checkOwnerActivity(PluginActivity activity) {
-            return activity != null && activity.mPluginApplication == shadowApplication;
+            return activity != null && activity.mPluginApplication == runtimeObject;
         }
     }
 }

@@ -107,7 +107,11 @@ public class ShadowWebView extends WebView {
 
         private WebResourceResponse getInterceptResponse(String url){
             if(url.startsWith(REPLACE_ASSET_PREFIX)){
-                String filePath = url.substring(REPLACE_ASSET_PREFIX.length());
+                int end = url.indexOf("?");
+                if (end == -1) {
+                    end = url.length();
+                }
+                String filePath = url.substring(REPLACE_ASSET_PREFIX.length(), end);
                 String mime = "text/html";
                 if (filePath.contains(".css")){
                     mime = "text/css";

@@ -161,6 +161,7 @@ abstract class ClassTransform(val project: Project) : Transform() {
      */
     open fun beforeTransform(invocation: TransformInvocation) {
         invocation.outputProvider.deleteAll()
+        inputSet.clear()
     }
 
     open fun afterTransform(invocation: TransformInvocation) {
@@ -175,12 +176,15 @@ abstract class ClassTransform(val project: Project) : Transform() {
     }
 
     override fun getSecondaryFiles(): ImmutableList<SecondaryFile>? {
-        val currentJar = File(this::class.java.protectionDomain.codeSource.location.toURI())
+        val transformJar = File(this::class.java.protectionDomain.codeSource.location.toURI())
+        val transformKitJar = File(ClassTransform::class.java.protectionDomain.codeSource.location.toURI())
+
         return ImmutableList.of(
                 //将当前类运行所在的jar本身作为转换输入的SecondaryFiles，也就作为了这个transform task的inputs的
                 //一部分，这使得当这个Transform程序变化时，构建能检测到这个Transform需要重新执行。这是直接编辑这个
                 //Transform源码后，应用了这个Plugin的debug工程能直接生效的关键。
-                SecondaryFile.nonIncremental(project.files(currentJar))
+                SecondaryFile.nonIncremental(project.files(transformJar)),
+                SecondaryFile.nonIncremental(project.files(transformKitJar))
         )
     }
 }

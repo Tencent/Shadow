@@ -34,6 +34,7 @@ class PluginInfo(
     internal val mProviders: Set<PluginProviderInfo>
         get() = _mProviders
 
+    internal var appComponentFactory: String? = null
 
     fun putActivityInfo(pluginActivityInfo: PluginActivityInfo) {
         _mActivities.add(pluginActivityInfo)

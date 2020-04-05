@@ -66,7 +66,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
                     CORE_LOADER_FACTORY_IMPL_NAME
             )
             mPluginLoader = coreLoaderFactory.build(hostContext)
-            DelegateProviderHolder.setDelegateProvider(mPluginLoader)
+            DelegateProviderHolder.setDelegateProvider(mPluginLoader.delegateProviderKey, mPluginLoader)
             ContentProviderDelegateProviderHolder.setContentProviderDelegateProvider(mPluginLoader)
             mPluginLoader.onCreate()
         } catch (e: Exception) {

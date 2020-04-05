@@ -21,14 +21,12 @@ package com.tencent.shadow.core.manager.installplugin;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Pair;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,12 +43,12 @@ public class InstalledDao {
      * 根据插件配置信息插入一组数据
      *
      * @param pluginConfig 插件配置信息
-     * @return 安装后的信息
+     * @param soDir
+     * @param oDexDir
      */
-    public InstalledPlugin insert(PluginConfig pluginConfig) {
+    public void insert(PluginConfig pluginConfig, String soDir, String oDexDir) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        Pair<InstalledPlugin, List<ContentValues>> pair = parseConfig(pluginConfig);
-        List<ContentValues> contentValuesList = pair.second;
+        List<ContentValues> contentValuesList = parseConfig(pluginConfig, soDir, oDexDir);
         db.beginTransaction();
         try {
             for (ContentValues contentValues : contentValuesList) {
@@ -65,7 +63,6 @@ public class InstalledDao {
         } finally {
             db.endTransaction();
         }
-        return pair.first;
     }
 
     /**
@@ -175,67 +172,20 @@ public class InstalledDao {
         return installedPlugins;
     }
 
-
-    public boolean updatePlugin(String UUID, String partKey, ContentValues contentValues) {
-        SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        db.beginTransaction();
-        int row = 0;
-        try {
-            row = db.update(InstalledPluginDBHelper.TABLE_NAME_MANAGER, contentValues,
-                    InstalledPluginDBHelper.COLUMN_UUID + " = ? and " + InstalledPluginDBHelper.COLUMN_PARTKEY + " = ?",
-                    new String[]{UUID, partKey});
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-        return row > 0;
-    }
-
-    public boolean updatePlugin(String UUID, int type, ContentValues contentValues) {
-        if (type != InstalledType.TYPE_PLUGIN_LOADER && type != InstalledType.TYPE_PLUGIN_RUNTIME) {
-            throw new RuntimeException("不支持更新 type:" + type);
-        }
-        SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        db.beginTransaction();
-        int row = 0;
-        try {
-            row = db.update(InstalledPluginDBHelper.TABLE_NAME_MANAGER, contentValues,
-                    InstalledPluginDBHelper.COLUMN_UUID + " = ? and " + InstalledPluginDBHelper.COLUMN_TYPE + " = ?",
-                    new String[]{UUID, String.valueOf(type)});
-            db.setTransactionSuccessful();
-        } finally {
-            db.endTransaction();
-        }
-        return row > 0;
-    }
-
-    private Pair<InstalledPlugin, List<ContentValues>> parseConfig(PluginConfig pluginConfig) {
+    private List<ContentValues> parseConfig(PluginConfig pluginConfig, String soDir, String oDexDir) {
         List<InstalledRow> installedRows = new ArrayList<>();
-        InstalledPlugin installedPlugin = new InstalledPlugin();
         if (pluginConfig.pluginLoader != null) {
-            installedPlugin.pluginLoaderFile = new InstalledPlugin.Part(InstalledType.TYPE_PLUGIN_LOADER, pluginConfig.pluginLoader.file, null, null);
-            installedRows.add(new InstalledRow(pluginConfig.pluginLoader.hash, null, pluginConfig.pluginLoader.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_LOADER));
+            installedRows.add(new InstalledRow(pluginConfig.pluginLoader.hash, null, pluginConfig.pluginLoader.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_LOADER,
+                    soDir, oDexDir));
         }
         if (pluginConfig.runTime != null) {
-            installedPlugin.runtimeFile = new InstalledPlugin.Part(InstalledType.TYPE_PLUGIN_RUNTIME, pluginConfig.runTime.file, null, null);
-            installedRows.add(new InstalledRow(pluginConfig.runTime.hash, null, pluginConfig.runTime.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_RUNTIME));
+            installedRows.add(new InstalledRow(pluginConfig.runTime.hash, null, pluginConfig.runTime.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_RUNTIME,
+                    soDir, oDexDir));
         }
         if (pluginConfig.plugins != null) {
             Set<Map.Entry<String, PluginConfig.PluginFileInfo>> plugins = pluginConfig.plugins.entrySet();
-            Map<String, InstalledPlugin.PluginPart> map = new HashMap<>();
             for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : plugins) {
                 PluginConfig.PluginFileInfo fileInfo = plugin.getValue();
-                map.put(plugin.getKey(),
-                        new InstalledPlugin.PluginPart(
-                                InstalledType.TYPE_PLUGIN,
-                                fileInfo.businessName,
-                                fileInfo.file,
-                                null,
-                                null,
-                                fileInfo.dependsOn,
-                                fileInfo.hostWhiteList
-                        )
-                );
                 installedRows.add(
                         new InstalledRow(
                                 fileInfo.hash,
@@ -244,11 +194,11 @@ public class InstalledDao {
                                 fileInfo.dependsOn,
                                 fileInfo.file.getAbsolutePath(),
                                 InstalledType.TYPE_PLUGIN,
-                                fileInfo.hostWhiteList
+                                fileInfo.hostWhiteList,
+                                soDir, oDexDir
                         )
                 );
             }
-            installedPlugin.plugins = map;
         }
         InstalledRow uuidRow = new InstalledRow();
         uuidRow.type = InstalledType.TYPE_UUID;
@@ -261,9 +211,7 @@ public class InstalledDao {
             row.version = pluginConfig.UUID_NickName;
             contentValues.add(row.toContentValues());
         }
-        installedPlugin.UUID = pluginConfig.UUID;
-        installedPlugin.UUID_NickName = pluginConfig.UUID_NickName;
-        return new Pair<>(installedPlugin, contentValues);
+        return contentValues;
     }
 
 

@@ -213,23 +213,23 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
 
 
     private fun createServiceAndCallOnCreate(intent: Intent): ShadowService {
-        val service = newServiceInstance(intent.component)
+        val service = newServiceInstance(intent)
         service.onCreate()
         return service
     }
 
 
-    private fun newServiceInstance(componentName: ComponentName): ShadowService {
+    private fun newServiceInstance(intent: Intent): ShadowService {
+        val componentName = intent.component!!
         val businessName = mPluginLoader.mComponentManager.getComponentBusinessName(componentName)
         val partKey = mPluginLoader.mComponentManager.getComponentPartKey(componentName)
         val className = componentName.className
 
         val tmpShadowDelegate = TmpShadowDelegate()
         mPluginLoader.inject(tmpShadowDelegate, partKey!!)
-        val serviceClazz = tmpShadowDelegate.getPluginClassLoader().loadClass(className)
-        val service = ShadowService::class.java.cast(serviceClazz.newInstance())
+        val service = tmpShadowDelegate.getAppComponentFactory()
+                .instantiateService(tmpShadowDelegate.getPluginClassLoader(), className, intent)
 
-        service.setHostContextAsBase(mHostContext)
         service.setPluginResources(tmpShadowDelegate.getPluginResources())
         service.setPluginClassLoader(tmpShadowDelegate.getPluginClassLoader())
         service.setShadowApplication(tmpShadowDelegate.getPluginApplication())
@@ -238,6 +238,8 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
         service.setBusinessName(businessName)
         service.setPluginPartKey(partKey)
 
+        //和ShadowActivityDelegate.initPluginActivity一样，attachBaseContext放到最后
+        service.setHostContextAsBase(mHostContext)
         return service
     }
 
@@ -280,6 +282,7 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
 private class TmpShadowDelegate : ShadowDelegate() {
 
     fun getPluginApplication(): ShadowApplication = mPluginApplication
+    fun getAppComponentFactory() = mAppComponentFactory
     fun getPluginClassLoader(): PluginClassLoader = mPluginClassLoader
     fun getPluginResources(): Resources = mPluginResources
     fun getComponentManager(): ComponentManager = mComponentManager

@@ -50,8 +50,10 @@ class PluginClassLoader(
      */
     private val allHostWhiteList: Array<String>
 
+    private val loaderClassLoader = PluginClassLoader::class.java.classLoader!!
+
     init {
-        val defaultWhiteList = arrayOf("com.tencent.shadow.core.runtime",
+        val defaultWhiteList = arrayOf(
                                "org.apache.commons.logging"//org.apache.commons.logging是非常特殊的的包,由系统放到App的PathClassLoader中.
         )
         if (hostWhiteList != null) {
@@ -63,8 +65,11 @@ class PluginClassLoader(
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
-        if (specialClassLoader == null //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
-                || className.inPackage(allHostWhiteList)
+        if (specialClassLoader == null) {//specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
+            return super.loadClass(className, resolve)
+        } else if (className.subStringBeforeDot() == "com.tencent.shadow.core.runtime") {
+            return loaderClassLoader.loadClass(className)
+        } else if (className.inPackage(allHostWhiteList)
                 || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的) {
             return super.loadClass(className, resolve)
         } else {
@@ -94,15 +99,37 @@ class PluginClassLoader(
         }
     }
 
-    private fun String.inPackage(packageNames: Array<String>): Boolean {
-        val packageName: String
-        val dot = lastIndexOf('.')
-        packageName = if (dot != -1) {
-            substring(0, dot)
-        } else {
-            ""
+}
+
+private fun String.subStringBeforeDot() = substringBeforeLast('.', "")
+
+internal fun String.inPackage(packageNames: Array<String>): Boolean {
+    val packageName = subStringBeforeDot()
+
+    return packageNames.any {
+        return@any when {
+            it == "" -> false
+            it == ".*" -> false
+            it == ".**" -> false
+            it.endsWith(".*") -> {//只允许一级子包
+                val sub = packageName.subStringBeforeDot()
+                if (sub.isEmpty()) {
+                    false
+                } else {
+                    sub == it.subStringBeforeDot()
+                }
+            }
+            it.endsWith(".**") -> {//允许所有子包
+                val sub = packageName.subStringBeforeDot()
+                if (sub.isEmpty()) {
+                    false
+                } else {
+                    "$sub.".startsWith(it.subStringBeforeDot() + '.')
+                }
+            }
+            else -> packageName == it
         }
-        return packageNames.any { packageName == it }
     }
 }
+
 

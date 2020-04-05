@@ -26,15 +26,20 @@ import com.tencent.shadow.core.loader.managers.ComponentManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TestComponentManager extends ComponentManager {
     final private static ComponentName sDefaultContainer = new ComponentName(BuildConfig.APPLICATION_ID, "com.tencent.shadow.test.none_dynamic.host.DefaultContainerActivity");
     final private static ComponentName sSingleTaskContainer = new ComponentName(BuildConfig.APPLICATION_ID, "com.tencent.shadow.test.none_dynamic.host.SingleTaskContainerActivity");
-
+    public static final ArrayList<String> sActivities = new ArrayList<>();
 
     @Override
     public ComponentName onBindContainerActivity(ComponentName componentName) {
+        if (!sActivities.contains(componentName.getClassName())) {
+            sActivities.add(componentName.getClassName());
+        }
         if (componentName.getClassName().equals("com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestActivityOrientation")) {
             return sSingleTaskContainer;
         }

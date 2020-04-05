@@ -1,0 +1,9 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.core'
+
+dependencies {
+    api files("${project(":activity-container").getBuildDir()}/outputs/jar/activity-container-debug.jar")
+}
+
+compileJava.dependsOn(":activity-container:jarDebugPackage")

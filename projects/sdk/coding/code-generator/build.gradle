@@ -1,0 +1,10 @@
+apply plugin: 'kotlin'
+
+group 'com.tencent.shadow.coding'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.squareup:javapoet:1.11.1'
+    implementation 'org.javassist:javassist:3.22.0-GA'
+    compileOnly files("${System.getenv().get('ANDROID_HOME')}/platforms/android-${project.COMPILE_SDK_VERSION}/android.jar")
+}

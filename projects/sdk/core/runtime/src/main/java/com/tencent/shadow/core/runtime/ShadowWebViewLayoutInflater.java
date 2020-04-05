@@ -43,7 +43,7 @@ public class ShadowWebViewLayoutInflater extends FixedContextLayoutInflater{
     @Override
     LayoutInflater createNewContextLayoutInflater(Context newContext) {
         if (newContext instanceof PluginContainerActivity) {
-            Object pluginActivity = ((PluginContainerActivity) newContext).getPluginActivity();
+            Object pluginActivity = PluginActivity.get((PluginContainerActivity) newContext);
             return new ShadowWebViewLayoutInflater(this, (Context) pluginActivity);
         } else {
             //context有2种可能，1种是ShadowContext,一种是其他context

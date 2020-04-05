@@ -30,7 +30,7 @@ dependencies {
     implementation project(":pinnedheaderexpandablelistview")
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'com.android.support:support-v4:27.1.1'
-
+    implementation 'com.android.support:appcompat-v7:27.1.1'
     //注意sample-host-lib要用compileOnly编译而不打包在插件中。在packagePlugin任务中配置hostWhiteList允许插件访问宿主的类。
     compileOnly files("${project(":sample-host-lib").getBuildDir()}/outputs/jar/sample-host-lib-debug.jar")
 }

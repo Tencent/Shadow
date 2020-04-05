@@ -25,15 +25,15 @@ import javassist.expr.ExprEditor
 import javassist.expr.MethodCall
 
 object ReplaceClassName {
-    private var mErrorCount = 0
-    private val mNewNames = mutableListOf<String>()
+    private val mNewNames = mutableSetOf<String>()
+    /**
+     * MutableMap<defClass, MutableMap<method, MutableSet<useClass>>>
+     */
+    private val errorResult: MutableMap<String, MutableMap<String, MutableSet<String>>> = mutableMapOf()
 
     fun resetErrorCount() {
-        mErrorCount = 0
-    }
-
-    fun getErrorCount(): Int {
-        return mErrorCount
+        mNewNames.clear()
+        errorResult.clear()
     }
 
     fun replaceClassName(ctClass: CtClass, oldName: String, newName: String) {
@@ -41,12 +41,16 @@ object ReplaceClassName {
         mNewNames.add(newName)
     }
 
-    fun checkAll(classPool: ClassPool, classes: Set<CtClass>) {
-        classes.forEach { ctClass ->
-            mNewNames.forEach { newName ->
-                ctClass.checkMethodExist(classPool[newName])
+    fun checkAll(classPool: ClassPool, inputClassNames: List<String>): Map<String, Map<String, Set<String>>> {
+        inputClassNames.forEach { inputClassName ->
+            val inputClass = classPool[inputClassName]
+            if (inputClass.refClasses.any { mNewNames.contains(it) }) {
+                mNewNames.forEach { newName ->
+                    inputClass.checkMethodExist(classPool[newName])
+                }
             }
         }
+        return errorResult
     }
 
     /**
@@ -54,15 +58,25 @@ object ReplaceClassName {
      */
     private fun CtClass.checkMethodExist(refClass: CtClass) {
         val invokeClass = name
+        val refClassName = refClass.name
         instrument(object : ExprEditor() {
             override fun edit(m: MethodCall) {
-                if (m.className == refClass.name) {
+                if (m.className == refClassName) {
                     try {
                         refClass.getMethod(m.methodName, m.signature)
                     } catch (ignored: NotFoundException) {
-                        mErrorCount++
-                        System.err.println("类$invokeClass 调用类${refClass.name}的" +
-                                "方法m.methodName==${m.methodName} 签名m.signature==${m.signature}不存在")
+                        val methodString = "${m.methodName}:${m.signature}"
+                        var methodMap = errorResult[refClassName]
+                        if (methodMap == null) {
+                            methodMap = mutableMapOf()
+                            errorResult[refClassName] = methodMap
+                        }
+                        var useSet = methodMap[methodString]
+                        if (useSet == null) {
+                            useSet = mutableSetOf()
+                            methodMap[methodString] = useSet
+                        }
+                        useSet.add(invokeClass)
                     }
                 }
             }

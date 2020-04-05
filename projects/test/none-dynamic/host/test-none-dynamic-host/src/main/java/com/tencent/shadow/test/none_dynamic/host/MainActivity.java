@@ -57,14 +57,18 @@ public class MainActivity extends Activity {
     }
 
     public void startPlugin(View view) {
-        HostApplication application = (HostApplication) getApplication();
-        application.loadPlugin(PART_MAIN);
+        final HostApplication application = (HostApplication) getApplication();
+        application.loadPlugin(PART_MAIN, new Runnable(){
+            @Override
+            public void run() {
+                Intent pluginIntent = new Intent();
+                pluginIntent.setClassName(getPackageName(), "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestListActivity");
+                pluginIntent.putStringArrayListExtra("activities", TestComponentManager.sActivities);
+                Intent intent = application.getPluginLoader().getMComponentManager().convertPluginActivityIntent(pluginIntent);
+                startActivity(intent);
+            }
+        });
 
-        Intent pluginIntent = new Intent();
-        pluginIntent.setClassName(getPackageName(), "com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity.TestActivityOnCreate");
-
-        Intent intent = application.getPluginLoader().getMComponentManager().convertPluginActivityIntent(pluginIntent);
-        startActivity(intent);
     }
 
 }

@@ -27,6 +27,7 @@ import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityRe
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivitySetTheme;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityWindowSoftMode;
+import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestAppCompatActivityOnCreate;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ActivityContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ApplicationContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.dialog.TestDialogActivity;
@@ -38,6 +39,7 @@ import com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestDBContentP
 import com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestFileProviderActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.TestDynamicReceiverActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.TestReceiverActivity;
+import com.tencent.shadow.sample.plugin.app.lib.usecases.webview.WebViewActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +66,8 @@ public class UseCaseManager {
                 new TestActivityWindowSoftMode.Case(),
                 new TestActivitySetTheme.Case(),
                 new TestActivityOptionMenu.Case(),
+                new TestAppCompatActivityOnCreate.Case(),
+                new WebViewActivity.Case()
         });
         useCases.add(activityCategory);
 

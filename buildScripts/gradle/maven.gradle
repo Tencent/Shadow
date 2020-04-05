@@ -4,6 +4,7 @@ task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':loader:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':runtime:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':activity-container:jarReleasePackage')
     dependsOn gradle.includedBuild('core').task(':transform-kit:assemble')
     dependsOn gradle.includedBuild('core').task(':transform-kit:testJar')
     dependsOn gradle.includedBuild('core').task(':transform:assemble')
@@ -13,6 +14,8 @@ task buildSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:jarReleasePackage')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:assembleRelease')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:assembleRelease')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:jarReleasePackage')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager-multi-loader-ext:assembleRelease')
 }
 
 task lintSdk() {
@@ -20,11 +23,14 @@ task lintSdk() {
     dependsOn gradle.includedBuild('core').task(':loader:lint')
     dependsOn gradle.includedBuild('core').task(':manager:lint')
     dependsOn gradle.includedBuild('core').task(':runtime:lint')
+    dependsOn gradle.includedBuild('core').task(':activity-container:lint')
     dependsOn gradle.includedBuild('core').task(':load-parameters:lint')
 
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:lint')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:lint')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:lint')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:lint')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager-multi-loader-ext:lint')
 }
 
 task testSdk() {
@@ -77,6 +83,17 @@ def setGeneratePomFileAndDepends(publicationName) {
     }
 }
 
+def sourceJar(String name, String path) {
+    return tasks.create("source${name.capitalize()}Jar", Jar) {
+        group = "publishing"
+        description = "package ${name} source to jar"
+        from "$path/src/main/java"
+        from "$path/src/main/kotlin"
+        destinationDir = file("$path/build/libs/")
+        classifier = 'sources'
+    }
+}
+
 def publicationVersion = project.ARTIFACT_VERSION
 def coreGroupId = 'com.tencent.shadow.core'
 def corePath = 'projects/sdk/core'
@@ -90,6 +107,7 @@ publishing {
             artifactId 'gradle-plugin'
             version publicationVersion
             artifact("$corePath/gradle-plugin/build/libs/gradle-plugin.jar")
+            artifact sourceJar("gradlePlugin", "$corePath/gradle-plugin")
 
             pom.withXml {
                 def root = asNode()
@@ -99,6 +117,7 @@ publishing {
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform-kit', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'activity-container', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -109,6 +128,7 @@ publishing {
             artifactId 'common'
             version publicationVersion
             artifact("$corePath/common/build/outputs/jar/common-release.jar")
+            artifact sourceJar("common", "$corePath/common")
 
             pom.withXml {
                 def root = asNode()
@@ -122,6 +142,7 @@ publishing {
             artifactId 'load-parameters'
             version publicationVersion
             artifact("$corePath/load-parameters/build/outputs/aar/load-parameters-release.aar")
+            artifact sourceJar("loadParameters", "$corePath/load-parameters")
 
             pom.withXml {
                 def root = asNode()
@@ -135,12 +156,14 @@ publishing {
             artifactId 'loader'
             version publicationVersion
             artifact("$corePath/loader/build/outputs/aar/loader-release.aar")
+            artifact sourceJar("loader", "$corePath/loader")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
-                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'activity-container', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'load-parameters', publicationVersion))
 
@@ -153,6 +176,7 @@ publishing {
             artifactId 'manager'
             version publicationVersion
             artifact("$corePath/manager/build/outputs/aar/manager-release.aar")
+            artifact sourceJar("manager", "$corePath/manager")
 
             pom.withXml {
                 def root = asNode()
@@ -169,6 +193,21 @@ publishing {
             artifactId 'runtime'
             version publicationVersion
             artifact("$corePath/runtime/build/outputs/jar/runtime-release.jar")
+            artifact sourceJar("runtime", "$corePath/runtime")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        activityContainer(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'activity-container'
+            version publicationVersion
+            artifact("$corePath/activity-container/build/outputs/jar/activity-container-release.jar")
+            artifact sourceJar("activity-container", "$corePath/activity-container")
 
             pom.withXml {
                 def root = asNode()
@@ -183,6 +222,7 @@ publishing {
             artifactId 'transform-kit'
             version publicationVersion
             artifact("$corePath/transform-kit/build/libs/transform-kit.jar")
+            artifact sourceJar("transformKit", "$corePath/transform-kit")
 
             pom.withXml {
                 def root = asNode()
@@ -217,6 +257,7 @@ publishing {
             artifactId 'transform'
             version publicationVersion
             artifact("$corePath/transform/build/libs/transform.jar")
+            artifact sourceJar("transform", "$corePath/transform")
 
             pom.withXml {
                 def root = asNode()
@@ -232,22 +273,41 @@ publishing {
             artifactId 'host'
             version publicationVersion
             artifact("$dynamicPath/dynamic-host/build/outputs/jar/dynamic-host-release.jar")
+            artifact sourceJar("dynamicHost", "$dynamicPath/dynamic-host")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
-                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'common', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
             }
         }
+        dynamicHostMultiLoaderExt(MavenPublication) {
+            groupId dynamicGroupId
+            artifactId 'host-multi-loader-ext'
+            version publicationVersion
+            artifact("$dynamicPath/dynamic-host-multi-loader-ext/build/outputs/jar/dynamic-host-multi-loader-ext-release.jar")
+            artifact sourceJar("dynamicHostMultiLoaderExt", "$dynamicPath/dynamic-host-multi-loader-ext")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'common', publicationVersion))
+                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'host', publicationVersion))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+
         dynamicLoader(MavenPublication) {
             groupId dynamicGroupId
             artifactId 'loader'
             version publicationVersion
             artifact("$dynamicPath/dynamic-loader/build/outputs/jar/dynamic-loader-release.jar")
+            artifact sourceJar("dynamicLoader", "$dynamicPath/dynamic-loader")
 
             pom.withXml {
                 def root = asNode()
@@ -260,13 +320,14 @@ publishing {
             artifactId 'loader-impl'
             version publicationVersion
             artifact("$dynamicPath/dynamic-loader-impl/build/outputs/aar/dynamic-loader-impl-release.aar")
+            artifact sourceJar("dynamicLoaderImpl", "$dynamicPath/dynamic-loader-impl")
 
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'loader', publicationVersion))
-                dependencies.append(getDependencyNode('provided',coreGroupId, 'runtime', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'activity-container', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
                 dependencies.append(getDependencyNode('compile', dynamicGroupId, 'loader', publicationVersion))
@@ -280,6 +341,7 @@ publishing {
             artifactId 'manager'
             version publicationVersion
             artifact("$dynamicPath/dynamic-manager/build/outputs/aar/dynamic-manager-release.aar")
+            artifact sourceJar("dynamicManager", "$dynamicPath/dynamic-manager")
 
             pom.withXml {
                 def root = asNode()
@@ -288,6 +350,27 @@ publishing {
                 dependencies.append(getDependencyNode('compile', dynamicGroupId, 'loader', publicationVersion))
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host', publicationVersion))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+
+        dynamicManagerMultiLoaderExt(MavenPublication) {
+            groupId dynamicGroupId
+            artifactId 'manager-multi-loader-ext'
+            version publicationVersion
+            artifact("$dynamicPath/dynamic-manager-multi-loader-ext/build/outputs/aar/dynamic-manager-multi-loader-ext-release.aar")
+            artifact sourceJar("dynamicManagerMultiLoaderExt", "$dynamicPath/dynamic-manager-multi-loader-ext")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'manager', publicationVersion))
+                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'loader', publicationVersion))
+                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'manager', publicationVersion))
+                dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
+                dependencies.append(getDependencyNode('provided', dynamicGroupId, 'host-multi-loader-ext', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -305,10 +388,13 @@ setGeneratePomFileAndDepends('loadParameters')
 setGeneratePomFileAndDepends('coreLoader')
 setGeneratePomFileAndDepends('coreManager')
 setGeneratePomFileAndDepends('runtime')
+setGeneratePomFileAndDepends('activityContainer')
 setGeneratePomFileAndDepends('transformKit')
 setGeneratePomFileAndDepends('transformKitTest')
 setGeneratePomFileAndDepends('transform')
 setGeneratePomFileAndDepends('dynamicHost')
+setGeneratePomFileAndDepends('dynamicHostMultiLoaderExt')
 setGeneratePomFileAndDepends('dynamicLoader')
 setGeneratePomFileAndDepends('dynamicLoaderImpl')
 setGeneratePomFileAndDepends('dynamicManager')
+setGeneratePomFileAndDepends('dynamicManagerMultiLoaderExt')

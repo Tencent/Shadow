@@ -57,6 +57,10 @@
 
         <activity android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.packagemanager.TestPackageManagerActivity" />
 
+        <activity android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestAppCompatActivityOnCreate"
+            android:theme="@style/Theme.AppCompat"
+            />
+
         <receiver android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.MyReceiver">
             <intent-filter>
                 <action android:name="com.tencent.test.action" />
@@ -71,6 +75,7 @@
 
         <activity android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.context.ApplicationContextSubDirTestActivity" />
         <activity android:name=".usecases.host_communication.PluginUseHostClassActivity" />
+        <activity android:name=".usecases.webview.WebViewActivity" />
 
         <provider
             android:authorities="com.tencent.shadow.provider.test"

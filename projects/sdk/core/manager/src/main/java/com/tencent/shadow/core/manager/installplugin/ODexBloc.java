@@ -28,7 +28,7 @@ public class ODexBloc {
 
     private static ConcurrentHashMap<String, Object> sLocks = new ConcurrentHashMap<>();
 
-    public static File oDexPlugin(File apkFile, File oDexDir, File copiedTagFile) throws InstallPluginException {
+    public static void oDexPlugin(File apkFile, File oDexDir, File copiedTagFile) throws InstallPluginException {
 
         String key = apkFile.getAbsolutePath();
         Object lock = sLocks.get(key);
@@ -40,7 +40,7 @@ public class ODexBloc {
 
         synchronized (lock) {
             if (copiedTagFile.exists()) {
-                return oDexDir;
+                return;
             }
 
             //如果odex目录存在但是个文件，不是目录，那超出预料了。删除了也不一定能工作正常。
@@ -58,9 +58,5 @@ public class ODexBloc {
                 throw new InstallPluginException("oDexPlugin完毕 创建tag文件失败：" + copiedTagFile.getAbsolutePath(), e);
             }
         }
-
-        return oDexDir;
-
-
     }
 }

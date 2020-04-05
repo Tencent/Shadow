@@ -27,9 +27,9 @@ import com.tencent.shadow.dynamic.host.UuidManager;
 
 class UuidManagerBinder extends android.os.Binder {
 
-    final private PluginManagerThatUseDynamicLoader mUuidManager;
+    final private UuidManagerImpl mUuidManager;
 
-    UuidManagerBinder(PluginManagerThatUseDynamicLoader uuidManager) {
+    UuidManagerBinder(UuidManagerImpl uuidManager) {
         mUuidManager = uuidManager;
     }
 

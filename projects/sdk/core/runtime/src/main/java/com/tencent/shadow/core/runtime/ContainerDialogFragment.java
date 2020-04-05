@@ -84,7 +84,7 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
         Constructor<?> constructor = constructorMap.get(pluginFragmentClassName);
         if (constructor == null) {
             PluginContainerActivity containerActivity = (PluginContainerActivity) context;
-            PluginActivity pluginActivity = (PluginActivity) containerActivity.getPluginActivity();
+            PluginActivity pluginActivity = PluginActivity.get(containerActivity);
             ClassLoader pluginClassLoader = pluginActivity.getClassLoader();
             try {
                 Class<?> aClass = pluginClassLoader.loadClass(pluginFragmentClassName);
@@ -155,7 +155,7 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
         super.onAttach(context);
 
         if (context instanceof PluginContainerActivity) {
-            Context pluginActivity = (Context) (((PluginContainerActivity) context).getPluginActivity());
+            Context pluginActivity = PluginActivity.get((PluginContainerActivity) context);
             mPluginFragment.onAttach(pluginActivity);
         }
     }
@@ -166,7 +166,7 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
         initPluginFragment(activity);
         super.onAttach(activity);
         if (activity instanceof PluginContainerActivity) {
-            Context pluginActivity = (Context) (((PluginContainerActivity) activity).getPluginActivity());
+            Context pluginActivity = PluginActivity.get((PluginContainerActivity) activity);
             mPluginFragment.onAttach((ShadowActivity)pluginActivity);
         }
     }

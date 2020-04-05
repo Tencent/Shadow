@@ -33,7 +33,32 @@ class DialogTransform : SpecificTransform() {
 
     private lateinit var codeConverter: CodeConverter
 
+    val mAllDialogs: MutableList<String> = mutableListOf(ShadowDialogClassname)
+    private fun CtClass.isDialog(): Boolean = isClassOf(AndroidDialogClassname)
+
     override fun setup(allInputClass: Set<CtClass>) {
+
+        //收集哪些当前Transform的App类是Dialog
+        newStep(object : TransformStep {
+            override fun filter(allInputClass: Set<CtClass>): Set<CtClass> = allInputClass
+
+            override fun transform(ctClass: CtClass) {
+                if (ctClass.isDialog()) {
+                    mAllDialogs.add(ctClass.name)
+                }
+            }
+        })
+
+        newStep(object : TransformStep {
+            override fun filter(allInputClass: Set<CtClass>) = allInputClass
+
+            override fun transform(ctClass: CtClass) {
+                ctClass.defrost()
+                ReplaceClassName.replaceClassName(ctClass, AndroidDialogClassname, ShadowDialogClassname)
+            }
+
+        })
+
         val dialogMethods = mClassPool[AndroidDialogClassname].methods!!
         val shadowDialogMethods = mClassPool[ShadowDialogClassname].methods!!
         codeConverter = CodeConverter()
@@ -49,20 +74,13 @@ class DialogTransform : SpecificTransform() {
         )
 
         newStep(object : TransformStep {
-            override fun filter(allInputClass: Set<CtClass>) = allInputClass
 
-            override fun transform(ctClass: CtClass) {
-                ReplaceClassName.replaceClassName(ctClass, AndroidDialogClassname, ShadowDialogClassname)
-            }
-
-        })
-
-        newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>): Set<CtClass> =
-                allCanRecompileAppClass(allInputClass, listOf(AndroidDialogClassname))
+                    allCanRecompileAppClass(allInputClass, mAllDialogs)
 
             override fun transform(ctClass: CtClass) {
                 try {
+                    ctClass.defrost()
                     ctClass.instrument(codeConverter)
                 } catch (e: Exception) {
                     System.err.println("处理" + ctClass.name + "时出错")

@@ -26,17 +26,48 @@
 
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginLeft="16dp"
+        android:tag="button_static"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="TestNormalBraodcast"
+        android:text="测试静态广播发送" />
+
+
+    <Button
+        android:id="@+id/button_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
+        android:tag="button_dynamic"
         android:layout_marginBottom="8dp"
-        android:text="测试静态广播发送" />
+        android:onClick="TestDynamicBraodcast"
+        android:text="测试动态广播发送" />
+
+    <Button
+        android:id="@+id/button_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:tag="button_unRegister_dynamic"
+        android:layout_marginBottom="8dp"
+        android:onClick="TestUnregisterDynamicBraodcast"
+        android:text="测试动态广播注销" />
 
 
-
-
+    <TextView
+        android:id="@+id/content"
+        android:layout_marginTop="20dp"
+        android:tag="text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

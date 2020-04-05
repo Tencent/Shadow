@@ -35,6 +35,8 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        main.java.srcDirs += project(':generate-delegate-code').buildDir.path + '/generated/DelegateCode/loader'
+        test.java.srcDirs += 'src/test/kotlin'
     }
 }
 
@@ -42,7 +44,8 @@ dependencies {
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     testImplementation 'junit:junit:4.12'
 
-    compileOnly project(':runtime')
+    api project(':runtime')
+    compileOnly project(':activity-container')
     compileOnly project(':common')
     api project(':load-parameters')
     implementation 'com.tencent.shadow.coding:lint'
@@ -70,3 +73,5 @@ afterEvaluate {
         }
     }
 }
+
+preBuild.dependsOn(project(":generate-delegate-code").getTasksByName("generateDelegateCode", false).first())

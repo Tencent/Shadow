@@ -35,13 +35,13 @@ class TransformManager(ctClassInputMap: Map<CtClass, InputClass>,
             ActivityTransform(),
             ServiceTransform(),
             InstrumentationTransform(),
-            RemoteViewTransform(),
             FragmentTransform(ctClassInputMap),
             DialogTransform(),
             WebViewTransform(),
             ContentProviderTransform(),
             PackageManagerTransform(),
             PackageItemInfoTransform(),
+            AppComponentFactoryTransform(),
             KeepHostContextTransform(useHostContext())
     )
 }

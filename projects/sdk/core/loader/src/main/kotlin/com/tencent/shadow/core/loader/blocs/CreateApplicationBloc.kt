@@ -25,8 +25,8 @@ import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.CreateApplicationException
 import com.tencent.shadow.core.loader.infos.PluginInfo
 import com.tencent.shadow.core.loader.managers.ComponentManager
+import com.tencent.shadow.core.runtime.ShadowAppComponentFactory
 import com.tencent.shadow.core.runtime.ShadowApplication
-import com.tencent.shadow.core.runtime.remoteview.ShadowRemoteViewCreatorProvider
 
 /**
  * 初始化插件Application类
@@ -41,28 +41,25 @@ object CreateApplicationBloc {
             resources: Resources,
             hostAppContext: Context,
             componentManager: ComponentManager,
-            remoteViewCreatorProvider: ShadowRemoteViewCreatorProvider?,
-            applicationInfo: ApplicationInfo
+            applicationInfo: ApplicationInfo,
+            appComponentFactory: ShadowAppComponentFactory
     ): ShadowApplication {
         try {
             val appClassName = pluginInfo.applicationClassName
-            val shadowApplication : ShadowApplication;
-            shadowApplication = if (appClassName != null) {
-                val appClass = pluginClassLoader.loadClass(appClassName)
-                ShadowApplication::class.java.cast(appClass.newInstance())
-            } else {
-                object : ShadowApplication(){}
-            }
+                    ?: ShadowApplication::class.java.name
+            val shadowApplication = appComponentFactory.instantiateApplication(pluginClassLoader, appClassName)
             val partKey = pluginInfo.partKey
             shadowApplication.setPluginResources(resources)
             shadowApplication.setPluginClassLoader(pluginClassLoader)
             shadowApplication.setPluginComponentLauncher(componentManager)
-            shadowApplication.setHostApplicationContextAsBase(hostAppContext)
             shadowApplication.setBroadcasts(componentManager.getBroadcastsByPartKey(partKey))
+            shadowApplication.setAppComponentFactory(appComponentFactory)
             shadowApplication.applicationInfo = applicationInfo
             shadowApplication.setBusinessName(pluginInfo.businessName)
             shadowApplication.setPluginPartKey(partKey)
-            shadowApplication.remoteViewCreatorProvider = remoteViewCreatorProvider
+
+            //和ShadowActivityDelegate.initPluginActivity一样，attachBaseContext放到最后
+            shadowApplication.setHostApplicationContextAsBase(hostAppContext)
             return shadowApplication
         } catch (e: Exception) {
             throw CreateApplicationException(e)

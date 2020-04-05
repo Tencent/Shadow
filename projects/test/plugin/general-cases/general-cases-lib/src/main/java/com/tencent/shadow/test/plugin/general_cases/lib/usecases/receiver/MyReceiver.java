@@ -29,5 +29,7 @@ public class MyReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String msg = intent.getStringExtra("msg");
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+
+        BroadCastHelper.notify(intent, context);
     }
 }

@@ -35,11 +35,13 @@ import java.util.Map;
 /**
  * 用于在plugin-loader中调用假的Application方法的接口
  */
-public abstract class ShadowApplication extends ShadowContext {
+public class ShadowApplication extends ShadowContext {
 
     private Application mHostApplication;
 
     private Map<String, List<String>> mBroadcasts;
+
+    private ShadowAppComponentFactory mAppComponentFactory;
 
     public boolean isCallOnCreate;
 
@@ -48,7 +50,9 @@ public abstract class ShadowApplication extends ShadowContext {
         return this;
     }
 
-    private Map<ShadowActivityLifecycleCallbacks, Application.ActivityLifecycleCallbacks> mActivityLifecycleCallbacksMap = new HashMap<>();
+    final private Map<ShadowActivityLifecycleCallbacks,
+            Application.ActivityLifecycleCallbacks>
+            mActivityLifecycleCallbacksMap = new HashMap<>();
 
     public void onCreate() {
 
@@ -58,12 +62,14 @@ public abstract class ShadowApplication extends ShadowContext {
             try {
                 Class<?> clazz = mPluginClassLoader.loadClass(entry.getKey());
                 BroadcastReceiver receiver = ((BroadcastReceiver) clazz.newInstance());
+                mAppComponentFactory.instantiateReceiver(mPluginClassLoader, entry.getKey(), null);
+
                 IntentFilter intentFilter = new IntentFilter();
                 for (String action:entry.getValue()
                      ) {
                     intentFilter.addAction(action);
                 }
-                mHostApplication.registerReceiver(receiver, intentFilter);
+                registerReceiver(receiver, intentFilter);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -118,19 +124,23 @@ public abstract class ShadowApplication extends ShadowContext {
 
 
     public void registerActivityLifecycleCallbacks(ShadowActivityLifecycleCallbacks callback) {
-        final ShadowActivityLifecycleCallbacks.Wrapper wrapper
-                = new ShadowActivityLifecycleCallbacks.Wrapper(callback, this);
-        mActivityLifecycleCallbacksMap.put(callback, wrapper);
-        mHostApplication.registerActivityLifecycleCallbacks(wrapper);
+        synchronized (mActivityLifecycleCallbacksMap) {
+            final ShadowActivityLifecycleCallbacks.Wrapper wrapper
+                    = new ShadowActivityLifecycleCallbacks.Wrapper(callback, this);
+            mActivityLifecycleCallbacksMap.put(callback, wrapper);
+            mHostApplication.registerActivityLifecycleCallbacks(wrapper);
+        }
     }
 
 
     public void unregisterActivityLifecycleCallbacks(ShadowActivityLifecycleCallbacks callback) {
-        final Application.ActivityLifecycleCallbacks activityLifecycleCallbacks
-                = mActivityLifecycleCallbacksMap.get(callback);
-        if (activityLifecycleCallbacks != null) {
-            mHostApplication.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks);
-            mActivityLifecycleCallbacksMap.remove(callback);
+        synchronized (mActivityLifecycleCallbacksMap) {
+            final Application.ActivityLifecycleCallbacks activityLifecycleCallbacks
+                    = mActivityLifecycleCallbacksMap.get(callback);
+            if (activityLifecycleCallbacks != null) {
+                mHostApplication.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks);
+                mActivityLifecycleCallbacksMap.remove(callback);
+            }
         }
     }
 
@@ -157,5 +167,9 @@ public abstract class ShadowApplication extends ShadowContext {
 
     public void attachBaseContext(Context base) {
         //do nothing.
+    }
+
+    public void setAppComponentFactory(ShadowAppComponentFactory factory) {
+        mAppComponentFactory = factory;
     }
 }

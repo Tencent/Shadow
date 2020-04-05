@@ -32,6 +32,7 @@ dependencies {
     implementation project(':sample-constant')
 
     compileOnly 'com.tencent.shadow.core:runtime-debug'
+    compileOnly 'com.tencent.shadow.core:activity-container-debug'
     compileOnly 'com.tencent.shadow.core:common-debug'
     //下面这行依赖是为了防止在proguard的时候找不到LoaderFactory接口
     compileOnly 'com.tencent.shadow.dynamic:dynamic-host-debug'
@@ -46,6 +47,7 @@ afterEvaluate {
         buildTypes.findAll().each { buildType ->
             def buildTypeName = buildType.getName()
             def task = project.getTasksByName("check${buildTypeName.capitalize()}Classpath", false).first() as Task
+            task.dependsOn(":sample-host-lib:jarDebugPackage")
             task.dependsOn gradle.includedBuild('core').task(':common:jarDebugPackage')
             task.dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:jarDebugPackage')
         }

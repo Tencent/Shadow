@@ -19,6 +19,7 @@
 package com.tencent.shadow.test.none_dynamic.host;
 
 import android.app.Application;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.StrictMode;
@@ -27,13 +28,16 @@ import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.core.load_parameters.LoadParameters;
 import com.tencent.shadow.core.loader.ShadowPluginLoader;
+import com.tencent.shadow.core.loader.exceptions.LoadPluginException;
 import com.tencent.shadow.core.runtime.container.ContentProviderDelegateProviderHolder;
 import com.tencent.shadow.core.runtime.container.DelegateProviderHolder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class HostApplication extends Application {
     private static Application sApp;
@@ -55,34 +59,49 @@ public class HostApplication extends Application {
 
     private final Map<String, InstalledApk> mPluginMap = new HashMap<>();
 
-    public void loadPlugin(String partKey) {
+    public void loadPlugin(final String partKey, final Runnable completeRunnable) {
         InstalledApk installedApk = mPluginMap.get(partKey);
         if (installedApk == null) {
             throw new NullPointerException("partKey == " + partKey);
         }
 
-        LoadParameters loadParameters = new LoadParameters(null, partKey, null, null);
+        if (mPluginLoader.getPluginParts(partKey) == null) {
+            LoadParameters loadParameters = new LoadParameters(null, partKey, null, null);
 
-        Parcel parcel = Parcel.obtain();
-        loadParameters.writeToParcel(parcel, 0);
-        InstalledApk plugin = new InstalledApk(
-                installedApk.apkFilePath,
-                installedApk.oDexPath,
-                installedApk.libraryPath,
-                parcel.marshall()
-        );
-        parcel.recycle();
+            Parcel parcel = Parcel.obtain();
+            loadParameters.writeToParcel(parcel, 0);
+            final InstalledApk plugin = new InstalledApk(
+                    installedApk.apkFilePath,
+                    installedApk.oDexPath,
+                    installedApk.libraryPath,
+                    parcel.marshall()
+            );
+            parcel.recycle();
 
+            new AsyncTask<Void, Void, Void>() {
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    ShadowPluginLoader pluginLoader = mPluginLoader;
+                    Future<?> future = null;
+                    try {
+                        future = pluginLoader.loadPlugin(plugin);
+                        future.get(10, TimeUnit.SECONDS);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException("加载失败", e);
+                    }
+                    return null;
+                }
 
-        try {
-            ShadowPluginLoader pluginLoader = this.mPluginLoader;
-            Future<?> future = pluginLoader.loadPlugin(plugin);
-
-            future.get(10, TimeUnit.SECONDS);
-
-            pluginLoader.callApplicationOnCreate(partKey);
-        } catch (Exception e) {
-            throw new RuntimeException("加载失败", e);
+                @Override
+                protected void onPostExecute(Void aVoid) {
+                    super.onPostExecute(aVoid);
+                    mPluginLoader.callApplicationOnCreate(partKey);
+                    completeRunnable.run();
+                }
+            }.execute();
+        } else {
+            completeRunnable.run();
         }
     }
 
@@ -93,7 +112,7 @@ public class HostApplication extends Application {
 
         ShadowPluginLoader loader = mPluginLoader = new TestPluginLoader(getApplicationContext());
         loader.onCreate();
-        DelegateProviderHolder.setDelegateProvider(loader);
+        DelegateProviderHolder.setDelegateProvider(loader.getDelegateProviderKey(), loader);
         ContentProviderDelegateProviderHolder.setContentProviderDelegateProvider(loader);
 
         InstalledApk installedApk = sPluginPrepareBloc.preparePlugin(this.getApplicationContext());
@@ -115,7 +134,6 @@ public class HostApplication extends Application {
             return;
         }
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        builder.penaltyDeath();
         builder.detectNonSdkApiUsage();
         StrictMode.setVmPolicy(builder.build());
     }

@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.shadow_version = '2.0.12-782812a5-SNAPSHOT'
+    ext.shadow_version = '2.0.12-c3a2c91f-SNAPSHOT'
     repositories {
         google()
         jcenter()
