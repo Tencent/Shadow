@@ -33,12 +33,20 @@ task lintSdk() {
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager-multi-loader-ext:lint')
 }
 
-task testSdk() {
+task jvmTestSdk() {
     dependsOn gradle.includedBuild('core').task(':transform-kit:test')
     dependsOn gradle.includedBuild('core').task(':transform:test')
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:test')
+}
+
+task androidTestSdk() {
     dependsOn gradle.includedBuild('core').task(':manager:connectedDebugAndroidTest')
     dependsOn ':test-dynamic-host:connectedDebugAndroidTest'
+}
+
+task testSdk() {
+    dependsOn jvmTestSdk
+    dependsOn androidTestSdk
 }
 
 apply plugin: 'maven-publish'
