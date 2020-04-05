@@ -118,7 +118,7 @@ shadow {
                         partKey = 'sample-plugin'
                         buildTask = 'assembleRelease'
                         apkName = 'app-release.apk'
-                        apkPath = 'app/build/outputs/apk/release/app-release.apk'
+                        apkPath = 'app/build/outputs/apk/release/app-release-unsigned.apk'
                     }
                 }
             }
