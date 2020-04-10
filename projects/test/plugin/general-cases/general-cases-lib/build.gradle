@@ -30,7 +30,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation project(':custom-view')
 
-    compileOnly 'androidx.test.espresso:espresso-idling-resource:3.2.0-alpha02'
+    compileOnly 'androidx.test.espresso:espresso-idling-resource:3.3.0-alpha05'
 
     compileOnly project(':plugin-use-host-code-lib')
 }
