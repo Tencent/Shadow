@@ -53,15 +53,23 @@ class PluginServiceConnectionBinder extends Binder {
             }
             case TRANSACTION_onServiceConnected: {
                 data.enforceInterface(DESCRIPTOR);
-                ComponentName _arg0;
+                final ComponentName name;
                 if (0 != data.readInt()) {
-                    _arg0 = ComponentName.CREATOR.createFromParcel(data);
+                    name = ComponentName.CREATOR.createFromParcel(data);
                 } else {
-                    _arg0 = null;
+                    name = null;
                 }
-                IBinder _arg1;
-                _arg1 = data.readStrongBinder();
-                mPsc.onServiceConnected(_arg0, _arg1);
+                IBinder service;
+                service = data.readStrongBinder();
+                mPsc.onServiceConnected(name, service);
+
+                service.linkToDeath(new DeathRecipient() {
+                    @Override
+                    public void binderDied() {
+                        mPsc.onServiceDisconnected(name);
+                    }
+                }, 0);
+
                 reply.writeNoException();
                 return true;
             }

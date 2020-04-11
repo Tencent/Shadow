@@ -15,8 +15,8 @@
 
     <instrumentation
         android:name="com.tencent.shadow.test.CustomAndroidJUnitRunner"
-        android:targetPackage="com.tencent.shadow.test.hostapp"
-        android:targetProcesses="*"> <!-- The instrumentation attribute introduced in O -->
+        android:targetPackage="com.tencent.shadow.test.hostapp">
+        <!-- 不设置targetProcesses为*是因为.plugin_service进程在PluginServiceConnectionTest中会被kill掉 -->
 
         <!--
           The following is used by AndroidJUnitRunner (AJUR) to init Espresso in the new PID. This
