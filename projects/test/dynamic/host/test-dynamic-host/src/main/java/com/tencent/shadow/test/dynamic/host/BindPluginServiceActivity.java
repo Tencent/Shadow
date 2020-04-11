@@ -25,13 +25,15 @@ import android.view.View;
 import com.tencent.shadow.dynamic.host.EnterCallback;
 import com.tencent.shadow.test.lib.constant.Constant;
 import com.tencent.shadow.test.lib.test_manager.SimpleIdlingResource;
+import com.tencent.shadow.test.lib.test_manager.TestManager;
 
-public class JumpToPluginActivity extends Activity {
+public class BindPluginServiceActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jump_to_plugin);
+        TestManager.sBindPluginServiceActivityContentView = findViewById(R.id.root);
     }
 
     public void jump(View view) {
@@ -46,7 +48,7 @@ public class JumpToPluginActivity extends Activity {
         final SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
         idlingResource.setIdleState(false);
         HostApplication.getApp().getPluginManager()
-                .enter(this, Constant.FROM_ID_START_ACTIVITY, bundle, new EnterCallback() {
+                .enter(this, Constant.FROM_ID_BIND_SERVICE, bundle, new EnterCallback() {
                     @Override
                     public void onShowLoadingView(View view) {
 

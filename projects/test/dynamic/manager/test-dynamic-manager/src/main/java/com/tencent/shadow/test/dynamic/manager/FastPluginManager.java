@@ -123,11 +123,6 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
 
     public Intent convertActivityIntent(InstalledPlugin installedPlugin, String partKey, Intent pluginIntent) throws RemoteException, TimeoutException, FailedException {
         loadPlugin(installedPlugin.UUID, partKey);
-        Map map = mPluginLoader.getLoadedPlugin();
-        Boolean isCall = (Boolean) map.get(partKey);
-        if (isCall == null || !isCall) {
-            mPluginLoader.callApplicationOnCreate(partKey);
-        }
         return mPluginLoader.convertActivityIntent(pluginIntent);
     }
 
@@ -140,11 +135,15 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
         loadPluginLoader(uuid);
     }
 
-    private void loadPlugin(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
+    protected void loadPlugin(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
         loadPluginLoaderAndRuntime(uuid);
         Map map = mPluginLoader.getLoadedPlugin();
         if (!map.containsKey(partKey)) {
             mPluginLoader.loadPlugin(partKey);
+        }
+        Boolean isCall = (Boolean) map.get(partKey);
+        if (isCall == null || !isCall) {
+            mPluginLoader.callApplicationOnCreate(partKey);
         }
     }
 

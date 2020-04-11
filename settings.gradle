@@ -28,6 +28,7 @@ def includeTest() {
             'test-multidex-lib',
             'test-plugin-multidex-v1_0_2',
             'test-plugin-multidex-v2_0_1',
+            'plugin-service-for-host',
             'test-none-dynamic-host'
     project(':test-dynamic-host').projectDir = file('projects/test/dynamic/host/test-dynamic-host')
     project(':test-dynamic-manager').projectDir = file('projects/test/dynamic/manager/test-dynamic-manager')
@@ -43,6 +44,7 @@ def includeTest() {
     project(':test-multidex-lib').projectDir = file('projects/test/plugin/particular-cases/multidex/test-multidex-lib')
     project(':test-plugin-multidex-v1_0_2').projectDir = file('projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v1_0_2')
     project(':test-plugin-multidex-v2_0_1').projectDir = file('projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1')
+    project(':plugin-service-for-host').projectDir = file('projects/test/plugin/particular-cases/plugin-service-for-host')
     project(':test-none-dynamic-host').projectDir = file('projects/test/none-dynamic/host/test-none-dynamic-host')
 }
 

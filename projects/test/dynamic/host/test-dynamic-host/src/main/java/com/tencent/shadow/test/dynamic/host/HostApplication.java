@@ -21,6 +21,7 @@ package com.tencent.shadow.test.dynamic.host;
 import android.app.Application;
 import android.os.Build;
 import android.os.StrictMode;
+import android.webkit.WebView;
 
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.dynamic.host.DynamicRuntime;
@@ -34,7 +35,7 @@ public class HostApplication extends Application {
 
     private PluginManager mPluginManager;
 
-    final public SimpleIdlingResource mIdlingResource = new SimpleIdlingResource();
+    final public SimpleIdlingResourceImpl mIdlingResource = new SimpleIdlingResourceImpl();
 
     @Override
     public void onCreate() {
@@ -52,6 +53,11 @@ public class HostApplication extends Application {
 
         PluginHelper.getInstance().init(this);
 
+        //Using WebView from more than one process at once with the same data directory is not supported.
+        //https://crbug.com/558377
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            WebView.setDataDirectorySuffix(Application.getProcessName());
+        }
     }
 
     private static void detectNonSdkApiUsageOnAndroidP() {

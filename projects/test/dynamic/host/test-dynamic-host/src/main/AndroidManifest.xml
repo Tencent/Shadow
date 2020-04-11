@@ -90,6 +90,9 @@
 
         <service android:name=".PluginProcessPPS"
             />
+        <service
+            android:name=".PluginServiceProcessPPS"
+            android:process=".plugin_service" />
 
         <activity android:name=".PluginLoadActivity"
             android:launchMode="standard"
@@ -98,6 +101,8 @@
             />
 
         <activity android:name=".JumpToPluginActivity" />
+
+        <activity android:name=".BindPluginServiceActivity" />
 
         <!--dynamic activity注册
           注意configChanges需要全注册
