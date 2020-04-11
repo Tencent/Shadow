@@ -57,6 +57,13 @@ shadow {
                         apkName = 'test-plugin-multidex-v2_0_1-debug.apk'
                         apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1/build/outputs/apk/debug/test-plugin-multidex-v2_0_1-debug.apk'
                     }
+                    pluginApk4 {
+                        businessName = 'plugin-service-for-host'
+                        partKey = 'plugin-service-for-host'
+                        buildTask = ':plugin-service-for-host:assembleDebug'
+                        apkName = 'plugin-service-for-host-debug.apk'
+                        apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/debug/plugin-service-for-host-debug.apk'
+                    }
                 }
             }
 
@@ -86,6 +93,13 @@ shadow {
                         buildTask = ':test-plugin-multidex-v2_0_1:assembleRelease'
                         apkName = 'test-plugin-multidex-v2_0_1-release.apk'
                         apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1/build/outputs/apk/release/test-plugin-multidex-v2_0_1-release-unsigned.apk'
+                    }
+                    pluginApk4 {
+                        businessName = 'plugin-service-for-host'
+                        partKey = 'plugin-service-for-host'
+                        buildTask = ':plugin-service-for-host:assembleRelease'
+                        apkName = 'plugin-service-for-host-release.apk'
+                        apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/release/plugin-service-for-host-release.apk'
                     }
                 }
             }

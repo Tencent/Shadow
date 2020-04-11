@@ -20,6 +20,8 @@ package com.tencent.shadow.test.dynamic.host;
 
 import androidx.test.espresso.IdlingResource;
 
+import com.tencent.shadow.test.lib.test_manager.SimpleIdlingResource;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -29,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * multiple threads or need to keep a count of pending operations.
  */
 
-public class SimpleIdlingResource implements IdlingResource {
+public class SimpleIdlingResourceImpl implements IdlingResource, SimpleIdlingResource {
 
     private volatile IdlingResource.ResourceCallback mCallback;
 
@@ -56,6 +58,7 @@ public class SimpleIdlingResource implements IdlingResource {
      *
      * @param isIdleNow false if there are pending operations, true if idle.
      */
+    @Override
     public void setIdleState(boolean isIdleNow) {
         mIsIdleNow.set(isIdleNow);
         if (isIdleNow && mCallback != null) {

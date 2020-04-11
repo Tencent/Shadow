@@ -18,12 +18,14 @@
 
 package com.tencent.shadow.test;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -31,8 +33,9 @@ import androidx.test.espresso.matcher.ViewMatchers;
 import com.tencent.shadow.test.dynamic.host.HostApplication;
 import com.tencent.shadow.test.dynamic.host.JumpToPluginActivity;
 import com.tencent.shadow.test.dynamic.host.R;
-import com.tencent.shadow.test.dynamic.host.SimpleIdlingResource;
+import com.tencent.shadow.test.dynamic.host.SimpleIdlingResourceImpl;
 import com.tencent.shadow.test.lib.constant.Constant;
+import com.tencent.shadow.test.lib.test_manager.TestManager;
 
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -68,9 +71,10 @@ public abstract class PluginTest {
 
     @Before
     public void launchActivity() {
-        SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
+        SimpleIdlingResourceImpl idlingResource = HostApplication.getApp().mIdlingResource;
         IdlingRegistry.getInstance().register(idlingResource);
-        launchPluginActivity(getPartKey(), getLaunchIntent());
+        TestManager.TheSimpleIdlingResource = idlingResource;
+        launchJumpActivity(getPartKey(), getLaunchIntent());
 
         Espresso.onView(ViewMatchers.withId(R.id.jump)).perform(ViewActions.click());
     }
@@ -78,15 +82,20 @@ public abstract class PluginTest {
 
     @After
     public void unregisterIdlingResource() {
-        SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
+        TestManager.TheSimpleIdlingResource = null;
+        IdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
         IdlingRegistry.getInstance().unregister(idlingResource);
     }
 
-    private static void launchPluginActivity(String partKey, Intent pluginIntent) {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), JumpToPluginActivity.class);
+    private void launchJumpActivity(String partKey, Intent pluginIntent) {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), getJumpActivityClass());
         intent.putExtra(Constant.KEY_PLUGIN_PART_KEY, partKey);
         intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, pluginIntent.getComponent().getClassName());
         intent.putExtra(Constant.KEY_EXTRAS, pluginIntent.getExtras());
         ActivityScenario.launch(intent);
+    }
+
+    protected Class<? extends Activity> getJumpActivityClass() {
+        return JumpToPluginActivity.class;
     }
 }
