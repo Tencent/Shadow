@@ -42,4 +42,13 @@ public class PluginServiceConnectionTest extends PluginServiceAppTest {
         matchTextWithViewTag("CLASS_VIEW_TAG", ServiceClassName);
     }
 
+    @Test
+    public void onServiceDisconnected() {
+        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("BIND_BUTTON_TAG"))).perform(ViewActions.click());
+        matchTextWithViewTag("STATUS_VIEW_TAG", "onServiceConnected");
+        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("STOP_BUTTON_TAG"))).perform(ViewActions.click());
+        matchTextWithViewTag("STATUS_VIEW_TAG", "onServiceDisconnected");
+        matchTextWithViewTag("PACKAGE_VIEW_TAG", packageName);
+        matchTextWithViewTag("CLASS_VIEW_TAG", ServiceClassName);
+    }
 }
