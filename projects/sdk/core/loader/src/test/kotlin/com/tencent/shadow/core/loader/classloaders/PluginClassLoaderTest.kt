@@ -218,6 +218,18 @@ class PluginClassLoaderTest {
         val className = "com.tencentshadow.next.MyClass"
         Assert.assertFalse(className.inPackage(packageNames))
     }
+
+    @Test
+    fun case75() {
+        //允许retrofit2包中的类和retrofit2包中所有子包中的类
+        val packageNames = arrayOf("retrofit2", "retrofit2.**")
+        val className1 = "retrofit2.Retrofit\$Builder"
+        val className2 = "retrofit2.a.Retrofit\$Builder"
+        val className3 = "retrofit2.a.b.Retrofit\$Builder"
+        Assert.assertTrue(className1.inPackage(packageNames))
+        Assert.assertTrue(className2.inPackage(packageNames))
+        Assert.assertTrue(className3.inPackage(packageNames))
+    }
 }
 
 
