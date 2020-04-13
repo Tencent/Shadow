@@ -191,11 +191,6 @@ public class ContainerDialogFragment extends DialogFragment implements IContaine
     }
 
     @Override
-    public void setTargetFragment(Fragment fragment, int requestCode) {
-        mPluginFragment.setTargetFragment(fragment, requestCode);
-    }
-
-    @Override
     public Context getContext() {
         return mPluginFragment.getContext();
     }
