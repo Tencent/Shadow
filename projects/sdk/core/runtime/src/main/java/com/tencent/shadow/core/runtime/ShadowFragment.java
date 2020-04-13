@@ -158,9 +158,19 @@ public class ShadowFragment {
 
     }
 
+    public void setTargetFragment(ShadowFragment fragment, int requestCode) {
+        Fragment containerFragment = fragment.getContainerFragment().asFragment();
+        mContainerFragment.asFragment().setTargetFragment(containerFragment, requestCode);
+    }
 
-    public void setTargetFragment(Fragment fragment, int requestCode) {
+    public ShadowFragment getTargetFragment() {
+        IContainerFragment targetFragment
+                = (IContainerFragment) mContainerFragment.asFragment().getTargetFragment();
+        return targetFragment.getPluginFragment();
+    }
 
+    public int getTargetRequestCode() {
+        return mContainerFragment.asFragment().getTargetRequestCode();
     }
 
 
