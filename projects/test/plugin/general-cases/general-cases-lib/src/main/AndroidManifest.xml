@@ -39,9 +39,9 @@
 
         <activity android:name=".usecases.receiver.TestReceiverActivity" />
 
-        <activity android:name=".usecases.fragment.TestDynamicFragmentActivity" />
+        <activity android:name=".usecases.fragment.ProgrammaticallyAddFragmentActivity" />
 
-        <activity android:name=".usecases.fragment.TestXmlFragmentActivity" />
+        <activity android:name=".usecases.fragment.XmlAddFragmentActivity" />
 
         <activity android:name=".usecases.dialog.TestDialogActivity" />
 
@@ -75,6 +75,7 @@
         <activity android:name=".usecases.application.TestGetApplicationInfoActivity" />
         <activity android:name=".usecases.activity.ApplicationContextActivity" />
         <activity android:name=".usecases.fragment.TargetFragmentTestActivity" />
+        <activity android:name=".usecases.fragment.FragmentStartedActivity" />
 
         <provider
             android:authorities="com.tencent.shadow.provider.test"
