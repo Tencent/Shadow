@@ -19,17 +19,43 @@
 package com.tencent.shadow.test.plugin.general_cases.lib.usecases.fragment;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.tencent.shadow.test.plugin.general_cases.lib.R;
 
-public class TestXmlFragmentActivity extends Activity {
+public class XmlAddFragmentActivity extends Activity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_fragment_xml_activity);
 
+        String fragmentType = getIntent().getStringExtra("FragmentType");
+        int xmlId;
+        switch (fragmentType) {
+            case "TestNormalFragment":
+                xmlId = R.layout.layout_xml_add_normal_fragment_activity;
+                break;
+            case "TestSubFragment":
+                xmlId = R.layout.layout_xml_add_sub_fragment_activity;
+                break;
+            case "TestBaseFragment":
+                xmlId = R.layout.layout_xml_add_base_fragment_activity;
+                break;
+            default:
+                throw new IllegalArgumentException("fragmentType不识别：" + fragmentType);
+        }
+
+        setContentView(xmlId);
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if ("TestFragmentTag".equals(fragment.getTag())) {
+            TestFragment testFragment = (TestFragment) fragment;
+            testFragment.setTestArguments("addFragmentWithXml");
+        }
     }
 }

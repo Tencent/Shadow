@@ -1,6 +1,7 @@
 package com.tencent.shadow.test.plugin.general_cases.lib.usecases.fragment;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
@@ -13,8 +14,8 @@ public class TargetFragmentTestActivity extends Activity {
         super.onCreate(savedInstanceState);
         ViewGroup viewGroup = UiUtil.setActivityContentView(this);
 
-        TestFragment fragA = TestFragment.newInstance(null);
-        TestFragment fragB = TestFragment.newInstance(null);
+        Fragment fragA = new TestNormalFragment();
+        Fragment fragB = new TestNormalFragment();
         getFragmentManager().beginTransaction()
                 .add(fragA, "fragA")
                 .add(fragB, "fragB")
