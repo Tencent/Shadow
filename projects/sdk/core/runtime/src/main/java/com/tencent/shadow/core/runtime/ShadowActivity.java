@@ -19,7 +19,6 @@
 package com.tencent.shadow.core.runtime;
 
 import android.app.Application;
-import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -33,10 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ShadowActivity extends PluginActivity {
-
-    private int mFragmentManagerHash;
-
-    private PluginFragmentManager mPluginFragmentManager;
 
     public void setContentView(int layoutResID) {
         if ("merge".equals(XmlPullParserUtil.getLayoutStartTagName(getResources(), layoutResID))) {
@@ -52,16 +47,6 @@ public abstract class ShadowActivity extends PluginActivity {
 
     public final ShadowApplication getApplication() {
         return mPluginApplication;
-    }
-
-    public PluginFragmentManager getFragmentManager() {
-        FragmentManager fragmentManager = hostActivityDelegator.getFragmentManager();
-        int hash = System.identityHashCode(fragmentManager);
-        if (hash != mFragmentManagerHash) {
-            mFragmentManagerHash = hash;
-            mPluginFragmentManager = new PluginFragmentManager(fragmentManager);
-        }
-        return mPluginFragmentManager;
     }
 
     public final ShadowActivity getParent() {

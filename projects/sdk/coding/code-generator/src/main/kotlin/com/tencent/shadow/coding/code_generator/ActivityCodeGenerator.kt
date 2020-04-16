@@ -5,7 +5,6 @@ package com.tencent.shadow.coding.code_generator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
-import android.app.FragmentManager
 import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.Window
@@ -74,7 +73,6 @@ class ActivityCodeGenerator {
 
         init {
             classPool.makeClass("$RUNTIME_PACKAGE.ShadowApplication").toClass()
-            classPool.makeClass("$RUNTIME_PACKAGE.PluginFragmentManager").toClass()
         }
 
         val activityCallbackMethods = getActivityCallbackMethods(ActivityClass)
@@ -94,8 +92,7 @@ class ActivityCodeGenerator {
 
             mapOf(
                     Activity::class to "ShadowActivity",
-                    Application::class to "ShadowApplication",
-                    FragmentManager::class to "PluginFragmentManager"
+                    Application::class to "ShadowApplication"
             ).forEach {
                 val newClassName = "$RUNTIME_PACKAGE.${it.value}"
                 renameMap[Descriptor.toJvmName(it.key.java.name)] =
