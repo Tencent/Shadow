@@ -16,7 +16,7 @@
  *
  */
 
-package android.android.content.res;
+package android.content.res;
 
 public interface XmlResourceParser {
 }

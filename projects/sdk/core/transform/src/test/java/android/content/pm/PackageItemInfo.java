@@ -18,7 +18,7 @@
 
 package android.content.pm;
 
-import android.android.content.res.XmlResourceParser;
+import android.content.res.XmlResourceParser;
 
 public class PackageItemInfo {
 
