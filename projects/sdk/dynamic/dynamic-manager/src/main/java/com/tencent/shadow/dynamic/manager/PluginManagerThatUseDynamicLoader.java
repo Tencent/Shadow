@@ -27,9 +27,9 @@ import android.os.RemoteException;
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.dynamic.host.FailedException;
+import com.tencent.shadow.dynamic.host.SinglePps;
 import com.tencent.shadow.dynamic.host.PluginManagerImpl;
 import com.tencent.shadow.dynamic.host.PluginProcessService;
-import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.host.PpsStatus;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
 
@@ -39,7 +39,7 @@ public abstract class PluginManagerThatUseDynamicLoader extends BaseDynamicPlugi
     /**
      * 插件进程PluginProcessService的接口
      */
-    protected PpsController mPpsController;
+    protected SinglePps mPpsController;
 
     /**
      * 插件加载服务端接口6

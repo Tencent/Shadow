@@ -90,7 +90,6 @@
             android:process=":plugin"
             />
         <service android:name="com.tencent.shadow.sample.host.PluginProcessPPS"
-            android:process=":plugin"
             />
         <service
             android:name="com.tencent.shadow.sample.host.Plugin2ProcessPPS"

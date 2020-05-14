@@ -20,11 +20,11 @@ package com.tencent.shadow.dynamic.host;
 
 import android.os.IBinder;
 import android.os.Parcel;
+import android.os.RemoteException;
 
 import static android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE;
 
-class PpsBinder extends android.os.Binder {
-    static final String DESCRIPTOR = PpsBinder.class.getName();
+class PpsBinder extends android.os.Binder implements SinglePps {
 
     static final int TRANSACTION_CODE_NO_EXCEPTION = 0;
     static final int TRANSACTION_CODE_FAILED_EXCEPTION = 1;
@@ -39,6 +39,7 @@ class PpsBinder extends android.os.Binder {
     private final PluginProcessService mPps;
 
     PpsBinder(PluginProcessService pps) {
+        attachInterface(this, DESCRIPTOR);
         mPps = pps;
     }
 
@@ -106,5 +107,48 @@ class PpsBinder extends android.os.Binder {
             default:
                 return false;
         }
+    }
+
+    @Override
+    public IBinder asBinder() {
+        return this;
+    }
+
+    public static SinglePps asInterface(android.os.IBinder binder) {
+        if (binder == null) {
+            return null;
+        }
+
+        android.os.IInterface iin = binder.queryLocalInterface(DESCRIPTOR);
+        if (iin instanceof SinglePps) {
+            return (SinglePps) iin;
+        }
+        return new PpsController(binder);
+    }
+
+    @Override
+    public void setUuidManager(IBinder binder) throws RemoteException {
+        UuidManager uuidManager = binder != null ? new BinderUuidManager(binder) : null;
+        mPps.setUuidManager(uuidManager);
+    }
+
+    @Override
+    public IBinder getPluginLoader() throws RemoteException {
+        return mPps.getPluginLoader();
+    }
+
+    @Override
+    public PpsStatus getPpsStatus() throws RemoteException {
+        return mPps.getPpsStatus();
+    }
+
+    @Override
+    public void loadRuntime(String uuid) throws RemoteException, FailedException {
+        mPps.loadRuntime(uuid);
+    }
+
+    @Override
+    public void loadPluginLoader(String uuid) throws RemoteException, FailedException {
+        mPps.loadPluginLoader(uuid);
     }
 }

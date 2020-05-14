@@ -25,7 +25,7 @@ import android.os.RemoteException;
 import static com.tencent.shadow.dynamic.host.PpsBinder.TRANSACTION_CODE_FAILED_EXCEPTION;
 import static com.tencent.shadow.dynamic.host.PpsBinder.TRANSACTION_CODE_NO_EXCEPTION;
 
-public class PpsController {
+public class PpsController implements SinglePps {
     final private IBinder mRemote;
 
     PpsController(IBinder remote) {
@@ -127,5 +127,10 @@ public class PpsController {
             _data.recycle();
         }
         return _result;
+    }
+
+    @Override
+    public IBinder asBinder() {
+        return mRemote;
     }
 }

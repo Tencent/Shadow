@@ -46,8 +46,8 @@ public class PluginProcessService extends BasePluginProcessService {
         return sActivityHolder;
     }
 
-    public static PpsController wrapBinder(IBinder ppsBinder) {
-        return new PpsController(ppsBinder);
+    public static SinglePps wrapBinder(IBinder ppsBinder) {
+        return PpsBinder.asInterface(ppsBinder);
     }
 
     @Override
