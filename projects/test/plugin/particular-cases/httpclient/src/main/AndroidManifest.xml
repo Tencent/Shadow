@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.tencent.shadow.test.plugin.particular_cases.plugin_service_for_host">
+
+    <application tools:ignore="AllowBackup,MissingApplicationIcon">
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+        <activity android:name="com.tencent.shadow.test.plugin.particular_cases.httpclient.UseApacheClassActivity" />
+    </application>
+</manifest>

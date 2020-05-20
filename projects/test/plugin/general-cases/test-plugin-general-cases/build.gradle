@@ -64,6 +64,13 @@ shadow {
                         apkName = 'plugin-service-for-host-debug.apk'
                         apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/debug/plugin-service-for-host-debug.apk'
                     }
+                    pluginApk5 {
+                        businessName = 'httpclient'
+                        partKey = 'httpclient'
+                        buildTask = ':httpclient:assembleDebug'
+                        apkName = 'httpclient-debug.apk'
+                        apkPath = 'projects/test/plugin/particular-cases/httpclient/build/outputs/apk/debug/httpclient-debug.apk'
+                    }
                 }
             }
 
@@ -100,6 +107,13 @@ shadow {
                         buildTask = ':plugin-service-for-host:assembleRelease'
                         apkName = 'plugin-service-for-host-release.apk'
                         apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/release/plugin-service-for-host-release.apk'
+                    }
+                    pluginApk5 {
+                        businessName = 'httpclient'
+                        partKey = 'httpclient'
+                        buildTask = ':httpclient:assembleRelease'
+                        apkName = 'httpclient-release.apk'
+                        apkPath = 'projects/test/plugin/particular-cases/httpclient/build/outputs/apk/release/httpclient-release.apk'
                     }
                 }
             }
