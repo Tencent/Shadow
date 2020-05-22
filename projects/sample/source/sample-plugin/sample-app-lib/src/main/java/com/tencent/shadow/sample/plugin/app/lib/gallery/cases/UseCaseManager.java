@@ -31,6 +31,7 @@ import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestAppCompatA
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ActivityContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ApplicationContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.dialog.TestDialogActivity;
+import com.tencent.shadow.sample.plugin.app.lib.usecases.fragment.TestDialogFragmentActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.fragment.TestDynamicFragmentActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.fragment.TestXmlFragmentActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.host_communication.PluginUseHostClassActivity;
@@ -87,7 +88,8 @@ public class UseCaseManager {
 
         UseCaseCategory fragmentCategory = new UseCaseCategory("fragment测试用例",new UseCase[]{
                 new TestDynamicFragmentActivity.Case(),
-                new TestXmlFragmentActivity.Case()
+                new TestXmlFragmentActivity.Case(),
+                new TestDialogFragmentActivity.Case()
         });
         useCases.add(fragmentCategory);
 

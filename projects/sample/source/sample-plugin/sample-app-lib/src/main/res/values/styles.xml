@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name ="activity_exit_fade_out" parent ="android:Animation" mce_bogus="1">
+        <item name="android:activityCloseExitAnimation">@anim/dialog_exit_fade_out</item>
+    </style>
+
+    <style name ="dialog_exit_fade_out" parent ="android:Animation" mce_bogus="1">
+        <item name="android:windowExitAnimation">@anim/dialog_exit_fade_out</item>
+    </style>
+</resources>
