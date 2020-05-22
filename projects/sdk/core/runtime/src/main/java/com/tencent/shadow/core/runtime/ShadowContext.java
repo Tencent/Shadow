@@ -284,6 +284,9 @@ public class ShadowContext extends SubDirContextThemeWrapper {
     }
 
     private BroadcastReceiverWapper wrapBroadcastReceiver(BroadcastReceiver receiver) {
+        if (receiver == null) {
+            return null;
+        }
         synchronized (mBroadcastReceivers) {
             BroadcastReceiverWapper broadcastReceiverWapper = mBroadcastReceivers.get(receiver);
             if (broadcastReceiverWapper == null) {
