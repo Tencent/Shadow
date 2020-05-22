@@ -19,24 +19,29 @@
 package com.tencent.shadow.test.plugin.general_cases.lib.usecases.dialog;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.tencent.shadow.test.plugin.general_cases.lib.gallery.util.UiUtil;
 
-public class TestDialogActivity extends Activity {
-
+public class TestAlertDialogActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TestDialog dialog = new TestDialog(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+
+        ViewGroup mItemViewGroup = UiUtil.setAlertDialogBuilderContentView(builder);
+
+
+        AlertDialog dialog = builder.show();
 
         dialog.setOwnerActivity(this);
         Activity ownerActivity = dialog.getOwnerActivity();
 
-        ViewGroup mItemViewGroup = UiUtil.setDialogContentView(dialog);
         mItemViewGroup.addView(
                 UiUtil.makeItem(
                         this,
@@ -45,7 +50,5 @@ public class TestDialogActivity extends Activity {
                         Boolean.toString(ownerActivity == this)
                 )
         );
-
-        dialog.show();
     }
 }

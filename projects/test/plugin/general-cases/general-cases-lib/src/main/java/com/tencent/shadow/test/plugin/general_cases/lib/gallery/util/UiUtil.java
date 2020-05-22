@@ -20,6 +20,8 @@ package com.tencent.shadow.test.plugin.general_cases.lib.gallery.util;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,20 @@ final public class UiUtil {
         ViewGroup viewGroup = makeItemViewGroup(activity);
         ScrollView scrollView = wrapScrollView(viewGroup);
         activity.setContentView(scrollView);
+        return viewGroup;
+    }
+
+    public static ViewGroup setDialogContentView(Dialog dialog) {
+        ViewGroup viewGroup = makeItemViewGroup(dialog.getContext());
+        ScrollView scrollView = wrapScrollView(viewGroup);
+        dialog.setContentView(scrollView);
+        return viewGroup;
+    }
+
+    public static ViewGroup setAlertDialogBuilderContentView(AlertDialog.Builder alertDialogBuilder) {
+        ViewGroup viewGroup = makeItemViewGroup(alertDialogBuilder.getContext());
+        ScrollView scrollView = wrapScrollView(viewGroup);
+        alertDialogBuilder.setView(scrollView);
         return viewGroup;
     }
 
