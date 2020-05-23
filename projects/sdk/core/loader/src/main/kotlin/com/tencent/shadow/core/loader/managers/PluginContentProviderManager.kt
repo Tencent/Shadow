@@ -71,7 +71,7 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
             throw RuntimeException("重复添加 ContentProvider")
         }
 
-        providerAuthorityMap[pluginProviderInfo.authority] = containerProviderInfo.authority
+        providerAuthorityMap[pluginProviderInfo.authority!!] = containerProviderInfo.authority
         var pluginProviderInfos: HashSet<PluginProviderInfo>? = null
         if (pluginProviderInfoMap.containsKey(partKey)) {
             pluginProviderInfos = pluginProviderInfoMap[partKey]
@@ -88,7 +88,7 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
                 val contentProvider = pluginParts!!.appComponentFactory
                         .instantiateProvider(pluginParts.classLoader, it.className)
                 contentProvider?.attachInfo(mContext, it.providerInfo)
-                providerMap[it.authority] = contentProvider
+                providerMap[it.authority!!] = contentProvider
             } catch (e: Exception) {
                 throw RuntimeException("partKey==$partKey className==${it.className} providerInfo==${it.providerInfo}", e)
             }

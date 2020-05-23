@@ -24,7 +24,7 @@ import android.os.Parcelable
 /**
  * Created by tracyluo on 2018/6/7.
  */
-class PluginServiceInfo(className: String) : Parcelable, PluginComponentInfo(className) {
+class PluginServiceInfo(className: String?) : Parcelable, PluginComponentInfo(className) {
     constructor(parcel: Parcel) : this(
             parcel.readString())
 
