@@ -22,7 +22,7 @@ import android.content.pm.ActivityInfo
 import android.os.Parcel
 import android.os.Parcelable
 
-class PluginActivityInfo(className: String, val themeResource: Int, val activityInfo: ActivityInfo) : Parcelable, PluginComponentInfo(className) {
+class PluginActivityInfo(className: String?, val themeResource: Int, val activityInfo: ActivityInfo?) : Parcelable, PluginComponentInfo(className) {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readInt(),

@@ -65,7 +65,7 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
 
 
     fun startPluginService(intent: Intent): ComponentName? {
-        val componentName = intent.component
+        val componentName = intent.component!!
 
 
         // 检查所请求的service是否已经存在
@@ -83,7 +83,7 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
     }
 
     fun stopPluginService(intent: Intent): Boolean {
-        val componentName = intent.component
+        val componentName = intent.component!!
 
         if (mAliveServicesMap.containsKey(componentName)) {
             mServiceStopCalledMap.add(componentName)
@@ -98,7 +98,7 @@ class PluginServiceManager(private val mPluginLoader: ShadowPluginLoader, privat
     fun bindPluginService(intent: Intent, conn: ServiceConnection, flags: Int): Boolean {
         // todo #25 目前实现未处理flags,后续实现补上
 
-        val componentName = intent.component
+        val componentName = intent.component!!
 
         // 1. 看要bind的service是否创建并在运行了
         if (!mAliveServicesMap.containsKey(componentName)) {

@@ -83,7 +83,7 @@ abstract class ComponentManager : PluginComponentLauncher {
         }
     }
 
-    override fun startService(context: ShadowContext, service: Intent): Pair<Boolean, ComponentName> {
+    override fun startService(context: ShadowContext, service: Intent): Pair<Boolean, ComponentName?> {
         if (service.isPluginComponent()) {
             // 插件service intent不需要转换成container service intent，直接使用intent
             val component = mPluginServiceManager!!.startPluginService(service)
@@ -161,7 +161,7 @@ abstract class ComponentManager : PluginComponentLauncher {
 
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
         fun common(pluginComponentInfo: PluginComponentInfo,componentName:ComponentName) {
-            packageNameMap[pluginComponentInfo.className] = pluginInfo.packageName
+            packageNameMap[pluginComponentInfo.className!!] = pluginInfo.packageName
             val previousValue = pluginInfoMap.put(componentName, pluginInfo)
             if (previousValue != null) {
                 throw IllegalStateException("重复添加Component：$componentName")
@@ -170,18 +170,18 @@ abstract class ComponentManager : PluginComponentLauncher {
         }
 
         pluginInfo.mActivities.forEach {
-            val componentName = ComponentName(pluginInfo.packageName, it.className)
+            val componentName = ComponentName(pluginInfo.packageName, it.className!!)
             common(it,componentName)
             componentMap[componentName] = onBindContainerActivity(componentName)
         }
 
         pluginInfo.mServices.forEach {
-            val componentName = ComponentName(pluginInfo.packageName, it.className)
+            val componentName = ComponentName(pluginInfo.packageName, it.className!!)
             common(it,componentName)
         }
 
         pluginInfo.mProviders.forEach {
-            val componentName = ComponentName(pluginInfo.packageName, it.className)
+            val componentName = ComponentName(pluginInfo.packageName, it.className!!)
             mPluginContentProviderManager!!.addContentProviderInfo(pluginInfo.partKey,it,onBindContainerContentProvider(componentName))
         }
     }
@@ -205,10 +205,8 @@ abstract class ComponentManager : PluginComponentLauncher {
     }
 
     private fun Intent.isPluginComponent(): Boolean {
-        if (component == null) {
-            return false
-        }
-        val className = component.className ?: return false
+        val component = component ?: return false
+        val className = component.className
         return packageNameMap.containsKey(className)
     }
 
@@ -228,9 +226,10 @@ abstract class ComponentManager : PluginComponentLauncher {
      * 调用前必须先调用isPluginComponent判断Intent确实一个插件内的组件
      */
     private fun Intent.toContainerIntent(bundleForPluginLoader: Bundle): Intent {
-        val className = component.className!!
+        val component = this.component!!
+        val className = component.className
         val packageName = packageNameMap[className]!!
-        component = ComponentName(packageName, className)
+        this.component = ComponentName(packageName, className)
         val containerComponent = componentMap[component]!!
         val businessName = pluginInfoMap[component]!!.businessName
         val partKey = pluginInfoMap[component]!!.partKey

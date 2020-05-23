@@ -22,7 +22,7 @@ import android.content.pm.ProviderInfo
 import android.os.Parcel
 import android.os.Parcelable
 
-class PluginProviderInfo(className: String, val authority: String, val providerInfo: ProviderInfo) : Parcelable, PluginComponentInfo(className) {
+class PluginProviderInfo(className: String?, val authority: String?, val providerInfo: ProviderInfo?) : Parcelable, PluginComponentInfo(className) {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),

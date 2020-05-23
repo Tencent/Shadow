@@ -221,8 +221,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     fun <T> ClassLoader.getInterface(clazz: Class<T>, className: String): T {
         try {
             val interfaceImplementClass = loadClass(className)
-            val interfaceImplement = interfaceImplementClass.newInstance()
-            return clazz.cast(interfaceImplement)
+            val interfaceImplement = interfaceImplementClass.newInstance()!!
+            return clazz.cast(interfaceImplement)!!
         } catch (e: ClassNotFoundException) {
             throw Exception(e)
         } catch (e: InstantiationException) {

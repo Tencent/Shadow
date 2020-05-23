@@ -108,7 +108,7 @@ object LoadPluginBloc {
                 CreateResourceBloc.create(packageInfo, installedApk.apkFilePath, hostAppContext)
             })
 
-            val buildAppComponentFactory = executorService.submit(Callable {
+            val buildAppComponentFactory = executorService.submit(Callable<ShadowAppComponentFactory> {
                 val pluginClassLoader = buildClassLoader.get()
                 val pluginInfo = buildPluginInfo.get()
                 if (pluginInfo.appComponentFactory != null) {

@@ -84,7 +84,7 @@ class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDeleg
     private var mCallingActivity: ComponentName? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val pluginInitBundle = if (savedInstanceState == null) mHostActivityDelegator.intent.extras else savedInstanceState
+        val pluginInitBundle = savedInstanceState ?: mHostActivityDelegator.intent.extras!!
 
         mCallingActivity = pluginInitBundle.getParcelable(CM_CALLING_ACTIVITY_KEY)
         mBusinessName = pluginInitBundle.getString(CM_BUSINESS_NAME_KEY, "")
@@ -98,12 +98,12 @@ class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDeleg
         val bundleForPluginLoader = pluginInitBundle.getBundle(CM_LOADER_BUNDLE_KEY)!!
         mBundleForPluginLoader = bundleForPluginLoader
         bundleForPluginLoader.classLoader = this.javaClass.classLoader
-        val pluginActivityClassName = bundleForPluginLoader.getString(CM_CLASS_NAME_KEY)
-        val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(CM_ACTIVITY_INFO_KEY)
+        val pluginActivityClassName = bundleForPluginLoader.getString(CM_CLASS_NAME_KEY)!!
+        val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(CM_ACTIVITY_INFO_KEY)!!
 
         mCurrentConfiguration = Configuration(resources.configuration)
         mPluginHandleConfigurationChange =
-                (pluginActivityInfo.activityInfo.configChanges
+                (pluginActivityInfo.activityInfo!!.configChanges
                         or ActivityInfo.CONFIG_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
                         or ActivityInfo.CONFIG_SMALLEST_SCREEN_SIZE//系统本身就会单独对待这个属性，不声明也不会重启Activity。
                         or 0x20000000 //见ActivityInfo.CONFIG_WINDOW_CONFIGURATION 系统处理属性
