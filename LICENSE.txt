@@ -8,8 +8,8 @@ Other dependencies and licenses:
 
 Open Source Software Licensed Under the Apache License Version 2.0: the below software in this distribution may have been modified by THL A29 Limited. All Tencent Modifications are Copyright (C) 2019 THL A29 Limited.
 --------------------------------------------------------------------
-1. javassist 3.22.0-GA
-Copyright (C) 1999-2017 by Shigeru Chiba, All rights reserved.
+1. javassist 3.27.0-GA
+Copyright (C) 1999-2020 by Shigeru Chiba, All rights reserved.
 
 
 Terms of the Apache License Version 2.0

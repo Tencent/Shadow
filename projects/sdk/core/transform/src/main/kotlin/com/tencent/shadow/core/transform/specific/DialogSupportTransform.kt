@@ -18,9 +18,9 @@
 
 package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform_kit.CodeConverterExtension
 import com.tencent.shadow.core.transform_kit.SpecificTransform
 import com.tencent.shadow.core.transform_kit.TransformStep
+import javassist.CodeConverter
 import javassist.CtClass
 import javassist.bytecode.Descriptor
 
@@ -56,9 +56,9 @@ class DialogSupportTransform : SpecificTransform() {
 
             override fun transform(ctClass: CtClass) {
                 ctClass.defrost()
-                val codeConverter = CodeConverterExtension()
-                codeConverter.redirectMethodCallToStaticMethodCall(setOwnerActivityMethod, dialogSetOwnerActivityMethod)
-                codeConverter.redirectMethodCallToStaticMethodCall(getOwnerActivityMethod, dialogGetOwnerActivityMethod)
+                val codeConverter = CodeConverter()
+                codeConverter.redirectMethodCallToStatic(setOwnerActivityMethod, dialogSetOwnerActivityMethod)
+                codeConverter.redirectMethodCallToStatic(getOwnerActivityMethod, dialogGetOwnerActivityMethod)
                 try {
                     ctClass.instrument(codeConverter)
                 } catch (e: Exception) {

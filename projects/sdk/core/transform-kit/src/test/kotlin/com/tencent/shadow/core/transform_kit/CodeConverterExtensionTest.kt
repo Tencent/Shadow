@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.core.transform_kit
 
+import javassist.CodeConverter
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -31,10 +32,10 @@ class CodeConverterExtensionTest : AbstractTransformTest() {
 
         val targetMethod = targetClass.getDeclaredMethod("add")
         val staticMethod = staticClass.getDeclaredMethod("add2")
-        val conv = CodeConverterExtension()
+        val codeConverter = CodeConverter()
 
-        conv.redirectMethodCallToStaticMethodCall(targetMethod, staticMethod)
-        targetClass.instrument(conv)
+        codeConverter.redirectMethodCallToStatic(targetMethod, staticMethod)
+        targetClass.instrument(codeConverter)
         targetClass.writeFile(WRITE_FILE_DIR)
 
         val obj = make(targetClass.name)
