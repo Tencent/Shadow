@@ -29,6 +29,10 @@ import androidx.test.espresso.IdlingResource;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.Until;
 
 import com.tencent.shadow.test.dynamic.host.HostApplication;
 import com.tencent.shadow.test.dynamic.host.JumpToPluginActivity;
@@ -45,7 +49,8 @@ public abstract class PluginTest {
 
     /**
      * 要启动的插件intent
-     * @return  插件Activity intent
+     *
+     * @return 插件Activity intent
      */
     abstract protected Intent getLaunchIntent();
 
@@ -56,10 +61,11 @@ public abstract class PluginTest {
 
     /**
      * 检测view
+     *
      * @param tag  view的tag
      * @param text view上的文字
      */
-    public void matchTextWithViewTag(String tag,String text){
+    public void matchTextWithViewTag(String tag, String text) {
         Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is(tag)))
                 .check(ViewAssertions.matches(ViewMatchers.withText(text)));
     }
@@ -75,6 +81,9 @@ public abstract class PluginTest {
         IdlingRegistry.getInstance().register(idlingResource);
         TestManager.TheSimpleIdlingResource = idlingResource;
         launchJumpActivity(getPartKey(), getLaunchIntent());
+        UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+        // 等待出现"跳转"字样，表示可以点击
+        device.wait(Until.findObject(By.text("跳转")), 1000L);
 
         Espresso.onView(ViewMatchers.withId(R.id.jump)).perform(ViewActions.click());
     }

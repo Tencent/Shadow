@@ -249,7 +249,8 @@ abstract class SubDirContextThemeWrapperTestActivity extends Activity {
         while (iterator.hasNext()) {
             s = iterator.next();
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                if (s.endsWith("-wal") || s.endsWith("-shm")) {
+                // 测试Pixel-Android10时，还有journal，所以把这个也加入进来
+                if (s.endsWith("-wal") || s.endsWith("-shm") || s.endsWith("-journal")) {
                     iterator.remove();
                 }
             } else {

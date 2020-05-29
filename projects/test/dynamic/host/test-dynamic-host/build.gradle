@@ -4,7 +4,8 @@ android {
     compileSdkVersion project.COMPILE_SDK_VERSION
     defaultConfig {
         applicationId project.TEST_HOST_APP_APPLICATION_ID
-        minSdkVersion project.MIN_SDK_VERSION
+        // 因为uiautomator需要至少18版本
+        minSdkVersion 18
         targetSdkVersion project.TARGET_SDK_VERSION
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
@@ -55,6 +56,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-remote:3.3.0-alpha05'
     implementation 'androidx.test.espresso:espresso-idling-resource:3.3.0-alpha05'
     androidTestImplementation "androidx.test:runner:1.3.0-alpha05"
+
+    androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
 
     implementation project(':plugin-use-host-code-lib')
     implementation project(':test-manager')
