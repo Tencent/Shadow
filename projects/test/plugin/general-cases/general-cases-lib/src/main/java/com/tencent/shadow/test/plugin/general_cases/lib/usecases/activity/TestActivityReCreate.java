@@ -35,13 +35,13 @@ public class TestActivityReCreate extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_recreate);
         TextView textView = findViewById(R.id.tv_msg);
-        boolean isRecreate = getIntent().getBooleanExtra("reCreate", false);
-        textView.setText("isRecreate:"+isRecreate);
+        String reCreateMsg = getIntent().getStringExtra("reCreateMsg");
+        textView.setText("reCreateMsg:" + reCreateMsg);
         ToastUtil.showToast(this, "onCreate");
     }
 
     public void reCreate(View view) {
-        getIntent().putExtra("reCreate", true);
+        getIntent().putExtra("reCreateMsg", "afterReCreate");
         recreate();
     }
 
