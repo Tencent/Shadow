@@ -20,8 +20,9 @@ package com.tencent.shadow.core.manager.installplugin;
 
 import android.content.Context;
 import android.os.Build;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
+
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -70,7 +71,7 @@ public class DbCompatibilityTest {
         //Android 7.0系统dump出的sql对表名加了额外的双引号，兼容略麻烦
         Assume.assumeTrue(Build.VERSION.SDK_INT == Build.VERSION_CODES.P);
 
-        context = InstrumentationRegistry.getTargetContext();
+        context = ApplicationProvider.getApplicationContext();
         databasePath = context.getDatabasePath(
                 InstalledPluginDBHelper.DB_NAME_PREFIX + TEST_DB_NAME
         );
