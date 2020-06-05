@@ -23,10 +23,6 @@ android {
 }
 
 dependencies {
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    testImplementation 'junit:junit:4.12'
     implementation 'com.tencent.shadow.coding:lint'
     compileOnly 'com.tencent.shadow.core:common'
     implementation 'com.tencent.shadow.core:manager'

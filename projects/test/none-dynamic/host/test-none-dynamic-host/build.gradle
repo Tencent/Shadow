@@ -39,7 +39,6 @@ android {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.12'
     implementation 'commons-io:commons-io:2.5'//example复制apk用的.
     implementation 'org.slf4j:slf4j-api:1.7.25'
 
@@ -48,10 +47,6 @@ dependencies {
     implementation 'com.tencent.shadow.core:loader'
     implementation 'com.tencent.shadow.core:activity-container'
     implementation project(':custom-view')
-
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 
 def createCopyTask(projectName, buildType, name, apkName) {

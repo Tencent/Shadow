@@ -1,8 +1,9 @@
 package com.tencent.shadow.core.manager.installplugin;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
+
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.tencent.shadow.core.common.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class CopySoBlocTest {
 
         System.out.println("apkFile文件存在，执行测试");
 
-        Context targetContext = InstrumentationRegistry.getTargetContext();
+        Context targetContext = ApplicationProvider.getApplicationContext();
         soDir = new File(targetContext.getCacheDir(), "CopySoBlocTestSoDir");
         soDir.mkdirs();
         FileUtils.cleanDirectory(soDir);
