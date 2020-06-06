@@ -82,7 +82,9 @@
         <activity android:name=".lib.usecases.context.ActivityContextSubDirTestActivity" />
 
         <activity android:name=".lib.usecases.context.ServiceContextSubDirTestActivity" />
-        <activity android:name=".lib.usecases.context.TestThemeActivity" />
+        <activity
+            android:name=".lib.usecases.context.TestThemeActivity"
+            android:theme="@style/TestPluginTheme" />
 
         <activity android:name=".lib.usecases.context.ApplicationContextSubDirTestActivity" />
         <activity android:name=".lib.usecases.application.TestGetApplicationInfoActivity" />

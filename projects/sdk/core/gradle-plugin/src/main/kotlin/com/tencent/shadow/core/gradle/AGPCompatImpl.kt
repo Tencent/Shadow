@@ -4,6 +4,7 @@ import com.android.SdkConstants
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.BaseVariantOutput
 import com.android.build.gradle.internal.dsl.ProductFlavor
+import com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask
 import com.android.build.gradle.tasks.ProcessApplicationManifest
 import com.android.build.gradle.tasks.ProcessMultiApkApplicationManifest
 import org.gradle.api.Project
@@ -19,6 +20,41 @@ internal class AGPCompatImpl : AGPCompat {
         } catch (e: NoSuchMethodError) {
             output.processManifest
         }
+
+    override fun getProcessResourcesTask(output: BaseVariantOutput): Task =
+        try {
+            output.processResourcesProvider.get()
+        } catch (e: NoSuchMethodError) {
+            output.processResources
+        }
+
+    @Suppress("PrivateApi")
+    override fun getAaptAdditionalParameters(processResourcesTask: Task): List<String> =
+        try {
+            if (processResourcesTask is LinkApplicationAndroidResourcesTask) {
+                processResourcesTask.aaptAdditionalParameters.get()
+            } else {
+                TODO("不支持的AGP版本")
+            }
+        } catch (ignored: NoSuchMethodError) {
+            //AGP 4.0.0
+            val aaptOptionsField =
+                LinkApplicationAndroidResourcesTask::class.java.getDeclaredField("aaptOptions")
+            aaptOptionsField.isAccessible = true
+            val aaptOptions = aaptOptionsField.get(processResourcesTask)
+            val additionalParametersField = try {
+                aaptOptions.javaClass.getDeclaredField("additionalParameters")
+            } catch (ignored: NoSuchFieldException) {
+                //AGP 3.4.0
+                aaptOptions.javaClass.superclass.getDeclaredField("additionalParameters")
+            }
+
+            additionalParametersField.isAccessible = true
+            @Suppress("UNCHECKED_CAST")
+            val additionalParameters = additionalParametersField.get(aaptOptions) as? List<String>
+            additionalParameters ?: listOf()
+        }
+
 
     override fun getManifestFile(processManifestTask: Task) =
         when (processManifestTask.javaClass.superclass.simpleName) {

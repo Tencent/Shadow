@@ -34,4 +34,6 @@ internal interface AGPCompat {
     fun addFlavorDimension(baseExtension: BaseExtension, dimensionName: String)
     fun setProductFlavorDefault(productFlavor: ProductFlavor, isDefault: Boolean)
     fun getProcessManifestTask(output: BaseVariantOutput): Task
+    fun getProcessResourcesTask(output: BaseVariantOutput): Task
+    fun getAaptAdditionalParameters(processResourcesTask: Task): List<String>
 }

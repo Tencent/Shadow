@@ -63,7 +63,13 @@ class ShadowPlugin : Plugin<Project> {
 
             createPackagePluginTasks(project)
 
-            createGeneratePluginManifestTasks(project)
+            onEachPluginVariant(project) { pluginVariant ->
+                checkAaptPackageIdConfig(pluginVariant)
+
+                val appExtension: AppExtension =
+                    project.extensions.getByType(AppExtension::class.java)
+                createGeneratePluginManifestTasks(project, appExtension, pluginVariant)
+            }
         }
 
         checkKotlinAndroidPluginForPluginManifestTask(project)
@@ -99,7 +105,7 @@ class ShadowPlugin : Plugin<Project> {
         }
     }
 
-    private fun createGeneratePluginManifestTasks(project: Project) {
+    private fun onEachPluginVariant(project: Project, actions: (ApplicationVariant) -> Unit) {
         val appExtension: AppExtension = project.extensions.getByType(AppExtension::class.java)
         val pluginVariants = appExtension.applicationVariants.filter { variant ->
             variant.productFlavors.any { flavor ->
@@ -110,35 +116,83 @@ class ShadowPlugin : Plugin<Project> {
 
         checkPluginVariants(pluginVariants, appExtension, project.name)
 
-        pluginVariants.forEach { pluginVariant ->
-            val output = pluginVariant.outputs.first()
-            val processManifestTask = agpCompat.getProcessManifestTask(output)
-            val manifestFile = agpCompat.getManifestFile(processManifestTask)
-            val variantName = pluginVariant.name
-            val outputDir = File(project.buildDir, "generated/source/pluginManifest/$variantName")
+        pluginVariants.forEach(actions)
+    }
 
-            // 添加生成PluginManifest.java任务
-            val task = project.tasks.register("generate${variantName.capitalize()}PluginManifest") {
-                it.dependsOn(processManifestTask)
-                it.inputs.file(manifestFile)
-                it.outputs.dir(outputDir).withPropertyName("outputDir")
+    /**
+     * 创建生成PluginManifest.java的任务
+     */
+    private fun createGeneratePluginManifestTasks(
+        project: Project,
+        appExtension: AppExtension,
+        pluginVariant: ApplicationVariant
+    ) {
+        val output = pluginVariant.outputs.first()
 
-                val packageForR = agpCompat.getPackageForR(project, variantName)
+        val processManifestTask = agpCompat.getProcessManifestTask(output)
+        val manifestFile = agpCompat.getManifestFile(processManifestTask)
+        val variantName = pluginVariant.name
+        val outputDir = File(project.buildDir, "generated/source/pluginManifest/$variantName")
 
-                it.doLast {
-                    generatePluginManifest(
-                        manifestFile,
-                        outputDir,
-                        "com.tencent.shadow.core.manifest_parser",
-                        packageForR
-                    )
+        // 添加生成PluginManifest.java任务
+        val task = project.tasks.register("generate${variantName.capitalize()}PluginManifest") {
+            it.dependsOn(processManifestTask)
+            it.inputs.file(manifestFile)
+            it.outputs.dir(outputDir).withPropertyName("outputDir")
+
+            val packageForR = agpCompat.getPackageForR(project, variantName)
+
+            it.doLast {
+                generatePluginManifest(
+                    manifestFile,
+                    outputDir,
+                    "com.tencent.shadow.core.manifest_parser",
+                    packageForR
+                )
+            }
+        }
+        project.tasks.getByName("compile${variantName.capitalize()}JavaWithJavac")
+            .dependsOn(task)
+
+        // 把PluginManifest.java添加为源码
+        appExtension.sourceSets.getByName(variantName).java.srcDir(outputDir)
+    }
+
+    /**
+     * 检查插件是否修改了资源ID分区
+     *
+     * 因为CreateResourceBloc在为插件创建Resources对象时，
+     * 将宿主和插件的apk都放进去了，所以不能让宿主和插件的资源ID冲突。详见CreateResourceBloc注释。
+     *
+     * 此任务只是检查任务，对构建无影响。
+     */
+    private fun checkAaptPackageIdConfig(pluginVariant: ApplicationVariant) {
+        val output = pluginVariant.outputs.first()
+
+        val processResourcesTask = agpCompat.getProcessResourcesTask(output)
+
+        processResourcesTask.doFirst {
+            val parameterList = agpCompat.getAaptAdditionalParameters(processResourcesTask)
+            var foundPackageIdParameter = false
+            parameterList.forEachIndexed { index, parameter ->
+                if (parameter == "--package-id" && parameterList.size >= index + 2) {
+                    val packageIdSetting = parameterList[index + 1]
+                    val packageIdValue = Integer.decode(packageIdSetting)
+                    if (packageIdValue <= 0x7f) {
+                        throw Error("--package-id必须大于0x7f")
+                    } else {
+                        foundPackageIdParameter = true
+                    }
                 }
             }
-            project.tasks.getByName("compile${variantName.capitalize()}JavaWithJavac")
-                .dependsOn(task)
-
-            // 把PluginManifest.java添加为源码
-            appExtension.sourceSets.getByName(variantName).java.srcDir(outputDir)
+            if (!foundPackageIdParameter) {
+                throw Error(
+                    "没有找到--package-id参数。插件需要设置大于0x7f(不同于宿主）的资源ID前缀：\n" +
+                            "aaptOptions {\n" +
+                            "    additionalParameters \"--xxxpackage-id\", \"0x80\"\n" +
+                            "}"
+                )
+            }
         }
     }
 

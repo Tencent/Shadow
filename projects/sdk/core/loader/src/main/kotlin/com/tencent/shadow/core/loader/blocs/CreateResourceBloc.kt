@@ -41,9 +41,29 @@ object CreateResourceBloc {
         val applicationInfo = ApplicationInfo()
         applicationInfo.packageName = hostAppContext.applicationInfo.packageName
         applicationInfo.uid = hostAppContext.applicationInfo.uid
-        applicationInfo.publicSourceDir = archiveFilePath
-        applicationInfo.sourceDir = archiveFilePath
-        applicationInfo.sharedLibraryFiles = hostAppContext.applicationInfo.sharedLibraryFiles
+
+        /**
+         * 这里虽然sourceDir和sharedLibraryFiles中指定的apk都会进入Resources对象，
+         * 但是只有资源id分区大于0x7f时才能在加载之后保持住资源id分区。
+         * 如果把宿主的apk路径放到sharedLibraryFiles中，我们假设宿主资源id分区是0x7f，
+         * 则加载后会变为一个随机的分区，如0x30。因此放入sharedLibraryFiles中的apk的
+         * 资源id分区都需要改为0x80或更大的值。
+         *
+         * 考虑到现网可能已经有旧方案运行的宿主和插件，而宿主不易更新。
+         * 因此新方案假设宿主保持0x7f固定不能修改，但是插件可以重新编译新版本修改资源id分区。
+         * 因此把插件apk路径放到sharedLibraryFiles中。
+         *
+         * 复制宿主的sharedLibraryFiles，主要是为了获取前面WebView初始化时，
+         * 系统使用私有API注入的webview.apk
+         */
+        applicationInfo.publicSourceDir = hostAppContext.applicationInfo.publicSourceDir
+        applicationInfo.sourceDir = hostAppContext.applicationInfo.sourceDir
+        val otherApksAddToResources = arrayOf(
+            *hostAppContext.applicationInfo.sharedLibraryFiles,
+            archiveFilePath
+        )
+        applicationInfo.sharedLibraryFiles = otherApksAddToResources
+
         try {
             return packageManager.getResourcesForApplication(applicationInfo)
         } catch (e: PackageManager.NameNotFoundException) {
