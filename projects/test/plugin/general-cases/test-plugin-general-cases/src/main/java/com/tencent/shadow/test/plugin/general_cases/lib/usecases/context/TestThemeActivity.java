@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.ContextThemeWrapper;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import com.tencent.shadow.test.plugin.general_cases.lib.gallery.util.UiUtil;
 
@@ -37,6 +38,12 @@ public class TestThemeActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mItemViewGroup = UiUtil.setActivityContentView(this);
+
+        boolean hasFeatureActionBar = getWindow().hasFeature(Window.FEATURE_ACTION_BAR);
+        if (!hasFeatureActionBar) {
+            throw new IllegalStateException("没有FEATURE_ACTION_BAR feature无法测试" +
+                    "Activity.initWindowDecorActionBar中加载宿主icon资源");
+        }
 
         mItemViewGroup.addView(
                 UiUtil.makeItem(

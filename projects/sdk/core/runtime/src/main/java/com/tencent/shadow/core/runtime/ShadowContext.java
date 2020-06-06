@@ -35,14 +35,12 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 
 import com.tencent.shadow.core.runtime.container.GeneratedHostActivityDelegator;
-import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
 
 public class ShadowContext extends SubDirContextThemeWrapper {
     PluginComponentLauncher mPluginComponentLauncher;
     ClassLoader mPluginClassLoader;
     ShadowApplication mShadowApplication;
     Resources mPluginResources;
-    Resources mMixResources;
     LayoutInflater mLayoutInflater;
     ApplicationInfo mApplicationInfo;
     protected String mPartKey;
@@ -95,17 +93,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     @Override
     public Resources getResources() {
-        if (mMixResources == null) {
-            Context baseContext = getBaseContext();
-            Resources hostResources;
-            if (baseContext instanceof HostActivityDelegator) {
-                hostResources = ((HostActivityDelegator) baseContext).superGetResources();
-            } else {
-                hostResources = baseContext.getResources();
-            }
-            mMixResources = new MixResources(hostResources, mPluginResources);
-        }
-        return mMixResources;
+        return mPluginResources;
     }
 
     @Override

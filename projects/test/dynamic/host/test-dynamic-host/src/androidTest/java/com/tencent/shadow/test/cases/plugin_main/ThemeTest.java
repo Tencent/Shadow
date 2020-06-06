@@ -50,7 +50,7 @@ public class ThemeTest extends PluginMainAppTest {
 
     @Test
     public void testActivityTheme() {
-        matchTextWithViewTag("ActivityThemeName", "android:style/Theme.NoTitleBar");
+        matchTextWithViewTag("ActivityThemeName", "com.tencent.shadow.test.hostapp:style/TestPluginTheme");
     }
 
 }
