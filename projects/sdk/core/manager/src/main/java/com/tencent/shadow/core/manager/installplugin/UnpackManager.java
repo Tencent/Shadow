@@ -18,20 +18,24 @@
 
 package com.tencent.shadow.core.manager.installplugin;
 
+import com.tencent.shadow.core.common.Logger;
+import com.tencent.shadow.core.common.LoggerFactory;
+
 import org.json.JSONException;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 
 public class UnpackManager {
+
+    private static final Logger mLogger = LoggerFactory.getLogger(UnpackManager.class);
 
     private static final String UNPACK_DONE_PRE_FIX = "unpacked.";
     private static final String CONFIG_FILENAME = "config.json";//todo #28 json的格式需要沉淀文档。
@@ -115,29 +119,14 @@ public class UnpackManager {
         }
         MinFileUtils.cleanDirectory(pluginUnpackDir);
 
-        SafeZipInputStream zipInputStream = new SafeZipInputStream(new FileInputStream(target));
-        ZipEntry zipEntry = null;
+        ZipFile zipFile = null;
         try {
-            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                if (!zipEntry.isDirectory()) {
-                    BufferedOutputStream output = null;
-                    try {
-                        output = new BufferedOutputStream(
-                                new FileOutputStream(new File(pluginUnpackDir, zipEntry.getName())));
-                        BufferedInputStream input = new BufferedInputStream(zipInputStream);
-                        byte b[] = new byte[8192];
-                        int n;
-                        while ((n = input.read(b, 0, 8192)) >= 0) {
-                            output.write(b, 0, n);
-                        }
-                    } finally {
-                        //noinspection ThrowFromFinallyBlock
-                        zipInputStream.closeEntry();
-                        if (output != null) {
-                            //noinspection ThrowFromFinallyBlock
-                            output.close();
-                        }
-                    }
+            zipFile = new SafeZipFile(target);
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                if (!entry.isDirectory()) {
+                    MinFileUtils.writeOutZipEntry(zipFile, entry, pluginUnpackDir, entry.getName());
                 }
             }
 
@@ -148,8 +137,13 @@ public class UnpackManager {
 
             return pluginConfig;
         } finally {
-            //noinspection ThrowFromFinallyBlock
-            zipInputStream.close();
+            try {
+                if (zipFile != null) {
+                    zipFile.close();
+                }
+            } catch (IOException e) {
+                mLogger.warn("zip关闭时出错忽略", e);
+            }
         }
     }
 

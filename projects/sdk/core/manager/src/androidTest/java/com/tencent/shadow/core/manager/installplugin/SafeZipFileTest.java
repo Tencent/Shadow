@@ -9,21 +9,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 @RunWith(AndroidJUnit4.class)
-public class SafeZipInputStreamTest {
+public class SafeZipFileTest {
 
     private File testZipFile;
     private ZipOutputStream zipOutputStream;
 
     @Before
     public void setUp() throws Exception {
-        testZipFile = File.createTempFile("SafeZipInputStreamTest", ".zip");
+        testZipFile = File.createTempFile("SafeZipFileTest", ".zip");
         zipOutputStream = new ZipOutputStream(new FileOutputStream(testZipFile));
     }
 
@@ -47,18 +48,15 @@ public class SafeZipInputStreamTest {
         out.closeEntry();
         out.close();
 
-        //测试用SafeZipInputStream类型遍历zip文件
-        SafeZipInputStream safeZipInputStream
-                = new SafeZipInputStream(new FileInputStream(testZipFile));
-        ZipEntry zipEntry;
-        while ((zipEntry = safeZipInputStream.getNextEntry()) != null) {
-            try {
-                String entryName = zipEntry.getName();
-                Assert.assertTrue(entryName.length() > 0);
-            } finally {
-                safeZipInputStream.closeEntry();
-            }
+        //测试用SafeZipFile类型遍历zip文件
+        ZipFile zipFile
+                = new SafeZipFile(testZipFile);
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        if (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            String entryName = entry.getName();
+            Assert.assertTrue(entryName.length() > 0);
         }
-        safeZipInputStream.close();
+        zipFile.close();
     }
 }
