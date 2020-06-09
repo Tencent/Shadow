@@ -24,14 +24,12 @@ import android.text.TextUtils;
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 
 public class CopySoBloc {
@@ -62,30 +60,15 @@ public class CopySoBloc {
             //创建so目录
             soDir.mkdirs();
 
-            ZipEntry zipEntry = null;
-            SafeZipInputStream zipInputStream = null;
+            ZipFile zipFile = null;
             try {
-                zipInputStream = new SafeZipInputStream(new FileInputStream(apkFile));
-                while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                    if (zipEntry.getName().startsWith(filter)) {
-                        BufferedOutputStream output = null;
-                        try {
-                            String fileName = zipEntry.getName().substring(filter.length());
-                            File file = new File(soDir, fileName);
-                            output = new BufferedOutputStream(
-                                    new FileOutputStream(file));
-                            BufferedInputStream input = new BufferedInputStream(zipInputStream);
-                            byte b[] = new byte[8192];
-                            int n;
-                            while ((n = input.read(b, 0, 8192)) >= 0) {
-                                output.write(b, 0, n);
-                            }
-                        } finally {
-                            zipInputStream.closeEntry();
-                            if (output != null) {
-                                output.close();
-                            }
-                        }
+                zipFile = new SafeZipFile(apkFile);
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while (entries.hasMoreElements()) {
+                    ZipEntry entry = entries.nextElement();
+                    if (entry.getName().startsWith(filter)) {
+                        String fileName = entry.getName().substring(filter.length());
+                        MinFileUtils.writeOutZipEntry(zipFile, entry, soDir, fileName);
                     }
                 }
 
@@ -100,8 +83,8 @@ public class CopySoBloc {
                 throw new InstallPluginException("解压so 失败 apkFile:" + apkFile.getAbsolutePath() + " abi:" + filter, e);
             } finally {
                 try {
-                    if (zipInputStream != null) {
-                        zipInputStream.close();
+                    if (zipFile != null) {
+                        zipFile.close();
                     }
                 } catch (IOException e) {
                     mLogger.warn("zip关闭时出错忽略", e);

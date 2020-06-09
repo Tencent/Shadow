@@ -21,14 +21,20 @@ package com.tencent.shadow.core.manager.installplugin;
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * 复制自
@@ -181,5 +187,38 @@ public class MinFileUtils {
             throw new IOException("Failed to list contents of " + directory);
         }
         return files;
+    }
+
+    public static void writeOutZipEntry(ZipFile zipFile, ZipEntry entry,
+                                        File outputDir, String outputFileName) throws IOException {
+        InputStream inputStream = null;
+        try {
+            inputStream = zipFile.getInputStream(entry);
+            writeOutInputStream(outputDir, outputFileName, inputStream);
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+    }
+
+    public static void writeOutInputStream(File outputDir, String outputFileName,
+                                           InputStream inputStream) throws IOException {
+        BufferedOutputStream output = null;
+        try {
+            File file = new File(outputDir, outputFileName);
+            output = new BufferedOutputStream(
+                    new FileOutputStream(file));
+            BufferedInputStream input = new BufferedInputStream(inputStream);
+            byte b[] = new byte[8192];
+            int n;
+            while ((n = input.read(b, 0, 8192)) >= 0) {
+                output.write(b, 0, n);
+            }
+        } finally {
+            if (output != null) {
+                output.close();
+            }
+        }
     }
 }
