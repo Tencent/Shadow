@@ -26,6 +26,32 @@ buildscript {
     }
 }
 
+def createDuplicateApkTask(buildType) {
+    def apkDir = file("${getBuildDir()}/outputs/apk/$buildType")
+
+    return tasks.create("duplicate${buildType.capitalize()}ApkTask", Copy) {
+        group = 'build'
+        description = "复制一个sample-plugin-app-${buildType}.apk用于测试目的"
+        from(apkDir) {
+            include("sample-plugin-app-${buildType}.apk")
+            rename { "sample-plugin-app-${buildType}2.apk" }
+        }
+        into(apkDir)
+
+    }.dependsOn(":sample-plugin-app:assemble${buildType.capitalize()}")
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == "assembleDebug") {
+        def createTask = createDuplicateApkTask('debug')
+        task.finalizedBy(createTask)
+    }
+    if (task.name == "assembleRelease") {
+        def createTask = createDuplicateApkTask('release')
+        task.finalizedBy(createTask)
+    }
+}
+
 apply plugin: 'com.tencent.shadow.plugin'
 
 
@@ -52,8 +78,8 @@ shadow {
                         businessName = 'sample-plugin-app2'
                         partKey = 'sample-plugin-app2'
                         buildTask = ':sample-plugin-app:assembleDebug'
-                        apkName = 'sample-plugin-app-debug.apk'
-                        apkPath = 'projects/sample/source/sample-plugin/sample-plugin-app/build/outputs/apk/debug/sample-plugin-app-debug.apk'
+                        apkName = 'sample-plugin-app-debug2.apk'
+                        apkPath = 'projects/sample/source/sample-plugin/sample-plugin-app/build/outputs/apk/debug/sample-plugin-app-debug2.apk'
                         hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
                     }
                 }
@@ -75,8 +101,8 @@ shadow {
                         businessName = 'sample-plugin-app2'
                         partKey = 'sample-plugin-app2'
                         buildTask = ':sample-plugin-app:assembleRelease'
-                        apkName = 'sample-plugin-app-release.apk'
-                        apkPath = 'projects/sample/source/sample-plugin/sample-plugin-app/build/outputs/apk/release/sample-plugin-app-release.apk'
+                        apkName = 'sample-plugin-app-release2.apk'
+                        apkPath = 'projects/sample/source/sample-plugin/sample-plugin-app/build/outputs/apk/release/sample-plugin-app-release2.apk'
                         hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
                     }
                 }
