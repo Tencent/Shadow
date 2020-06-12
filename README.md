@@ -1,6 +1,7 @@
 # Shadow
 
 ![Android CI](https://github.com/Tencent/Shadow/workflows/Android%20CI/badge.svg?event=push)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 ## 介绍
 Shadow是一个腾讯自主研发的Android插件框架，经过线上亿级用户量检验。
