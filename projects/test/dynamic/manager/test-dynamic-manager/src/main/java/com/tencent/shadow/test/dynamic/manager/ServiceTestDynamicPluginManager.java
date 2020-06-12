@@ -87,6 +87,10 @@ public class ServiceTestDynamicPluginManager extends FastPluginManager {
                 PluginServiceConnectionTestCase systemExitServiceCase = new PluginServiceConnectionTestCase(mPluginLoader, pluginIntent);
                 systemExitServiceCase.prepareUi();
                 break;
+            case "com.tencent.shadow.test.plugin.particular_cases.plugin_service_for_host.SystemExitIntentService":
+                PluginServiceConnectionTestCase systemExitIntentService = new PluginServiceConnectionTestCase(mPluginLoader, pluginIntent);
+                systemExitIntentService.prepareUi();
+                break;
             default:
                 throw new IllegalArgumentException(className + "没有对应的PluginServiceConnection");
         }
