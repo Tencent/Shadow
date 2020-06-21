@@ -75,7 +75,6 @@
         android:theme="@android:style/Theme.DeviceDefault"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name="com.tencent.shadow.sample.host.MainActivity"
-            android:process=":plugin"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
