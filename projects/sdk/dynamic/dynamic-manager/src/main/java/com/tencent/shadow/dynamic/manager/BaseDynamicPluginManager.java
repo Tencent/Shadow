@@ -18,11 +18,8 @@ import com.tencent.shadow.dynamic.host.PluginManagerImpl;
 abstract public class BaseDynamicPluginManager extends BasePluginManager implements UuidManagerImpl, PluginManagerImpl {
     private static final Logger mLogger = LoggerFactory.getLogger(BaseDynamicPluginManager.class);
 
-    protected ProcessLoader processLoader;
-
     public BaseDynamicPluginManager(Context context) {
         super(context);
-        processLoader = new ProcessLoader(mHostContext, this);
     }
 
     /**
