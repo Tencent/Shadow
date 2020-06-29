@@ -29,7 +29,9 @@ import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.manager.installplugin.InstalledType;
 import com.tencent.shadow.core.manager.installplugin.PluginConfig;
 import com.tencent.shadow.dynamic.host.FailedException;
-import com.tencent.shadow.dynamic.manager.PluginManagerThatUseDynamicLoader;
+import com.tencent.shadow.dynamic.host.PpsController;
+import com.tencent.shadow.dynamic.loader.PluginLoader;
+import com.tencent.shadow.dynamic.manager.BaseDynamicPluginManager;
 
 import org.json.JSONException;
 
@@ -46,7 +48,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoader {
+public abstract class FastPluginManager extends BaseDynamicPluginManager {
 
     private static final Logger mLogger = LoggerFactory.getLogger(FastPluginManager.class);
 
@@ -57,7 +59,7 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
     }
 
 
-    public InstalledPlugin installPlugin(String zip, String hash , boolean odex) throws IOException, JSONException, InterruptedException, ExecutionException {
+    public InstalledPlugin installPlugin(String zip, String hash, boolean odex) throws IOException, JSONException, InterruptedException, ExecutionException {
         final PluginConfig pluginConfig = installPluginFromZip(new File(zip), hash);
         final String uuid = pluginConfig.UUID;
         List<Future> futures = new LinkedList<>();
@@ -123,27 +125,30 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
 
     public Intent convertActivityIntent(InstalledPlugin installedPlugin, String partKey, Intent pluginIntent) throws RemoteException, TimeoutException, FailedException {
         loadPlugin(installedPlugin.UUID, partKey);
-        return mPluginLoader.convertActivityIntent(pluginIntent);
+        PluginLoader pluginLoader = processLoader.getPluginLoader();
+        return pluginLoader.convertActivityIntent(pluginIntent);
     }
 
     private void loadPluginLoaderAndRuntime(String uuid) throws RemoteException, TimeoutException, FailedException {
-        if (mPpsController == null) {
-            bindPluginProcessService(getPluginProcessServiceName());
-            waitServiceConnected(10, TimeUnit.SECONDS);
+        PpsController ppsController = processLoader.getPpsController();
+        if (ppsController == null) {
+            processLoader.bindPluginProcessService(getPluginProcessServiceName());
+            processLoader.waitServiceConnected(10, TimeUnit.SECONDS);
         }
-        loadRunTime(uuid);
-        loadPluginLoader(uuid);
+        processLoader.loadRunTime(uuid);
+        processLoader.loadPluginLoader(uuid);
     }
 
     protected void loadPlugin(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
         loadPluginLoaderAndRuntime(uuid);
-        Map map = mPluginLoader.getLoadedPlugin();
+        PluginLoader pluginLoader = processLoader.getPluginLoader();
+        Map map = pluginLoader.getLoadedPlugin();
         if (!map.containsKey(partKey)) {
-            mPluginLoader.loadPlugin(partKey);
+            pluginLoader.loadPlugin(partKey);
         }
         Boolean isCall = (Boolean) map.get(partKey);
         if (isCall == null || !isCall) {
-            mPluginLoader.callApplicationOnCreate(partKey);
+            pluginLoader.callApplicationOnCreate(partKey);
         }
     }
 
