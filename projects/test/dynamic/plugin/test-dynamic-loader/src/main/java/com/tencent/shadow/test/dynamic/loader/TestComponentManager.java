@@ -67,7 +67,7 @@ public class TestComponentManager extends ComponentManager {
     public ContainerProviderInfo onBindContainerContentProvider(ComponentName pluginContentProvider) {
         return new ContainerProviderInfo(
                 "com.tencent.shadow.core.runtime.container.PluginContainerContentProvider",
-                "com.tencent.shadow.contentprovider.authority.dynamic");
+                context.getPackageName() + ".contentprovider.authority.dynamic");
     }
 
     @Override
