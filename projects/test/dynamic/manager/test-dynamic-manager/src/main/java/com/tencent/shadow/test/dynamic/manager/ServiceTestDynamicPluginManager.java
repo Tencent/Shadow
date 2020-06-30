@@ -26,6 +26,8 @@ import android.view.View;
 
 import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.EnterCallback;
+import com.tencent.shadow.dynamic.loader.PluginLoader;
+import com.tencent.shadow.dynamic.manager.ProcessLoader;
 import com.tencent.shadow.test.cases.PluginServiceConnectionTestCase;
 import com.tencent.shadow.test.lib.constant.Constant;
 import com.tencent.shadow.test.lib.test_manager.TestManager;
@@ -47,6 +49,13 @@ public class ServiceTestDynamicPluginManager extends FastPluginManager {
         mCurrentContext = context;
     }
 
+    @Override
+    protected String[] getPluginProcessServiceNames() {
+        return new String[]{
+                "com.tencent.shadow.test.dynamic.host.PluginServiceProcessPPS"
+        };
+    }
+
     /**
      * @return PluginManager实现的别名，用于区分不同PluginManager实现的数据存储路径
      */
@@ -63,14 +72,6 @@ public class ServiceTestDynamicPluginManager extends FastPluginManager {
         return "";
     }
 
-    /**
-     * @return 宿主中注册的PluginProcessService实现的类名
-     */
-    @Override
-    protected String getPluginProcessServiceName() {
-        return "com.tencent.shadow.test.dynamic.host.PluginServiceProcessPPS";
-    }
-
     @Override
     public void enter(final Context context, long fromId, Bundle bundle, final EnterCallback callback) {
         if (fromId == Constant.FROM_ID_BIND_SERVICE) {
@@ -80,15 +81,15 @@ public class ServiceTestDynamicPluginManager extends FastPluginManager {
         }
     }
 
-    private void doCase(Intent pluginIntent) throws InterruptedException {
+    private void doCase(Intent pluginIntent, PluginLoader pluginLoader) throws InterruptedException {
         String className = pluginIntent.getComponent().getClassName();
         switch (className) {
             case "com.tencent.shadow.test.plugin.particular_cases.plugin_service_for_host.SystemExitService":
-                PluginServiceConnectionTestCase systemExitServiceCase = new PluginServiceConnectionTestCase(mPluginLoader, pluginIntent);
+                PluginServiceConnectionTestCase systemExitServiceCase = new PluginServiceConnectionTestCase(pluginLoader, pluginIntent);
                 systemExitServiceCase.prepareUi();
                 break;
             case "com.tencent.shadow.test.plugin.particular_cases.plugin_service_for_host.SystemExitIntentService":
-                PluginServiceConnectionTestCase systemExitIntentService = new PluginServiceConnectionTestCase(mPluginLoader, pluginIntent);
+                PluginServiceConnectionTestCase systemExitIntentService = new PluginServiceConnectionTestCase(pluginLoader, pluginIntent);
                 systemExitIntentService.prepareUi();
                 break;
             default:
@@ -129,7 +130,9 @@ public class ServiceTestDynamicPluginManager extends FastPluginManager {
                         pluginIntent.replaceExtras(extras);
                     }
 
-                    doCase(pluginIntent);
+                    ProcessLoader processLoader = getProcessLoader(installedPlugin.UUID);
+                    PluginLoader pluginLoader = processLoader.getPluginLoader();
+                    doCase(pluginIntent, pluginLoader);
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

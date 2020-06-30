@@ -29,9 +29,9 @@ import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.core.manager.installplugin.InstalledType;
 import com.tencent.shadow.core.manager.installplugin.PluginConfig;
 import com.tencent.shadow.dynamic.host.FailedException;
-import com.tencent.shadow.dynamic.host.PpsController;
 import com.tencent.shadow.dynamic.loader.PluginLoader;
-import com.tencent.shadow.dynamic.manager.BaseDynamicPluginManager;
+import com.tencent.shadow.dynamic.manager.PluginManagerThatUseProcessManager;
+import com.tencent.shadow.dynamic.manager.ProcessLoader;
 
 import org.json.JSONException;
 
@@ -48,7 +48,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public abstract class FastPluginManager extends BaseDynamicPluginManager {
+public abstract class FastPluginManager extends PluginManagerThatUseProcessManager {
 
     private static final Logger mLogger = LoggerFactory.getLogger(FastPluginManager.class);
 
@@ -125,15 +125,16 @@ public abstract class FastPluginManager extends BaseDynamicPluginManager {
 
     public Intent convertActivityIntent(InstalledPlugin installedPlugin, String partKey, Intent pluginIntent) throws RemoteException, TimeoutException, FailedException {
         loadPlugin(installedPlugin.UUID, partKey);
+        ProcessLoader processLoader = getProcessLoader(installedPlugin.UUID);
         PluginLoader pluginLoader = processLoader.getPluginLoader();
         return pluginLoader.convertActivityIntent(pluginIntent);
     }
 
     private void loadPluginLoaderAndRuntime(String uuid) throws RemoteException, TimeoutException, FailedException {
-        PpsController ppsController = processLoader.getPpsController();
-        if (ppsController == null) {
-            processLoader.bindPluginProcessService(getPluginProcessServiceName());
-            processLoader.waitServiceConnected(10, TimeUnit.SECONDS);
+        ProcessLoader processLoader = getProcessLoader(uuid);
+        if (processLoader == null) {
+            initProcessLoaderSync(uuid, 10, TimeUnit.SECONDS);
+            processLoader = getProcessLoader(uuid);
         }
         processLoader.loadRunTime(uuid);
         processLoader.loadPluginLoader(uuid);
@@ -141,6 +142,7 @@ public abstract class FastPluginManager extends BaseDynamicPluginManager {
 
     protected void loadPlugin(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
         loadPluginLoaderAndRuntime(uuid);
+        ProcessLoader processLoader = getProcessLoader(uuid);
         PluginLoader pluginLoader = processLoader.getPluginLoader();
         Map map = pluginLoader.getLoadedPlugin();
         if (!map.containsKey(partKey)) {
@@ -151,8 +153,4 @@ public abstract class FastPluginManager extends BaseDynamicPluginManager {
             pluginLoader.callApplicationOnCreate(partKey);
         }
     }
-
-
-    protected abstract String getPluginProcessServiceName();
-
 }

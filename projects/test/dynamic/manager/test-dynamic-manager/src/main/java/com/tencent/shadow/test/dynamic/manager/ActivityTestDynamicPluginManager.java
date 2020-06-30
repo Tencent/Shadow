@@ -44,6 +44,13 @@ public class ActivityTestDynamicPluginManager extends FastPluginManager {
         mCurrentContext = context;
     }
 
+    @Override
+    protected String[] getPluginProcessServiceNames() {
+        return new String[]{
+                "com.tencent.shadow.test.dynamic.host.PluginProcessPPS"
+        };
+    }
+
     /**
      * @return PluginManager实现的别名，用于区分不同PluginManager实现的数据存储路径
      */
@@ -58,14 +65,6 @@ public class ActivityTestDynamicPluginManager extends FastPluginManager {
     @Override
     public String getAbi() {
         return "";
-    }
-
-    /**
-     * @return 宿主中注册的PluginProcessService实现的类名
-     */
-    @Override
-    protected String getPluginProcessServiceName() {
-        return "com.tencent.shadow.test.dynamic.host.PluginProcessPPS";
     }
 
     @Override
