@@ -1,0 +1,19 @@
+buildscript {
+    ext.kotlin_version = '1.3.72'
+    ext.build_gradle_version = '3.6.3'
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$build_gradle_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        //gradle-plugin中transform需要的
+        classpath 'com.tencent.shadow.core:runtime-debug'
+        classpath 'com.tencent.shadow.core:activity-container-debug'
+
+        classpath 'com.tencent.shadow.core:gradle-plugin'
+    }
+}
+apply from: '../../buildScripts/gradle/common.gradle'
