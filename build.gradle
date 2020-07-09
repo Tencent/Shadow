@@ -12,11 +12,19 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$build_gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        //gradle-plugin中transform需要的
+        classpath 'com.tencent.shadow.core:runtime-debug'
+        classpath 'com.tencent.shadow.core:activity-container-debug'
+
+        classpath 'com.tencent.shadow.core:gradle-plugin'
     }
 }
 apply from: 'buildScripts/gradle/common.gradle'
 
 apply from: "buildScripts/gradle/maven.gradle"
+
+apply from: "buildScripts/gradle/packagePlugins.gradle"
 
 task clean(type: Delete) {
     delete rootProject.buildDir
