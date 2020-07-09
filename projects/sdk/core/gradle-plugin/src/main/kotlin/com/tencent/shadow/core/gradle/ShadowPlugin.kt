@@ -36,29 +36,16 @@ class ShadowPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         System.err.println("ShadowPlugin project.name==" + project.name)
-
-        val plugin = project.plugins.getPlugin(AppPlugin::class.java)
-        val sdkDirectory = plugin.baseExtension.sdkDirectory
-        val androidJarPath = "platforms/${plugin.baseExtension.compileSdkVersion}/android.jar"
-        val androidJar = File(sdkDirectory, androidJarPath)
-
-        //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
-        val contextClassLoader = Thread.currentThread().contextClassLoader
-
-        val classPoolBuilder = AndroidClassPoolBuilder(project, contextClassLoader, androidJar)
-
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
-        if (!project.hasProperty("disable_shadow_transform")) {
-            plugin.baseExtension.registerTransform(ShadowTransform(
-                    project,
-                    classPoolBuilder,
-                    { shadowExtension.transformConfig.useHostContext }
-            ))
-        }
-
         project.extensions.create("packagePlugin", PackagePluginExtension::class.java, project)
 
         project.afterEvaluate {
+            //为指定的插件app工程注册 ShadowTransform
+            shadowExtension.pluginModuleNames.forEach { moduleName ->
+                println("moduleName = $moduleName")
+                registerPluginProjectTransform(project.rootProject.findProject(moduleName)!!, shadowExtension)
+            }
+
             val packagePlugin = project.extensions.findByName("packagePlugin")
             val extension = packagePlugin as PackagePluginExtension
             val buildTypes = extension.buildTypes
@@ -78,8 +65,39 @@ class ShadowPlugin : Plugin<Project> {
         }
     }
 
+    /**
+     * @param project 插件工程
+     */
+    private fun registerPluginProjectTransform(project: Project, shadowExtension: ShadowExtension) {
+        project.afterEvaluate {
+            val plugin = project.plugins.getPlugin(AppPlugin::class.java)
+            val sdkDirectory = plugin.baseExtension.sdkDirectory
+            val androidJarPath = "platforms/${plugin.baseExtension.compileSdkVersion}/android.jar"
+            val androidJar = File(sdkDirectory, androidJarPath)
+
+            //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
+            val contextClassLoader = plugin::class.java.classLoader
+            val classPoolBuilder = AndroidClassPoolBuilder(project, contextClassLoader, androidJar)
+
+            if (!project.hasProperty("disable_shadow_transform")) {
+                plugin.baseExtension.registerTransform(ShadowTransform(
+                        project,
+                        classPoolBuilder,
+                        { shadowExtension.transformConfig.useHostContext }
+                ))
+                println("registerPluginProjectTransform project=${project.name}")
+            }
+        }
+    }
+
     open class ShadowExtension {
         var transformConfig = TransformConfig()
+
+        /**
+         * 插件app模块的名字，用来为这个app模块自动注册transform
+         */
+        var pluginModuleNames: Array<String> = emptyArray()
+
         fun transform(action: Action<in TransformConfig>) {
             action.execute(transformConfig)
         }
