@@ -17,3 +17,5 @@ buildscript {
     }
 }
 apply from: '../../buildScripts/gradle/common.gradle'
+
+apply from: 'packagePlugins.gradle'
