@@ -60,6 +60,7 @@ object CreateApplicationBloc {
 
             //和ShadowActivityDelegate.initPluginActivity一样，attachBaseContext放到最后
             shadowApplication.setHostApplicationContextAsBase(hostAppContext)
+            shadowApplication.setTheme(applicationInfo.theme)
             return shadowApplication
         } catch (e: Exception) {
             throw CreateApplicationException(e)

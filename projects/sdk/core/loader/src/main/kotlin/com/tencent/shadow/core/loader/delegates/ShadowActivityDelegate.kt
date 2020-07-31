@@ -114,14 +114,13 @@ class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDeleg
         }
         mHostActivityDelegator.intent.setExtrasClassLoader(mPluginClassLoader)
 
-        mHostActivityDelegator.setTheme(pluginActivityInfo.themeResource)
         try {
             val pluginActivity = mAppComponentFactory.instantiateActivity(
                     mPluginClassLoader,
                     pluginActivityClassName,
                     mHostActivityDelegator.intent
             )
-            initPluginActivity(pluginActivity)
+            initPluginActivity(pluginActivity, pluginActivityInfo)
             super.pluginActivity = pluginActivity
 
             if (mLogger.isDebugEnabled) {
@@ -149,7 +148,7 @@ class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDeleg
         }
     }
 
-    private fun initPluginActivity(pluginActivity: PluginActivity) {
+    private fun initPluginActivity(pluginActivity: PluginActivity, pluginActivityInfo: PluginActivityInfo) {
         pluginActivity.setHostActivityDelegator(mHostActivityDelegator)
         pluginActivity.setPluginResources(mPluginResources)
         pluginActivity.setPluginClassLoader(mPluginClassLoader)
@@ -167,6 +166,7 @@ class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDeleg
         //有可能会执行业务Activity覆盖的逻辑。
         //所以，这个调用要放在最后。
         pluginActivity.setHostContextAsBase(mHostActivityDelegator.hostActivity as Context)
+        pluginActivity.setTheme(pluginActivityInfo.themeResource)
     }
 
     override fun getLoaderVersion() = BuildConfig.VERSION_NAME

@@ -91,4 +91,11 @@ public abstract class PluginActivity extends GeneratedPluginActivity {
     public void setCallingActivity(ComponentName callingActivity) {
         mCallingActivity = callingActivity;
     }
+
+    @Override
+    public void setTheme(int resid) {
+        super.setTheme(resid);
+        hostActivityDelegator.setTheme(resid);
+    }
+
 }
