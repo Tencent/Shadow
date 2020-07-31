@@ -70,6 +70,7 @@
         <activity android:name=".usecases.context.ActivityContextSubDirTestActivity" />
 
         <activity android:name=".usecases.context.ServiceContextSubDirTestActivity" />
+        <activity android:name=".usecases.context.TestThemeActivity" />
 
         <activity android:name=".usecases.context.ApplicationContextSubDirTestActivity" />
         <activity android:name=".usecases.application.TestGetApplicationInfoActivity" />

@@ -160,11 +160,6 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
     @Override
-    public void setTheme(int resid) {
-        hostActivityDelegator.setTheme(resid);
-    }
-
-    @Override
     public ComponentName getCallingActivity() {
         return mCallingActivity;
     }
