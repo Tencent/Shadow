@@ -41,6 +41,7 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
     HostActivityDelegate hostActivityDelegate;
 
     private boolean isBeforeOnCreate = true;
+    private boolean isThemeSet = false;
 
     public PluginContainerActivity() {
         HostActivityDelegate delegate;
@@ -157,7 +158,8 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
 
     @Override
     public Resources.Theme getTheme() {
-        if (isBeforeOnCreate) {
+        //在没有设置插件的主题前，一直返回空主题，否则执行到super.getTheme()将无法更换Resources，比如AppCompatActivity
+        if (isBeforeOnCreate || !isThemeSet) {
             if (mHostTheme == null) {
                 mHostTheme = super.getResources().newTheme();
             }
@@ -171,6 +173,7 @@ public class PluginContainerActivity extends GeneratedPluginContainerActivity im
     public void setTheme(int resid) {
         if (!isBeforeOnCreate) {
             super.setTheme(resid);
+            isThemeSet = true;
         }
     }
 
