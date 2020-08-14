@@ -112,19 +112,17 @@ internal fun String.inPackage(packageNames: Array<String>): Boolean {
             it == ".*" -> false
             it == ".**" -> false
             it.endsWith(".*") -> {//只允许一级子包
-                val sub = packageName.subStringBeforeDot()
-                if (sub.isEmpty()) {
+                if (packageName.isEmpty()) {
                     false
                 } else {
-                    sub == it.subStringBeforeDot()
+                    packageName == it.subStringBeforeDot()
                 }
             }
             it.endsWith(".**") -> {//允许所有子包
-                val sub = packageName.subStringBeforeDot()
-                if (sub.isEmpty()) {
+                if (packageName.isEmpty()) {
                     false
                 } else {
-                    "$sub.".startsWith(it.subStringBeforeDot() + '.')
+                    "$packageName.".startsWith(it.subStringBeforeDot() + '.')
                 }
             }
             else -> packageName == it

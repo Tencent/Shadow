@@ -97,7 +97,7 @@ class PluginClassLoaderTest {
     fun case41() {
         val packageNames = arrayOf("a.b.c.*")
         val className = "a.b.c.D"
-        Assert.assertFalse(className.inPackage(packageNames))
+        Assert.assertTrue(className.inPackage(packageNames))
     }
 
     @Test
@@ -111,7 +111,7 @@ class PluginClassLoaderTest {
     fun case43() {
         val packageNames = arrayOf("a.b.c.*")
         val className = "a.b.c.d.E"
-        Assert.assertTrue(className.inPackage(packageNames))
+        Assert.assertFalse(className.inPackage(packageNames))
     }
 
     @Test
@@ -139,7 +139,7 @@ class PluginClassLoaderTest {
     fun case61() {
         val packageNames = arrayOf("a.b.c.**")
         val className = "a.b.c.D"
-        Assert.assertFalse(className.inPackage(packageNames))
+        Assert.assertTrue(className.inPackage(packageNames))
     }
 
     @Test
