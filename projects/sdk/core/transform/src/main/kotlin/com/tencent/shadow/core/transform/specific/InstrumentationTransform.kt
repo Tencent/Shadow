@@ -18,9 +18,48 @@
 
 package com.tencent.shadow.core.transform.specific
 
-class InstrumentationTransform : SimpleRenameTransform(
-        mapOf(
-                "android.app.Instrumentation"
-                        to "com.tencent.shadow.core.runtime.ShadowInstrumentation"
-        )
-)
+import com.tencent.shadow.core.transform_kit.ReplaceClassName
+import com.tencent.shadow.core.transform_kit.SpecificTransform
+import com.tencent.shadow.core.transform_kit.TransformStep
+import javassist.CodeConverter
+import javassist.CtClass
+
+class InstrumentationTransform : SpecificTransform() {
+    companion object {
+        const val AndroidInstrumentationClassname = "android.app.Instrumentation"
+        const val ShadowInstrumentationClassname = "com.tencent.shadow.core.runtime.ShadowInstrumentation"
+    }
+
+    override fun setup(allInputClass: Set<CtClass>) {
+        val shadowInstrumentation = mClassPool[ShadowInstrumentationClassname]
+
+        val newShadowApplicationMethod = shadowInstrumentation.getDeclaredMethod("newShadowApplication")
+
+        newStep(object : TransformStep {
+            override fun filter(allInputClass: Set<CtClass>) = allInputClass
+
+            override fun transform(ctClass: CtClass) {
+                ReplaceClassName.replaceClassName(
+                        ctClass,
+                        AndroidInstrumentationClassname,
+                        ShadowInstrumentationClassname
+                )
+            }
+        })
+        newStep(object : TransformStep {
+            override fun filter(allInputClass: Set<CtClass>) = allInputClass
+
+            override fun transform(ctClass: CtClass) {
+                ctClass.defrost()
+                val codeConverter = CodeConverter()
+                codeConverter.redirectMethodCall("newApplication", newShadowApplicationMethod)
+                try {
+                    ctClass.instrument(codeConverter)
+                } catch (e: Exception) {
+                    System.err.println("处理" + ctClass.name + "时出错:" + e)
+                    throw e
+                }
+            }
+        })
+    }
+}

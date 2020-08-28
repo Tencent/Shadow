@@ -20,11 +20,24 @@ package com.tencent.shadow.core.runtime;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.content.Context;
 
 public class ShadowInstrumentation extends Instrumentation {
 
     public void callActivityOnDestroy(ShadowActivity activity) {
         Activity hostActivity = (Activity) activity.hostActivityDelegator.getHostActivity();
         super.callActivityOnDestroy(hostActivity);
+    }
+
+    static public ShadowApplication newShadowApplication(Class<?> clazz, Context context)
+            throws InstantiationException, IllegalAccessException,
+            ClassNotFoundException {
+        ShadowApplication app = (ShadowApplication) clazz.newInstance();
+
+        app.attachBaseContext(context);
+
+        //这样构造的 ShadowApplication 跟 CreateApplicationBloc 正常构造的不一样。
+        //这里构造的只是个Context而已，没有插件的各种信息。
+        return app;
     }
 }
