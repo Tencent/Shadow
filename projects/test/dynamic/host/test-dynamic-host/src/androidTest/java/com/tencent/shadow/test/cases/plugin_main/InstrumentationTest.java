@@ -29,4 +29,34 @@ public class InstrumentationTest extends PluginMainAppTest {
         matchTextWithViewTag("callActivityOnDestroySuccess", Boolean.toString(true));
     }
 
+    @Test
+    public void testNewApplicationSuccess1() {
+        matchTextWithViewTag("newApplicationSuccess1", Boolean.toString(true));
+    }
+
+    @Test
+    public void testNewShadowActivitySuccess() {
+        matchTextWithViewTag("newShadowActivitySuccess", Boolean.toString(true));
+    }
+
+    @Test
+    public void testCallApplicationOnCreateSuccess() {
+        matchTextWithViewTag("callApplicationOnCreateSuccess", Boolean.toString(true));
+    }
+
+    @Test
+    public void testCallActivityOnCreateSuccess() {
+        matchTextWithViewTag("callActivityOnCreateSuccess", Boolean.toString(true));
+    }
+
+    @Test
+    public void testCallActivityOnCreateSuccess1() {
+        matchTextWithViewTag("callActivityOnCreateSuccess1", Boolean.toString(true));
+    }
+
+    @Test
+    public void testExecStartActivitySuccess() {
+        matchTextWithViewTag("execStartActivitySuccess", Boolean.toString(true));
+    }
+
 }

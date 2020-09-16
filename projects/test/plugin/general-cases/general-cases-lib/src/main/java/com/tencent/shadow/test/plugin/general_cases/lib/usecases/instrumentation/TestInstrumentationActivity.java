@@ -21,7 +21,9 @@ package com.tencent.shadow.test.plugin.general_cases.lib.usecases.instrumentatio
 import android.app.Activity;
 import android.app.Application;
 import android.app.Instrumentation;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 
@@ -70,6 +72,119 @@ public class TestInstrumentationActivity extends Activity {
                         "callActivityOnDestroySuccess",
                         "callActivityOnDestroySuccess",
                         Boolean.toString(callActivityOnDestroySuccess)
+                )
+        );
+
+
+        boolean newApplicationSuccess1 = false;
+        try {
+            MyInstrumentation myInstrumentation = new MyInstrumentation();
+            Application app = myInstrumentation.newApplication(myInstrumentation.getClass().getClassLoader(),
+                    Application.class.getName(),
+                    getApplicationContext());
+            newApplicationSuccess1 = true;
+        } catch (Exception ignore) {
+        }
+
+
+        mItemViewGroup.addView(
+                UiUtil.makeItem(this,
+                        "newApplicationSuccess1",
+                        "newApplicationSuccess1",
+                        Boolean.toString(newApplicationSuccess1))
+        );
+
+
+        boolean newShadowActivitySuccess = false;
+        try {
+            MyInstrumentation myInstrumentation = new MyInstrumentation();
+            myInstrumentation.newActivity(myInstrumentation.getClass().getClassLoader(),
+                    TestInstrumentationActivity.class.getName(),
+                    null);
+            newShadowActivitySuccess = true;
+        } catch (Exception ignore) {
+        }
+
+
+        mItemViewGroup.addView(
+                UiUtil.makeItem(this,
+                        "newShadowActivitySuccess",
+                        "newShadowActivitySuccess",
+                        Boolean.toString(newShadowActivitySuccess))
+        );
+
+        boolean callApplicationOnCreateSuccess = false;
+        try {
+            MyInstrumentation myInstrumentation = new MyInstrumentation();
+            myInstrumentation.callApplicationOnCreate(getApplication());
+            callApplicationOnCreateSuccess = true;
+        } catch (Exception ignore) {
+        }
+
+
+        mItemViewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "callApplicationOnCreateSuccess",
+                        "callApplicationOnCreateSuccess",
+                        Boolean.toString(callApplicationOnCreateSuccess)
+                )
+        );
+
+        boolean callActivityOnCreateSuccess = false;
+        try {
+            MyInstrumentation myInstrumentation = new MyInstrumentation();
+            myInstrumentation.callActivityOnCreate(this, new Bundle());
+            callActivityOnCreateSuccess = true;
+        } catch (Exception ignore) {
+        }
+
+
+        mItemViewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "callActivityOnCreateSuccess",
+                        "callActivityOnCreateSuccess",
+                        Boolean.toString(callActivityOnCreateSuccess)
+                )
+        );
+
+        boolean callActivityOnCreateSuccess1 = false;
+        try {
+            MyInstrumentation myInstrumentation = new MyInstrumentation();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                myInstrumentation.callActivityOnCreate(this, new Bundle(), new PersistableBundle());
+            }
+            callActivityOnCreateSuccess1 = true;
+        } catch (Exception ignore) {
+        }
+
+
+        mItemViewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "callActivityOnCreateSuccess1",
+                        "callActivityOnCreateSuccess1",
+                        Boolean.toString(callActivityOnCreateSuccess1)
+                )
+        );
+
+        boolean execStartActivitySuccess = false;
+        try {
+            MyInstrumentation myInstrumentation = new MyInstrumentation();
+            // 这里是UnsupportedAppUsage的,无法测试
+//            myInstrumentation.execStartActivity(this, new Bundle(), new PersistableBundle());
+            execStartActivitySuccess = true;
+        } catch (Exception ignore) {
+        }
+
+
+        mItemViewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "execStartActivitySuccess",
+                        "execStartActivitySuccess",
+                        Boolean.toString(execStartActivitySuccess)
                 )
         );
     }
