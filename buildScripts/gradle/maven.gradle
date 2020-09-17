@@ -41,7 +41,7 @@ task jvmTestSdk() {
 
 task androidTestSdk() {
     dependsOn gradle.includedBuild('core').task(':manager:connectedDebugAndroidTest')
-    dependsOn ':test-dynamic-host:connectedDebugAndroidTest'
+    dependsOn gradle.includedBuild('test').task(':test-dynamic-host:connectedDebugAndroidTest')
 }
 
 task testSdk() {

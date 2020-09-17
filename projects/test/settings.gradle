@@ -1,0 +1,48 @@
+rootProject.name = 'test'
+
+includeTest()
+
+includeBuild '../sdk/coding'
+includeBuild '../sdk/core'
+includeBuild '../sdk/dynamic'
+includeJar()
+
+def includeJar() {
+    include ':jar-wrapper:runtime-debug',
+            ':jar-wrapper:activity-container-debug'
+}
+
+def includeTest() {
+    include 'test-dynamic-host',
+            'test-dynamic-manager',
+            'test-dynamic-loader',
+            'test-dynamic-runtime',
+            'constant',
+            'custom-view',
+            'plugin-use-host-code-lib',
+            'test-manager',
+            'general-cases-lib',
+            'test-plugin-general-cases',
+            'general-cases-app',
+            'test-multidex-lib',
+            'test-plugin-multidex-v1_0_2',
+            'test-plugin-multidex-v2_0_1',
+            'plugin-service-for-host',
+            'test-none-dynamic-host'
+    project(':test-dynamic-host').projectDir = file('dynamic/host/test-dynamic-host')
+    project(':test-dynamic-manager').projectDir = file('dynamic/manager/test-dynamic-manager')
+    project(':test-dynamic-loader').projectDir = file('dynamic/plugin/test-dynamic-loader')
+    project(':test-dynamic-runtime').projectDir = file('dynamic/plugin/test-dynamic-runtime')
+    project(':constant').projectDir = file('lib/constant')
+    project(':custom-view').projectDir = file('lib/custom-view')
+    project(':plugin-use-host-code-lib').projectDir = file('lib/plugin-use-host-code-lib')
+    project(':test-manager').projectDir = file('lib/test-manager')
+    project(':general-cases-lib').projectDir = file('plugin/general-cases/general-cases-lib')
+    project(':test-plugin-general-cases').projectDir = file('plugin/general-cases/test-plugin-general-cases')
+    project(':general-cases-app').projectDir = file('plugin/general-cases/general-cases-app')
+    project(':test-multidex-lib').projectDir = file('plugin/particular-cases/multidex/test-multidex-lib')
+    project(':test-plugin-multidex-v1_0_2').projectDir = file('plugin/particular-cases/multidex/test-plugin-multidex-v1_0_2')
+    project(':test-plugin-multidex-v2_0_1').projectDir = file('plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1')
+    project(':plugin-service-for-host').projectDir = file('plugin/particular-cases/plugin-service-for-host')
+    project(':test-none-dynamic-host').projectDir = file('none-dynamic/host/test-none-dynamic-host')
+}
