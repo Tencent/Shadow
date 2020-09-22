@@ -49,7 +49,7 @@ class PendingIntentTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    allCanRecompileAppClass(allInputClass, listOf(AndroidPendingIntentClassname))
+                    filterRefClasses(allInputClass, listOf(AndroidPendingIntentClassname))
 
             override fun transform(ctClass: CtClass) {
                 try {

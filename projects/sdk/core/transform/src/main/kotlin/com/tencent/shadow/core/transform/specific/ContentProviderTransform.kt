@@ -106,7 +106,7 @@ class ContentProviderTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    allCanRecompileAppClass(allInputClass, listOf(AndroidUriClassname))
+                    filterRefClasses(allInputClass, listOf(AndroidUriClassname))
 
             override fun transform(ctClass: CtClass) {
                 try {
@@ -120,7 +120,7 @@ class ContentProviderTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    allCanRecompileAppClass(allInputClass, listOf(uriBuilderName))
+                    filterRefClasses(allInputClass, listOf(uriBuilderName))
 
             override fun transform(ctClass: CtClass) {
                 try {
@@ -134,7 +134,7 @@ class ContentProviderTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    allCanRecompileAppClass(allInputClass, listOf(resolverName))
+                    filterRefClasses(allInputClass, listOf(resolverName))
 
             override fun transform(ctClass: CtClass) {
                 try {

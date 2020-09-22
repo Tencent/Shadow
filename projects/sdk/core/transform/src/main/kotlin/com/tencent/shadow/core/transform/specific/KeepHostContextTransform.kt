@@ -107,7 +107,7 @@ class KeepHostContextTransform(private val rules: Array<String>) : SpecificTrans
 
             newStep(object : TransformStep {
                 override fun filter(allInputClass: Set<CtClass>) =
-                        allCanRecompileAppClass(allInputClass, listOf(targetClass.name))
+                        filterRefClasses(allInputClass, listOf(targetClass.name))
 
                 override fun transform(ctClass: CtClass) {
                     if (ctClass != targetClass)
