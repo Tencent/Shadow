@@ -46,7 +46,7 @@ class PackageItemInfoTransform : SpecificTransform() {
         targetMethods.forEach { targetMethod ->
             newStep(object : TransformStep {
                 override fun filter(allInputClass: Set<CtClass>) =
-                        allCanRecompileAppClass(
+                        filterRefClasses(
                                 allInputClass,
                                 targetClassNames.asList()
                         ).filter { matchMethodCallInClass(targetMethod, it) }.toSet()

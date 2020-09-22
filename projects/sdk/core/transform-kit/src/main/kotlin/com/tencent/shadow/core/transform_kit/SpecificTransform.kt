@@ -43,21 +43,13 @@ abstract class SpecificTransform {
         methodInfo.descriptor = other.methodInfo.descriptor
     }
 
-    fun allCanRecompileAppClass(allAppClass: Set<CtClass>, targetClassList: List<String>) =
+    /**
+     * 过滤引用了某些类型的类
+     */
+    fun filterRefClasses(allAppClass: Set<CtClass>, targetClassList: List<String>) =
             allAppClass.filter { ctClass ->
                 targetClassList.any { targetClass ->
                     ctClass.refClasses.contains(targetClass)
-                }
-            }.filter {
-                it.refClasses.all {
-                    var found: Boolean;
-                    try {
-                        mClassPool[it as String]
-                        found = true
-                    } catch (e: NotFoundException) {
-                        found = false
-                    }
-                    found
                 }
             }.toSet()
 

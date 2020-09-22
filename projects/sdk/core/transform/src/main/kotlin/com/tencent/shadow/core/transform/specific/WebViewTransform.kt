@@ -35,7 +35,7 @@ class WebViewTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    allCanRecompileAppClass(allInputClass, listOf(AndroidWebViewClassname))
+                    filterRefClasses(allInputClass, listOf(AndroidWebViewClassname))
 
             override fun transform(ctClass: CtClass) {
                 if (ctClass.superclass.name == AndroidWebViewClassname) {
@@ -46,7 +46,7 @@ class WebViewTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    allCanRecompileAppClass(allInputClass, listOf(AndroidWebViewClassname))
+                    filterRefClasses(allInputClass, listOf(AndroidWebViewClassname))
 
             override fun transform(ctClass: CtClass) {
                 try {
