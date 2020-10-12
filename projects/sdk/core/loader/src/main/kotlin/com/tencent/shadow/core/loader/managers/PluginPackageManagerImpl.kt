@@ -26,14 +26,14 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
                                         private val packageInfo: PackageInfo,
                                         private val allPluginPackageInfo: () -> (Array<PackageInfo>))
     : PluginPackageManager {
-    override fun getApplicationInfo(packageName: String?, flags: Int): ApplicationInfo =
+    override fun getApplicationInfo(packageName: String, flags: Int): ApplicationInfo =
             if (packageInfo.applicationInfo.packageName == packageName) {
                 packageInfo.applicationInfo
             } else {
                 hostPackageManager.getApplicationInfo(packageName, flags)
             }
 
-    override fun getPackageInfo(packageName: String?, flags: Int): PackageInfo? =
+    override fun getPackageInfo(packageName: String, flags: Int): PackageInfo? =
             if (packageInfo.applicationInfo.packageName == packageName) {
                 packageInfo
             } else {
@@ -54,7 +54,7 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
         return hostPackageManager.getActivityInfo(component, flags)
     }
 
-    override fun resolveContentProvider(name: String?, flags: Int): ProviderInfo? {
+    override fun resolveContentProvider(name: String, flags: Int): ProviderInfo? {
         val pluginProviderInfo = allPluginPackageInfo()
                 .flatMap { it.providers.asIterable() }.find {
                     it.authority == name
