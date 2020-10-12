@@ -37,9 +37,9 @@ class ShadowPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         System.err.println("ShadowPlugin project.name==" + project.name)
 
-        val plugin = project.plugins.getPlugin(AppPlugin::class.java)
-        val sdkDirectory = plugin.baseExtension.sdkDirectory
-        val androidJarPath = "platforms/${plugin.baseExtension.compileSdkVersion}/android.jar"
+        val baseExtension = getBaseExtension(project)
+        val sdkDirectory = baseExtension.sdkDirectory
+        val androidJarPath = "platforms/${baseExtension.compileSdkVersion}/android.jar"
         val androidJar = File(sdkDirectory, androidJarPath)
 
         //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
@@ -49,7 +49,7 @@ class ShadowPlugin : Plugin<Project> {
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
         if (!project.hasProperty("disable_shadow_transform")) {
-            plugin.baseExtension.registerTransform(ShadowTransform(
+            baseExtension.registerTransform(ShadowTransform(
                     project,
                     classPoolBuilder,
                     { shadowExtension.transformConfig.useHostContext }
@@ -89,14 +89,15 @@ class ShadowPlugin : Plugin<Project> {
         var useHostContext: Array<String> = emptyArray()
     }
 
-    private val AppPlugin.baseExtension: BaseExtension
-        get() {
-            return if (com.android.builder.model.Version.ANDROID_GRADLE_PLUGIN_VERSION == "3.0.0") {
-                val method = BasePlugin::class.declaredFunctions.first { it.name == "getExtension" }
-                method.isAccessible = true
-                method.call(this) as BaseExtension
-            } else {
-                extension
-            }
+    fun getBaseExtension(project: Project): BaseExtension {
+        val plugin = project.plugins.getPlugin(AppPlugin::class.java)
+        if (com.android.builder.model.Version.ANDROID_GRADLE_PLUGIN_VERSION == "3.0.0") {
+            val method = BasePlugin::class.declaredFunctions.first { it.name == "getExtension" }
+            method.isAccessible = true
+            return method.call(plugin) as BaseExtension
+        } else {
+            return project.extensions.getByName("android") as BaseExtension
         }
+    }
+
 }
