@@ -81,6 +81,12 @@ abstract class AbstractTransform(
     }
 
     private fun CtClass.debugWriteJar(outputStream: ZipOutputStream) {
+        //忽略Kotlin 1.4引入的module-info
+        //https://kotlinlang.org/docs/reference/whatsnew14.html#module-info-descriptors-for-stdlib-artifacts
+        if (name == "module-info") {
+            return
+        }
+
         try {
             val entryName = (name.replace('.', '/') + ".class")
             outputStream.putNextEntry(ZipEntry(entryName))
