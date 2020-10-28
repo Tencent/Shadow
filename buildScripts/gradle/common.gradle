@@ -27,4 +27,14 @@ allprojects {
         google()
         jcenter()
     }
+    //环境检查
+    envCheck()
+}
+
+
+def envCheck(){
+    //优化错误提示，不然会出现代码中找不到android依赖的问题
+    if(!file("${System.getenv().get('ANDROID_HOME')}/platforms/android-${project.COMPILE_SDK_VERSION}/android.jar").exists()){
+        throw new RuntimeException("Missing SDK Platform Android，API ${project.COMPILE_SDK_VERSION}。请确保以下文件存在: ${System.getenv().get('ANDROID_HOME')}/platforms/android-${project.COMPILE_SDK_VERSION}/android.jar")
+    }
 }
