@@ -101,12 +101,12 @@ public abstract class PluginManagerThatUseDynamicLoader extends BaseDynamicPlugi
         if (mLogger.isInfoEnabled()) {
             mLogger.info("loadPluginLoader mPluginLoader:" + mPluginLoader);
         }
-        if (mPluginLoader == null) {
-            PpsStatus ppsStatus = mPpsController.getPpsStatus();
-            if (!ppsStatus.loaderLoaded) {
-                mPpsController.loadPluginLoader(uuid);
-            }
-            IBinder iBinder = mPpsController.getPluginLoader();
+        PpsStatus ppsStatus = mPpsController.getPpsStatus();
+        if (!ppsStatus.loaderLoaded) {
+            mPpsController.loadPluginLoader(uuid);
+        }
+        IBinder iBinder = mPpsController.getPluginLoader();
+        if (iBinder != null) {
             mPluginLoader = new BinderPluginLoader(iBinder);
         }
     }
