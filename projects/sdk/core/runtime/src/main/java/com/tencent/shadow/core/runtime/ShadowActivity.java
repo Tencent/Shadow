@@ -31,8 +31,9 @@ import android.view.ViewGroup;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ShadowActivity extends PluginActivity {
+public class ShadowActivity extends PluginActivity {
 
+    @Override
     public void setContentView(int layoutResID) {
         if ("merge".equals(XmlPullParserUtil.getLayoutStartTagName(getResources(), layoutResID))) {
             //如果传进来的xml文件的根tag是merge时，需要特殊处理
@@ -45,14 +46,17 @@ public abstract class ShadowActivity extends PluginActivity {
         }
     }
 
+    @Override
     public final ShadowApplication getApplication() {
         return mPluginApplication;
     }
 
+    @Override
     public final ShadowActivity getParent() {
         return null;
     }
 
+    @Override
     public void overridePendingTransition(int enterAnim, int exitAnim) {
         //如果使用的资源不是系统资源，我们无法支持这个特性。
         if ((enterAnim & 0xFF000000) != 0x01000000) {
@@ -65,10 +69,12 @@ public abstract class ShadowActivity extends PluginActivity {
     }
 
 
+    @Override
     public void startActivityForResult(Intent intent, int requestCode) {
         startActivityForResult(intent, requestCode, null);
     }
 
+    @Override
     public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
         final Intent pluginIntent = new Intent(intent);
         pluginIntent.setExtrasClassLoader(mPluginClassLoader);
@@ -85,21 +91,25 @@ public abstract class ShadowActivity extends PluginActivity {
         return super.getSharedPreferences(getLocalClassName(), mode);
     }
 
+    @Override
     public String getLocalClassName() {
         return this.getClass().getName();
     }
 
 
+    @Override
     public boolean shouldUpRecreateTask(Intent targetIntent) {
         Intent intent = mPluginComponentLauncher.convertPluginActivityIntent(targetIntent);
         return hostActivityDelegator.shouldUpRecreateTask(intent);
     }
 
+    @Override
     public boolean navigateUpTo(Intent upIntent) {
         Intent intent = mPluginComponentLauncher.convertPluginActivityIntent(upIntent);
         return hostActivityDelegator.navigateUpTo(intent);
     }
 
+    @Override
     public final <T extends View> T requireViewById(int id) {
         T view = findViewById(id);
         if (view == null) {
