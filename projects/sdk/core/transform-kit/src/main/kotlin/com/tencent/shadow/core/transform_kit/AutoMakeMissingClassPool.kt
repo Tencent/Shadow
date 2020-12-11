@@ -5,6 +5,17 @@ import javassist.CtClass
 
 class AutoMakeMissingClassPool(useDefaultPath: Boolean) : ClassPool(useDefaultPath) {
 
+    companion object {
+        fun isFromFixTypes2Called(newThrowable: Throwable): Boolean {
+            for (stackTraceElement in newThrowable.stackTrace) {
+                if (stackTraceElement.methodName == "fixTypes2") {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
     override fun get0(classname: String?, useCache: Boolean): CtClass? {
         var get0 = super.get0(classname, useCache)
 
@@ -18,7 +29,7 @@ class AutoMakeMissingClassPool(useDefaultPath: Boolean) : ClassPool(useDefaultPa
         // 这里必须判断是来自的fixTypes2的调用，而不是所有调用都构造类型，是因为存在像
         // javassist.compiler.MemberResolver.lookupClass0
         // 依赖NotFoundException的逻辑存在。
-        if (get0 == null && Throwable().stackTrace[2].methodName == "fixTypes2") {
+        if (get0 == null && isFromFixTypes2Called(Throwable())) {
             get0 = makeClass(classname)
             if (useCache) cacheCtClass(get0.getName(), get0, false)
         }
