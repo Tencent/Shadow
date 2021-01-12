@@ -36,4 +36,9 @@ public class PackageManagerTest extends PluginMainAppTest {
         matchTextWithViewTag("getApplicationInfo/metaData", "test_value");
     }
 
+    @Test
+    public void testQueryContentProvidersName() {
+        matchTextWithViewTag("queryContentProviders/size", "2");
+        matchTextWithViewTag("queryContentProviders/name", "[android.support.v4.content.FileProvider, com.tencent.shadow.test.plugin.general_cases.lib.usecases.provider.TestProvider]");
+    }
 }

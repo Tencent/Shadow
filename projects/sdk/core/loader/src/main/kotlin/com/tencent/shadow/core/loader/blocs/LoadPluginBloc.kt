@@ -87,6 +87,8 @@ object LoadPluginBloc {
 
                 packageArchiveInfo.applicationInfo.nativeLibraryDir = installedApk.libraryPath
                 packageArchiveInfo.applicationInfo.dataDir = dataDir.absolutePath
+                packageArchiveInfo.applicationInfo.processName = hostAppContext.applicationInfo.processName
+                packageArchiveInfo.applicationInfo.uid = hostAppContext.applicationInfo.uid
 
                 lock.withLock { pluginPackageInfoSet.add(packageArchiveInfo) }
                 packageArchiveInfo

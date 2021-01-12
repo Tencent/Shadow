@@ -6,6 +6,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.ProviderInfo;
 
+import java.util.List;
+
 public interface PluginPackageManager {
     ApplicationInfo getApplicationInfo(String packageName, int flags);
 
@@ -14,4 +16,6 @@ public interface PluginPackageManager {
     PackageInfo getPackageInfo(String packageName, int flags);
 
     ProviderInfo resolveContentProvider(String name, int flags);
+
+    List<ProviderInfo> queryContentProviders(String processName, int uid, int flags);
 }

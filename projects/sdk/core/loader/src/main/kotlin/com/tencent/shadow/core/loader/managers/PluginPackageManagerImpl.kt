@@ -65,4 +65,17 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
 
         return hostPackageManager.resolveContentProvider(name, flags)
     }
+
+    override fun queryContentProviders(processName: String?, uid: Int, flags: Int) =
+            if (processName == null) {
+                val allNormalProviders = hostPackageManager.queryContentProviders(null, 0, flags)
+                val allPluginProviders = allPluginPackageInfo()
+                        .flatMap { it.providers.asIterable() }
+                listOf(allNormalProviders, allPluginProviders).flatten()
+            } else {
+                allPluginPackageInfo().filter {
+                    it.applicationInfo.processName == processName
+                            && it.applicationInfo.uid == uid
+                }.flatMap { it.providers.asIterable() }
+            }
 }

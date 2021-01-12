@@ -28,6 +28,8 @@ import android.content.pm.ProviderInfo;
 import android.content.pm.VersionedPackage;
 import android.os.Build;
 
+import java.util.List;
+
 /**
  * PackageManagerTransform必须把对PackageManager的调用转到到这个处于Runtime层不被Transform作用的类上来，
  * 而不能把这个类实现的方法直接写在Transform生成的方法体中，是为了避免这个类实现的代码再次被Transform，
@@ -53,7 +55,7 @@ public class PackageManagerInvokeRedirect {
 
     @TargetApi(Build.VERSION_CODES.O)
     public static PackageInfo getPackageInfo(ClassLoader classLoaderOfInvokeCode, VersionedPackage versionedPackage,
-                                             int flags) throws PackageManager.NameNotFoundException{
+                                             int flags) throws PackageManager.NameNotFoundException {
         return getPluginPackageManager(classLoaderOfInvokeCode).getPackageInfo(versionedPackage.getPackageName(), flags);
     }
 
@@ -61,5 +63,8 @@ public class PackageManagerInvokeRedirect {
         return getPluginPackageManager(classLoaderOfInvokeCode).resolveContentProvider(name, flags);
     }
 
+    public static List<ProviderInfo> queryContentProviders(ClassLoader classLoaderOfInvokeCode, String processName, int uid, int flags) {
+        return getPluginPackageManager(classLoaderOfInvokeCode).queryContentProviders(processName, uid, flags);
+    }
 
 }
