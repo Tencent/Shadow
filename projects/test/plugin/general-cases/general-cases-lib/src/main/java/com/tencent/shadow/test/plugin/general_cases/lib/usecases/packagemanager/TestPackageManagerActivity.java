@@ -24,10 +24,16 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.tencent.shadow.test.plugin.general_cases.lib.gallery.util.UiUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static android.content.pm.PackageManager.GET_META_DATA;
 
@@ -41,6 +47,7 @@ public class TestPackageManagerActivity extends Activity {
         getApplicationInfo(viewGroup);
         getActivityInfo(viewGroup);
         getPackageInfo(viewGroup);
+        queryContentProviders(viewGroup);
     }
 
     private void getApplicationInfo(ViewGroup viewGroup) {
@@ -134,6 +141,43 @@ public class TestPackageManagerActivity extends Activity {
                         "getPackageInfo/versionCode",
                         "getPackageInfo/versionCode",
                         versionCode
+                )
+        );
+    }
+
+    private void queryContentProviders(ViewGroup viewGroup) {
+        PackageManager packageManager = getPackageManager();
+        ApplicationInfo applicationInfo = getApplicationInfo();
+        String processName = applicationInfo.processName;
+        int uid = applicationInfo.uid;
+        List<ProviderInfo> providerInfos = packageManager.queryContentProviders(processName, uid, PackageManager.MATCH_ALL);
+
+        String size = Integer.toString(providerInfos.size());
+        String name;
+        if (providerInfos.isEmpty()) {
+            name = "";
+        } else {
+            ArrayList<String> names = new ArrayList<>(providerInfos.size());
+            for (ProviderInfo providerInfo : providerInfos) {
+                names.add(providerInfo.name);
+            }
+            Collections.sort(names);
+            name = Arrays.toString(names.toArray());
+        }
+        viewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "queryContentProviders/size",
+                        "queryContentProviders/size",
+                        size
+                )
+        );
+        viewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "queryContentProviders/name",
+                        "queryContentProviders/name",
+                        name
                 )
         );
     }
