@@ -20,11 +20,13 @@ package com.tencent.shadow.core.runtime;
 
 import android.annotation.TargetApi;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
+import android.content.pm.ResolveInfo;
 import android.content.pm.VersionedPackage;
 import android.os.Build;
 
@@ -65,6 +67,10 @@ public class PackageManagerInvokeRedirect {
 
     public static List<ProviderInfo> queryContentProviders(ClassLoader classLoaderOfInvokeCode, String processName, int uid, int flags) {
         return getPluginPackageManager(classLoaderOfInvokeCode).queryContentProviders(processName, uid, flags);
+    }
+
+    public static ResolveInfo resolveActivity(ClassLoader classLoaderOfInvokeCode, Intent intent, int flags) {
+        return getPluginPackageManager(classLoaderOfInvokeCode).resolveActivity(intent, flags);
     }
 
 }
