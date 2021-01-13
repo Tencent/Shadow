@@ -20,11 +20,13 @@ package com.tencent.shadow.test.plugin.general_cases.lib.usecases.packagemanager
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
@@ -48,6 +50,7 @@ public class TestPackageManagerActivity extends Activity {
         getActivityInfo(viewGroup);
         getPackageInfo(viewGroup);
         queryContentProviders(viewGroup);
+        resolveActivityByExplicitIntent(viewGroup);
     }
 
     private void getApplicationInfo(ViewGroup viewGroup) {
@@ -177,6 +180,27 @@ public class TestPackageManagerActivity extends Activity {
                         this,
                         "queryContentProviders/name",
                         "queryContentProviders/name",
+                        name
+                )
+        );
+    }
+
+    private void resolveActivityByExplicitIntent(ViewGroup viewGroup) {
+        PackageManager packageManager = getPackageManager();
+        Intent intent = new Intent(this, this.getClass());
+        ResolveInfo resolveInfo = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY);
+
+        String name;
+        if (resolveInfo != null && resolveInfo.activityInfo != null) {
+            name = resolveInfo.activityInfo.name;
+        } else {
+            name = "";
+        }
+        viewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "resolveActivity/explicit",
+                        "resolveActivity/explicit",
                         name
                 )
         );

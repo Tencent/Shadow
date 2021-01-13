@@ -47,13 +47,18 @@
 
         <activity android:name=".usecases.view.TestViewConstructorCache" />
 
-        <activity android:name=".usecases.packagemanager.TestPackageManagerActivity" />
+        <activity android:name=".usecases.packagemanager.TestPackageManagerActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="com.tencent.test.implicit.intent" />
+            </intent-filter>
+        </activity>
 
         <service android:name=".usecases.service.TestService" />
 
         <receiver android:name=".usecases.receiver.MyReceiver">
             <intent-filter>
-                <action android:name="com.tencent.test.normal.action"/>
+                <action android:name="com.tencent.test.normal.action" />
             </intent-filter>
         </receiver>
 

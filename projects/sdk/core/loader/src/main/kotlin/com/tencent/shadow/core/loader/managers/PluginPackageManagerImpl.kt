@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.loader.managers
 
 import android.content.ComponentName
+import android.content.Intent
 import android.content.pm.*
 import com.tencent.shadow.core.runtime.PluginPackageManager
 
@@ -78,4 +79,19 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
                             && it.applicationInfo.uid == uid
                 }.flatMap { it.providers.asIterable() }
             }
+
+    override fun resolveActivity(intent: Intent, flags: Int): ResolveInfo {
+        val hostResolveInfo = hostPackageManager.resolveActivity(intent, flags)
+        return if (hostResolveInfo?.activityInfo == null) {
+            ResolveInfo().apply {
+                activityInfo = allPluginPackageInfo()
+                        .flatMap { it.activities.asIterable() }
+                        .find {
+                            it.name == intent.component?.className
+                        }
+            }
+        } else {
+            hostResolveInfo
+        }
+    }
 }
