@@ -1,0 +1,62 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-and-test-on-macos:
+    runs-on: macos-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: buildSdk
+        run: ./gradlew buildSdk
+      - name: lintSdk
+        run: ./gradlew lintSdk
+      - name: build sample/source
+        run: ./gradlew build
+      - name: unit test
+        run: ./gradlew jvmTestSdk -S
+      - name: run androidTestSdk on API 28 emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 28
+          target: default
+          arch: x86_64
+          profile: pixel_xl
+          script: ./gradlew androidTestSdk
+  build-on-windows:
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: buildSdk
+        run: ./gradlew buildSdk
+      - name: lintSdk
+        run: ./gradlew lintSdk
+      - name: build sample/source
+        run: ./gradlew build
+  build-samples:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: build sample/maven/host-project
+        working-directory: projects/sample/maven/host-project
+        run: ./gradlew assemble
+      - name: build sample/maven/manager-project
+        working-directory: projects/sample/maven/manager-project
+        run: ./gradlew assemble
+      - name: build sample/maven/plugin-project
+        working-directory: projects/sample/maven/plugin-project
+        run: ./gradlew assemble
+      - name: build sample/sunflower/host-project
+        working-directory: projects/sample/sunflower/host-project
+        run: ./gradlew assemble
+      - name: build sample/sunflower/manager-project
+        working-directory: projects/sample/sunflower/manager-project
+        run: ./gradlew assemble
+      - name: build sample/sunflower/plugin-project
+        working-directory: projects/sample/sunflower/plugin-project
+        run: ./gradlew assemble
