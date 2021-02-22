@@ -71,15 +71,15 @@ def gitShortRev() {
 }
 
 def setScm(scm) {
-    scm.appendNode('connection', 'https://github.com/Tencent/Shadow.git')
+    scm.appendNode('connection', "https://github.com/${System.getenv("GITHUB_ACTOR")}/Shadow.git")
 
     def commit
-    if ("${System.env.ORANGE}".equalsIgnoreCase("true")) {
-        commit = "${System.env.ORANGE_COMMIT}"
+    if ("${System.env.CI}".equalsIgnoreCase("true")) {
+        commit = System.getenv("GITHUB_SHA")
     } else {
         commit = gitShortRev()
     }
-    scm.appendNode('url', "https://github.com/Tencent/Shadow/commit/$commit")
+    scm.appendNode('url', "https://github.com/${System.getenv("GITHUB_ACTOR")}/Shadow/commit/$commit")
 }
 
 def setGeneratePomFileAndDepends(publicationName) {
@@ -387,7 +387,40 @@ publishing {
         }
     }
     repositories {
-        mavenLocal()
+        def useLocalCredential = false
+        Properties properties = new Properties()
+        def propertiesFile = project.rootProject.file('local.properties')
+        if (propertiesFile.exists()) {
+            properties.load(propertiesFile.newDataInputStream())
+
+            if ("${properties.getProperty('gpr.local')}".equalsIgnoreCase('true')) {
+                def user = properties.getProperty('gpr.user')
+                def key = properties.getProperty('gpr.key')
+                maven {
+                    name = "GitHubPackages"
+                    credentials {
+                        username = user
+                        password = key
+                    }
+                    url "https://maven.pkg.github.com/${user}/shadow"
+                }
+
+                useLocalCredential = true
+            }
+        }
+
+        if (!useLocalCredential && "${System.env.CI}".equalsIgnoreCase("true")) {
+            maven {
+                name = "GitHubPackages"
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+                url "https://maven.pkg.github.com/" + "${System.env.GITHUB_REPOSITORY}".toLowerCase()
+            }
+        } else {
+            mavenLocal()
+        }
     }
 }
 
