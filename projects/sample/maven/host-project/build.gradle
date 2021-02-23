@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.shadow_version = 'master-b4632d8f-SNAPSHOT'
+    ext.shadow_version = '2.1.0'
     repositories {
         google()
         jcenter()
@@ -19,7 +19,7 @@ allprojects {
         jcenter()
         maven {
             name = "GitHubPackages"
-            url "https://maven.pkg.github.com/shifujun/shadow"
+            url "https://maven.pkg.github.com/tencent/shadow"
             //一个只读账号兼容Github Packages暂时不支持匿名下载
             //https://github.community/t/download-from-github-package-registry-without-authentication/14407
             credentials {
