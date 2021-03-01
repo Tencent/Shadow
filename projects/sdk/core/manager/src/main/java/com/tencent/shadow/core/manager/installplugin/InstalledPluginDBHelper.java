@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.manager.installplugin;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -121,6 +122,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
     }
 
     @Override
+    @SuppressLint("Range")
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion < 2) {
             db.beginTransaction();
