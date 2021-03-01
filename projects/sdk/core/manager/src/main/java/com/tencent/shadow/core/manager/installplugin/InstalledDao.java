@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.core.manager.installplugin;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -90,6 +91,7 @@ public class InstalledDao {
      * @param UUID  插件的发布id
      * @return 插件安装数据
      */
+    @SuppressLint("Range")
     public InstalledPlugin getInstalledPluginByUUID(String UUID) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from shadowPluginManager where uuid = ?", new String[]{UUID});
@@ -155,6 +157,7 @@ public class InstalledDao {
      * @param limit 获取的数据数量
      * @return 插件列表数据
      */
+    @SuppressLint("Range")
     public List<InstalledPlugin> getLastPlugins(int limit) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select uuid from shadowPluginManager where  type = ?   order by installedTime desc limit " + limit, new String[]{String.valueOf(InstalledType.TYPE_UUID)});
