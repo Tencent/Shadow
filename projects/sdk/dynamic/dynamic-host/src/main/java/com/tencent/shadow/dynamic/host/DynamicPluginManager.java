@@ -20,17 +20,24 @@ package com.tencent.shadow.dynamic.host;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
 
 public final class DynamicPluginManager implements PluginManager {
 
     final private PluginManagerUpdater mUpdater;
     private PluginManagerImpl mManagerImpl;
-    private long mLastModified;
+    private String mCurrentImplMd5;
     private static final Logger mLogger = LoggerFactory.getLogger(DynamicPluginManager.class);
 
     public DynamicPluginManager(PluginManagerUpdater updater) {
@@ -63,11 +70,11 @@ public final class DynamicPluginManager implements PluginManager {
 
     private void updateManagerImpl(Context context) {
         File latestManagerImplApk = mUpdater.getLatest();
-        long lastModified = latestManagerImplApk.lastModified();
+        String md5 = md5File(latestManagerImplApk);
         if (mLogger.isInfoEnabled()) {
-            mLogger.info("mLastModified != lastModified : " + (mLastModified != lastModified));
+            mLogger.info("TextUtils.equals(mCurrentImplMd5, md5) : " + (TextUtils.equals(mCurrentImplMd5, md5)));
         }
-        if (mLastModified != lastModified) {
+        if (!TextUtils.equals(mCurrentImplMd5, md5)) {
             ManagerImplLoader implLoader = new ManagerImplLoader(context, latestManagerImplApk);
             PluginManagerImpl newImpl = implLoader.load();
             Bundle state;
@@ -80,11 +87,40 @@ public final class DynamicPluginManager implements PluginManager {
             }
             newImpl.onCreate(state);
             mManagerImpl = newImpl;
-            mLastModified = lastModified;
+            mCurrentImplMd5 = md5;
         }
     }
 
     public PluginManager getManagerImpl() {
         return mManagerImpl;
+    }
+
+    /**
+     * 获取 文件的md5
+     *
+     * @param file 文件
+     * @return md5
+     */
+    private static String md5File(File file) {
+        String value = null;
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            MappedByteBuffer byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.update(byteBuffer);
+            BigInteger bi = new BigInteger(1, md5.digest());
+            value = bi.toString(16);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+        return value;
     }
 }
