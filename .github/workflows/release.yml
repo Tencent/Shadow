@@ -8,17 +8,19 @@ on:
 jobs:
   build-and-test:
     runs-on: macos-latest
+    env:
+      DISABLE_TENCENT_MAVEN_MIRROR: true
     steps:
       - name: checkout
         uses: actions/checkout@v2
       - name: buildSdk
-        run: ./gradlew buildSdk
+        run: ./gradlew wrapper; ./gradlew buildSdk
       - name: lintSdk
-        run: ./gradlew lintSdk
+        run: ./gradlew wrapper; ./gradlew lintSdk
       - name: build sample/source
-        run: ./gradlew build
+        run: ./gradlew wrapper; ./gradlew build
       - name: unit test
-        run: ./gradlew jvmTestSdk -S
+        run: ./gradlew wrapper; ./gradlew jvmTestSdk -S
       - name: run androidTestSdk on API 28 emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -26,11 +28,12 @@ jobs:
           target: default
           arch: x86_64
           profile: pixel_xl
-          script: ./gradlew androidTestSdk
+          script: ./gradlew wrapper; ./gradlew androidTestSdk
   publish:
     needs: build-and-test
     runs-on: macos-latest
     env:
+      DISABLE_TENCENT_MAVEN_MIRROR: true
       PUBLISH_RELEASE: true
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -39,4 +42,4 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: publish
-        run: ./gradlew publish
+        run: ./gradlew wrapper; ./gradlew publish

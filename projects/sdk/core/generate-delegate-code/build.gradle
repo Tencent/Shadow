@@ -2,8 +2,12 @@ import com.tencent.shadow.coding.code_generator.ActivityCodeGenerator
 
 buildscript {
     repositories {
-        google()
-        jcenter()
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            jcenter()
+        }
     }
 
     dependencies {
