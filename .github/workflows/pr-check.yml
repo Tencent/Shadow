@@ -7,17 +7,19 @@ on:
 jobs:
   build-and-test-on-macos:
     runs-on: macos-latest
+    env:
+      DISABLE_TENCENT_MAVEN_MIRROR: true
     steps:
       - name: checkout
         uses: actions/checkout@v2
       - name: buildSdk
-        run: ./gradlew buildSdk
+        run: ./gradlew wrapper; ./gradlew buildSdk
       - name: lintSdk
-        run: ./gradlew lintSdk
+        run: ./gradlew wrapper; ./gradlew lintSdk
       - name: build sample/source
-        run: ./gradlew build
+        run: ./gradlew wrapper; ./gradlew build
       - name: unit test
-        run: ./gradlew jvmTestSdk -S
+        run: ./gradlew wrapper; ./gradlew jvmTestSdk -S
       - name: run androidTestSdk on API 28 emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -25,38 +27,42 @@ jobs:
           target: default
           arch: x86_64
           profile: pixel_xl
-          script: ./gradlew androidTestSdk
+          script: ./gradlew wrapper; ./gradlew androidTestSdk
   build-on-windows:
     runs-on: windows-latest
+    env:
+      DISABLE_TENCENT_MAVEN_MIRROR: true
     steps:
       - name: checkout
         uses: actions/checkout@v2
       - name: buildSdk
-        run: ./gradlew buildSdk
+        run: ./gradlew wrapper; ./gradlew buildSdk
       - name: lintSdk
-        run: ./gradlew lintSdk
+        run: ./gradlew wrapper; ./gradlew lintSdk
       - name: build sample/source
-        run: ./gradlew build
+        run: ./gradlew wrapper; ./gradlew build
   build-samples:
     runs-on: ubuntu-latest
+    env:
+      DISABLE_TENCENT_MAVEN_MIRROR: true
     steps:
       - name: checkout
         uses: actions/checkout@v2
       - name: build sample/maven/host-project
         working-directory: projects/sample/maven/host-project
-        run: ./gradlew assemble
+        run: ./gradlew wrapper; ./gradlew assemble
       - name: build sample/maven/manager-project
         working-directory: projects/sample/maven/manager-project
-        run: ./gradlew assemble
+        run: ./gradlew wrapper; ./gradlew assemble
       - name: build sample/maven/plugin-project
         working-directory: projects/sample/maven/plugin-project
-        run: ./gradlew assemble
+        run: ./gradlew wrapper; ./gradlew assemble
       - name: build sample/sunflower/host-project
         working-directory: projects/sample/sunflower/host-project
-        run: ./gradlew assemble
+        run: ./gradlew wrapper; ./gradlew assemble
       - name: build sample/sunflower/manager-project
         working-directory: projects/sample/sunflower/manager-project
-        run: ./gradlew assemble
+        run: ./gradlew wrapper; ./gradlew assemble
       - name: build sample/sunflower/plugin-project
         working-directory: projects/sample/sunflower/plugin-project
-        run: ./gradlew assemble
+        run: ./gradlew wrapper; ./gradlew assemble

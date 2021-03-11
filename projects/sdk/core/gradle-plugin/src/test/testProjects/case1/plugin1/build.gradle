@@ -1,8 +1,12 @@
 buildscript {
     ext.build_gradle_version = '4.0.2'
     repositories {
-        google()
-        jcenter()
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            jcenter()
+        }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$build_gradle_version"
@@ -21,8 +25,12 @@ allprojects {
     ext.VERSION_CODE = 1
     ext.VERSION_NAME = "local"
     repositories {
-        google()
-        jcenter()
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            jcenter()
+        }
     }
 }
 
