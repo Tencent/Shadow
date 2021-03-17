@@ -4,6 +4,10 @@ android {
     defaultConfig {
         applicationId project.SAMPLE_HOST_APP_APPLICATION_ID
     }
+    aaptOptions {
+        additionalParameters '--allow-reserved-package-id','--package-id','0x60'
+    }
+
 }
 
 dependencies {

@@ -281,4 +281,16 @@ public class MixResources extends ResourcesWrapper {
             return mHostResources.openRawResourceFd(id);
         }
     }
+
+    /**
+     * 该方法配合aapt2修改 package id, 可以实现插件和宿主资源共享
+     */
+    @Override
+    public int getIdentifier(String name, String defType, String defPackage) {
+        int id = super.getIdentifier(name,defType,defPackage);
+        if(id == 0){
+            return mHostResources.getIdentifier(name, defType, defPackage);
+        }
+        return id;
+    }
 }
