@@ -68,6 +68,13 @@ shadow {
                         apkName = 'plugin-service-for-host-debug.apk'
                         apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/debug/plugin-service-for-host-debug.apk'
                     }
+                    pluginApk5 {
+                        businessName = 'androidx-cases'
+                        partKey = 'test-plugin-androidx-cases'
+                        buildTask = ':test-plugin-androidx-cases:assembleDebug'
+                        apkName = 'test-plugin-androidx-cases-debug.apk'
+                        apkPath = 'projects/test/plugin/androidx-cases/test-plugin-androidx-cases/build/outputs/apk/debug/test-plugin-androidx-cases-debug.apk'
+                    }
                 }
             }
 
@@ -104,6 +111,13 @@ shadow {
                         buildTask = ':plugin-service-for-host:assembleRelease'
                         apkName = 'plugin-service-for-host-release.apk'
                         apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/release/plugin-service-for-host-release.apk'
+                    }
+                    pluginApk5 {
+                        businessName = 'androidx-cases'
+                        partKey = 'test-plugin-androidx-cases'
+                        buildTask = ':test-plugin-androidx-cases:assembleRelease'
+                        apkName = 'test-plugin-androidx-cases-release.apk'
+                        apkPath = 'projects/test/plugin/androidx-cases/test-plugin-androidx-cases/build/outputs/apk/release/test-plugin-androidx-cases-release.apk'
                     }
                 }
             }

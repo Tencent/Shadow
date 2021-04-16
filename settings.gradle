@@ -25,6 +25,9 @@ def includeTest() {
             'general-cases-lib',
             'test-plugin-general-cases',
             'general-cases-app',
+            'androidx-cases-lib',
+            'androidx-cases-app',
+            'test-plugin-androidx-cases',
             'test-multidex-lib',
             'test-plugin-multidex-v1_0_2',
             'test-plugin-multidex-v2_0_1',
@@ -40,6 +43,9 @@ def includeTest() {
     project(':plugin-use-host-code-lib').projectDir = file('projects/test/lib/plugin-use-host-code-lib')
     project(':test-manager').projectDir = file('projects/test/lib/test-manager')
     project(':general-cases-lib').projectDir = file('projects/test/plugin/general-cases/general-cases-lib')
+    project(':androidx-cases-lib').projectDir = file('projects/test/plugin/androidx-cases/androidx-cases-lib')
+    project(':androidx-cases-app').projectDir = file('projects/test/plugin/androidx-cases/androidx-cases-app')
+    project(':test-plugin-androidx-cases').projectDir = file('projects/test/plugin/androidx-cases/test-plugin-androidx-cases')
     project(':test-plugin-general-cases').projectDir = file('projects/test/plugin/general-cases/test-plugin-general-cases')
     project(':general-cases-app').projectDir = file('projects/test/plugin/general-cases/general-cases-app')
     project(':test-multidex-lib').projectDir = file('projects/test/plugin/particular-cases/multidex/test-multidex-lib')
