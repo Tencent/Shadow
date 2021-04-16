@@ -1,0 +1,27 @@
+apply from: "../androidx-cases-app/build.gradle"
+
+android {
+    defaultConfig {
+        applicationId project.TEST_HOST_APP_APPLICATION_ID
+    }
+}
+
+buildscript {
+    repositories {
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            jcenter()
+        }
+    }
+
+    dependencies {
+        classpath 'com.tencent.shadow.core:runtime-debug'
+        classpath 'com.tencent.shadow.core:activity-container-debug'
+        classpath 'com.tencent.shadow.core:gradle-plugin'
+        classpath 'org.javassist:javassist:3.22.0-GA'
+    }
+}
+
+apply plugin: 'com.tencent.shadow.plugin'
