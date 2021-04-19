@@ -121,7 +121,13 @@ public interface ShadowActivityLifecycleCallbacks {
          * @return 是否属于当前Application所在的插件 true属于
          */
         private boolean checkOwnerActivity(PluginActivity activity) {
-            return activity != null && activity.mPluginApplication == runtimeObject;
+            if (activity == null) {
+                return false;
+            } else if (runtimeObject instanceof ShadowApplication) {
+                return activity.mPluginApplication == runtimeObject;
+            } else {
+                return activity == runtimeObject;
+            }
         }
     }
 }
