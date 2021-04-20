@@ -57,7 +57,7 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
 
     override fun resolveContentProvider(name: String, flags: Int): ProviderInfo? {
         val pluginProviderInfo = allPluginPackageInfo()
-                .flatMap { it.providers.asIterable() }.find {
+                .providers().find {
                     it.authority == name
                 }
         if (pluginProviderInfo != null) {
@@ -70,14 +70,13 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
     override fun queryContentProviders(processName: String?, uid: Int, flags: Int) =
             if (processName == null) {
                 val allNormalProviders = hostPackageManager.queryContentProviders(null, 0, flags)
-                val allPluginProviders = allPluginPackageInfo()
-                        .flatMap { it.providers.asIterable() }
+                val allPluginProviders = allPluginPackageInfo().providers()
                 listOf(allNormalProviders, allPluginProviders).flatten()
             } else {
                 allPluginPackageInfo().filter {
                     it.applicationInfo.processName == processName
                             && it.applicationInfo.uid == uid
-                }.flatMap { it.providers.asIterable() }
+                }.providers()
             }
 
     override fun resolveActivity(intent: Intent, flags: Int): ResolveInfo {
@@ -94,4 +93,20 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
             hostResolveInfo
         }
     }
+
+    private fun Array<PackageInfo>.providers(): List<ProviderInfo> {
+        return this.asIterable().providers()
+    }
+
+    private fun Iterable<PackageInfo>.providers(): List<ProviderInfo> {
+        return this.flatMap {
+            if (it.providers != null) {
+                it.providers.asIterable()
+            } else {
+                emptyList()
+            }
+        }
+    }
+
+
 }
