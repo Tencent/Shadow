@@ -19,6 +19,7 @@
 package com.tencent.shadow.test.dynamic.host;
 
 import android.app.Activity;
+import android.app.Application;
 import android.os.Bundle;
 import android.view.View;
 
@@ -28,10 +29,75 @@ import com.tencent.shadow.test.lib.test_manager.SimpleIdlingResource;
 
 public class JumpToPluginActivity extends Activity {
 
+    final private Application.ActivityLifecycleCallbacks lifecycleCallbacks = new Application.ActivityLifecycleCallbacks() {
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+        }
+
+        @Override
+        public void onActivityStarted(Activity activity) {
+
+        }
+
+        @Override
+        public void onActivityResumed(Activity activity) {
+            if (isPluginContainerActivity(activity)) {
+                getApplication().unregisterActivityLifecycleCallbacks(lifecycleCallbacks);
+                setIdlingResourceTrue();
+            }
+        }
+
+        @Override
+        public void onActivityPaused(Activity activity) {
+
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+        }
+
+        @Override
+        public void onActivityDestroyed(Activity activity) {
+
+        }
+
+        private boolean isPluginContainerActivity(Activity activity) {
+            Class<?> superclass = activity.getClass().getSuperclass();
+
+            final String superclassName;
+            if (superclass != null) {
+                superclassName = superclass.getName();
+            } else {
+                superclassName = "";
+            }
+            return "com.tencent.shadow.core.runtime.container.PluginContainerActivity".equals(superclassName);
+        }
+
+        private void setIdlingResourceTrue() {
+            final SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
+            idlingResource.setIdleState(true);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jump_to_plugin);
+
+        getApplication().registerActivityLifecycleCallbacks(lifecycleCallbacks);
+    }
+
+    @Override
+    protected void onDestroy() {
+        getApplication().unregisterActivityLifecycleCallbacks(lifecycleCallbacks);
+        super.onDestroy();
     }
 
     public void jump(View view) {
@@ -54,7 +120,6 @@ public class JumpToPluginActivity extends Activity {
 
                     @Override
                     public void onCloseLoadingView() {
-                        idlingResource.setIdleState(true);
                     }
 
                     @Override
