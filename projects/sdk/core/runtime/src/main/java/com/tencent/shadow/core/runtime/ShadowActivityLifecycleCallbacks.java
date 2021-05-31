@@ -22,7 +22,13 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
+import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
 import com.tencent.shadow.core.runtime.container.PluginContainerActivity;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public interface ShadowActivityLifecycleCallbacks {
 
@@ -162,7 +168,10 @@ public interface ShadowActivityLifecycleCallbacks {
 
         @Override
         public void onActivityPreCreated(Activity activity, Bundle savedInstanceState) {
-            final ShadowActivity pluginActivity = getPluginActivity(activity);
+            //此时PluginActivity尚未构造。改由onPluginActivityPreCreated通知。
+        }
+
+        public void onPluginActivityPreCreated(ShadowActivity pluginActivity, Bundle savedInstanceState) {
             if (checkOwnerActivity(pluginActivity)) {
                 try {
                     shadowActivityLifecycleCallbacks.onActivityPreCreated(pluginActivity, savedInstanceState);
@@ -341,6 +350,94 @@ public interface ShadowActivityLifecycleCallbacks {
                 return activity.mPluginApplication == runtimeObject;
             } else {
                 return activity == runtimeObject;
+            }
+        }
+    }
+
+    /**
+     * ShadowActivity和ShadowApplication共用的ActivityLifecycleCallbacks逻辑。
+     * 用一个Map将ActivityLifecycleCallbacks映射成ShadowActivityLifecycleCallbacks。
+     * 同时，持有所有的有注册ActivityLifecycleCallbacks的Holder，
+     * 提供通知所有callbacks onPluginActivityPreCreated事件的方法。
+     */
+    class Holder {
+        final private static Set<Holder> sAllHolders = new HashSet<>();
+
+        final private HostActivityDelegator delegator;
+        final private Application application;
+
+        final private Map<ShadowActivityLifecycleCallbacks,
+                Wrapper>
+                mActivityLifecycleCallbacksMap = new HashMap<>();
+
+        public Holder(Object hostActivityDelegatorOrApplication) {
+            if (hostActivityDelegatorOrApplication instanceof HostActivityDelegator) {
+                this.delegator = (HostActivityDelegator) hostActivityDelegatorOrApplication;
+                this.application = null;
+            } else {
+                this.delegator = null;
+                this.application = (Application) hostActivityDelegatorOrApplication;
+            }
+        }
+
+        private void register(Application.ActivityLifecycleCallbacks callbacks) {
+            if (delegator != null) {
+                delegator.registerActivityLifecycleCallbacks(callbacks);
+            } else {
+                assert application != null;
+                application.registerActivityLifecycleCallbacks(callbacks);
+            }
+        }
+
+        private void unregister(Application.ActivityLifecycleCallbacks callbacks) {
+            if (delegator != null) {
+                delegator.unregisterActivityLifecycleCallbacks(callbacks);
+            } else {
+                assert application != null;
+                application.unregisterActivityLifecycleCallbacks(callbacks);
+            }
+        }
+
+        public void registerActivityLifecycleCallbacks(
+                Object caller,
+                ShadowActivityLifecycleCallbacks callback) {
+            synchronized (sAllHolders) {
+                final ShadowActivityLifecycleCallbacks.Wrapper wrapper
+                        = new ShadowActivityLifecycleCallbacks.Wrapper(callback, caller);
+                mActivityLifecycleCallbacksMap.put(callback, wrapper);
+                register(wrapper);
+                sAllHolders.add(this);
+            }
+        }
+
+        public void unregisterActivityLifecycleCallbacks(
+                ShadowActivityLifecycleCallbacks callback) {
+            synchronized (sAllHolders) {
+                final Application.ActivityLifecycleCallbacks activityLifecycleCallbacks
+                        = mActivityLifecycleCallbacksMap.get(callback);
+                if (activityLifecycleCallbacks != null) {
+                    unregister(activityLifecycleCallbacks);
+                    mActivityLifecycleCallbacksMap.remove(callback);
+                }
+                if (mActivityLifecycleCallbacksMap.isEmpty()) {
+                    sAllHolders.remove(this);
+                }
+            }
+        }
+
+        public static void notifyPluginActivityPreCreated(ShadowActivity pluginActivity, Bundle savedInstanceState) {
+            synchronized (sAllHolders) {
+                for (Holder holder : sAllHolders) {
+                    holder.onPluginActivityPreCreated(pluginActivity, savedInstanceState);
+                }
+            }
+        }
+
+        private void onPluginActivityPreCreated(ShadowActivity pluginActivity, Bundle savedInstanceState) {
+            synchronized (sAllHolders) {
+                for (ShadowActivityLifecycleCallbacks.Wrapper wrapper : mActivityLifecycleCallbacksMap.values()) {
+                    wrapper.onPluginActivityPreCreated(pluginActivity, savedInstanceState);
+                }
             }
         }
     }

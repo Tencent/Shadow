@@ -85,6 +85,7 @@
         <activity android:name=".usecases.context.RegisterNullReceiverActivity" />
         <activity android:name=".usecases.dialog.TestAlertDialogActivity" />
         <activity android:name=".usecases.instrumentation.TestInstrumentationActivity" />
+        <activity android:name=".usecases.application.ActivityLifecycleCallbacksTestActivity" />
 
         <provider
             android:authorities="com.tencent.shadow.provider.test"

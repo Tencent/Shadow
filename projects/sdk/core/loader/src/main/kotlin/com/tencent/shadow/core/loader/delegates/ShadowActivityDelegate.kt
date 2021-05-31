@@ -26,6 +26,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.WindowManager
@@ -39,9 +40,7 @@ import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CLA
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_EXTRAS_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_LOADER_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_PART_KEY
-import com.tencent.shadow.core.runtime.MixResources
-import com.tencent.shadow.core.runtime.PluginActivity
-import com.tencent.shadow.core.runtime.ShadowLayoutInflater
+import com.tencent.shadow.core.runtime.*
 import com.tencent.shadow.core.runtime.container.HostActivityDelegate
 import com.tencent.shadow.core.runtime.container.HostActivityDelegator
 
@@ -135,12 +134,18 @@ class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDeleg
 
             //Activity.onCreate调用之前应该先收到onWindowAttributesChanged。
             if (mCallOnWindowAttributesChanged) {
-                pluginActivity.onWindowAttributesChanged(mBeforeOnCreateOnWindowAttributesChangedCalledParams)
+                pluginActivity.onWindowAttributesChanged(
+                    mBeforeOnCreateOnWindowAttributesChangedCalledParams
+                )
                 mBeforeOnCreateOnWindowAttributesChangedCalledParams = null
             }
 
-            val pluginSavedInstanceState: Bundle? = savedInstanceState?.getBundle(PLUGIN_OUT_STATE_KEY)
+            val pluginSavedInstanceState: Bundle? =
+                savedInstanceState?.getBundle(PLUGIN_OUT_STATE_KEY)
             pluginSavedInstanceState?.classLoader = mPluginClassLoader
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                notifyPluginActivityPreCreated(pluginActivity, pluginSavedInstanceState)
+            }
             pluginActivity.onCreate(pluginSavedInstanceState)
             mPluginActivityCreated = true
         } catch (e: Exception) {
@@ -262,4 +267,13 @@ class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDeleg
         mHostActivityDelegator.superRecreate()
     }
 
+    private fun notifyPluginActivityPreCreated(
+        pluginActivity: ShadowActivity,
+        pluginSavedInstanceState: Bundle?
+    ) {
+        ShadowActivityLifecycleCallbacks.Holder.notifyPluginActivityPreCreated(
+            pluginActivity,
+            pluginSavedInstanceState
+        )
+    }
 }
