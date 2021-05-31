@@ -46,6 +46,18 @@ public abstract class PluginActivity extends GeneratedPluginActivity {
 
     ComponentName mCallingActivity;
 
+    private ShadowActivityLifecycleCallbacks.Holder lifecycleCallbacksHolder;
+
+    public void registerActivityLifecycleCallbacks(
+            ShadowActivityLifecycleCallbacks callback) {
+        lifecycleCallbacksHolder.registerActivityLifecycleCallbacks(this, callback);
+    }
+
+    public void unregisterActivityLifecycleCallbacks(
+            ShadowActivityLifecycleCallbacks callback) {
+        lifecycleCallbacksHolder.unregisterActivityLifecycleCallbacks(callback);
+    }
+
     public final void setHostContextAsBase(Context context) {
         attachBaseContext(context);
     }
@@ -53,6 +65,7 @@ public abstract class PluginActivity extends GeneratedPluginActivity {
     public void setHostActivityDelegator(HostActivityDelegator delegator) {
         super.hostActivityDelegator = delegator;
         hostActivityDelegator = delegator;
+        lifecycleCallbacksHolder = new ShadowActivityLifecycleCallbacks.Holder(delegator);
     }
 
     public void setPluginApplication(ShadowApplication pluginApplication) {
