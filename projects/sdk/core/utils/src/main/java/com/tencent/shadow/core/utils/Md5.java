@@ -2,36 +2,39 @@ package com.tencent.shadow.core.utils;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.math.BigInteger;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 
 public class Md5 {
     /**
      * 获取 文件的md5
-     *
-     * @param file 文件
-     * @return md5
+     * 计算方式性能优化
+     * 参考：https://juejin.im/post/583e2172128fe1006bf66bc8#heading-9
      */
     public static String md5File(File file) {
-        String value = null;
-        FileInputStream in = null;
+        MessageDigest messageDigest;
+        RandomAccessFile randomAccessFile = null;
         try {
-            in = new FileInputStream(file);
-            MappedByteBuffer byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            md5.update(byteBuffer);
-            BigInteger bi = new BigInteger(1, md5.digest());
-            value = bi.toString(16);
+            messageDigest = MessageDigest.getInstance("MD5");
+            randomAccessFile = new RandomAccessFile(file, "r");
+            byte[] bytes = new byte[2 * 1024 * 1024];
+            int len = 0;
+            while ((len = randomAccessFile.read(bytes)) != -1) {
+                messageDigest.update(bytes, 0, len);
+            }
+            BigInteger bigInt = new BigInteger(1, messageDigest.digest());
+            StringBuilder md5 = new StringBuilder(bigInt.toString(16));
+            while (md5.length() < 32) {
+                md5.insert(0, "0");
+            }
+            return md5.toString();
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
-            closeQuietly(in);
+            closeQuietly(randomAccessFile);
         }
-        return value;
     }
 
     static void closeQuietly(final Closeable closeable) {
