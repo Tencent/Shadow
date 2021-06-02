@@ -24,15 +24,10 @@ import com.tencent.shadow.core.common.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.security.MessageDigest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -57,35 +52,6 @@ public class MinFileUtils {
         if (!parent.isDirectory() && !parent.mkdirs()) {
             throw new IOException("创建父目录失败,文件目录:" + file.getAbsolutePath() + " parent dir exists=" + parent.exists());
         }
-    }
-
-    /**
-     * 获取 文件的md5
-     *
-     * @param file 文件
-     * @return md5
-     */
-    public static String md5File(File file) {
-        String value = null;
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream(file);
-            MappedByteBuffer byteBuffer = in.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, file.length());
-            MessageDigest md5 = MessageDigest.getInstance("MD5");
-            md5.update(byteBuffer);
-            BigInteger bi = new BigInteger(1, md5.digest());
-            value = bi.toString(16);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (null != in) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {
-                }
-            }
-        }
-        return value;
     }
 
     /**

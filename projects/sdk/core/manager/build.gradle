@@ -36,6 +36,7 @@ dependencies {
     androidTestImplementation project(':common')
 
     implementation 'com.tencent.shadow.coding:lint'
+    implementation project(':utils')
     compileOnly project(':common')
     api project(':load-parameters')
 }

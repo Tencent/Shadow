@@ -32,6 +32,8 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static com.tencent.shadow.core.utils.Md5.md5File;
+
 
 public class UnpackManager {
 
@@ -101,7 +103,7 @@ public class UnpackManager {
      */
     public PluginConfig unpackPlugin(String zipHash, File target) throws IOException, JSONException {
         if (zipHash == null) {
-            zipHash = MinFileUtils.md5File(target);
+            zipHash = md5File(target);
         }
         File pluginUnpackDir = getPluginUnpackDir(zipHash, target);
 
