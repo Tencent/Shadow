@@ -37,6 +37,7 @@ task jvmTestSdk() {
     dependsOn gradle.includedBuild('core').task(':transform-kit:test')
     dependsOn gradle.includedBuild('core').task(':transform:test')
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:test')
+    dependsOn gradle.includedBuild('core').task(':utils:test')
     dependsOn ':test_third-party-transform_androidx:assembleDebug'
 }
 

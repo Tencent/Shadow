@@ -25,6 +25,7 @@ android {
 
 dependencies {
     implementation 'com.tencent.shadow.coding:lint'
+    implementation 'com.tencent.shadow.core:utils'
     compileOnly 'com.tencent.shadow.core:common'
 }
 

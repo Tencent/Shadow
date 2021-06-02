@@ -1,0 +1,10 @@
+apply plugin: 'java-library'
+
+group 'com.tencent.shadow.core'
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+
+    // https://mvnrepository.com/artifact/commons-io/commons-io (requires Java 8)
+    testImplementation 'commons-io:commons-io:2.9.0'
+}
