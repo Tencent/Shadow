@@ -35,9 +35,11 @@ open class JavassistTransform(project: Project, val classPoolBuilder: ClassPoolB
     }
 
     override fun DirInputClass.onInputClass(classFile: File, outputFile: File) {
-        val ctClass: CtClass = classPool.makeClass(classFile.inputStream())
-        addOutput(ctClass.name, outputFile)
-        mCtClassInputMap[ctClass] = this
+        classFile.inputStream().use {
+            val ctClass: CtClass = classPool.makeClass(it)
+            addOutput(ctClass.name, outputFile)
+            mCtClassInputMap[ctClass] = this
+        }
     }
 
     override fun JarInputClass.onInputClass(zipInputStream: ZipInputStream, entryName: String) {
