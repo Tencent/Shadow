@@ -9,6 +9,7 @@ task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':transform-kit:testJar')
     dependsOn gradle.includedBuild('core').task(':transform:assemble')
     dependsOn gradle.includedBuild('core').task(':load-parameters:assembleRelease')
+    dependsOn gradle.includedBuild('core').task(':utils:assemble')
 
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:jarReleasePackage')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:jarReleasePackage')
@@ -193,6 +194,7 @@ publishing {
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('provided', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'load-parameters', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'utils', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -289,6 +291,7 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'common', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'utils', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -386,6 +389,21 @@ publishing {
                 setScm(scm)
             }
         }
+
+        coreUtils(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'utils'
+            version publicationVersion
+            artifact("$corePath/utils/build/libs/utils.jar")
+            artifact sourceJar("utils", "$corePath/utils")
+
+            pom.withXml {
+                def root = asNode()
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
     }
     repositories {
         def useLocalCredential = false
@@ -430,6 +448,7 @@ setGeneratePomFileAndDepends('common')
 setGeneratePomFileAndDepends('loadParameters')
 setGeneratePomFileAndDepends('coreLoader')
 setGeneratePomFileAndDepends('coreManager')
+setGeneratePomFileAndDepends('coreUtils')
 setGeneratePomFileAndDepends('runtime')
 setGeneratePomFileAndDepends('activityContainer')
 setGeneratePomFileAndDepends('transformKit')
