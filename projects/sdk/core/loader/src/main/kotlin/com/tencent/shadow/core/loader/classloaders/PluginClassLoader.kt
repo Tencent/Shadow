@@ -78,13 +78,13 @@ class PluginClassLoader(
             if (clazz == null) {
                 var suppressed: ClassNotFoundException? = null
                 try {
-                    clazz = findClass(className)!!
+                    clazz = specialClassLoader.loadClass(className)!!
                 } catch (e: ClassNotFoundException) {
                     suppressed = e
                 }
                 if (clazz == null) {
                     try {
-                        clazz = specialClassLoader.loadClass(className)!!
+                        clazz = findClass(className)!!
                     } catch (e: ClassNotFoundException) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                             e.addSuppressed(suppressed)
