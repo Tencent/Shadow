@@ -38,6 +38,9 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+    testOptions {
+        animationsDisabled = true
+    }
 }
 
 dependencies {
