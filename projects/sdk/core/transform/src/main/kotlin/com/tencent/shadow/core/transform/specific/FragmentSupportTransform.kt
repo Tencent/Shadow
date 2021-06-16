@@ -18,7 +18,6 @@
 
 package com.tencent.shadow.core.transform.specific
 
-import com.tencent.shadow.core.transform_kit.CodeConverterExtension
 import com.tencent.shadow.core.transform_kit.SpecificTransform
 import com.tencent.shadow.core.transform_kit.TransformStep
 import javassist.*
@@ -92,12 +91,21 @@ class FragmentSupportTransform : SpecificTransform() {
 
             override fun transform(ctClass: CtClass) {
                 ctClass.defrost()
-                val codeConverter = CodeConverterExtension()
-                codeConverter.redirectMethodCallToStaticMethodCall(getActivityMethod, fragmentGetActivityMethod)
-                codeConverter.redirectMethodCallToStaticMethodCall(getContextMethod, fragmentGetContextMethod)
-                codeConverter.redirectMethodCallToStaticMethodCall(getHostMethod, fragmentGetHostMethod)
-                codeConverter.redirectMethodCallToStaticMethodCall(startActivityMethod1, fragmentStartActivityMethod1)
-                codeConverter.redirectMethodCallToStaticMethodCall(startActivityMethod2, fragmentStartActivityMethod2)
+                val codeConverter = CodeConverter()
+                codeConverter.redirectMethodCallToStatic(
+                    getActivityMethod,
+                    fragmentGetActivityMethod
+                )
+                codeConverter.redirectMethodCallToStatic(getContextMethod, fragmentGetContextMethod)
+                codeConverter.redirectMethodCallToStatic(getHostMethod, fragmentGetHostMethod)
+                codeConverter.redirectMethodCallToStatic(
+                    startActivityMethod1,
+                    fragmentStartActivityMethod1
+                )
+                codeConverter.redirectMethodCallToStatic(
+                    startActivityMethod2,
+                    fragmentStartActivityMethod2
+                )
                 try {
                     ctClass.instrument(codeConverter)
                 } catch (e: Exception) {
@@ -186,16 +194,19 @@ class FragmentSupportTransform : SpecificTransform() {
                 override fun transform(ctClass: CtClass) {
                     ctClass.defrost()
                     //定义将插件Activity还原为ContainerActivity再调用super.onAttach方法的转调方法
-                    val superOnAttach = CtMethod.make("""
+                    val superOnAttach = CtMethod.make(
+                        """
                         private void superOnAttach(Context context) {
                             Context pluginContainerActivity = ShadowFragmentSupport.toOriginalContext(context);
                             super.onAttach(pluginContainerActivity);
                         }
-                    """.trimIndent(), ctClass)
+                    """.trimIndent(), ctClass
+                    )
 
                     //将插件Fragment中对super.onAttach的调用改调到superOnAttach上
-                    val codeConverter = CodeConverterExtension()
-                    val superOnAttachContext: CtMethod = ctClass.superclass.getMethod("onAttach", "(Landroid/content/Context;)V")
+                    val codeConverter = CodeConverter()
+                    val superOnAttachContext: CtMethod =
+                        ctClass.superclass.getMethod("onAttach", "(Landroid/content/Context;)V")
                     codeConverter.redirectMethodCall(superOnAttachContext, superOnAttach)
                     try {
                         ctClass.instrument(codeConverter)
@@ -221,20 +232,25 @@ class FragmentSupportTransform : SpecificTransform() {
                     //定义将插件Activity还原为ContainerActivity再调用super.onAttach方法的转调方法
 
                     val superOnAttach =
-                            fixSuperOnAttachCall(ctClass) {
-                                CtMethod.make("""
+                        fixSuperOnAttachCall(ctClass) {
+                            CtMethod.make(
+                                """
                         private void superOnAttach(ShadowActivity shadowActivity) {
                             Activity pluginContainerActivity = (Activity)ShadowFragmentSupport.toOriginalContext(shadowActivity);
                             super.onAttach(pluginContainerActivity);
                         }
-                    """.trimIndent(), ctClass)
-                            }
+                    """.trimIndent(), ctClass
+                            )
+                        }
 
                     //将插件Fragment中对super.onAttach的调用改调到superOnAttach上
-                    val codeConverter = CodeConverterExtension()
-                    var superOnAttachActivity: CtMethod = androidFragment.getDeclaredMethod("onAttach", arrayOf(androidActivity))
-                    superOnAttachActivity = CtNewMethod.copy(superOnAttachActivity, androidFragment, null)
-                    superOnAttachActivity.methodInfo.descriptor = "(Lcom/tencent/shadow/core/runtime/ShadowActivity;)V"
+                    val codeConverter = CodeConverter()
+                    var superOnAttachActivity: CtMethod =
+                        androidFragment.getDeclaredMethod("onAttach", arrayOf(androidActivity))
+                    superOnAttachActivity =
+                        CtNewMethod.copy(superOnAttachActivity, androidFragment, null)
+                    superOnAttachActivity.methodInfo.descriptor =
+                        "(Lcom/tencent/shadow/core/runtime/ShadowActivity;)V"
                     codeConverter.redirectMethodCall(superOnAttachActivity, superOnAttach)
                     try {
                         ctClass.instrument(codeConverter)
@@ -362,16 +378,21 @@ class FragmentSupportTransform : SpecificTransform() {
                 override fun transform(ctClass: CtClass) {
                     ctClass.defrost()
                     //定义将插件Activity还原为ContainerActivity再调用super.onInflate方法的转调方法
-                    val superOnInflate = CtMethod.make("""
+                    val superOnInflate = CtMethod.make(
+                        """
                         private void superOnInflate(Context context, AttributeSet attrs, Bundle savedInstanceState) {
                             Context pluginContainerActivity = ShadowFragmentSupport.toOriginalContext(context);
                             super.onInflate(pluginContainerActivity, attrs, savedInstanceState);
                         }
-                    """.trimIndent(), ctClass)
+                    """.trimIndent(), ctClass
+                    )
 
                     //将插件Fragment中对super.onAttach的调用改调到superOnAttach上
-                    val codeConverter = CodeConverterExtension()
-                    val superOnInflateContext: CtMethod = ctClass.superclass.getMethod("onInflate", "(Landroid/content/Context;Landroid/util/AttributeSet;Landroid/os/Bundle;)V")
+                    val codeConverter = CodeConverter()
+                    val superOnInflateContext: CtMethod = ctClass.superclass.getMethod(
+                        "onInflate",
+                        "(Landroid/content/Context;Landroid/util/AttributeSet;Landroid/os/Bundle;)V"
+                    )
                     codeConverter.redirectMethodCall(superOnInflateContext, superOnInflate)
                     try {
                         ctClass.instrument(codeConverter)
@@ -397,20 +418,27 @@ class FragmentSupportTransform : SpecificTransform() {
                     //定义将插件Activity还原为ContainerActivity再调用super.onInflate方法的转调方法
 
                     val superOnInflate =
-                            fixSuperOnInflateCall(ctClass) {
-                                CtMethod.make("""
+                        fixSuperOnInflateCall(ctClass) {
+                            CtMethod.make(
+                                """
                         private void superOnInflate(ShadowActivity shadowActivity, AttributeSet attrs, Bundle savedInstanceState) {
                             Activity pluginContainerActivity = (Activity)ShadowFragmentSupport.toOriginalContext(shadowActivity);
                             super.onInflate(pluginContainerActivity, attrs, savedInstanceState);
                         }
-                    """.trimIndent(), ctClass)
-                            }
+                    """.trimIndent(), ctClass
+                            )
+                        }
 
                     //将插件Fragment中对super.onAttach的调用改调到superOnAttach上
-                    val codeConverter = CodeConverterExtension()
-                    var superOnInflateActivity: CtMethod = androidFragment.getDeclaredMethod("onInflate", arrayOf(androidActivity, androidAttributeSet, androidBundle))
-                    superOnInflateActivity = CtNewMethod.copy(superOnInflateActivity, androidFragment, null)
-                    superOnInflateActivity.methodInfo.descriptor = "(Lcom/tencent/shadow/core/runtime/ShadowActivity;Landroid/util/AttributeSet;Landroid/os/Bundle;)V"
+                    val codeConverter = CodeConverter()
+                    var superOnInflateActivity: CtMethod = androidFragment.getDeclaredMethod(
+                        "onInflate",
+                        arrayOf(androidActivity, androidAttributeSet, androidBundle)
+                    )
+                    superOnInflateActivity =
+                        CtNewMethod.copy(superOnInflateActivity, androidFragment, null)
+                    superOnInflateActivity.methodInfo.descriptor =
+                        "(Lcom/tencent/shadow/core/runtime/ShadowActivity;Landroid/util/AttributeSet;Landroid/os/Bundle;)V"
                     codeConverter.redirectMethodCall(superOnInflateActivity, superOnInflate)
                     try {
                         ctClass.instrument(codeConverter)

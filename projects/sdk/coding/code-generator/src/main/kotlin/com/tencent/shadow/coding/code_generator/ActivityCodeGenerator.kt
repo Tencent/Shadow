@@ -11,6 +11,7 @@ import android.view.Window
 import com.squareup.javapoet.*
 import javassist.ClassMap
 import javassist.ClassPool
+import javassist.LoaderClassPath
 import javassist.bytecode.Descriptor
 import java.io.File
 import java.lang.reflect.Method
@@ -68,13 +69,18 @@ class ActivityCodeGenerator {
         const val CS_pluginActivity_field = "pluginActivity"
 
         val classPool = ClassPool.getDefault()
-        val ActivityClass = Activity::class.java
-        val ModifiedActivityClass = modifySdkClass(Activity::class.java)
-
         init {
+            // 兼容javassist升级后的ClassPool#appendSystemPath()改动：
+            // https://github.com/jboss-javassist/javassist/commit/e41e0790c0cb073e9e2e30071afecfcdc4621d42
+            if (javassist.bytecode.ClassFile.MAJOR_VERSION < javassist.bytecode.ClassFile.JAVA_9){
+                val cl = Thread.currentThread().contextClassLoader
+                classPool.appendClassPath(LoaderClassPath(cl))
+            }
             classPool.makeClass("$RUNTIME_PACKAGE.ShadowApplication").toClass()
         }
 
+        val ActivityClass = Activity::class.java
+        val ModifiedActivityClass = modifySdkClass(Activity::class.java)
         val activityCallbackMethods = getActivityCallbackMethods(ActivityClass)
         val otherMethods = getOtherMethods(ActivityClass)
         val activityCallbackMethodsModified = getActivityCallbackMethods(ModifiedActivityClass)
