@@ -7,3 +7,6 @@ dependencies {
 }
 
 compileJava.dependsOn(":dynamic-host:jarReleasePackage")
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
