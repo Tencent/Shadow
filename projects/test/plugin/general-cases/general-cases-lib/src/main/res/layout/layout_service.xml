@@ -47,6 +47,17 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:tag="startInNewThread"
+            android:onClick="startInNewThread"
+            android:text="startInNewThread" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:tag="bind"
             android:onClick="bind"
             android:text="bindService" />

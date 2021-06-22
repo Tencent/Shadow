@@ -88,12 +88,24 @@ public class PluginServiceTest extends PluginMainAppTest {
         check(text);
     }
 
-    private void click(String tag){
+    @Test
+    public void startInNewThread() {
+        click("startInNewThread");
+        String text = "onCreate-onStartCommand";
+        check(text);
+
+        // test stopService
+        click("stop");
+        text += "-onDestroy";
+        check(text);
+    }
+
+    private void click(String tag) {
         Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is(tag))).perform(ViewActions.click());
     }
 
-    private void check(String text){
-        matchTextWithViewTag("text",text);
+    private void check(String text) {
+        matchTextWithViewTag("text", text);
     }
 
 }
