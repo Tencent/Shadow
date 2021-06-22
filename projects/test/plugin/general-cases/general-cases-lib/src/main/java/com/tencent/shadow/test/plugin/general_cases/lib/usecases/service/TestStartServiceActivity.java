@@ -56,12 +56,22 @@ public class TestStartServiceActivity extends WithIdlingResourceActivity {
         serviceIntent = new Intent(this, TestService.class);
         setContentView(R.layout.layout_service);
         mTextView = findViewById(R.id.tv_msg);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver,new IntentFilter(INTENT_ACTION));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadcastReceiver, new IntentFilter(INTENT_ACTION));
     }
 
     public void start(View view) {
         setIdle();
         startService(serviceIntent);
+    }
+
+    public void startInNewThread(View view) {
+        setIdle();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                startService(serviceIntent);
+            }
+        }).start();
     }
 
     public void bind(View view) {
