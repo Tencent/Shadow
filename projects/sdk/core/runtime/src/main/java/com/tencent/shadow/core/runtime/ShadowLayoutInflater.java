@@ -29,6 +29,36 @@ import android.view.LayoutInflater;
  */
 public class ShadowLayoutInflater extends ShadowWebViewLayoutInflater {
 
+    private Factory mOriginalFactory = null;
+    private Factory2 mOriginalFactory2 = null;
+
+    @Override
+    public void setFactory(Factory factory) {
+        mOriginalFactory = factory;
+        super.setFactory(factory);
+    }
+
+    @Override
+    public void setFactory2(Factory2 factory) {
+        mOriginalFactory = mOriginalFactory2 = factory;
+        super.setFactory2(factory);
+    }
+
+    public static Factory getOriginalFactory(LayoutInflater inflater) {
+        if (inflater instanceof ShadowLayoutInflater) {
+            return ((ShadowLayoutInflater) inflater).mOriginalFactory;
+        } else {
+            return inflater.getFactory();
+        }
+    }
+
+    public static Factory2 getOriginalFactory2(LayoutInflater inflater) {
+        if (inflater instanceof ShadowLayoutInflater) {
+            return ((ShadowLayoutInflater) inflater).mOriginalFactory2;
+        } else {
+            return inflater.getFactory2();
+        }
+    }
 
     public static ShadowLayoutInflater build(LayoutInflater original, Context newContext, String partKey) {
         InnerInflater innerLayoutInflater = new InnerInflater(original, newContext, partKey);

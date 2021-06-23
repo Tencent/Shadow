@@ -43,6 +43,7 @@ class TransformManager(ctClassInputMap: Map<CtClass, InputClass>,
             PackageManagerTransform(),
             PackageItemInfoTransform(),
             AppComponentFactoryTransform(),
+            LayoutInflaterTransform(),
             KeepHostContextTransform(useHostContext())
     )
 }
