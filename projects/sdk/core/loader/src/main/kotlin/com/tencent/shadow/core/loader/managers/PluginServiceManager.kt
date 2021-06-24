@@ -202,10 +202,12 @@ private open class UnsafePluginServiceManager(
 
     }
 
-    fun unbindPluginService(connection: ServiceConnection) {
-
+    fun unbindPluginService(connection: ServiceConnection): Pair<Boolean, Boolean> {
+        var isPluginService = false
+        var isPluginServiceStopped = false
         for ((componentName, connSet) in mServiceConnectionMap) {
             if (connSet.contains(connection)) {
+                isPluginService = true
                 connSet.remove(connection)
                 val intent = mConnectionIntentMap.remove(connection)
 
@@ -218,12 +220,12 @@ private open class UnsafePluginServiceManager(
                 }
 
                 // 结束该service
-                destroyServiceIfNeed(componentName)
+                isPluginServiceStopped = destroyServiceIfNeed(componentName)
 
                 break
             }
         }
-
+        return Pair(isPluginService, isPluginServiceStopped)
     }
 
 
