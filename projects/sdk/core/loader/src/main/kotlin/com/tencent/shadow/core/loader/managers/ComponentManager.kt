@@ -120,8 +120,10 @@ abstract class ComponentManager : PluginComponentLauncher {
     }
 
     override fun unbindService(context: ShadowContext, conn: ServiceConnection): Pair<Boolean, Unit> {
-        mPluginServiceManager!!.unbindPluginService(conn)
-        return Pair(true, Unit)
+        return Pair.create(
+            mPluginServiceManager!!.unbindPluginService(conn).first,
+            Unit
+        )
     }
 
     override fun convertPluginActivityIntent(pluginIntent: Intent): Intent {
