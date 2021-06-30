@@ -1,0 +1,13 @@
+ext {
+
+    android = [
+            compileSdkVersion: 30,
+            buildToolsVersion: "30.0.3",
+            applicationId    : "com.tencent.shadow.sample.plugin",
+            minSdkVersion    : 21,
+            targetSdkVersion : 30,
+            versionCode      : 20210514,
+            versionName      : "V1.2.2",
+    ]
+
+}
