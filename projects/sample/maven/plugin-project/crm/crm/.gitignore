@@ -36,7 +36,7 @@ Icon?
 .tags*
 
 build/
-.android/
+#.android/
 .ios/
 .ios/Flutter/Generated.xcconfig
 .flutter-plugins
