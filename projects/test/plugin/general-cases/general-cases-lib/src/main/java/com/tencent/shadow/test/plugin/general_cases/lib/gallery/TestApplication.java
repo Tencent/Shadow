@@ -20,6 +20,7 @@ package com.tencent.shadow.test.plugin.general_cases.lib.gallery;
 
 import android.app.Activity;
 import android.app.Application;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,6 +44,9 @@ public class TestApplication extends Application {
         super.onCreate();
 
         registerActivityLifecycleCallbacks(alc);
+
+        //额外添加一个callback，构造通知遍历多个callback的场景
+        registerActivityLifecycleCallbacks(new TestActivityLifecycleCallbacks("TestForRegisterInPreCreatedCallback"));
     }
 
     public static TestApplication getInstance() {
@@ -70,6 +74,12 @@ class TestActivityLifecycleCallbacks implements Application.ActivityLifecycleCal
     public void onActivityPreCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
         if (isTargetActivity(activity)) {
             recordList.add("onActivityPreCreated");
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            TestApplication.getInstance().registerActivityLifecycleCallbacks(
+                    new TestActivityLifecycleCallbacks("TestForRegisterInPreCreatedCallback")
+            );
         }
     }
 
