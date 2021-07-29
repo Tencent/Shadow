@@ -42,6 +42,8 @@ class FragmentSupportTransformTest : AbstractTransformTest() {
     val fragmentGetActivity = shadowFragmentSupportClazz.getMethod("fragmentGetActivity", "($FragmentSig)$ShadowActivitySig")
     val fragmentStartActivity1 = shadowFragmentSupportClazz.getMethod("fragmentStartActivity", "($FragmentSig$IntentSig)V")
     val fragmentStartActivity2 = shadowFragmentSupportClazz.getMethod("fragmentStartActivity", "($FragmentSig$IntentSig$BundleSig)V")
+    val fragmentStartActivityForResult1 = shadowFragmentSupportClazz.getMethod("fragmentStartActivityForResult", "($FragmentSig${IntentSig}I)V")
+    val fragmentStartActivityForResult2 = shadowFragmentSupportClazz.getMethod("fragmentStartActivityForResult", "($FragmentSig${IntentSig}I$BundleSig)V")
 
     private fun transform(clazz: CtClass) {
         val transform = FragmentSupportTransform()
@@ -95,6 +97,26 @@ class FragmentSupportTransformTest : AbstractTransformTest() {
         )
         Assert.assertTrue("${fragmentStartActivity2}调用应该可以找到",
                 matchMethodCallInClass(fragmentStartActivity2, transformedClass)
+        )
+    }
+
+    @Test
+    fun fragmentStartActivityForResult() {
+        val name = "test.fragment.UseStartActivityForResultFragment"
+        transform(sLoader[name])
+
+        val transformedClass = dLoader.get(name)
+        try {
+            transformedClass.getMethod("test", "($TestFragmentSig)$ShadowActivitySig")
+        } catch (e: Exception) {
+            Assert.fail("找不到正确的test方法")
+        }
+
+        Assert.assertTrue("${fragmentStartActivityForResult1}调用应该可以找到",
+            matchMethodCallInClass(fragmentStartActivityForResult1, transformedClass)
+        )
+        Assert.assertTrue("${fragmentStartActivityForResult2}调用应该可以找到",
+            matchMethodCallInClass(fragmentStartActivityForResult2, transformedClass)
         )
     }
 
