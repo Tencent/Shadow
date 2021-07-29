@@ -51,6 +51,21 @@ public class ShadowFragmentSupport {
         }
     }
 
+    public static void fragmentStartActivityForResult(Fragment fragment, Intent intent, int requestCode) {
+        fragmentStartActivityForResult(fragment, intent, requestCode, null);
+    }
+
+    public static void fragmentStartActivityForResult(Fragment fragment, Intent intent, int requestCode, Bundle options) {
+        ShadowContext shadowContext = fragmentGetActivity(fragment);
+        Intent containerActivityIntent
+                = shadowContext.mPluginComponentLauncher.convertPluginActivityIntent(intent);
+        if (options == null) {
+            fragment.startActivityForResult(containerActivityIntent, requestCode);
+        } else {
+            fragment.startActivityForResult(containerActivityIntent, requestCode, options);
+        }
+    }
+
     public static Context toPluginContext(Context pluginContainerActivity) {
         return PluginActivity.get((PluginContainerActivity) pluginContainerActivity);
     }

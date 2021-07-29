@@ -83,6 +83,19 @@ class FragmentSupportTransform : SpecificTransform() {
                 Descriptor.ofMethod(CtClass.voidType,
                         arrayOf(androidFragment, androidIntent, androidBundle)))
 
+        val startActivityForResultMethod1 = androidFragment.getMethod("startActivityForResult",
+            Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(androidIntent, CtClass.intType)))
+        val fragmentStartActivityForResultMethod1 = shadowFragmentSupport.getMethod("fragmentStartActivityForResult",
+            Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(androidFragment, androidIntent, CtClass.intType)))
+        val startActivityForResultMethod2 = androidFragment.getMethod("startActivityForResult",
+            Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(androidIntent, CtClass.intType, androidBundle)))
+        val fragmentStartActivityForResultMethod2 = shadowFragmentSupport.getMethod("fragmentStartActivityForResult",
+            Descriptor.ofMethod(CtClass.voidType,
+                arrayOf(androidFragment, androidIntent, CtClass.intType, androidBundle)))
+
         /**
          * 调用插件Fragment的Activity相关方法时将ContainerActivity转换成ShadowActivity
          */
@@ -105,6 +118,14 @@ class FragmentSupportTransform : SpecificTransform() {
                 codeConverter.redirectMethodCallToStatic(
                     startActivityMethod2,
                     fragmentStartActivityMethod2
+                )
+                codeConverter.redirectMethodCallToStatic(
+                    startActivityForResultMethod1,
+                    fragmentStartActivityForResultMethod1
+                )
+                codeConverter.redirectMethodCallToStatic(
+                    startActivityForResultMethod2,
+                    fragmentStartActivityForResultMethod2
                 )
                 try {
                     ctClass.instrument(codeConverter)

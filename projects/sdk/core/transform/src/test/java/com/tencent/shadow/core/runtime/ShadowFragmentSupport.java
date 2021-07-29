@@ -25,6 +25,12 @@ public class ShadowFragmentSupport {
     public void fragmentStartActivity(Fragment fragment, Intent intent, Bundle options) {
     }
 
+    public static void fragmentStartActivityForResult(Fragment fragment, Intent intent, int requestCode) {
+    }
+
+    public static void fragmentStartActivityForResult(Fragment fragment, Intent intent, int requestCode, Bundle options) {
+    }
+
     public static Context toPluginContext(Context pluginContainerActivity) {
         return null;
     }

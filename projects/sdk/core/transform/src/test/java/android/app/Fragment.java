@@ -32,6 +32,14 @@ public class Fragment {
 
     }
 
+    public void startActivityForResult(Intent intent, int requestCode) {
+
+    }
+
+    public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
+
+    }
+
     public void onAttach(Context context) {
 
     }
