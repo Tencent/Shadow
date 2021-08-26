@@ -16,13 +16,27 @@
  *
  */
 
-package com.tencent.shadow.core.transform.specific
+package com.tencent.shadow.core.runtime.container;
 
-class ActivityTransform : SimpleRenameTransform(
-        mapOf(
-                "android.app.Activity"
-                        to "com.tencent.shadow.core.runtime.ShadowActivity",
-                "android.app.NativeActivity"
-                        to "com.tencent.shadow.core.runtime.ShadowNativeActivity"
-        )
-)
+import android.content.pm.PackageManager;
+import android.view.InputQueue;
+import android.view.SurfaceHolder;
+
+public interface HostNativeActivityDelegate extends HostActivityDelegate {
+
+    PackageManager getPackageManager();
+
+    void surfaceCreated(SurfaceHolder holder);
+
+    void surfaceChanged(SurfaceHolder holder, int format, int width, int height);
+
+    void surfaceRedrawNeeded(SurfaceHolder holder);
+
+    void surfaceDestroyed(SurfaceHolder holder);
+
+    void onInputQueueCreated(InputQueue queue);
+
+    void onInputQueueDestroyed(InputQueue queue);
+
+    void onGlobalLayout();
+}

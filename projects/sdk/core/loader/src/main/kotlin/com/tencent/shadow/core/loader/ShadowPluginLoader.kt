@@ -27,10 +27,7 @@ import com.tencent.shadow.core.common.InstalledApk
 import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.blocs.LoadPluginBloc
-import com.tencent.shadow.core.loader.delegates.DI
-import com.tencent.shadow.core.loader.delegates.ShadowActivityDelegate
-import com.tencent.shadow.core.loader.delegates.ShadowContentProviderDelegate
-import com.tencent.shadow.core.loader.delegates.ShadowDelegate
+import com.tencent.shadow.core.loader.delegates.*
 import com.tencent.shadow.core.loader.exceptions.LoadPluginException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import com.tencent.shadow.core.loader.managers.ComponentManager
@@ -178,7 +175,11 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
     }
 
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {
-        return ShadowActivityDelegate(this)
+        return if (HostNativeActivityDelegator::class.java.isAssignableFrom(aClass)) {
+            ShadowNativeActivityDelegate(this)
+        } else {
+            ShadowActivityDelegate(this)
+        }
     }
 
 
