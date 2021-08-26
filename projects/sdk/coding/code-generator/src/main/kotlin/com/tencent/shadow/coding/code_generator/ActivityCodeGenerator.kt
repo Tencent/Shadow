@@ -5,6 +5,7 @@ package com.tencent.shadow.coding.code_generator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
+import android.app.NativeActivity
 import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.Window
@@ -15,6 +16,7 @@ import javassist.LoaderClassPath
 import javassist.bytecode.Descriptor
 import java.io.File
 import java.lang.reflect.Method
+import java.lang.reflect.Type
 import javax.lang.model.element.Modifier
 
 /**
@@ -62,6 +64,7 @@ class ActivityCodeGenerator {
         const val CS_HostActivityDelegate = "${PREFIX}HostActivityDelegate"
         const val CS_HostActivityDelegator = "${PREFIX}HostActivityDelegator"
         const val CS_PluginContainerActivity = "${PREFIX}PluginContainerActivity"
+        const val CS_NativePluginContainerActivity = "${PREFIX}NativePluginContainerActivity"
         const val CS_PluginActivity = "${PREFIX}PluginActivity"
         const val CS_ShadowActivityDelegate = "${PREFIX}ShadowActivityDelegate"
         const val CS_delegate_field = "hostActivityDelegate"
@@ -80,6 +83,7 @@ class ActivityCodeGenerator {
         }
 
         val ActivityClass = Activity::class.java
+        val NativeActivityClass = NativeActivity::class.java
         val ModifiedActivityClass = modifySdkClass(Activity::class.java)
         val activityCallbackMethods = getActivityCallbackMethods(ActivityClass)
         val otherMethods = getOtherMethods(ActivityClass)
@@ -328,7 +332,14 @@ class ActivityCodeGenerator {
 
     val activityDelegate = defineActivityDelegate()
     val activityDelegator = defineActivityDelegator()
-    val pluginContainerActivity = definePluginContainerActivity()
+    val pluginContainerActivity = definePluginContainerActivity(
+        CS_PluginContainerActivity,
+        ActivityClass
+    )
+    val nativePluginContainerActivity = definePluginContainerActivity(
+        CS_NativePluginContainerActivity,
+        NativeActivityClass
+    )
     val pluginActivity = definePluginActivity()
     val shadowActivityDelegate = defineShadowActivityDelegate()
 
@@ -348,10 +359,10 @@ class ActivityCodeGenerator {
                             + "以便Delegate可以通过这个接口调用到Activity的super方法。\n"
                     )
 
-    fun definePluginContainerActivity() =
-            TypeSpec.classBuilder(CS_PluginContainerActivity)
+    fun definePluginContainerActivity(className: String, superclass: Type) =
+            TypeSpec.classBuilder(className)
                     .addModifiers(Modifier.ABSTRACT)
-                    .superclass(ActivityClass)
+                    .superclass(superclass)
                     .addSuperinterface(ClassName.get(ACTIVITY_CONTAINER_PACKAGE, CS_HostActivityDelegator))
                     .addAnnotation(
                             AnnotationSpec.builder(SuppressLint::class.java)
@@ -425,6 +436,8 @@ class ActivityCodeGenerator {
                 .build().writeTo(activityContainerOutput)
         JavaFile.builder(ACTIVITY_CONTAINER_PACKAGE, pluginContainerActivity.build())
                 .build().writeTo(activityContainerOutput)
+        JavaFile.builder(ACTIVITY_CONTAINER_PACKAGE, nativePluginContainerActivity.build())
+                .build().writeTo(activityContainerOutput)
         JavaFile.builder(RUNTIME_PACKAGE, pluginActivity.build())
                 .build().writeTo(runtimeOutput)
         JavaFile.builder(DELEGATE_PACKAGE, shadowActivityDelegate.build())
@@ -459,25 +472,26 @@ class ActivityCodeGenerator {
         )
 
         //对系统会调用的方法转调到hostActivityDelegate去，再生成对应的super方法
-        pluginContainerActivity.addMethods(
+        listOf(pluginContainerActivity, nativePluginContainerActivity).forEach {
+            it.addMethods(
                 activityCallbackMethods.map(::delegateCallbackMethod)
-        )
-        pluginContainerActivity.addMethods(
+            )
+            it.addMethods(
                 activityCallbackMethods.map(::implementSuperMethod)
-        )
-
-        //TODO:这些方法并不需要添加super前缀方法，但先对齐原手工实现的类，保证单元测试检测生成类和原手工写的类一致可以通过。
-        pluginContainerActivity.addMethods(
+            )
+            //TODO:这些方法并不需要添加super前缀方法，但先对齐原手工实现的类，保证单元测试检测生成类和原手工写的类一致可以通过。
+            it.addMethods(
                 otherMethods.filterNot { activityCallbackMethods.contains(it) }
-                        .map(::implementSuperMethod)
-        )
+                    .map(::implementSuperMethod)
+            )
 
-        //将所有protected方法暴露成public方法
-        pluginContainerActivity.addMethods(
+            //将所有protected方法暴露成public方法
+            it.addMethods(
                 otherMethods.filter {
                     java.lang.reflect.Modifier.isProtected(it.modifiers)
                 }.map(::exposeProtectedMethod)
-        )
+            )
+        }
 
         pluginActivity.addMethods(
                 activityCallbackMethodsModified

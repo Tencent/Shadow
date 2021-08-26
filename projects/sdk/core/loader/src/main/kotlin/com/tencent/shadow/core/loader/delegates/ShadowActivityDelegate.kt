@@ -50,13 +50,14 @@ import com.tencent.shadow.core.runtime.container.HostActivityDelegator
  *
  * @author cubershi
  */
-class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDelegate(), HostActivityDelegate {
+open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDelegate(),
+    HostActivityDelegate {
     companion object {
         const val PLUGIN_OUT_STATE_KEY = "PLUGIN_OUT_STATE_KEY"
         val mLogger = LoggerFactory.getLogger(ShadowActivityDelegate::class.java)
     }
 
-    private lateinit var mHostActivityDelegator: HostActivityDelegator
+    protected lateinit var mHostActivityDelegator: HostActivityDelegator
     private val mPluginActivity get() = super.pluginActivity
     private lateinit var mBusinessName: String
     private lateinit var mPartKey: String
@@ -81,6 +82,7 @@ class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDeleg
     private lateinit var mCurrentConfiguration: Configuration
     private var mPluginHandleConfigurationChange: Int = 0
     private var mCallingActivity: ComponentName? = null
+    protected lateinit var mPluginActivityInfo: PluginActivityInfo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val pluginInitBundle = savedInstanceState ?: mHostActivityDelegator.intent.extras!!
@@ -99,6 +101,7 @@ class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivityDeleg
         bundleForPluginLoader.classLoader = this.javaClass.classLoader
         val pluginActivityClassName = bundleForPluginLoader.getString(CM_CLASS_NAME_KEY)!!
         val pluginActivityInfo: PluginActivityInfo = bundleForPluginLoader.getParcelable(CM_ACTIVITY_INFO_KEY)!!
+        mPluginActivityInfo = pluginActivityInfo
 
         mCurrentConfiguration = Configuration(resources.configuration)
         mPluginHandleConfigurationChange =
