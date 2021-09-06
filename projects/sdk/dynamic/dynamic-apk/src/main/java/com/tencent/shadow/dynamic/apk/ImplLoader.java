@@ -16,7 +16,7 @@
  *
  */
 
-package com.tencent.shadow.dynamic.host;
+package com.tencent.shadow.dynamic.apk;
 
 import com.tencent.shadow.core.common.InstalledApk;
 
@@ -24,13 +24,17 @@ import java.lang.reflect.Field;
 
 import dalvik.system.DexClassLoader;
 
-abstract class ImplLoader {
+public abstract class ImplLoader {
     private static final String WHITE_LIST_CLASS_NAME = "com.tencent.shadow.dynamic.impl.WhiteList";
     private static final String WHITE_LIST_FIELD_NAME = "sWhiteList";
 
-    abstract String[] getCustomWhiteList();
+    protected abstract String[] getCustomWhiteList();
 
-    String[] loadWhiteList(InstalledApk installedApk) {
+    public String[] loadWhiteList(InstalledApk installedApk) {
+        return loadWhiteList(installedApk, WHITE_LIST_CLASS_NAME, WHITE_LIST_FIELD_NAME);
+    }
+
+    public String[] loadWhiteList(InstalledApk installedApk, String whiteListClassName, String whiteListFieldName) {
         DexClassLoader dexClassLoader = new DexClassLoader(
                 installedApk.apkFilePath,
                 installedApk.oDexPath,
@@ -40,8 +44,8 @@ abstract class ImplLoader {
 
         String[] whiteList = null;
         try {
-            Class<?> whiteListClass = dexClassLoader.loadClass(WHITE_LIST_CLASS_NAME);
-            Field whiteListField = whiteListClass.getDeclaredField(WHITE_LIST_FIELD_NAME);
+            Class<?> whiteListClass = dexClassLoader.loadClass(whiteListClassName);
+            Field whiteListField = whiteListClass.getDeclaredField(whiteListFieldName);
             Object o = whiteListField.get(null);
             whiteList = (String[]) o;
         } catch (ClassNotFoundException ignored) {

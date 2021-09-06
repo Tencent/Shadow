@@ -1,0 +1,31 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion project.COMPILE_SDK_VERSION
+
+    defaultConfig {
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        versionCode project.VERSION_CODE
+        versionName project.VERSION_NAME
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    // 使用 api 而不是 compileOnly：发布 aar 时会传递依赖，而不是打包进 aar
+    api 'com.tencent.shadow.core:utils'
+    api 'com.tencent.shadow.core:common'
+    api 'com.tencent.shadow.dynamic:dynamic-apk'
+
+    api project(':sample-hello-api')
+}

@@ -11,6 +11,7 @@ task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':load-parameters:assembleRelease')
     dependsOn gradle.includedBuild('core').task(':utils:assemble')
 
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-apk:jarReleasePackage')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:jarReleasePackage')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:jarReleasePackage')
     dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:assembleRelease')
@@ -281,6 +282,22 @@ publishing {
                 setScm(scm)
             }
         }
+        dynamicApk(MavenPublication) {
+            groupId dynamicGroupId
+            artifactId 'apk'
+            version publicationVersion
+            artifact("$dynamicPath/dynamic-apk/build/outputs/jar/dynamic-apk-release.jar")
+            artifact sourceJar("dynamicApk", "$dynamicPath/dynamic-apk")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'common', publicationVersion))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
         dynamicHost(MavenPublication) {
             groupId dynamicGroupId
             artifactId 'host'
@@ -291,6 +308,7 @@ publishing {
             pom.withXml {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', dynamicGroupId, 'apk', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'common', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'utils', publicationVersion))
 
@@ -455,6 +473,7 @@ setGeneratePomFileAndDepends('activityContainer')
 setGeneratePomFileAndDepends('transformKit')
 setGeneratePomFileAndDepends('transformKitTest')
 setGeneratePomFileAndDepends('transform')
+setGeneratePomFileAndDepends('dynamicApk')
 setGeneratePomFileAndDepends('dynamicHost')
 setGeneratePomFileAndDepends('dynamicHostMultiLoaderExt')
 setGeneratePomFileAndDepends('dynamicLoader')

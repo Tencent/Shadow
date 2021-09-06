@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Tencent is pleased to support the open source community by making Tencent Shadow available.
+  ~ Copyright (C) 2019 THL A29 Limited, a Tencent company.  All rights reserved.
+  ~
+  ~ Licensed under the BSD 3-Clause License (the "License"); you may not use
+  ~ this file except in compliance with the License. You may obtain a copy of
+  ~ the License at
+  ~
+  ~     https://opensource.org/licenses/BSD-3-Clause
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#fcfcfc"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="20dp"
+        android:textSize="30sp"
+        android:text="这是一个位于dynamic-pluginmanager-apk中的view" />
+
+    <ProgressBar
+        android:layout_marginTop="30dp"
+        android:layout_gravity="center"
+        android:layout_width="60dp"
+        android:layout_height="60dp" />
+</LinearLayout>

@@ -16,7 +16,7 @@
  *
  */
 
-package com.tencent.shadow.dynamic.host;
+package com.tencent.shadow.dynamic.apk;
 
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -31,7 +31,7 @@ import static android.content.pm.PackageManager.GET_META_DATA;
 /**
  * 修改Context的apk路径的Wrapper。可将原Context的Resource和ClassLoader重新修改为新的Apk。
  */
-class ChangeApkContextWrapper extends ContextWrapper {
+public class ChangeApkContextWrapper extends ContextWrapper {
 
     private Resources mResources;
 
@@ -39,7 +39,7 @@ class ChangeApkContextWrapper extends ContextWrapper {
 
     final private ClassLoader mClassloader;
 
-    ChangeApkContextWrapper(Context base, String apkPath, ClassLoader mClassloader) {
+    public ChangeApkContextWrapper(Context base, String apkPath, ClassLoader mClassloader) {
         super(base);
         this.mClassloader = mClassloader;
         mResources = createResources(apkPath, base);
