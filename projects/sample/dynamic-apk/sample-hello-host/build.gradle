@@ -1,0 +1,99 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion project.COMPILE_SDK_VERSION
+    defaultConfig {
+        //region hello.apk 演示
+        applicationId 'com.tencent.shadow.sample.hello.host'
+        //endregion
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        versionCode project.VERSION_CODE
+        versionName project.VERSION_NAME
+        testInstrumentationRunner "com.tencent.shadow.test.CustomAndroidJUnitRunner"
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.create("release")
+            signingConfig.initWith(buildTypes.debug.signingConfig)
+        }
+    }
+    //region hello.apk 演示
+    sourceSets {
+        debug {
+            assets.srcDir('build/generated/assets/sample-hello-apk/debug/')
+        }
+        release {
+            assets.srcDir('build/generated/assets/sample-hello-apk/release/')
+        }
+    }
+    //endregion
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'commons-io:commons-io:2.5'//sample-hello-host从assets中复制插件用的
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+
+    //region hello.apk 演示
+    implementation project(':sample-hello-api-holder')
+    //endregion
+}
+
+def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
+    def outputFile = file("${getBuildDir()}/generated/assets/${name}/${buildType}/${apkName}")
+    outputFile.getParentFile().mkdirs()
+    return tasks.create("copy${buildType.capitalize()}${name.capitalize()}Task", Copy) {
+        group = 'build'
+        description = "复制${name}到assets中."
+        from(inputFile.getParent()) {
+            include(inputFile.name)
+            rename { outputFile.name }
+        }
+        into(outputFile.getParent())
+
+    }.dependsOn("${projectName}:${taskName}")
+}
+
+//region hello.apk 演示
+def generateHelloAssets(generateAssetsTask, buildType) {
+    def moduleName = 'sample-hello-apk'
+    def pluginManagerApkFile = file(
+            "${project(":sample-hello-apk").getBuildDir()}" +
+                    "/outputs/apk/${buildType}/" +
+                    "${moduleName}-${buildType}.apk"
+    )
+    generateAssetsTask.dependsOn createCopyTask(
+            ':sample-hello-apk',
+            buildType,
+            moduleName,
+            'hello.apk',
+            pluginManagerApkFile,
+            "assemble${buildType.capitalize()}"
+    )
+}
+//endregion
+
+tasks.whenTaskAdded { task ->
+    if (task.name == "generateDebugAssets") {
+        //region hello.apk 演示
+        generateHelloAssets(task, 'debug')
+        //endregion
+    }
+    if (task.name == "generateReleaseAssets") {
+        //region hello.apk 演示
+        generateHelloAssets(task, 'release')
+        //endregion
+    }
+}

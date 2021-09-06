@@ -16,7 +16,7 @@
  *
  */
 
-package com.tencent.shadow.dynamic.host;
+package com.tencent.shadow.sample.apk.hello;
 
 import android.content.Context;
 
@@ -24,28 +24,32 @@ import com.tencent.shadow.core.common.InstalledApk;
 import com.tencent.shadow.dynamic.apk.ApkClassLoader;
 import com.tencent.shadow.dynamic.apk.ChangeApkContextWrapper;
 import com.tencent.shadow.dynamic.apk.ImplLoader;
+import com.tencent.shadow.sample.api.hello.HelloFactory;
+import com.tencent.shadow.sample.api.hello.IHelloWorldImpl;
 
 import java.io.File;
 
-final class ManagerImplLoader extends ImplLoader {
-    private static final String MANAGER_FACTORY_CLASS_NAME = "com.tencent.shadow.dynamic.impl.ManagerFactoryImpl";
+final class HelloImplLoader extends ImplLoader {
+    //指定实现类在apk中的路径
+    private static final String FACTORY_CLASS_NAME = "com.tencent.shadow.dynamic.impl.HelloFactoryImpl";
     private static final String[] REMOTE_PLUGIN_MANAGER_INTERFACES = new String[]
             {
                     "com.tencent.shadow.core.common",
-                    "com.tencent.shadow.dynamic.host"
+                    //注意将宿主自定义接口加入白名单
+                    "com.tencent.shadow.sample.api.hello"
             };
     final private Context applicationContext;
     final private InstalledApk installedApk;
 
-    ManagerImplLoader(Context context, File apk) {
+    HelloImplLoader(Context context, File apk) {
         applicationContext = context.getApplicationContext();
-        File root = new File(applicationContext.getFilesDir(), "ManagerImplLoader");
+        File root = new File(applicationContext.getFilesDir(), "HelloImplLoader");
         File odexDir = new File(root, Long.toString(apk.lastModified(), Character.MAX_RADIX));
         odexDir.mkdirs();
         installedApk = new InstalledApk(apk.getAbsolutePath(), odexDir.getAbsolutePath(), null);
     }
 
-    PluginManagerImpl load() {
+    IHelloWorldImpl load() {
         ApkClassLoader apkClassLoader = new ApkClassLoader(
                 installedApk,
                 getClass().getClassLoader(),
@@ -53,23 +57,22 @@ final class ManagerImplLoader extends ImplLoader {
                 1
         );
 
-        Context pluginManagerContext = new ChangeApkContextWrapper(
+        Context contextForApi = new ChangeApkContextWrapper(
                 applicationContext,
                 installedApk.apkFilePath,
                 apkClassLoader
         );
 
         try {
-            ManagerFactory managerFactory = apkClassLoader.getInterface(
-                    ManagerFactory.class,
-                    MANAGER_FACTORY_CLASS_NAME
+            HelloFactory factory = apkClassLoader.getInterface(
+                    HelloFactory.class,
+                    FACTORY_CLASS_NAME
             );
-            return managerFactory.buildManager(pluginManagerContext);
+            return factory.build(contextForApi);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
 
     @Override
     protected String[] getCustomWhiteList() {

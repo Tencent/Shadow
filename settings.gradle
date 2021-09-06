@@ -12,6 +12,7 @@ includeBuild 'projects/sdk/dynamic'
 
 includeTest()
 includeSample()
+includeSampleDynamicApk()
 
 def includeTest() {
     include 'test-dynamic-host',
@@ -79,4 +80,15 @@ def includeSample() {
     project(':sample-app-lib').projectDir = file('projects/sample/source/sample-plugin/sample-app-lib')
     project(':sample-normal-app').projectDir = file('projects/sample/source/sample-plugin/sample-normal-app')
     project(':sample-plugin-app').projectDir = file('projects/sample/source/sample-plugin/sample-plugin-app')
+}
+
+def includeSampleDynamicApk() {
+    include 'sample-hello-api',
+            'sample-hello-api-holder',
+            'sample-hello-apk',
+            'sample-hello-host'
+    project(':sample-hello-api').projectDir = file('projects/sample/dynamic-apk/sample-hello-api')
+    project(':sample-hello-api-holder').projectDir = file('projects/sample/dynamic-apk/sample-hello-api-holder')
+    project(':sample-hello-apk').projectDir = file('projects/sample/dynamic-apk/sample-hello-apk')
+    project(':sample-hello-host').projectDir = file('projects/sample/dynamic-apk/sample-hello-host')
 }

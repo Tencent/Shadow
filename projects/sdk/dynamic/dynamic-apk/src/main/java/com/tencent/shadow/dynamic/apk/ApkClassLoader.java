@@ -16,7 +16,7 @@
  *
  */
 
-package com.tencent.shadow.dynamic.host;
+package com.tencent.shadow.dynamic.apk;
 
 import android.os.Build;
 
@@ -35,11 +35,11 @@ import dalvik.system.DexClassLoader;
  *
  * @author cubershi
  */
-class ApkClassLoader extends DexClassLoader {
+public class ApkClassLoader extends DexClassLoader {
     private ClassLoader mGrandParent;
     private final String[] mInterfacePackageNames;
 
-    ApkClassLoader(InstalledApk installedApk,
+    public ApkClassLoader(InstalledApk installedApk,
                    ClassLoader parent, String[] mInterfacePackageNames, int grandTimes) {
         super(installedApk.apkFilePath, installedApk.oDexPath, installedApk.libraryPath, parent);
         ClassLoader grand = parent;
@@ -106,7 +106,7 @@ class ApkClassLoader extends DexClassLoader {
      * @return 所需接口
      * @throws Exception
      */
-    <T> T getInterface(Class<T> clazz, String className) throws Exception {
+    public <T> T getInterface(Class<T> clazz, String className) throws Exception {
         try {
             Class<?> interfaceImplementClass = loadClass(className);
             Object interfaceImplement = interfaceImplementClass.newInstance();

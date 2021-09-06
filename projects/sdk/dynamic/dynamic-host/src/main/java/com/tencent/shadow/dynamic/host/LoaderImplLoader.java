@@ -21,6 +21,8 @@ package com.tencent.shadow.dynamic.host;
 import android.content.Context;
 
 import com.tencent.shadow.core.common.InstalledApk;
+import com.tencent.shadow.dynamic.apk.ApkClassLoader;
+import com.tencent.shadow.dynamic.apk.ImplLoader;
 
 final class LoaderImplLoader extends ImplLoader {
     /**
@@ -54,7 +56,7 @@ final class LoaderImplLoader extends ImplLoader {
     }
 
     @Override
-    String[] getCustomWhiteList() {
+    protected String[] getCustomWhiteList() {
         return sInterfaces;
     }
 }
