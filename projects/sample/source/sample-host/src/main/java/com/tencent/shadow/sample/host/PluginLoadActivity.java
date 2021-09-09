@@ -87,6 +87,7 @@ public class PluginLoadActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        HostApplication.getApp().getPluginManager().enter(this, Constant.FROM_ID_CLOSE, null, null);
         mViewGroup.removeAllViews();
     }
 }

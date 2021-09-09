@@ -57,7 +57,7 @@ public abstract class BasePluginManager {
     /**
      * 插件信息查询数据库接口
      */
-    private InstalledDao mInstalledDao;
+    final private InstalledDao mInstalledDao;
 
     /**
      * UI线程的handler
@@ -295,5 +295,12 @@ public abstract class BasePluginManager {
      */
     public String getAbi() {
         return null;
+    }
+
+    /**
+     * 释放资源
+     */
+    public void close() {
+        mInstalledDao.close();
     }
 }
