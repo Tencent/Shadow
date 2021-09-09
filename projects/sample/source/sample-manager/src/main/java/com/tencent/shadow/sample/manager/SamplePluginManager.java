@@ -80,6 +80,8 @@ public class SamplePluginManager extends FastPluginManager {
             //do nothing.
         } else if (fromId == Constant.FROM_ID_START_ACTIVITY) {
             onStartActivity(context, bundle, callback);
+        } else if (fromId == Constant.FROM_ID_CLOSE) {
+            close();
         } else {
             throw new IllegalArgumentException("不认识的fromId==" + fromId);
         }

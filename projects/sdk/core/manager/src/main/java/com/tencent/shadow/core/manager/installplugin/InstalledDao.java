@@ -34,7 +34,7 @@ import java.util.Set;
 
 public class InstalledDao {
 
-    private InstalledPluginDBHelper mDBHelper;
+    final private InstalledPluginDBHelper mDBHelper;
 
     public InstalledDao(InstalledPluginDBHelper dbHelper) {
         mDBHelper = dbHelper;
@@ -171,7 +171,6 @@ public class InstalledDao {
         for (String uuid : uuids) {
             installedPlugins.add(getInstalledPluginByUUID(uuid));
         }
-        db.close();
         return installedPlugins;
     }
 
@@ -218,4 +217,10 @@ public class InstalledDao {
     }
 
 
+    /**
+     * 释放资源
+     */
+    public void close() {
+        mDBHelper.close();
+    }
 }
