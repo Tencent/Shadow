@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.core.runtime;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.BroadcastReceiver;
@@ -157,5 +158,10 @@ public class ShadowApplication extends ShadowContext {
 
     public void setAppComponentFactory(ShadowAppComponentFactory factory) {
         mAppComponentFactory = factory;
+    }
+
+    @SuppressLint("NewApi")
+    public static String getProcessName() {
+        return Application.getProcessName();
     }
 }
