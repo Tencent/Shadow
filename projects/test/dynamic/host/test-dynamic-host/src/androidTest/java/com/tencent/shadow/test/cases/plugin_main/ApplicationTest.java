@@ -19,11 +19,13 @@
 package com.tencent.shadow.test.cases.plugin_main;
 
 import android.content.Intent;
+import android.os.Build;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,4 +50,10 @@ public class ApplicationTest extends PluginMainAppTest {
         matchTextWithViewTag("TAG_IS_ON_CREATE", Boolean.toString(true));
     }
 
+    @Test
+    public void testApplicationGetProcessName() {
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.P);
+        matchTextWithViewTag("Application.getProcessName()",
+                ApplicationProvider.getApplicationContext().getPackageName());
+    }
 }
