@@ -13,6 +13,14 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: buildSdk
         run: ./gradlew wrapper; ./gradlew buildSdk
       - name: lintSdk
@@ -30,6 +38,8 @@ jobs:
           arch: x86_64
           profile: pixel_xl
           script: ./gradlew wrapper; ./gradlew androidTestSdk
+      - name: stop gradle deamon for actions/cache
+        run: ./gradlew --stop
   publish:
     needs: build-and-test
     runs-on: macos-latest
@@ -42,5 +52,15 @@ jobs:
         uses: rlespinasse/github-slug-action@v3.x
       - name: checkout
         uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: publish
         run: ./gradlew wrapper; ./gradlew publish
+      - name: stop gradle deamon for actions/cache
+        run: ./gradlew --stop
