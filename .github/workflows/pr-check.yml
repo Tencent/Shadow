@@ -12,6 +12,14 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: buildSdk
         run: ./gradlew wrapper; ./gradlew buildSdk
       - name: lintSdk
@@ -29,6 +37,8 @@ jobs:
           arch: x86_64
           profile: pixel_xl
           script: ./gradlew wrapper; ./gradlew androidTestSdk
+      - name: stop gradle deamon for actions/cache
+        run: ./gradlew --stop
   build-on-windows:
     runs-on: windows-latest
     env:
@@ -36,12 +46,22 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: buildSdk
         run: ./gradlew wrapper; ./gradlew buildSdk
       - name: lintSdk
         run: ./gradlew wrapper; ./gradlew lintSdk
       - name: build sample/source
         run: ./gradlew wrapper; ./gradlew build
+      - name: stop gradle deamon for actions/cache
+        run: ./gradlew --stop
   build-samples:
     runs-on: ubuntu-latest
     env:
@@ -49,6 +69,14 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: build sample/maven/host-project
         working-directory: projects/sample/maven/host-project
         run: ./gradlew wrapper; ./gradlew assemble
@@ -67,3 +95,5 @@ jobs:
       - name: build sample/sunflower/plugin-project
         working-directory: projects/sample/sunflower/plugin-project
         run: ./gradlew wrapper; ./gradlew assemble
+      - name: stop gradle deamon for actions/cache
+        run: ./gradlew --stop
