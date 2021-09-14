@@ -41,6 +41,7 @@ abstract class AbstractTransform(
 
     private fun cleanDebugClassFileDir() {
         val transformTempDir = File(project.buildDir, "transform-temp")
+        transformTempDir.deleteRecursively()
         transformTempDir.mkdirs()
         mDebugClassJar = File.createTempFile("transform-temp", ".jar", transformTempDir)
         mDebugClassJarZOS = ZipOutputStream(FileOutputStream(mDebugClassJar))
