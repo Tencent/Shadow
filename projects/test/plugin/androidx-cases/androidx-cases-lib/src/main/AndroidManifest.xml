@@ -9,5 +9,8 @@
 
         <activity android:name=".LiveDataWithActivityTestActivity" />
         <activity android:name=".AppComponentFactoryTestActivity" />
+        <activity
+            android:name=".AppCompatTestActivity"
+            android:theme="@style/Theme.AppCompat" />
     </application>
 </manifest>
