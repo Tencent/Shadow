@@ -21,7 +21,6 @@ package com.tencent.shadow.core.loader.delegates
 import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
-import android.content.Context.LAYOUT_INFLATER_SERVICE
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -40,7 +39,10 @@ import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CLA
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_EXTRAS_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_LOADER_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_PART_KEY
-import com.tencent.shadow.core.runtime.*
+import com.tencent.shadow.core.runtime.MixResources
+import com.tencent.shadow.core.runtime.PluginActivity
+import com.tencent.shadow.core.runtime.ShadowActivity
+import com.tencent.shadow.core.runtime.ShadowActivityLifecycleCallbacks
 import com.tencent.shadow.core.runtime.container.HostActivityDelegate
 import com.tencent.shadow.core.runtime.container.HostActivityDelegator
 
@@ -250,10 +252,7 @@ open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivity
         return mPluginClassLoader
     }
 
-    override fun getLayoutInflater(): LayoutInflater {
-        val inflater = mHostActivityDelegator.applicationContext.getSystemService(LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        return ShadowLayoutInflater.build(inflater, mPluginActivity, mPartKey)
-    }
+    override fun getLayoutInflater(): LayoutInflater = LayoutInflater.from(mPluginActivity)
 
     override fun getResources(): Resources {
         if (mDependenciesInjected) {
