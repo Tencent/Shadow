@@ -46,4 +46,14 @@ public class PackageManagerTest extends PluginMainAppTest {
     public void testResolveActivityByExplicitIntent() {
         matchTextWithViewTag("resolveActivity/explicit", "com.tencent.shadow.test.plugin.general_cases.lib.usecases.packagemanager.TestPackageManagerActivity");
     }
+
+    @Test
+    public void testGetServiceInfoName() {
+        matchTextWithViewTag("getServiceInfo/name", "com.tencent.shadow.test.plugin.general_cases.lib.usecases.service.TestService");
+    }
+
+    @Test
+    public void testGetServiceInfoPackageName() {
+        matchTextWithViewTag("getServiceInfo/packageName", "com.tencent.shadow.test.hostapp");
+    }
 }

@@ -18,6 +18,8 @@
 
 package com.tencent.shadow.test.plugin.general_cases.lib.usecases.packagemanager;
 
+import static android.content.pm.PackageManager.GET_META_DATA;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -27,17 +29,17 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
+import android.content.pm.ServiceInfo;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.tencent.shadow.test.plugin.general_cases.lib.gallery.util.UiUtil;
+import com.tencent.shadow.test.plugin.general_cases.lib.usecases.service.TestService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static android.content.pm.PackageManager.GET_META_DATA;
 
 public class TestPackageManagerActivity extends Activity {
 
@@ -48,6 +50,7 @@ public class TestPackageManagerActivity extends Activity {
 
         getApplicationInfo(viewGroup);
         getActivityInfo(viewGroup);
+        getServiceInfo(viewGroup);
         getPackageInfo(viewGroup);
         queryContentProviders(viewGroup);
         resolveActivityByExplicitIntent(viewGroup);
@@ -119,6 +122,33 @@ public class TestPackageManagerActivity extends Activity {
         );
     }
 
+    private void getServiceInfo(ViewGroup viewGroup) {
+        String name;
+        String packageName;
+        try {
+            ServiceInfo serviceInfo = getPackageManager().getServiceInfo(new ComponentName(this, TestService.class), 0);
+            name = serviceInfo.name;
+            packageName = serviceInfo.packageName;
+        } catch (PackageManager.NameNotFoundException e) {
+            name = packageName = "NameNotFoundException";
+        }
+        viewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "getServiceInfo/name",
+                        "getServiceInfo/name",
+                        name
+                )
+        );
+        viewGroup.addView(
+                UiUtil.makeItem(
+                        this,
+                        "getServiceInfo/packageName",
+                        "getServiceInfo/packageName",
+                        packageName
+                )
+        );
+    }
 
     private void getPackageInfo(ViewGroup viewGroup) {
         String versionName;

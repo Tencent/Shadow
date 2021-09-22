@@ -8,12 +8,15 @@ import android.content.pm.PackageInfo;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 
+import android.content.pm.ServiceInfo;
 import java.util.List;
 
 public interface PluginPackageManager {
     ApplicationInfo getApplicationInfo(String packageName, int flags);
 
     ActivityInfo getActivityInfo(ComponentName component, int flags);
+
+    ServiceInfo getServiceInfo(ComponentName component, int flags);
 
     PackageInfo getPackageInfo(String packageName, int flags);
 
@@ -22,4 +25,6 @@ public interface PluginPackageManager {
     List<ProviderInfo> queryContentProviders(String processName, int uid, int flags);
 
     ResolveInfo resolveActivity(Intent intent, int flags);
+
+    ResolveInfo resolveService(Intent intent, int flags);
 }
