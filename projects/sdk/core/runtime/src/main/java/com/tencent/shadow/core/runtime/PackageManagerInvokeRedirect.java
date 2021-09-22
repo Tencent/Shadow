@@ -27,6 +27,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
+import android.content.pm.ServiceInfo;
 import android.content.pm.VersionedPackage;
 import android.os.Build;
 
@@ -51,6 +52,10 @@ public class PackageManagerInvokeRedirect {
         return getPluginPackageManager(classLoaderOfInvokeCode).getActivityInfo(component, flags);
     }
 
+    public static ServiceInfo getServiceInfo(ClassLoader classLoaderOfInvokeCode, ComponentName component, int flags) throws PackageManager.NameNotFoundException {
+        return getPluginPackageManager(classLoaderOfInvokeCode).getServiceInfo(component,flags);
+    }
+
     public static PackageInfo getPackageInfo(ClassLoader classLoaderOfInvokeCode, String packageName, int flags) throws PackageManager.NameNotFoundException {
         return getPluginPackageManager(classLoaderOfInvokeCode).getPackageInfo(packageName, flags);
     }
@@ -71,6 +76,10 @@ public class PackageManagerInvokeRedirect {
 
     public static ResolveInfo resolveActivity(ClassLoader classLoaderOfInvokeCode, Intent intent, int flags) {
         return getPluginPackageManager(classLoaderOfInvokeCode).resolveActivity(intent, flags);
+    }
+
+    public static ResolveInfo resolveService(ClassLoader classLoaderOfInvokeCode, Intent intent, int flags) {
+        return getPluginPackageManager(classLoaderOfInvokeCode).resolveService(intent,flags);
     }
 
 }

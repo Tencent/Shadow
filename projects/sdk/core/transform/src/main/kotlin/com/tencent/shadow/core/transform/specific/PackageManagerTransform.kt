@@ -97,10 +97,12 @@ class PackageManagerTransform : SpecificTransform() {
                 arrayOf(
                         "getApplicationInfo",
                         "getActivityInfo",
+                        "getServiceInfo",
                         "getPackageInfo",
                         "resolveContentProvider",
                         "queryContentProviders",
                         "resolveActivity",
+                        "resolveService",
                 )
         )
     }

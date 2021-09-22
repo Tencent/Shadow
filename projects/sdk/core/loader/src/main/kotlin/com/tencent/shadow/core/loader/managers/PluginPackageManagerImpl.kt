@@ -55,6 +55,20 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
         return hostPackageManager.getActivityInfo(component, flags)
     }
 
+    override fun getServiceInfo(component: ComponentName, flags: Int): ServiceInfo {
+      if (component.packageName == packageInfo.applicationInfo.packageName) {
+        val pluginServiceInfo = allPluginPackageInfo()
+          .mapNotNull { it.services }
+          .flatMap { it.asIterable() }.find {
+            it.name == component.className
+          }
+        if (pluginServiceInfo != null) {
+          return pluginServiceInfo
+        }
+      }
+      return hostPackageManager.getServiceInfo(component, flags)
+    }
+
     override fun resolveContentProvider(name: String, flags: Int): ProviderInfo? {
         val pluginProviderInfo = allPluginPackageInfo()
                 .providers().find {
@@ -85,6 +99,21 @@ internal class PluginPackageManagerImpl(private val hostPackageManager: PackageM
             ResolveInfo().apply {
                 activityInfo = allPluginPackageInfo()
                         .flatMap { it.activities.asIterable() }
+                        .find {
+                            it.name == intent.component?.className
+                        }
+            }
+        } else {
+            hostResolveInfo
+        }
+    }
+
+    override fun resolveService(intent: Intent, flags: Int): ResolveInfo {
+        val hostResolveInfo = hostPackageManager.resolveService(intent, flags)
+        return if (hostResolveInfo?.serviceInfo == null) {
+            ResolveInfo().apply {
+                serviceInfo = allPluginPackageInfo()
+                        .flatMap { it.services.asIterable() }
                         .find {
                             it.name == intent.component?.className
                         }
