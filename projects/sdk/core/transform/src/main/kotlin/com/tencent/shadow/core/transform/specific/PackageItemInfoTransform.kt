@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.core.transform.specific
 
+import com.tencent.shadow.core.transform.ShadowTransform.Companion.SelfClassNamePlaceholder
 import com.tencent.shadow.core.transform_kit.SpecificTransform
 import com.tencent.shadow.core.transform_kit.TransformStep
 import javassist.*
@@ -76,7 +77,7 @@ class PackageItemInfoTransform : SpecificTransform() {
                                 .append(".")
                                 .append(targetMethod.methodInfo.name)
                                 .append("(")
-                                .append(ctClass.name)
+                                .append(SelfClassNamePlaceholder)
                                 .append(".class.getClassLoader(),")
                         for (i in 1..newMethod.parameterTypes.size) {
                             if (i > 1) {
@@ -88,6 +89,7 @@ class PackageItemInfoTransform : SpecificTransform() {
 
                         newMethod.setBody(newBodyBuilder.toString())
                         ctClass.addMethod(newMethod)
+                        ctClass.replaceClassName(SelfClassNamePlaceholder,ctClass.name)
                         val codeConverter = CodeConverter()
                         codeConverter.redirectMethodCallToStatic(targetMethod, newMethod)
                         ctClass.instrument(codeConverter)

@@ -29,6 +29,10 @@ class ShadowTransform(
         classPoolBuilder: ClassPoolBuilder,
         private val useHostContext: () -> Array<String>
 ) : AbstractTransform(project, classPoolBuilder) {
+    companion object {
+        const val SelfClassNamePlaceholder =
+            "com.tencent.shadow.core.transform.SelfClassNamePlaceholder"
+    }
 
     lateinit var _mTransformManager: TransformManager
 
@@ -38,6 +42,7 @@ class ShadowTransform(
     override fun beforeTransform(invocation: TransformInvocation) {
         super.beforeTransform(invocation)
         _mTransformManager = TransformManager(mCtClassInputMap, classPool, useHostContext)
+        classPool.makeInterface(SelfClassNamePlaceholder)
     }
 
     override fun isCacheable(): Boolean {
