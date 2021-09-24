@@ -18,6 +18,7 @@
 
 package com.tencent.shadow.core.transform.specific
 
+import com.tencent.shadow.core.transform.ShadowTransform.Companion.SelfClassNamePlaceholder
 import com.tencent.shadow.core.transform_kit.AbstractTransformTest
 import javassist.CtClass
 import javassist.CtMethod
@@ -34,12 +35,16 @@ class PackageManagerTransformTest : AbstractTransformTest() {
 
         val packageManagerTransform = PackageManagerTransform()
         packageManagerTransform.mClassPool = sLoader
+        packageManagerTransform.mClassPool.makeInterface(SelfClassNamePlaceholder)
         packageManagerTransform.setup(allInputClass)
 
         val methods = arrayOf("getApplicationInfo","getActivityInfo")
 
 
         allInputClass.forEach {
+            //将测试类的包名改为Java的非法包名字符，测试Proguard混淆成这种形式的jar的场景
+            it.name = "1.${it.simpleName}"
+
             for (method in methods) {
                 beforeTransformCheck(it, method)
             }
