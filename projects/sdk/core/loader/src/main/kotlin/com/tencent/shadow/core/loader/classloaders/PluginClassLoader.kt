@@ -65,38 +65,49 @@ class PluginClassLoader(
 
     @Throws(ClassNotFoundException::class)
     override fun loadClass(className: String, resolve: Boolean): Class<*> {
-        if (specialClassLoader == null) {//specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
-            return super.loadClass(className, resolve)
-        } else if (className.subStringBeforeDot() == "com.tencent.shadow.core.runtime") {
-            return loaderClassLoader.loadClass(className)
-        } else if (className.inPackage(allHostWhiteList)
-                || (Build.VERSION.SDK_INT < 28 && className.startsWith("org.apache.http"))) {//Android 9.0以下的系统里面带有http包，走系统的不走本地的) {
-            return super.loadClass(className, resolve)
-        } else {
-            var clazz: Class<*>? = findLoadedClass(className)
+        var clazz: Class<*>? = findLoadedClass(className)
 
-            if (clazz == null) {
-                var suppressed: ClassNotFoundException? = null
-                try {
-                    clazz = specialClassLoader.loadClass(className)!!
-                } catch (e: ClassNotFoundException) {
-                    suppressed = e
-                }
-                if (clazz == null) {
-                    try {
-                        clazz = findClass(className)!!
-                    } catch (e: ClassNotFoundException) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                            e.addSuppressed(suppressed)
-                        }
-                        throw e
-                    }
-
-                }
+        if (clazz == null) {
+            //specialClassLoader 为null 表示该classLoader依赖了其他的插件classLoader，需要遵循双亲委派
+            if (specialClassLoader == null) {
+                return super.loadClass(className, resolve)
             }
 
-            return clazz
+            //插件依赖跟loader一起打包的runtime类，如ShadowActivity，从loader的ClassLoader加载
+            if (className.subStringBeforeDot() == "com.tencent.shadow.core.runtime") {
+                return loaderClassLoader.loadClass(className)
+            }
+
+            //包名在白名单中的类按双亲委派逻辑，从宿主中加载
+            if (className.inPackage(allHostWhiteList)
+                //Android 9.0以下的系统里面带有http包，走系统的不走本地的
+                || (Build.VERSION.SDK_INT < Build.VERSION_CODES.P
+                        && className.startsWith("org.apache.http"))
+            ) {
+                return super.loadClass(className, resolve)
+            }
+
+            var suppressed: ClassNotFoundException? = null
+            try {
+                //正常的ClassLoader这里是parent.loadClass,插件用specialClassLoader以跳过parent
+                clazz = specialClassLoader.loadClass(className)!!
+            } catch (e: ClassNotFoundException) {
+                suppressed = e
+            }
+            if (clazz == null) {
+                try {
+                    clazz = findClass(className)!!
+                } catch (e: ClassNotFoundException) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        e.addSuppressed(suppressed)
+                    }
+                    throw e
+                }
+
+            }
         }
+
+        return clazz
     }
 
 }
