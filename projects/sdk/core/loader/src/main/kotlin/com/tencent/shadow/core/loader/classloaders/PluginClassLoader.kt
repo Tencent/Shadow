@@ -116,29 +116,44 @@ private fun String.subStringBeforeDot() = substringBeforeLast('.', "")
 
 internal fun String.inPackage(packageNames: Array<String>): Boolean {
     val packageName = subStringBeforeDot()
-
+    val sub = packageName.subStringBeforeDot()
     return packageNames.any {
         return@any when {
             it == "" -> false
             it == ".*" -> false
             it == ".**" -> false
-            it.endsWith(".*") -> {//只允许一级子包
-                val sub = packageName.subStringBeforeDot()
+            it.endsWith(".*") -> {
+                // 只允许一级子包下的类
+                //     a.b.c.*
+                // [N] a.b.c.Class
+                // [Y] a.b.c.d.Class
+                // [N] a.b.c.d.e.Class
                 if (sub.isEmpty()) {
                     false
                 } else {
                     sub == it.subStringBeforeDot()
                 }
             }
-            it.endsWith(".**") -> {//允许所有子包
-                val sub = packageName.subStringBeforeDot()
+            it.endsWith(".**") -> {
+                // 允许所有子包的类
+                //     a.b.c.**
+                // [N] a.b.c.Class
+                // [Y] a.b.c.d.Class
+                // [Y] a.b.c.d.e.Class
                 if (sub.isEmpty()) {
                     false
                 } else {
                     "$sub.".startsWith(it.subStringBeforeDot() + '.')
                 }
             }
-            else -> packageName == it
+            else -> {
+                // 允许本包下的类
+                //     a.b.c
+                // [Y] a.b.c.Class
+                // [N] a.b.c.d.Class
+                // [N] a.b.c.d.e.Class
+                packageName == it
+            }
         }
     }
 }
