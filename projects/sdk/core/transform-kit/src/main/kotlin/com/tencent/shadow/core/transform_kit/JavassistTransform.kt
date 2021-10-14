@@ -30,7 +30,7 @@ open class JavassistTransform(project: Project, val classPoolBuilder: ClassPoolB
     val mCtClassInputMap = mutableMapOf<CtClass, InputClass>()
     lateinit var classPool: ClassPool
 
-    override fun onOutputClass(className: String, outputStream: OutputStream) {
+    override fun onOutputClass(entryName: String?, className: String, outputStream: OutputStream) {
         classPool[className].writeOut(outputStream)
     }
 

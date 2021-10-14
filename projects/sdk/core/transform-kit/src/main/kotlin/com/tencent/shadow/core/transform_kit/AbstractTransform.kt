@@ -76,20 +76,19 @@ abstract class AbstractTransform(
         onCheckTransformedClasses(debugClassPool, inputClassNames)
     }
 
-    override fun onOutputClass(className: String, outputStream: OutputStream) {
-        classPool[className].debugWriteJar(mDebugClassJarZOS)
-        super.onOutputClass(className, outputStream)
+    override fun onOutputClass(entryName: String?, className: String, outputStream: OutputStream) {
+        classPool[className].debugWriteJar(entryName, mDebugClassJarZOS)
+        super.onOutputClass(entryName, className, outputStream)
     }
 
-    private fun CtClass.debugWriteJar(outputStream: ZipOutputStream) {
-        //忽略Kotlin 1.4引入的module-info
-        //https://kotlinlang.org/docs/reference/whatsnew14.html#module-info-descriptors-for-stdlib-artifacts
-        if (name == "module-info") {
+    private fun CtClass.debugWriteJar(outputEntryName: String?, outputStream: ZipOutputStream) {
+        //忽略META-INF
+        if (outputEntryName?.startsWith("META-INF/") == true) {
             return
         }
 
         try {
-            val entryName = (name.replace('.', '/') + ".class")
+            val entryName = outputEntryName ?: (name.replace('.', '/') + ".class")
             outputStream.putNextEntry(ZipEntry(entryName))
             val p = stopPruning(true)
             toBytecode(DataOutputStream(outputStream))

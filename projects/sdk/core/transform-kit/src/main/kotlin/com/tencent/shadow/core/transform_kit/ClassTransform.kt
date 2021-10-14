@@ -114,7 +114,7 @@ abstract class ClassTransform(val project: Project) : Transform() {
                             val file = it.second
                             Files.createParentDirs(file)
                             FileOutputStream(file).use {
-                                onOutputClass(className, it)
+                                onOutputClass(null, className, it)
                             }
                         }
                     }
@@ -129,7 +129,7 @@ abstract class ClassTransform(val project: Project) : Transform() {
                                 val className = it.first
                                 val entryName = it.second
                                 zos.putNextEntry(ZipEntry(entryName))
-                                onOutputClass(className, zos)
+                                onOutputClass(entryName, className, zos)
                             }
                         }
                     }
@@ -138,7 +138,7 @@ abstract class ClassTransform(val project: Project) : Transform() {
         }
     }
 
-    abstract fun onOutputClass(className: String, outputStream: OutputStream)
+    abstract fun onOutputClass(entryName: String?, className: String, outputStream: OutputStream)
 
     abstract fun DirInputClass.onInputClass(classFile: File, outputFile: File)
 
