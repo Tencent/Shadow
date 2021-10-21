@@ -109,4 +109,13 @@ public abstract class PluginActivity extends GeneratedPluginActivity {
         hostActivityDelegator.setTheme(resid);
     }
 
+    @Override
+    public Object getSystemService(String name) {
+        if (LAYOUT_INFLATER_SERVICE.equals(name)) {
+            return super.getSystemService(name);
+        } else {
+            return hostActivityDelegator.getHostActivity().getImplementActivity()
+                    .getSystemService(name);
+        }
+    }
 }

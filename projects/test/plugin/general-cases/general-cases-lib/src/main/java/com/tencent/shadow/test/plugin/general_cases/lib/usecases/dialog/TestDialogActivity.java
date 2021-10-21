@@ -18,7 +18,10 @@
 
 package com.tencent.shadow.test.plugin.general_cases.lib.usecases.dialog;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
@@ -47,5 +50,13 @@ public class TestDialogActivity extends Activity {
         );
 
         dialog.show();
+    }
+
+    @SuppressLint("NewApi")
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        Configuration configuration = new Configuration();
+        Context context = newBase.createConfigurationContext(configuration);
+        super.attachBaseContext(context);
     }
 }
