@@ -104,12 +104,15 @@ class FragmentSupportTransform : SpecificTransform() {
 
             override fun transform(ctClass: CtClass) {
                 ctClass.defrost()
-                val codeConverter = CodeConverter()
+                val codeConverter = EnhancedCodeConverter()
                 codeConverter.redirectMethodCallToStatic(
                     getActivityMethod,
                     fragmentGetActivityMethod
                 )
-                codeConverter.redirectMethodCallToStatic(getContextMethod, fragmentGetContextMethod)
+                codeConverter.redirectMethodCallExceptSuperCallToStatic(
+                    getContextMethod,
+                    fragmentGetContextMethod
+                )
                 codeConverter.redirectMethodCallToStatic(getHostMethod, fragmentGetHostMethod)
                 codeConverter.redirectMethodCallToStatic(
                     startActivityMethod1,
