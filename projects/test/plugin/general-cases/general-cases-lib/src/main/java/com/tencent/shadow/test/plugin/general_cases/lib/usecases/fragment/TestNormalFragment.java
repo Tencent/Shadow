@@ -91,4 +91,12 @@ public class TestNormalFragment extends Fragment implements TestFragment {
         super.onInflate(activity, attrs, savedInstanceState);
         commonLogic.onInflate(activity, attrs, savedInstanceState);
     }
+
+    /**
+     * 测试Fragment override getContext的场景
+     */
+    @Override
+    public Context getContext() {
+        return super.getContext();
+    }
 }
