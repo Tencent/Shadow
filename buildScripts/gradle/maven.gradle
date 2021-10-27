@@ -41,6 +41,7 @@ task jvmTestSdk() {
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:test')
     dependsOn gradle.includedBuild('core').task(':utils:test')
     dependsOn gradle.includedBuild('core').task(':loader:test')
+    dependsOn gradle.includedBuild('coding').task(':code-generator:test')
 }
 
 task androidTestSdk() {

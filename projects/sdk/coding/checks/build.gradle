@@ -8,16 +8,16 @@ The lint version of the libraries (specified in this project as the lintVersion 
 
 If the Gradle plugin version is X.Y.Z, then the Lint library version is X+23.Y.Z.
  */
-ext.lintVersion = '26.1.2'
+ext.lintVersion = '30.0.3'
 
 dependencies {
     compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compileOnly "com.android.tools.lint:lint-api:$lintVersion"
     compileOnly "com.android.tools.lint:lint-checks:$lintVersion"
-    testCompile "junit:junit:4.12"
-    testCompile "com.android.tools.lint:lint:$lintVersion"
-    testCompile "com.android.tools.lint:lint-tests:$lintVersion"
-    testCompile "com.android.tools:testutils:$lintVersion"
+    testImplementation "junit:junit:4.12"
+    testImplementation "com.android.tools.lint:lint:$lintVersion"
+    testImplementation "com.android.tools.lint:lint-tests:$lintVersion"
+    testImplementation "com.android.tools:testutils:$lintVersion"
 }
 
 compileKotlin {

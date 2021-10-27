@@ -40,6 +40,10 @@ Shadow不仅开源分享了插件技术的关键代码，还完整的分享了�
 ./gradlew build
 ```
 
+如果Gradle提示需要Java 11，建议直接使用Android Studio Arctic Fox内置的JDK。
+macOS：`export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jre/Contents/Home`
+其他OS欢迎PR补充。
+
 如果没有出错，再尝试用Android Studio打开工程。
 
 * **必须**使用3.5或更高版本的Android Studio打开工程。(业务插件开发时没有限制)

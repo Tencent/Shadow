@@ -36,6 +36,18 @@ android {
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
+
+    // Starting in version 4.2, AGP will use the Java 8 language level by default.
+    // To keep the old behavior, specify Java 7 explicitly.
+    // https://developer.android.com/studio/releases/gradle-plugin?hl=lt#java-8-default
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    // For Kotlin projects, compile to Java 6 instead of 7
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
 }
 
 dependencies {

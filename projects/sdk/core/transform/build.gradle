@@ -3,9 +3,9 @@ apply plugin: 'kotlin'
 group 'com.tencent.shadow.core'
 
 dependencies {
-    compile project(':transform-kit')
-    testCompile 'junit:junit:4.12'
-    testCompile project(path: ':transform-kit', configuration: 'tests')
+    api project(':transform-kit')
+    testImplementation 'junit:junit:4.12'
+    testImplementation project(path: ':transform-kit', configuration: 'tests')
 }
 
 compileKotlin {
