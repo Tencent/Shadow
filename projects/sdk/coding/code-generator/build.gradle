@@ -7,5 +7,8 @@ dependencies {
     implementation 'com.squareup:javapoet:1.11.1'
     implementation 'org.javassist:javassist:3.28.0-GA'
     implementation 'junit:junit:4.12'
-    compileOnly files("${System.getenv().get('ANDROID_HOME')}/platforms/android-${project.COMPILE_SDK_VERSION}/android.jar")
+
+    def androidJar = files("${System.getenv().get('ANDROID_HOME')}/platforms/android-${project.COMPILE_SDK_VERSION}/android.jar")
+    compileOnly androidJar
+    testImplementation androidJar
 }

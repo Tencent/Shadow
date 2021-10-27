@@ -10,6 +10,7 @@ android {
         targetSdkVersion project.TARGET_SDK_VERSION
         versionCode project.VERSION_CODE
         versionName project.VERSION_NAME
+        buildConfigField("String","VERSION_NAME","\"${defaultConfig.versionName}\"")
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -17,6 +18,14 @@ android {
 
     sourceSets {
         main.java.srcDirs += project(':generate-delegate-code').buildDir.path + '/generated/DelegateCode/activity_container'
+    }
+
+    // Starting in version 4.2, AGP will use the Java 8 language level by default.
+    // To keep the old behavior, specify Java 7 explicitly.
+    // https://developer.android.com/studio/releases/gradle-plugin?hl=lt#java-8-default
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 

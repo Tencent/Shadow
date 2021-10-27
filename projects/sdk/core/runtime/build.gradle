@@ -28,6 +28,14 @@ android {
     sourceSets {
         main.java.srcDirs += project(':generate-delegate-code').buildDir.path + '/generated/DelegateCode/runtime'
     }
+
+    // Starting in version 4.2, AGP will use the Java 8 language level by default.
+    // To keep the old behavior, specify Java 7 explicitly.
+    // https://developer.android.com/studio/releases/gradle-plugin?hl=lt#java-8-default
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
 
 dependencies{

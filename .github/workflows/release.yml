@@ -13,6 +13,11 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
       - uses: actions/cache@v2
         with:
           path: |
@@ -52,6 +57,11 @@ jobs:
         uses: rlespinasse/github-slug-action@v3.x
       - name: checkout
         uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
       - uses: actions/cache@v2
         with:
           path: |
