@@ -31,11 +31,11 @@ dependencies {
     implementation 'com.tencent.shadow.dynamic:dynamic-loader-impl'
     implementation project(':sample-constant')
 
-    compileOnly 'com.tencent.shadow.core:runtime-debug'
-    compileOnly 'com.tencent.shadow.core:activity-container-debug'
-    compileOnly 'com.tencent.shadow.core:common-debug'
+    compileOnly 'com.tencent.shadow.core:runtime'
+    compileOnly 'com.tencent.shadow.core:activity-container'
+    compileOnly 'com.tencent.shadow.core:common'
     //下面这行依赖是为了防止在proguard的时候找不到LoaderFactory接口
-    compileOnly 'com.tencent.shadow.dynamic:dynamic-host-debug'
+    compileOnly 'com.tencent.shadow.dynamic:dynamic-host'
 
     compileOnly files("${project(":sample-host-lib").getBuildDir()}/outputs/jar/sample-host-lib-debug.jar")
 }

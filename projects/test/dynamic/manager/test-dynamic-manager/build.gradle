@@ -34,7 +34,7 @@ dependencies {
     implementation 'com.tencent.shadow.dynamic:dynamic-loader'
     implementation project(':constant')
 
-    compileOnly 'com.tencent.shadow.core:common-debug'
-    compileOnly 'com.tencent.shadow.dynamic:dynamic-host-debug'
+    compileOnly 'com.tencent.shadow.core:common'
+    compileOnly 'com.tencent.shadow.dynamic:dynamic-host'
     compileOnly project(':test-manager')
 }
