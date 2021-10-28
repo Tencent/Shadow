@@ -1,0 +1,22 @@
+apply plugin: 'java-gradle-plugin'
+
+apply plugin: 'kotlin'
+
+group 'com.tencent.shadow.coding'
+
+gradlePlugin {
+    plugins {
+        shadow {
+            id = "com.tencent.shadow.internal.aar-to-jar"
+            implementationClass = "com.tencent.shadow.coding.aar_to_jar_plugin.AarToJarPlugin"
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.android.tools.build:gradle:$build_gradle_version"
+    testImplementation 'junit:junit:4.12'
+    testImplementation gradleTestKit()
+
+}

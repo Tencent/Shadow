@@ -16,6 +16,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$build_gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.tencent.shadow.coding:aar-to-jar-plugin'
     }
 }
 apply from: '../../../buildScripts/gradle/common.gradle'
