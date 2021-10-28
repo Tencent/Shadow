@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.tencent.shadow.internal.aar-to-jar'
 
 group 'com.tencent.shadow.dynamic'
 
@@ -36,27 +37,4 @@ dependencies {
     implementation 'com.tencent.shadow.core:utils'
     compileOnly 'com.tencent.shadow.core:common'
     api project(':dynamic-apk')
-}
-
-def jarPackage(buildType) {
-    return tasks.create("jar${buildType.capitalize()}Package", Copy) {
-        def aarFile = file(project.buildDir.path + "/outputs/aar/${project.name}-${buildType}.aar")
-        def outputDir = file(project.buildDir.path + "/outputs/jar")
-
-        from zipTree(aarFile)
-        into outputDir
-        include 'classes.jar'
-        rename 'classes.jar', "${project.name}-${buildType}.jar"
-        group = 'build'
-        description = '生成jar包'
-    }.dependsOn(project.getTasksByName("assemble${buildType.capitalize()}", false).first())
-}
-
-afterEvaluate {
-    android {
-        buildTypes.findAll().each { buildType ->
-            def buildTypeName = buildType.getName()
-            jarPackage(buildTypeName)
-        }
-    }
 }

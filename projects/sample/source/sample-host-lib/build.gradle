@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.tencent.shadow.internal.aar-to-jar'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -22,28 +23,4 @@ android {
         }
     }
 
-}
-
-//下面的jarPackage和afterEvaluate负责让这个aar再生成一个输出jar包的任务
-def jarPackage(buildType) {
-    return tasks.create("jar${buildType.capitalize()}Package", Copy) {
-        def aarFile = file(project.buildDir.path + "/outputs/aar/${project.name}-${buildType}.aar")
-        def outputDir = file(project.buildDir.path + "/outputs/jar")
-
-        from zipTree(aarFile)
-        into outputDir
-        include 'classes.jar'
-        rename 'classes.jar', "${project.name}-${buildType}.jar"
-        group = 'build'
-        description = '生成jar包'
-    }.dependsOn(project.getTasksByName("assemble${buildType.capitalize()}", false).first())
-}
-
-afterEvaluate {
-    android {
-        buildTypes.findAll().each { buildType ->
-            def buildTypeName = buildType.getName()
-            jarPackage(buildTypeName)
-        }
-    }
 }
