@@ -1,39 +1,8 @@
-apply plugin: 'com.android.library'
-apply plugin: 'com.tencent.shadow.internal.aar-to-jar'
+apply plugin: 'com.tencent.shadow.internal.common-aar-settings'
 
 group 'com.tencent.shadow.dynamic'
 
-android {
-    compileSdkVersion project.COMPILE_SDK_VERSION
-
-    defaultConfig {
-        minSdkVersion project.MIN_SDK_VERSION
-        targetSdkVersion project.TARGET_SDK_VERSION
-        versionCode project.VERSION_CODE
-        versionName project.VERSION_NAME
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    // Starting in version 4.2, AGP will use the Java 8 language level by default.
-    // To keep the old behavior, specify Java 7 explicitly.
-    // https://developer.android.com/studio/releases/gradle-plugin?hl=lt#java-8-default
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-}
-
-
 dependencies {
-    implementation 'com.tencent.shadow.coding:lint'
     implementation 'com.tencent.shadow.core:utils'
     compileOnly 'com.tencent.shadow.core:common'
 }

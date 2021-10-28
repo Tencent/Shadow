@@ -1,3 +1,4 @@
 include 'checks', 'lint'
 include 'code-generator'
 include 'aar-to-jar-plugin'
+include 'common-aar-settings'
