@@ -2,8 +2,8 @@ apply from: '../apk-module-common.gradle'
 
 dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
-    compileOnly 'com.tencent.shadow.core:runtime-debug'
-    compileOnly 'com.tencent.shadow.core:activity-container-debug'
+    compileOnly 'com.tencent.shadow.core:runtime'
+    compileOnly 'com.tencent.shadow.core:activity-container'
 }
 
 buildscript {
@@ -17,8 +17,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.tencent.shadow.core:runtime-debug'
-        classpath 'com.tencent.shadow.core:activity-container-debug'
+        classpath group: 'com.tencent.shadow.core', name: 'runtime', configuration: 'jar-debug'
+        classpath group: 'com.tencent.shadow.core', name: 'activity-container', configuration: 'jar-debug'
         classpath 'com.tencent.shadow.core:gradle-plugin'
         classpath 'org.javassist:javassist:3.28.0-GA'
     }

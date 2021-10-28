@@ -31,7 +31,8 @@ class AarToJarPlugin : Plugin<Project> {
         project.afterEvaluate {
             val android = it.extensions.getByName("android") as BaseExtension
             android.buildTypes.forEach { buildType ->
-                createJarPackageTask(project, buildType.name)
+                val createJarPackageTask = createJarPackageTask(project, buildType.name)
+                addJarConfiguration(project, buildType.name, createJarPackageTask)
             }
         }
     }
@@ -58,5 +59,22 @@ class AarToJarPlugin : Plugin<Project> {
                 false
             ).first()
         )
+    }
+
+    /**
+     * 添加一个额外的Configuration，用于buildScript中以classpath方式依赖
+     */
+    private fun addJarConfiguration(
+        project: Project,
+        buildType: String,
+        createJarPackageTask: Task
+    ) {
+        val configurationName = "jar-${buildType}"
+        val jarFile =
+            project.file(project.buildDir.path + "/outputs/jar/${project.name}-${buildType}.jar")
+        project.configurations.create(configurationName)
+        project.artifacts.add(configurationName, jarFile) {
+            it.builtBy(createJarPackageTask)
+        }
     }
 }
