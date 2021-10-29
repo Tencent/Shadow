@@ -77,8 +77,12 @@ class TestActivityLifecycleCallbacks implements Application.ActivityLifecycleCal
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            TestActivityLifecycleCallbacks testForRegisterInPreCreatedCallback = new TestActivityLifecycleCallbacks("TestForRegisterInPreCreatedCallback");
             TestApplication.getInstance().registerActivityLifecycleCallbacks(
-                    new TestActivityLifecycleCallbacks("TestForRegisterInPreCreatedCallback")
+                    testForRegisterInPreCreatedCallback
+            );
+            TestApplication.getInstance().unregisterActivityLifecycleCallbacks(
+                    testForRegisterInPreCreatedCallback
             );
         }
     }
