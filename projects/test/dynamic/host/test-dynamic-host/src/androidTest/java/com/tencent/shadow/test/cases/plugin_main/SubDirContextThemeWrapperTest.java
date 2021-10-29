@@ -18,6 +18,10 @@
 
 package com.tencent.shadow.test.cases.plugin_main;
 
+import static android.content.Context.MODE_PRIVATE;
+import static android.os.Environment.DIRECTORY_MUSIC;
+import static android.os.Environment.DIRECTORY_PODCASTS;
+
 import android.content.SharedPreferences;
 import android.os.Build;
 
@@ -29,10 +33,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
-
-import static android.content.Context.MODE_PRIVATE;
-import static android.os.Environment.DIRECTORY_MUSIC;
-import static android.os.Environment.DIRECTORY_PODCASTS;
 
 abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
 
@@ -324,9 +324,9 @@ abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
     @Test
     public void testDatabaseList() {
         String dbName = EXPECT_NAME + "_bar";
-        matchTextWithViewTag(
+        matchSubstringWithViewTag(
                 "TAG_DATABASE_LIST",
-                "[" + dbName + "]"
+                dbName
         );
     }
 
