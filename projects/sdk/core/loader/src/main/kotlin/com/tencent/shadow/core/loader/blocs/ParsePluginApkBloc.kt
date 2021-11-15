@@ -23,10 +23,7 @@ import android.content.pm.PackageInfo
 import android.os.Build
 import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.ParsePluginApkException
-import com.tencent.shadow.core.loader.infos.PluginActivityInfo
-import com.tencent.shadow.core.loader.infos.PluginInfo
-import com.tencent.shadow.core.loader.infos.PluginProviderInfo
-import com.tencent.shadow.core.loader.infos.PluginServiceInfo
+import com.tencent.shadow.core.loader.infos.*
 
 /**
  * 解析插件apk逻辑
@@ -42,7 +39,12 @@ object ParsePluginApkBloc {
      * @throws ParsePluginApkException 解析失败时抛出
      */
     @Throws(ParsePluginApkException::class)
-    fun parse(packageArchiveInfo: PackageInfo, loadParameters: LoadParameters, hostAppContext: Context): PluginInfo {
+    fun parse(
+        packageArchiveInfo: PackageInfo,
+        manifestInfo: ManifestInfo,
+        loadParameters: LoadParameters,
+        hostAppContext: Context
+    ): PluginInfo {
         if (packageArchiveInfo.applicationInfo.packageName != hostAppContext.packageName) {
             /*
             要求插件和宿主包名一致有两方面原因：
@@ -70,16 +72,27 @@ object ParsePluginApkBloc {
         val partKey = loadParameters.partKey
 
         val pluginInfo = PluginInfo(
-                loadParameters.businessName
-                , partKey
-                , packageArchiveInfo.applicationInfo.packageName
-                , packageArchiveInfo.applicationInfo.className
+                loadParameters.businessName,
+            partKey,
+            packageArchiveInfo.applicationInfo.packageName,
+            packageArchiveInfo.applicationInfo.className
         )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             pluginInfo.appComponentFactory = packageArchiveInfo.applicationInfo.appComponentFactory
         }
         packageArchiveInfo.activities?.forEach {
             pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource, it))
+        }
+
+        val receiveMap = manifestInfo.receivers.map { it.name to it }.toMap()
+        packageArchiveInfo.receivers?.forEach {
+            pluginInfo.putReceiverInfo(
+                PluginReceiverInfo(
+                    it.name,
+                    it,
+                    receiveMap[it.name]?.actions()
+                )
+            )
         }
         packageArchiveInfo.services?.forEach { pluginInfo.putServiceInfo(PluginServiceInfo(it.name)) }
         packageArchiveInfo.providers?.forEach {

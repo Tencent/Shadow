@@ -27,12 +27,15 @@ class PluginInfo(
     private val _mActivities: MutableSet<PluginActivityInfo> = HashSet()
     private val _mServices: MutableSet<PluginServiceInfo> = HashSet()
     private val _mProviders: MutableSet<PluginProviderInfo> = HashSet()
+    private val _mReceivers: MutableSet<PluginReceiverInfo> = HashSet()
     internal val mActivities: Set<PluginActivityInfo>
         get() = _mActivities
     internal val mServices: Set<PluginServiceInfo>
         get() = _mServices
     internal val mProviders: Set<PluginProviderInfo>
         get() = _mProviders
+    internal val mReceivers: Set<PluginReceiverInfo>
+        get() = _mReceivers
 
     internal var appComponentFactory: String? = null
 
@@ -46,5 +49,9 @@ class PluginInfo(
 
     fun putPluginProviderInfo(pluginProviderInfo: PluginProviderInfo) {
         _mProviders.add(pluginProviderInfo)
+    }
+
+    fun putReceiverInfo(pluginReceiverInfo: PluginReceiverInfo) {
+        _mReceivers.add(pluginReceiverInfo)
     }
 }

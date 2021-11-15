@@ -26,9 +26,6 @@ import com.tencent.shadow.core.loader.managers.ComponentManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class TestComponentManager extends ComponentManager {
     final private static ComponentName sDefaultContainer = new ComponentName(BuildConfig.APPLICATION_ID, "com.tencent.shadow.test.none_dynamic.host.DefaultContainerActivity");
@@ -53,11 +50,4 @@ public class TestComponentManager extends ComponentManager {
         return new ContainerProviderInfo("com.tencent.shadow.core.runtime.container.PluginContainerContentProvider", "com.tencent.shadow.contentprovider.authority");
     }
 
-    @Override
-    public List<BroadcastInfo> getBroadcastInfoList(String partKey) {
-        List<ComponentManager.BroadcastInfo> broadcastInfos = new ArrayList<>();
-        broadcastInfos.add(new ComponentManager.BroadcastInfo("com.tencent.shadow.test.plugin.general_cases.lib.usecases.receiver.MyReceiver",
-                new String[]{"com.tencent.test.action"}));
-        return broadcastInfos;
-    }
 }
