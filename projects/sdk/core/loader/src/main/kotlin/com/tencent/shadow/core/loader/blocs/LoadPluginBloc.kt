@@ -71,6 +71,7 @@ object LoadPluginBloc {
                                 or PackageManager.GET_META_DATA
                                 or PackageManager.GET_SERVICES
                                 or PackageManager.GET_PROVIDERS
+                                or PackageManager.GET_RECEIVERS
                                 or PackageManager.GET_SIGNATURES
                 )
                         ?: throw NullPointerException("getPackageArchiveInfo return null.archiveFilePath==$archiveFilePath")
@@ -87,16 +88,22 @@ object LoadPluginBloc {
 
                 packageArchiveInfo.applicationInfo.nativeLibraryDir = installedApk.libraryPath
                 packageArchiveInfo.applicationInfo.dataDir = dataDir.absolutePath
-                packageArchiveInfo.applicationInfo.processName = hostAppContext.applicationInfo.processName
+                packageArchiveInfo.applicationInfo.processName =
+                    hostAppContext.applicationInfo.processName
                 packageArchiveInfo.applicationInfo.uid = hostAppContext.applicationInfo.uid
 
                 lock.withLock { pluginPackageInfoSet.add(packageArchiveInfo) }
                 packageArchiveInfo
             })
 
+            val buildManifestInfo = executorService.submit(Callable {
+                ParseManifestBloc.parse(hostAppContext, installedApk)
+            })
+
             val buildPluginInfo = executorService.submit(Callable {
                 val packageInfo = getPackageInfo.get()
-                ParsePluginApkBloc.parse(packageInfo, loadParameters, hostAppContext)
+                val manifestInfo = buildManifestInfo.get()
+                ParsePluginApkBloc.parse(packageInfo, manifestInfo, loadParameters, hostAppContext)
             })
 
             val buildPackageManager = executorService.submit(Callable {

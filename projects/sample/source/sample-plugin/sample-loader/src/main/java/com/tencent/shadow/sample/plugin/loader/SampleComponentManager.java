@@ -23,10 +23,6 @@ import android.content.Context;
 
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo;
 import com.tencent.shadow.core.loader.managers.ComponentManager;
-import com.tencent.shadow.sample.constant.Constant;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SampleComponentManager extends ComponentManager {
 
@@ -68,20 +64,6 @@ public class SampleComponentManager extends ComponentManager {
         return new ContainerProviderInfo(
                 "com.tencent.shadow.core.runtime.container.PluginContainerContentProvider",
                 context.getPackageName() + ".contentprovider.authority.dynamic");
-    }
-
-    @Override
-    public List<BroadcastInfo> getBroadcastInfoList(String partKey) {
-        List<ComponentManager.BroadcastInfo> broadcastInfos = new ArrayList<>();
-        if (partKey.equals(Constant.PART_KEY_PLUGIN_MAIN_APP)) {
-            broadcastInfos.add(
-                    new ComponentManager.BroadcastInfo(
-                            "com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.MyReceiver",
-                            new String[]{"com.tencent.test.action"}
-                    )
-            );
-        }
-        return broadcastInfos;
     }
 
 }

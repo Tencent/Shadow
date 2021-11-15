@@ -60,8 +60,6 @@ abstract class ComponentManager : PluginComponentLauncher {
 
     abstract fun onBindContainerContentProvider(pluginContentProvider: ComponentName): ContainerProviderInfo
 
-    abstract fun getBroadcastInfoList(partKey: String): List<BroadcastInfo>?
-
     override fun startActivity(shadowContext: ShadowContext, pluginIntent: Intent, option: Bundle?): Boolean {
         return if (pluginIntent.isPluginComponent()) {
             shadowContext.superStartActivity(pluginIntent.toActivityContainerIntent(), option)
@@ -159,8 +157,6 @@ abstract class ComponentManager : PluginComponentLauncher {
     private val pluginComponentInfoMap: MutableMap<ComponentName, PluginComponentInfo> = hashMapOf()
 
 
-    private var application2broadcastInfo: MutableMap<String, MutableMap<String, List<String>>> = HashMap()
-
     fun addPluginApkInfo(pluginInfo: PluginInfo) {
         fun common(pluginComponentInfo: PluginComponentInfo,componentName:ComponentName) {
             packageNameMap[pluginComponentInfo.className!!] = pluginInfo.packageName
@@ -179,12 +175,21 @@ abstract class ComponentManager : PluginComponentLauncher {
 
         pluginInfo.mServices.forEach {
             val componentName = ComponentName(pluginInfo.packageName, it.className!!)
-            common(it,componentName)
+            common(it, componentName)
         }
 
         pluginInfo.mProviders.forEach {
             val componentName = ComponentName(pluginInfo.packageName, it.className!!)
-            mPluginContentProviderManager!!.addContentProviderInfo(pluginInfo.partKey,it,onBindContainerContentProvider(componentName))
+            mPluginContentProviderManager!!.addContentProviderInfo(
+                pluginInfo.partKey,
+                it,
+                onBindContainerContentProvider(componentName)
+            )
+        }
+
+        pluginInfo.mReceivers.forEach {
+            val componentName = ComponentName(pluginInfo.packageName, it.className!!)
+            common(it, componentName)
         }
     }
 
@@ -253,22 +258,4 @@ abstract class ComponentManager : PluginComponentLauncher {
         containerIntent.putExtra(PROCESS_ID_KEY, DelegateProviderHolder.sCustomPid)
         return containerIntent
     }
-
-
-    class BroadcastInfo(val className: String, val actions: Array<String>)
-
-    fun getBroadcastsByPartKey(partKey: String): MutableMap<String, List<String>> {
-        if (application2broadcastInfo[partKey] == null) {
-            application2broadcastInfo[partKey] = HashMap()
-            val broadcastInfoList = getBroadcastInfoList(partKey)
-            if (broadcastInfoList != null) {
-                for (broadcastInfo in broadcastInfoList) {
-                    application2broadcastInfo[partKey]!![broadcastInfo.className] =
-                            broadcastInfo.actions.toList()
-                }
-            }
-        }
-        return application2broadcastInfo[partKey]!!
-    }
-
 }

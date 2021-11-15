@@ -46,13 +46,16 @@ object CreateApplicationBloc {
     ): ShadowApplication {
         try {
             val appClassName = pluginInfo.applicationClassName
-                    ?: ShadowApplication::class.java.name
-            val shadowApplication = appComponentFactory.instantiateApplication(pluginClassLoader, appClassName)
+                ?: ShadowApplication::class.java.name
+            val shadowApplication =
+                appComponentFactory.instantiateApplication(pluginClassLoader, appClassName)
             val partKey = pluginInfo.partKey
             shadowApplication.setPluginResources(resources)
             shadowApplication.setPluginClassLoader(pluginClassLoader)
             shadowApplication.setPluginComponentLauncher(componentManager)
-            shadowApplication.setBroadcasts(componentManager.getBroadcastsByPartKey(partKey))
+            shadowApplication.setBroadcasts(pluginInfo.mReceivers.map { receiveInfo ->
+                receiveInfo.className!! to receiveInfo.actions
+            }.toMap())
             shadowApplication.setAppComponentFactory(appComponentFactory)
             shadowApplication.applicationInfo = applicationInfo
             shadowApplication.setBusinessName(pluginInfo.businessName)
