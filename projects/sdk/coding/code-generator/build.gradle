@@ -8,7 +8,6 @@ dependencies {
     implementation 'org.javassist:javassist:3.28.0-GA'
     implementation 'junit:junit:4.12'
 
-    def androidJar = files("${System.getenv().get('ANDROID_HOME')}/platforms/android-${project.COMPILE_SDK_VERSION}/android.jar")
-    compileOnly androidJar
-    testImplementation androidJar
+    compileOnly project(path: ":get-android-jar", configuration: 'exportAndroidJar')
+    testImplementation project(path: ":get-android-jar", configuration: 'exportAndroidJar')
 }
