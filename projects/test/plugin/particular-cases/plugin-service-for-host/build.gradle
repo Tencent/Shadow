@@ -1,10 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.tencent.shadow.plugin'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
 
     defaultConfig {
-        applicationId project.TEST_HOST_APP_APPLICATION_ID
+        applicationId 'com.tencent.shadow.test.plugin.particular_cases.plugin_service_for_host'
         minSdkVersion project.MIN_SDK_VERSION
         targetSdkVersion project.TARGET_SDK_VERSION
         versionCode project.VERSION_CODE
@@ -18,6 +19,13 @@ android {
 
             signingConfig signingConfigs.create("release")
             signingConfig.initWith(buildTypes.debug.signingConfig)
+        }
+    }
+
+    // 将插件applicationId设置为和宿主相同
+    productFlavors {
+        plugin {
+            applicationId project.TEST_HOST_APP_APPLICATION_ID
         }
     }
 
@@ -44,4 +52,3 @@ buildscript {
     }
 }
 
-apply plugin: 'com.tencent.shadow.plugin'

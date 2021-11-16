@@ -23,10 +23,8 @@ import com.android.build.gradle.BaseExtension
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import com.tencent.shadow.core.transform.ShadowTransform
 import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
-import org.gradle.api.Action
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.Task
+import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
+import org.gradle.api.*
 import org.gradle.api.plugins.BasePlugin
 import java.io.File
 import kotlin.reflect.full.declaredFunctions
@@ -34,48 +32,84 @@ import kotlin.reflect.jvm.isAccessible
 
 class ShadowPlugin : Plugin<Project> {
 
-    override fun apply(project: Project) {
-        System.err.println("ShadowPlugin project.name==" + project.name)
+    private lateinit var androidClassPoolBuilder: ClassPoolBuilder
+    private lateinit var contextClassLoader: ClassLoader
 
+    override fun apply(project: Project) {
         val baseExtension = getBaseExtension(project)
-        val sdkDirectory = baseExtension.sdkDirectory
-        val androidJarPath = "platforms/${baseExtension.compileSdkVersion}/android.jar"
-        val androidJar = File(sdkDirectory, androidJarPath)
 
         //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
-        val contextClassLoader = Thread.currentThread().contextClassLoader
-
-        val classPoolBuilder = AndroidClassPoolBuilder(project, contextClassLoader, androidJar)
+        contextClassLoader = Thread.currentThread().contextClassLoader
+        val lateInitBuilder = object : ClassPoolBuilder {
+            override fun build() = androidClassPoolBuilder.build()
+        }
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
         if (!project.hasProperty("disable_shadow_transform")) {
             baseExtension.registerTransform(ShadowTransform(
-                    project,
-                    classPoolBuilder,
-                    { shadowExtension.transformConfig.useHostContext }
+                project,
+                lateInitBuilder,
+                { shadowExtension.transformConfig.useHostContext }
             ))
         }
+
+        addFlavorForTransform(baseExtension)
 
         project.extensions.create("packagePlugin", PackagePluginExtension::class.java, project)
 
         project.afterEvaluate {
-            val packagePlugin = project.extensions.findByName("packagePlugin")
-            val extension = packagePlugin as PackagePluginExtension
-            val buildTypes = extension.buildTypes
+            initAndroidClassPoolBuilder(baseExtension, project)
 
-            val tasks = mutableListOf<Task>()
-            for (i in buildTypes) {
-                println("buildTypes = " + i.name)
-                val task = createPackagePluginTask(project, i)
-                tasks.add(task)
-            }
-            if (tasks.isNotEmpty()) {
-                project.tasks.create("packageAllPlugin") {
-                    it.group = "plugin"
-                    it.description = "打包所有插件"
-                }.dependsOn(tasks)
-            }
+            createPackagePluginTasks(project)
         }
+    }
+
+    private fun createPackagePluginTasks(project: Project) {
+        val packagePlugin = project.extensions.findByName("packagePlugin")
+        val extension = packagePlugin as PackagePluginExtension
+        val buildTypes = extension.buildTypes
+
+        val tasks = mutableListOf<Task>()
+        for (i in buildTypes) {
+            println("buildTypes = " + i.name)
+            val task = createPackagePluginTask(project, i)
+            tasks.add(task)
+        }
+        if (tasks.isNotEmpty()) {
+            project.tasks.create("packageAllPlugin") {
+                it.group = "plugin"
+                it.description = "打包所有插件"
+            }.dependsOn(tasks)
+        }
+    }
+
+    private fun addFlavorForTransform(baseExtension: BaseExtension) {
+        baseExtension.flavorDimensionList.add(ShadowTransform.DimensionName)
+        try {
+            baseExtension.productFlavors.create(ShadowTransform.NoShadowTransformFlavorName) {
+                it.dimension = ShadowTransform.DimensionName
+                it.isDefault = true
+            }
+            baseExtension.productFlavors.create(ShadowTransform.ApplyShadowTransformFlavorName) {
+                it.dimension = ShadowTransform.DimensionName
+                it.isDefault = false
+            }
+        } catch (e: InvalidUserDataException) {
+            throw Error("请在android{} DSL之前apply plugin: 'com.tencent.shadow.plugin'", e)
+        }
+    }
+
+    private fun initAndroidClassPoolBuilder(
+        baseExtension: BaseExtension,
+        project: Project
+    ) {
+        val sdkDirectory = baseExtension.sdkDirectory
+        val compileSdkVersion =
+            baseExtension.compileSdkVersion ?: throw IllegalStateException("compileSdkVersion获取失败")
+        val androidJarPath = "platforms/${compileSdkVersion}/android.jar"
+        val androidJar = File(sdkDirectory, androidJarPath)
+
+        androidClassPoolBuilder = AndroidClassPoolBuilder(project, contextClassLoader, androidJar)
     }
 
     open class ShadowExtension {

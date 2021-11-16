@@ -23,9 +23,6 @@ def includeTest() {
             'androidx-cases-lib',
             'androidx-cases-app',
             'test-plugin-androidx-cases',
-            'test-multidex-lib',
-            'test-plugin-multidex-v1_0_2',
-            'test-plugin-multidex-v2_0_1',
             'plugin-service-for-host',
             'test-none-dynamic-host'
     project(':test-dynamic-host').projectDir = file('projects/test/dynamic/host/test-dynamic-host')
@@ -42,9 +39,6 @@ def includeTest() {
     project(':test-plugin-androidx-cases').projectDir = file('projects/test/plugin/androidx-cases/test-plugin-androidx-cases')
     project(':test-plugin-general-cases').projectDir = file('projects/test/plugin/general-cases/test-plugin-general-cases')
     project(':general-cases-app').projectDir = file('projects/test/plugin/general-cases/general-cases-app')
-    project(':test-multidex-lib').projectDir = file('projects/test/plugin/particular-cases/multidex/test-multidex-lib')
-    project(':test-plugin-multidex-v1_0_2').projectDir = file('projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v1_0_2')
-    project(':test-plugin-multidex-v2_0_1').projectDir = file('projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1')
     project(':plugin-service-for-host').projectDir = file('projects/test/plugin/particular-cases/plugin-service-for-host')
     project(':test-none-dynamic-host').projectDir = file('projects/test/none-dynamic/host/test-none-dynamic-host')
 }
@@ -58,9 +52,7 @@ def includeSample() {
             'sample-runtime',
             'pinnedheaderexpandablelistview',
             'slidingmenu',
-            'sample-app-lib',
-            'sample-normal-app',
-            'sample-plugin-app'
+            'sample-app'
     project(':sample-constant').projectDir = file('projects/sample/source/sample-constant')
     project(':sample-host').projectDir = file('projects/sample/source/sample-host')
     project(':sample-host-lib').projectDir = file('projects/sample/source/sample-host-lib')
@@ -69,9 +61,7 @@ def includeSample() {
     project(':sample-runtime').projectDir = file('projects/sample/source/sample-plugin/sample-runtime')
     project(':pinnedheaderexpandablelistview').projectDir = file('projects/sample/source/sample-plugin/third-party/pinnedheaderexpandablelistview')
     project(':slidingmenu').projectDir = file('projects/sample/source/sample-plugin/third-party/slidingmenu')
-    project(':sample-app-lib').projectDir = file('projects/sample/source/sample-plugin/sample-app-lib')
-    project(':sample-normal-app').projectDir = file('projects/sample/source/sample-plugin/sample-normal-app')
-    project(':sample-plugin-app').projectDir = file('projects/sample/source/sample-plugin/sample-plugin-app')
+    project(':sample-app').projectDir = file('projects/sample/source/sample-plugin/sample-app')
 }
 
 def includeSampleDynamicApk() {

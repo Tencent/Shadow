@@ -15,23 +15,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            signingConfig signingConfigs.create("release")
-            signingConfig.initWith(buildTypes.debug.signingConfig)
-        }
     }
     sourceSets {
         debug {
             assets.srcDir('build/generated/assets/test-dynamic-manager/debug/')
             assets.srcDir('build/generated/assets/plugin-zip/debug/')
-        }
-        release {
-            assets.srcDir('build/generated/assets/test-dynamic-manager/release/')
-            assets.srcDir('build/generated/assets/plugin-zip/release/')
         }
     }
     lintOptions {
@@ -112,8 +100,5 @@ def generateAssets(generateAssetsTask, buildType) {
 tasks.whenTaskAdded { task ->
     if (task.name == "generateDebugAssets") {
         generateAssets(task, 'debug')
-    }
-    if (task.name == "generateReleaseAssets") {
-        generateAssets(task, 'release')
     }
 }
