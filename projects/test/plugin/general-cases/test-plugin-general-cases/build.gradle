@@ -1,9 +1,54 @@
-apply from: "../general-cases-app/build.gradle"
+apply plugin: 'com.android.application'
+apply plugin: 'com.tencent.shadow.plugin'
 
 android {
+    compileSdkVersion project.COMPILE_SDK_VERSION
+
     defaultConfig {
         applicationId project.TEST_HOST_APP_APPLICATION_ID
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        versionCode project.VERSION_CODE
+        versionName project.VERSION_NAME
+        testInstrumentationRunner "com.tencent.shadow.test.plugin.general_cases.app.CustomAndroidJUnitRunner"
     }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.create("release")
+            signingConfig.initWith(buildTypes.debug.signingConfig)
+        }
+    }
+
+    // 将插件applicationId设置为和宿主相同
+    productFlavors {
+        plugin {
+            applicationId project.TEST_HOST_APP_APPLICATION_ID
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'com.android.support:support-annotations:28.0.0'
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation project(':custom-view')
+    pluginCompileOnly 'androidx.test.espresso:espresso-idling-resource:3.3.0'
+    normalImplementation 'androidx.test.espresso:espresso-idling-resource:3.3.0'
+    pluginCompileOnly project(':plugin-use-host-code-lib')
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:core:1.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-remote:3.3.0'
+    androidTestImplementation "androidx.test:runner:1.3.0"
 }
 
 buildscript {
@@ -24,9 +69,6 @@ buildscript {
     }
 }
 
-apply plugin: 'com.tencent.shadow.plugin'
-
-
 shadow {
     transform {
 //        useHostContext = ['abc']
@@ -41,86 +83,29 @@ shadow {
                     pluginApk1 {
                         businessName = 'general-cases'
                         partKey = 'test-plugin-general-cases'
-                        buildTask = ':test-plugin-general-cases:assembleDebug'
-                        apkName = 'test-plugin-general-cases-debug.apk'
-                        apkPath = 'projects/test/plugin/general-cases/test-plugin-general-cases/build/outputs/apk/debug/test-plugin-general-cases-debug.apk'
+                        buildTask = ':test-plugin-general-cases:assemblePluginDebug'
+                        apkName = 'test-plugin-general-cases-plugin-debug.apk'
+                        apkPath = 'projects/test/plugin/general-cases/test-plugin-general-cases/build/outputs/apk/plugin/debug/test-plugin-general-cases-plugin-debug.apk'
                         hostWhiteList = ["androidx.test.espresso",//这个包添加是为了general-cases插件中可以访问测试框架的类
                                          "com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces"]//测试插件访问宿主白名单类
-                    }
-                    pluginApk2 {
-                        businessName = 'plugin-multidex'
-                        partKey = 'test-plugin-multidex-v1_0_2'
-                        buildTask = ':test-plugin-multidex-v1_0_2:assembleDebug'
-                        apkName = 'test-plugin-multidex-v1_0_2-debug.apk'
-                        apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v1_0_2/build/outputs/apk/debug/test-plugin-multidex-v1_0_2-debug.apk'
-                    }
-                    pluginApk3 {
-                        businessName = 'plugin-multidex'
-                        partKey = 'test-plugin-multidex-v2_0_1'
-                        buildTask = ':test-plugin-multidex-v2_0_1:assembleDebug'
-                        apkName = 'test-plugin-multidex-v2_0_1-debug.apk'
-                        apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1/build/outputs/apk/debug/test-plugin-multidex-v2_0_1-debug.apk'
                     }
                     pluginApk4 {
                         businessName = 'plugin-service-for-host'
                         partKey = 'plugin-service-for-host'
-                        buildTask = ':plugin-service-for-host:assembleDebug'
-                        apkName = 'plugin-service-for-host-debug.apk'
-                        apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/debug/plugin-service-for-host-debug.apk'
+                        buildTask = ':plugin-service-for-host:assemblePluginDebug'
+                        apkName = 'plugin-service-for-host-plugin-debug.apk'
+                        apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/plugin/debug/plugin-service-for-host-plugin-debug.apk'
                     }
                     pluginApk5 {
                         businessName = 'androidx-cases'
                         partKey = 'test-plugin-androidx-cases'
-                        buildTask = ':test-plugin-androidx-cases:assembleDebug'
-                        apkName = 'test-plugin-androidx-cases-debug.apk'
-                        apkPath = 'projects/test/plugin/androidx-cases/test-plugin-androidx-cases/build/outputs/apk/debug/test-plugin-androidx-cases-debug.apk'
+                        buildTask = ':test-plugin-androidx-cases:assemblePluginDebug'
+                        apkName = 'test-plugin-androidx-cases-plugin-debug.apk'
+                        apkPath = 'projects/test/plugin/androidx-cases/test-plugin-androidx-cases/build/outputs/apk/plugin/debug/test-plugin-androidx-cases-plugin-debug.apk'
                     }
                 }
             }
 
-            release {
-                loaderApkConfig = new Tuple2('test-dynamic-loader-release.apk', ':test-dynamic-loader:assembleRelease')
-                runtimeApkConfig = new Tuple2('test-dynamic-runtime-release.apk', ':test-dynamic-runtime:assembleRelease')
-                pluginApks {
-                    pluginApk1 {
-                        businessName = 'test-plugin-general-cases'
-                        partKey = 'test-plugin-general-cases'
-                        buildTask = ':test-plugin-general-cases:assembleRelease'
-                        apkName = 'test-plugin-general-cases-release.apk'
-                        apkPath = 'projects/test/plugin/general-cases/test-plugin-general-cases/build/outputs/apk/release/test-plugin-general-cases-release.apk'
-                        hostWhiteList = ["androidx.test.espresso",//这个包添加是为了general-cases插件中可以访问测试框架的类
-                                         "com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces"]//测试插件访问宿主白名单类
-                    }
-                    pluginApk2 {
-                        businessName = 'plugin-multidex'
-                        partKey = 'test-plugin-multidex-v1_0_2'
-                        buildTask = ':test-plugin-multidex-v1_0_2:assembleRelease'
-                        apkName = 'test-plugin-multidex-v1_0_2-release.apk'
-                        apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v1_0_2/build/outputs/apk/release/test-plugin-multidex-v1_0_2-release-unsigned.apk'
-                    }
-                    pluginApk3 {
-                        businessName = 'plugin-multidex'
-                        partKey = 'test-plugin-multidex-v2_0_1'
-                        buildTask = ':test-plugin-multidex-v2_0_1:assembleRelease'
-                        apkName = 'test-plugin-multidex-v2_0_1-release.apk'
-                        apkPath = 'projects/test/plugin/particular-cases/multidex/test-plugin-multidex-v2_0_1/build/outputs/apk/release/test-plugin-multidex-v2_0_1-release-unsigned.apk'
-                    }
-                    pluginApk4 {
-                        businessName = 'plugin-service-for-host'
-                        partKey = 'plugin-service-for-host'
-                        buildTask = ':plugin-service-for-host:assembleRelease'
-                        apkName = 'plugin-service-for-host-release.apk'
-                        apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/release/plugin-service-for-host-release.apk'
-                    }
-                    pluginApk5 {
-                        businessName = 'androidx-cases'
-                        partKey = 'test-plugin-androidx-cases'
-                        buildTask = ':test-plugin-androidx-cases:assembleRelease'
-                        apkName = 'test-plugin-androidx-cases-release.apk'
-                        apkPath = 'projects/test/plugin/androidx-cases/test-plugin-androidx-cases/build/outputs/apk/release/test-plugin-androidx-cases-release.apk'
-                    }
-                }
-            }
         }
 
         loaderApkProjectPath = 'projects/test/dynamic/plugin/test-dynamic-loader'

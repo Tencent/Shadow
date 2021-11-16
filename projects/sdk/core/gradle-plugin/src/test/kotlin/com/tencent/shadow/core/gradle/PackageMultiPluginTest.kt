@@ -65,7 +65,7 @@ class PackageMultiPluginTest {
         val zipFile = ZipFile(ROOT_PROJECT_DIR.absolutePath + "/build/plugin-debug.zip")
         val zipFileNames = mutableSetOf<String>()
         zipFileNames.add("config.json")
-        zipFileNames.add("plugin1-debug.apk")
+        zipFileNames.add("plugin1-plugin-debug.apk")
         zipFileNames.add("loader-debug.apk")
         zipFileNames.add("runtime-debug.apk")
 
@@ -79,7 +79,7 @@ class PackageMultiPluginTest {
 
         val case2ZipFile = ZipFile(ROOT_PROJECT_DIR.absolutePath + "/build/plugin-plugin2Debug.zip")
         zipFileNames.add("config.json")
-        zipFileNames.add("plugin2-debug.apk")
+        zipFileNames.add("plugin2-plugin-debug.apk")
 
         entries = case2ZipFile.entries()
         Assert.assertEquals(2, case2ZipFile.size())
@@ -111,7 +111,7 @@ class PackageMultiPluginTest {
         val pluginsJson = json["plugins"] as JSONArray
         val pluginJson = pluginsJson[0] as JSONObject
         Assert.assertEquals("plugin1", pluginJson["partKey"])
-        Assert.assertEquals("plugin1-debug.apk", pluginJson["apkName"])
+        Assert.assertEquals("plugin1-plugin-debug.apk", pluginJson["apkName"])
         val dependsOnJson = pluginJson["dependsOn"] as JSONArray
         Assert.assertEquals(2, dependsOnJson.size)
         Assert.assertNotNull(pluginJson["hash"])
