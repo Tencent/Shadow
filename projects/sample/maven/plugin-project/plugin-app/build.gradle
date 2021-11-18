@@ -1,17 +1,39 @@
-//先照抄一下plugin-normal-apk
-apply from: '../plugin-normal-apk/build.gradle'
+apply plugin: 'com.android.application'
+apply plugin: 'com.tencent.shadow.plugin'
 
 android {
+    compileSdkVersion 30
     defaultConfig {
-        //再把applicationId改成宿主的
-        applicationId "com.tencent.shadow.sample.host"
+        applicationId "com.tencent.shadow.sample.plugin"
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            signingConfig signingConfigs.create("release")
+            signingConfig.initWith(buildTypes.debug.signingConfig)
+        }
+    }
+
+    // 将插件applicationId设置为和宿主相同
+    productFlavors {
+        plugin {
+            applicationId "com.tencent.shadow.sample.host"
+        }
     }
 }
 
 dependencies {
     //Shadow Transform后业务代码会有一部分实际引用runtime中的类
     //如果不以compileOnly方式依赖，会导致其他Transform或者Proguard找不到这些类
-    compileOnly "com.tencent.shadow.core:runtime:$shadow_version"
+    pluginCompileOnly "com.tencent.shadow.core:runtime:$shadow_version"
 }
 
 //这段buildscript配置的dependencies是为了apply plugin: 'com.tencent.shadow.plugin'能找到实现
@@ -41,8 +63,6 @@ buildscript {
     }
 }
 
-apply plugin: 'com.tencent.shadow.plugin'
-
 shadow {
     packagePlugin {
         pluginTypes {
@@ -53,9 +73,9 @@ shadow {
                     pluginApk1 {
                         businessName = 'sample-plugin'//businessName相同的插件，context获取的Dir是相同的。businessName留空，表示和宿主相同业务，直接使用宿主的Dir。
                         partKey = 'sample-plugin'
-                        buildTask = 'assembleDebug'
-                        apkName = 'plugin-shadow-apk-debug.apk'
-                        apkPath = 'plugin-shadow-apk/build/outputs/apk/debug/plugin-shadow-apk-debug.apk'
+                        buildTask = 'assemblePluginDebug'
+                        apkName = 'plugin-app-plugin-debug.apk'
+                        apkPath = 'plugin-app/build/outputs/apk/plugin/debug/plugin-app-plugin-debug.apk'
                     }
                 }
             }
@@ -67,9 +87,9 @@ shadow {
                     pluginApk1 {
                         businessName = 'demo'
                         partKey = 'sample-plugin'
-                        buildTask = 'assembleRelease'
-                        apkName = 'plugin-shadow-apk-release.apk'
-                        apkPath = 'plugin-shadow-apk/build/outputs/apk/release/plugin-shadow-apk-release.apk'
+                        buildTask = 'assemblePluginRelease'
+                        apkName = 'plugin-app-plugin-release.apk'
+                        apkPath = 'plugin-app/build/outputs/apk/plugin/release/plugin-app-plugin-release.apk'
                     }
                 }
             }
