@@ -11,6 +11,8 @@ jobs:
     env:
       DISABLE_TENCENT_MAVEN_MIRROR: true
     steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
       - name: checkout
         uses: actions/checkout@v2
       - uses: actions/setup-java@v2
