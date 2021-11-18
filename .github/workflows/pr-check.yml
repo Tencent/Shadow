@@ -102,14 +102,5 @@ jobs:
       - name: build sample/maven/plugin-project
         working-directory: projects/sample/maven/plugin-project
         run: ./gradlew wrapper; ./gradlew assemble
-      - name: build sample/sunflower/host-project
-        working-directory: projects/sample/sunflower/host-project
-        run: ./gradlew wrapper; ./gradlew assemble
-      - name: build sample/sunflower/manager-project
-        working-directory: projects/sample/sunflower/manager-project
-        run: ./gradlew wrapper; ./gradlew assemble
-      - name: build sample/sunflower/plugin-project
-        working-directory: projects/sample/sunflower/plugin-project
-        run: ./gradlew wrapper; ./gradlew assemble
       - name: stop gradle deamon for actions/cache
         run: ./gradlew --stop
