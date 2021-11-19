@@ -16,19 +16,18 @@
  *
  */
 
-package com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity;
+package com.tencent.shadow.sample.plugin.app.lib.gallery.splash;
 
-import android.os.Bundle;
+public interface ISplashAnimation {
 
-public abstract class UseCase {
+    void start();
 
-    public abstract String getName();
+    void stop();
 
-    public abstract String getSummary();
+    void setAnimationListener(AnimationListener animationListener);
 
-    public abstract Class getPageClass();
 
-    public Bundle getPageParams(){
-        return null;
+    interface AnimationListener {
+        void onAnimationEnd();
     }
 }

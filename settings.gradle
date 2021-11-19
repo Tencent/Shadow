@@ -52,6 +52,8 @@ def includeSample() {
             'sample-runtime',
             'pinnedheaderexpandablelistview',
             'slidingmenu',
+            'sample-base-lib',
+            'sample-base',
             'sample-app'
     project(':sample-constant').projectDir = file('projects/sample/source/sample-constant')
     project(':sample-host').projectDir = file('projects/sample/source/sample-host')
@@ -61,6 +63,8 @@ def includeSample() {
     project(':sample-runtime').projectDir = file('projects/sample/source/sample-plugin/sample-runtime')
     project(':pinnedheaderexpandablelistview').projectDir = file('projects/sample/source/sample-plugin/third-party/pinnedheaderexpandablelistview')
     project(':slidingmenu').projectDir = file('projects/sample/source/sample-plugin/third-party/slidingmenu')
+    project(':sample-base-lib').projectDir = file('projects/sample/source/sample-plugin/sample-base-lib')
+    project(':sample-base').projectDir = file('projects/sample/source/sample-plugin/sample-base')
     project(':sample-app').projectDir = file('projects/sample/source/sample-plugin/sample-app')
 }
 
