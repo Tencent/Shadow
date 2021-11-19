@@ -20,6 +20,7 @@ package com.tencent.shadow.sample.manager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +57,13 @@ public class SamplePluginManager extends FastPluginManager {
      */
     @Override
     public String getAbi() {
-        return "";
+        String abi = "";
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            abi = Build.CPU_ABI;
+        } else {
+            abi = Build.SUPPORTED_ABIS[0];
+        }
+        return abi;
     }
 
     /**
