@@ -37,7 +37,7 @@ import com.ryg.expandable.ui.PinnedHeaderExpandableListView;
 import com.ryg.expandable.ui.PinnedHeaderExpandableListView.OnHeaderUpdateListener;
 import com.ryg.expandable.ui.StickyLayout;
 import com.ryg.expandable.ui.StickyLayout.OnGiveUpTouchEventListener;
-import com.tencent.shadow.sample.plugin.app.lib.R;
+import com.tencent.shadow.sample.plugin.app.lib.base.R;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.UseCaseManager;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.UseCaseSummaryFragment;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
@@ -109,8 +109,9 @@ public class MainActivity extends Activity implements
 
         @Override
         public Object getGroup(int groupPosition) {
-
-            return categoryList.get(groupPosition);
+            if (groupPosition >= 0)
+                return categoryList.get(groupPosition);
+            else return null;
         }
 
         @Override
@@ -215,7 +216,9 @@ public class MainActivity extends Activity implements
     @Override
     public void updatePinnedHeader(View headerView, int firstVisibleGroupPos) {
         UseCaseCategory firstVisibleGroup = (UseCaseCategory) adapter.getGroup(firstVisibleGroupPos);
-        TextView textView =  headerView.findViewById(R.id.tv_category);
+        if (firstVisibleGroup == null) return;
+
+        TextView textView = headerView.findViewById(R.id.tv_category);
         String title = firstVisibleGroup.title;
         textView.setText(expandStatus.get(firstVisibleGroupPos) ? title + " - " : title + " + ");
     }

@@ -23,29 +23,29 @@ import android.os.Handler;
 
 import com.tencent.shadow.sample.plugin.app.lib.gallery.util.ToastUtil;
 
-public class SplashAnimation implements ISplashAnimation{
+public class SplashAnimation implements ISplashAnimation {
 
     private AnimationListener mAnimationListener;
 
     private Context mContext;
 
-    public SplashAnimation(Context context){
+    public SplashAnimation(Context context) {
         mContext = context;
     }
 
 
     @Override
     public void start() {
-        ToastUtil.showToast(mContext,"animation start");
+        ToastUtil.showToast(mContext, "animation start");
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(mAnimationListener != null){
+                if (mAnimationListener != null) {
                     mAnimationListener.onAnimationEnd();
                 }
             }
-        },2000);
+        }, 2000);
     }
 
     @Override

@@ -1,23 +1,10 @@
-/*
- * Tencent is pleased to support the open source community by making Tencent Shadow available.
- * Copyright (C) 2019 THL A29 Limited, a Tencent company.  All rights reserved.
- *
- * Licensed under the BSD 3-Clause License (the "License"); you may not use
- * this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- *     https://opensource.org/licenses/BSD-3-Clause
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
+package com.tencent.shadow.sample.plugin.app.lib;
 
-package com.tencent.shadow.sample.plugin.app.lib.gallery.cases;
+import static com.tencent.shadow.sample.plugin.app.lib.gallery.cases.UseCaseManager.useCases;
 
+import android.app.Application;
+
+import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.UseCaseManager;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCaseCategory;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOnCreate;
@@ -27,7 +14,6 @@ import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityRe
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreateBySystem;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivitySetTheme;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityWindowSoftMode;
-import com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestAppCompatActivityOnCreate;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ActivityContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.context.ApplicationContextSubDirTestActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.dialog.TestDialogActivity;
@@ -42,24 +28,22 @@ import com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.TestDynamicRec
 import com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.TestReceiverActivity;
 import com.tencent.shadow.sample.plugin.app.lib.usecases.webview.WebViewActivity;
 
-import java.util.ArrayList;
-import java.util.List;
+public class UseCaseApplication extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        initCase();
+    }
 
-public class UseCaseManager {
+    private static void initCase() {
 
-    public static List<UseCaseCategory> useCases = new ArrayList<>();
-
-    private static boolean sInit;
-
-    public static void initCase() {
-
-        if (sInit) {
+        if (UseCaseManager.sInit) {
             throw new RuntimeException("不能重复调用init");
         }
 
-        sInit = true;
+        UseCaseManager.sInit = true;
 
-        UseCaseCategory activityCategory = new UseCaseCategory("Activity测试用例",new UseCase[]{
+        UseCaseCategory activityCategory = new UseCaseCategory("Activity测试用例", new UseCase[]{
                 new TestActivityOnCreate.Case(),
                 new TestActivityReCreate.Case(),
                 new TestActivityReCreateBySystem.Case(),
@@ -67,38 +51,37 @@ public class UseCaseManager {
                 new TestActivityWindowSoftMode.Case(),
                 new TestActivitySetTheme.Case(),
                 new TestActivityOptionMenu.Case(),
-                new TestAppCompatActivityOnCreate.Case(),
                 new WebViewActivity.Case()
         });
         useCases.add(activityCategory);
 
-        UseCaseCategory broadcastReceiverCategory = new UseCaseCategory("广播测试用例",new UseCase[]{
+        UseCaseCategory broadcastReceiverCategory = new UseCaseCategory("广播测试用例", new UseCase[]{
                 new TestReceiverActivity.Case(),
                 new TestDynamicReceiverActivity.Case()
         });
         useCases.add(broadcastReceiverCategory);
 
 
-        UseCaseCategory providerCategory = new UseCaseCategory( "ContentProvider测试用例",new UseCase[]{
+        UseCaseCategory providerCategory = new UseCaseCategory("ContentProvider测试用例", new UseCase[]{
                 new TestDBContentProviderActivity.Case(),
                 new TestFileProviderActivity.Case()
         });
         useCases.add(providerCategory);
 
 
-        UseCaseCategory fragmentCategory = new UseCaseCategory("fragment测试用例",new UseCase[]{
+        UseCaseCategory fragmentCategory = new UseCaseCategory("fragment测试用例", new UseCase[]{
                 new TestDynamicFragmentActivity.Case(),
                 new TestXmlFragmentActivity.Case(),
                 new TestDialogFragmentActivity.Case()
         });
         useCases.add(fragmentCategory);
 
-        UseCaseCategory dialogCategory = new UseCaseCategory("Dialog测试用例",new UseCase[]{
+        UseCaseCategory dialogCategory = new UseCaseCategory("Dialog测试用例", new UseCase[]{
                 new TestDialogActivity.Case(),
         });
         useCases.add(dialogCategory);
 
-        UseCaseCategory packageManagerCategory = new UseCaseCategory("PackageManager测试用例",new UseCase[]{
+        UseCaseCategory packageManagerCategory = new UseCaseCategory("PackageManager测试用例", new UseCase[]{
                 new TestPackageManagerActivity.Case(),
         });
         useCases.add(packageManagerCategory);
@@ -115,6 +98,4 @@ public class UseCaseManager {
         });
         useCases.add(communicationCategory);
     }
-
-
 }

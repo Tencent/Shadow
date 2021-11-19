@@ -14,6 +14,7 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 在这个Sample目录下，提供了两种示例工程：
 
 ## 源码依赖SDK的Sample(`projects/sample/source`)
+
 ***
 要测试这个Sample请用Android Studio直接打开clone版本库的根目录。
 ***
@@ -23,9 +24,13 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 * `sample-plugin/sample-loader`是loader的动态实现，业务主要在这里定义插件组件和壳子代理组件的配对关系等。
 * `sample-constant`是在前3者中共用的相同字符串常量。
 * `sample-plugin/sample-runtime`是runtime的动态实现，业务主要在这里定义壳子代理组件的实际类。
-* `sample-plugin/sample-app-lib`是业务App的主要代码，是一个aar库。
-* `sample-plugin/sample-normal-app`是一个apk模块壳子，将`sample-app-lib`打包在其中，演示业务App是可以正常安装运行的。
-* `sample-plugin/sample-plugin-app`也是一个apk模块壳子，同样将`sample-app-lib`打包在其中，但是额外应用了Shadow插件，生成的apk不能正常安装运行。
+* `sample-plugin/sample-base-lib`是业务App的一部分基础代码，是一个aar库。
+* `sample-plugin/sample-base`是一个apk模块壳子，将`sample-base-lib`打包在其中。既用于正常安装运行开发`sample-base-lib`
+  ，又用于编译`sample-base`插件。
+* `sample-plugin/sample-app`是依赖`sample-base-lib`开发的更多业务代码。它编译出的插件apk没有打包`sample-base-lib`
+  ，会在插件运行时依赖`sample-base`插件。
+
+`sample-app`和`sample-base`构成了一个多插件示例，请注意`sample-app/build.gradle`中的`dependsOn = ['sample-base']`设置。
 
 这些工程中对Shadow SDK的依赖完全是源码级的依赖，因此修改Shadow SDK的源码后可以直接运行生效。
 
@@ -33,8 +38,10 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 `sample-host`在构建中会自动打包manager和"插件"到assets中，在运行时自动释放模拟下载过程。
 
 ## 二进制Maven依赖SDK的Sample(`projects/sample/maven`)
+
 ***
-要测试这个Sample请用Android Studio *分别* 打开`projects/sample/maven/host-project`,`projects/sample/maven/manager-project`,`projects/sample/maven/plugin-project`三个目录。
+要测试这个Sample请用Android Studio *分别* 打开`projects/sample/maven/host-project`
+,`projects/sample/maven/manager-project`,`projects/sample/maven/plugin-project`三个目录。
 ***
 
 源码依赖SDK的Sample中对Shadow SDK的依赖配置不适用于正式业务接入。
