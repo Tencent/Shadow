@@ -1,51 +1,33 @@
 task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:assemble')
-    dependsOn gradle.includedBuild('core').task(':common:jarReleasePackage')
-    dependsOn gradle.includedBuild('core').task(':loader:assembleRelease')
-    dependsOn gradle.includedBuild('core').task(':manager:assembleRelease')
-    dependsOn gradle.includedBuild('core').task(':runtime:jarReleasePackage')
-    dependsOn gradle.includedBuild('core').task(':activity-container:jarReleasePackage')
+    dependsOn gradle.includedBuild('core').task(':common:assemble')
+    dependsOn gradle.includedBuild('core').task(':loader:assemble')
+    dependsOn gradle.includedBuild('core').task(':manager:assemble')
+    dependsOn gradle.includedBuild('core').task(':runtime:assemble')
+    dependsOn gradle.includedBuild('core').task(':activity-container:assemble')
     dependsOn gradle.includedBuild('core').task(':transform-kit:assemble')
     dependsOn gradle.includedBuild('core').task(':transform-kit:testJar')
     dependsOn gradle.includedBuild('core').task(':transform:assemble')
-    dependsOn gradle.includedBuild('core').task(':load-parameters:assembleRelease')
+    dependsOn gradle.includedBuild('core').task(':load-parameters:assemble')
     dependsOn gradle.includedBuild('core').task(':utils:assemble')
 
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-apk:jarReleasePackage')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:jarReleasePackage')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:jarReleasePackage')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:assembleRelease')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:assembleRelease')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:jarReleasePackage')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager-multi-loader-ext:assembleRelease')
-}
-
-task lintSdk() {
-    dependsOn gradle.includedBuild('core').task(':common:lint')
-    dependsOn gradle.includedBuild('core').task(':loader:lint')
-    dependsOn gradle.includedBuild('core').task(':manager:lint')
-    dependsOn gradle.includedBuild('core').task(':runtime:lint')
-    dependsOn gradle.includedBuild('core').task(':activity-container:lint')
-    dependsOn gradle.includedBuild('core').task(':load-parameters:lint')
-
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:lint')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:lint')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:lint')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:lint')
-    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager-multi-loader-ext:lint')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-apk:assemble')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host:assemble')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader:assemble')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-loader-impl:assemble')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager:assemble')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-host-multi-loader-ext:assemble')
+    dependsOn gradle.includedBuild('dynamic').task(':dynamic-manager-multi-loader-ext:assemble')
 }
 
 task jvmTestSdk() {
-    dependsOn gradle.includedBuild('core').task(':transform-kit:test')
-    dependsOn gradle.includedBuild('core').task(':transform:test')
-    dependsOn gradle.includedBuild('core').task(':gradle-plugin:test')
-    dependsOn gradle.includedBuild('core').task(':utils:test')
-    dependsOn gradle.includedBuild('core').task(':loader:test')
-    dependsOn gradle.includedBuild('coding').task(':code-generator:test')
+    dependsOn gradle.includedBuild('coding').task(':test')
+    dependsOn gradle.includedBuild('core').task(':test')
+    dependsOn gradle.includedBuild('dynamic').task(':test')
 }
 
 task androidTestSdk() {
-    dependsOn gradle.includedBuild('core').task(':manager:connectedDebugAndroidTest')
+    dependsOn gradle.includedBuild('core').task(':manager-db-test:connectedDebugAndroidTest')
     dependsOn ':test-dynamic-host:connectedDebugAndroidTest'
 }
 
@@ -91,7 +73,6 @@ def setGeneratePomFileAndDepends(publicationName) {
         tasks."generatePomFileFor${publicationName.capitalize()}Publication" {
             destination = file("$buildDir/pom/$publicationName-pom.xml")
             dependsOn(buildSdk)
-            dependsOn(lintSdk)
         }
     }
 }
@@ -140,7 +121,7 @@ publishing {
             groupId coreGroupId
             artifactId 'common'
             version publicationVersion
-            artifact("$corePath/common/build/outputs/jar/common-release.jar")
+            artifact("$corePath/common/build/libs/common.jar")
             artifact sourceJar("common", "$corePath/common")
 
             pom.withXml {
@@ -154,7 +135,7 @@ publishing {
             groupId coreGroupId
             artifactId 'load-parameters'
             version publicationVersion
-            artifact("$corePath/load-parameters/build/outputs/aar/load-parameters-release.aar")
+            artifact("$corePath/load-parameters/build/libs/load-parameters.jar")
             artifact sourceJar("loadParameters", "$corePath/load-parameters")
 
             pom.withXml {
@@ -168,7 +149,7 @@ publishing {
             groupId coreGroupId
             artifactId 'loader'
             version publicationVersion
-            artifact("$corePath/loader/build/outputs/aar/loader-release.aar")
+            artifact("$corePath/loader/build/libs/loader.jar")
             artifact sourceJar("loader", "$corePath/loader")
 
             pom.withXml {
@@ -188,7 +169,7 @@ publishing {
             groupId coreGroupId
             artifactId 'manager'
             version publicationVersion
-            artifact("$corePath/manager/build/outputs/aar/manager-release.aar")
+            artifact("$corePath/manager/build/libs/manager.jar")
             artifact sourceJar("manager", "$corePath/manager")
 
             pom.withXml {
@@ -206,7 +187,7 @@ publishing {
             groupId coreGroupId
             artifactId 'runtime'
             version publicationVersion
-            artifact("$corePath/runtime/build/outputs/jar/runtime-release.jar")
+            artifact("$corePath/runtime/build/libs/runtime.jar")
             artifact sourceJar("runtime", "$corePath/runtime")
 
             pom.withXml {
@@ -220,7 +201,7 @@ publishing {
             groupId coreGroupId
             artifactId 'activity-container'
             version publicationVersion
-            artifact("$corePath/activity-container/build/outputs/jar/activity-container-release.jar")
+            artifact("$corePath/activity-container/build/libs/activity-container.jar")
             artifact sourceJar("activity-container", "$corePath/activity-container")
 
             pom.withXml {
@@ -286,7 +267,7 @@ publishing {
             groupId dynamicGroupId
             artifactId 'apk'
             version publicationVersion
-            artifact("$dynamicPath/dynamic-apk/build/outputs/jar/dynamic-apk-release.jar")
+            artifact("$dynamicPath/dynamic-apk/build/libs/dynamic-apk.jar")
             artifact sourceJar("dynamicApk", "$dynamicPath/dynamic-apk")
 
             pom.withXml {
@@ -302,7 +283,7 @@ publishing {
             groupId dynamicGroupId
             artifactId 'host'
             version publicationVersion
-            artifact("$dynamicPath/dynamic-host/build/outputs/jar/dynamic-host-release.jar")
+            artifact("$dynamicPath/dynamic-host/build/libs/dynamic-host.jar")
             artifact sourceJar("dynamicHost", "$dynamicPath/dynamic-host")
 
             pom.withXml {
@@ -320,7 +301,7 @@ publishing {
             groupId dynamicGroupId
             artifactId 'host-multi-loader-ext'
             version publicationVersion
-            artifact("$dynamicPath/dynamic-host-multi-loader-ext/build/outputs/jar/dynamic-host-multi-loader-ext-release.jar")
+            artifact("$dynamicPath/dynamic-host-multi-loader-ext/build/libs/dynamic-host-multi-loader-ext.jar")
             artifact sourceJar("dynamicHostMultiLoaderExt", "$dynamicPath/dynamic-host-multi-loader-ext")
 
             pom.withXml {
@@ -338,7 +319,7 @@ publishing {
             groupId dynamicGroupId
             artifactId 'loader'
             version publicationVersion
-            artifact("$dynamicPath/dynamic-loader/build/outputs/jar/dynamic-loader-release.jar")
+            artifact("$dynamicPath/dynamic-loader/build/libs/dynamic-loader.jar")
             artifact sourceJar("dynamicLoader", "$dynamicPath/dynamic-loader")
 
             pom.withXml {
@@ -351,7 +332,7 @@ publishing {
             groupId dynamicGroupId
             artifactId 'loader-impl'
             version publicationVersion
-            artifact("$dynamicPath/dynamic-loader-impl/build/outputs/aar/dynamic-loader-impl-release.aar")
+            artifact("$dynamicPath/dynamic-loader-impl/build/libs/dynamic-loader-impl.jar")
             artifact sourceJar("dynamicLoaderImpl", "$dynamicPath/dynamic-loader-impl")
 
             pom.withXml {
@@ -372,7 +353,7 @@ publishing {
             groupId dynamicGroupId
             artifactId 'manager'
             version publicationVersion
-            artifact("$dynamicPath/dynamic-manager/build/outputs/aar/dynamic-manager-release.aar")
+            artifact("$dynamicPath/dynamic-manager/build/libs/dynamic-manager.jar")
             artifact sourceJar("dynamicManager", "$dynamicPath/dynamic-manager")
 
             pom.withXml {
@@ -392,7 +373,7 @@ publishing {
             groupId dynamicGroupId
             artifactId 'manager-multi-loader-ext'
             version publicationVersion
-            artifact("$dynamicPath/dynamic-manager-multi-loader-ext/build/outputs/aar/dynamic-manager-multi-loader-ext-release.aar")
+            artifact("$dynamicPath/dynamic-manager-multi-loader-ext/build/libs/dynamic-manager-multi-loader-ext.jar")
             artifact sourceJar("dynamicManagerMultiLoaderExt", "$dynamicPath/dynamic-manager-multi-loader-ext")
 
             pom.withXml {

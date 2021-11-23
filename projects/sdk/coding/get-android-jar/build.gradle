@@ -1,7 +1,5 @@
 apply plugin: 'com.android.library'
 
-group 'com.tencent.shadow.coding'
-
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
 }
@@ -9,10 +7,4 @@ android {
 def sdkPath = android.sdkComponents.getSdkDirectory().get().asFile.absolutePath
 def androidJarPath = new File(sdkPath, "platforms/${android.compileSdkVersion}/android.jar")
 
-configurations {
-    exportAndroidJar
-}
-
-artifacts {
-    exportAndroidJar(androidJarPath)
-}
+ext.set('androidJarPath', androidJarPath)

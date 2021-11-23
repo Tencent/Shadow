@@ -1,7 +1,5 @@
 apply plugin: 'kotlin'
 
-group 'com.tencent.shadow.core'
-
 dependencies {
     api project(':transform-kit')
     testImplementation 'junit:junit:4.12'

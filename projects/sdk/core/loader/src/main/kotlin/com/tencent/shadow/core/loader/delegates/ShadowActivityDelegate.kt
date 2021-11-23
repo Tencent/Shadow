@@ -29,8 +29,8 @@ import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.WindowManager
+import com.tencent.shadow.coding.java_build_config.BuildConfig
 import com.tencent.shadow.core.common.LoggerFactory
-import com.tencent.shadow.core.loader.BuildConfig
 import com.tencent.shadow.core.loader.infos.PluginActivityInfo
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_ACTIVITY_INFO_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_BUSINESS_NAME_KEY

@@ -18,16 +18,16 @@
 
 package com.tencent.shadow.core.runtime.container;
 
+import static com.tencent.shadow.core.runtime.container.DelegateProvider.LOADER_VERSION_KEY;
+import static com.tencent.shadow.core.runtime.container.DelegateProvider.PROCESS_ID_KEY;
+
 import android.app.Activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 
-import com.tencent.shadow.core.container.BuildConfig;
-
-import static com.tencent.shadow.core.runtime.container.DelegateProvider.LOADER_VERSION_KEY;
-import static com.tencent.shadow.core.runtime.container.DelegateProvider.PROCESS_ID_KEY;
+import com.tencent.shadow.coding.java_build_config.BuildConfig;
 
 /**
  * 插件的容器Activity。PluginLoader将把插件的Activity放在其中。

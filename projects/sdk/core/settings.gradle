@@ -1,3 +1,13 @@
 includeBuild '../coding'
-include 'generate-delegate-code', 'loader', 'runtime', 'activity-container', 'transform', 'gradle-plugin', 'common', 'manager', 'load-parameters', 'transform-kit'
-include 'utils'
+include 'generate-delegate-code',
+        'loader',
+        'runtime',
+        'activity-container',
+        'transform',
+        'gradle-plugin',
+        'common',
+        'manager',
+        'manager-db-test',
+        'load-parameters',
+        'transform-kit',
+        'utils'
