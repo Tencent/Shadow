@@ -31,8 +31,6 @@ jobs:
         run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: buildSdk
         run: ./gradlew buildSdk -S
-      - name: lintSdk
-        run: ./gradlew lintSdk
       - name: build sample/source
         run: ./gradlew build
       - name: unit test
@@ -74,8 +72,6 @@ jobs:
         run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: buildSdk
         run: ./gradlew buildSdk -S
-      - name: lintSdk
-        run: ./gradlew lintSdk
       - name: build sample/source
         run: ./gradlew build
       - name: stop gradle deamon for actions/cache

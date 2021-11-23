@@ -3,7 +3,7 @@ apply plugin: 'java-library'
 group 'com.tencent.shadow.test.lib.test-manager'
 
 dependencies {
-    compileOnly group: 'com.tencent.shadow.dynamic', name: 'dynamic-host', configuration: 'jar-debug'
+    compileOnly 'com.tencent.shadow.dynamic:dynamic-host'
 }
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8

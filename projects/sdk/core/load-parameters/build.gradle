@@ -1,3 +1,1 @@
-apply plugin: 'com.tencent.shadow.internal.common-aar-settings'
-
-group 'com.tencent.shadow.core'
+apply plugin: 'com.tencent.shadow.internal.common-jar-settings'

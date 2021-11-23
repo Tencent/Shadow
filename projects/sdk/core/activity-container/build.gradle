@@ -1,11 +1,13 @@
-apply plugin: 'com.tencent.shadow.internal.common-aar-settings'
+apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
-group 'com.tencent.shadow.core'
-
-android {
+java {
     sourceSets {
         main.java.srcDirs += project(':generate-delegate-code').buildDir.path + '/generated/DelegateCode/activity_container'
     }
 }
 
-preBuild.dependsOn(project(":generate-delegate-code").getTasksByName("generateDelegateCode", false).first())
+compileJava.dependsOn(project(":generate-delegate-code").getTasksByName("generateDelegateCode", false).first())
+
+dependencies {
+    implementation 'com.tencent.shadow.coding:java-build-config'
+}

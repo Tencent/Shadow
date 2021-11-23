@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath group: 'com.tencent.shadow.coding', name: 'get-android-jar', configuration: 'exportAndroidJar'
+        classpath 'com.tencent.shadow.coding:android-jar'
         classpath 'com.tencent.shadow.coding:code-generator'
     }
 }

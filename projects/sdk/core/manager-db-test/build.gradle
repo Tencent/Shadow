@@ -1,0 +1,28 @@
+apply plugin: 'com.android.library'
+
+android {
+    defaultConfig {
+        compileSdkVersion project.COMPILE_SDK_VERSION
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        testInstrumentationRunner "com.tencent.shadow.core.pluginmanager.CustomAndroidJUnitRunner"
+    }
+    testOptions {
+        animationsDisabled = true
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:core:1.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-remote:3.3.0'
+    implementation 'androidx.test.espresso:espresso-idling-resource:3.3.0'
+    androidTestImplementation "androidx.test:runner:1.3.0"
+
+    androidTestImplementation 'commons-io:commons-io:2.5'
+    androidTestImplementation project(':common')
+
+    implementation project(':manager')
+}

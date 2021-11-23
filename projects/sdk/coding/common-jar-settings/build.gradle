@@ -1,0 +1,20 @@
+apply plugin: 'java-gradle-plugin'
+
+apply plugin: 'kotlin'
+
+gradlePlugin {
+    plugins {
+        shadow {
+            id = "com.tencent.shadow.internal.common-jar-settings"
+            implementationClass = "com.tencent.shadow.coding.common_jar_settings.CommonJarSettingsPlugin"
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "com.android.tools.build:gradle:$build_gradle_version"
+    implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+    testImplementation gradleTestKit()
+}

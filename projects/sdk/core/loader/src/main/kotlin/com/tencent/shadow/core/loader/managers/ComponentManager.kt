@@ -23,7 +23,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.util.Pair
-import com.tencent.shadow.core.loader.BuildConfig
+import com.tencent.shadow.coding.java_build_config.BuildConfig
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginComponentInfo
 import com.tencent.shadow.core.loader.infos.PluginInfo

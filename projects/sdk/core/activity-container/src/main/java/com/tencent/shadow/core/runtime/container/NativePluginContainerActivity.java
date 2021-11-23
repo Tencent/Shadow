@@ -30,7 +30,7 @@ import android.view.InputQueue;
 import android.view.SurfaceHolder;
 import android.view.Window;
 
-import com.tencent.shadow.core.container.BuildConfig;
+import com.tencent.shadow.coding.java_build_config.BuildConfig;
 
 /**
  * NativeActivity位于宿主中的壳子

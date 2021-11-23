@@ -1,6 +1,4 @@
-apply plugin: 'java-library'
-
-group 'com.tencent.shadow.core'
+apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
 dependencies {
     testImplementation 'junit:junit:4.12'

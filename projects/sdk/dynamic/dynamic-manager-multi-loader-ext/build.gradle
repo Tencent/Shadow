@@ -1,6 +1,4 @@
-apply plugin: 'com.tencent.shadow.internal.common-aar-settings'
-
-group 'com.tencent.shadow.dynamic'
+apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
 dependencies {
     implementation 'com.tencent.shadow.core:manager'

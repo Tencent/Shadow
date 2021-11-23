@@ -1,13 +1,11 @@
 apply plugin: 'kotlin'
 
-group 'com.tencent.shadow.coding'
-
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.squareup:javapoet:1.11.1'
     implementation 'org.javassist:javassist:3.28.0-GA'
     implementation 'junit:junit:4.12'
 
-    compileOnly project(path: ":get-android-jar", configuration: 'exportAndroidJar')
-    testImplementation project(path: ":get-android-jar", configuration: 'exportAndroidJar')
+    compileOnly project(':android-jar')
+    testImplementation project(':android-jar')
 }

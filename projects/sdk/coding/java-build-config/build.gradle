@@ -1,0 +1,50 @@
+import com.squareup.javapoet.FieldSpec
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.TypeSpec
+
+import javax.lang.model.element.Modifier
+
+apply plugin: 'java'
+
+buildscript {
+    repositories {
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            jcenter()
+        }
+    }
+    dependencies {
+        classpath 'com.squareup:javapoet:1.11.1'
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+
+    sourceSets {
+        main.java.srcDirs += 'build/generateCode'
+    }
+}
+
+def generateCode = tasks.register('generateCode') {
+    inputs.property('VERSION_NAME', project.VERSION_NAME)
+    outputs.dir(layout.buildDirectory.dir('generateCode'))
+            .withPropertyName('outputDir')
+    doLast {
+        def versionNameField
+                = FieldSpec.builder(String, "VERSION_NAME", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
+                .initializer("\"${project.VERSION_NAME}\"").build()
+
+        def buildConfigClass = TypeSpec.classBuilder("BuildConfig")
+                .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
+                .addField(versionNameField).build()
+
+        JavaFile.builder("com.tencent.shadow.coding.java_build_config", buildConfigClass)
+                .build().writeTo(new File(project.getBuildDir(), 'generateCode'))
+    }
+}
+
+compileJava.dependsOn(generateCode)
