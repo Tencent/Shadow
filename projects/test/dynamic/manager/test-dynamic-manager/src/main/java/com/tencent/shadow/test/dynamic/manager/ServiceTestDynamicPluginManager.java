@@ -56,14 +56,6 @@ public class ServiceTestDynamicPluginManager extends FastPluginManager {
     }
 
     /**
-     * @return 宿主so的ABI。插件必须和宿主使用相同的ABI。
-     */
-    @Override
-    public String getAbi() {
-        return "";
-    }
-
-    /**
      * @return 宿主中注册的PluginProcessService实现的类名
      */
     @Override

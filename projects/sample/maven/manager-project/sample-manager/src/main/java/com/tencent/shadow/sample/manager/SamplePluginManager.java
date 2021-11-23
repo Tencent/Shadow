@@ -37,14 +37,6 @@ public class SamplePluginManager extends FastPluginManager {
     }
 
     /**
-     * @return demo插件so的abi
-     */
-    @Override
-    public String getAbi() {
-        return "";
-    }
-
-    /**
      * @return 宿主中注册的PluginProcessService实现的类名
      */
     @Override
