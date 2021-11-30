@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageInfo
 import android.os.Build
 import com.tencent.shadow.core.load_parameters.LoadParameters
@@ -41,7 +42,6 @@ object ParsePluginApkBloc {
     @Throws(ParsePluginApkException::class)
     fun parse(
         packageArchiveInfo: PackageInfo,
-        manifestInfo: ManifestInfo,
         loadParameters: LoadParameters,
         hostAppContext: Context
     ): PluginInfo {
@@ -84,13 +84,12 @@ object ParsePluginApkBloc {
             pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource, it))
         }
 
-        val receiveMap = manifestInfo.receivers.map { it.name to it }.toMap()
         packageArchiveInfo.receivers?.forEach {
             pluginInfo.putReceiverInfo(
                 PluginReceiverInfo(
                     it.name,
                     it,
-                    receiveMap[it.name]?.actions()
+                    it.toReceiveActions()
                 )
             )
         }
@@ -99,5 +98,11 @@ object ParsePluginApkBloc {
             pluginInfo.putPluginProviderInfo(PluginProviderInfo(it.name, it.authority, it))
         }
         return pluginInfo
+    }
+
+    private fun ActivityInfo.toReceiveActions(): List<String>? {
+        return this.metaData?.keySet()?.filter {
+            this.metaData?.getString(it) == this.name
+        }
     }
 }
