@@ -1,1 +1,22 @@
-<manifest package="com.tencent.shadow.test.plugin.general_cases" />
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.tencent.shadow.test.plugin.androidx_cases">
+
+    <application
+        android:appComponentFactory="com.tencent.shadow.test.plugin.androidx_cases.lib.TestComponentFactory"
+        tools:replace="android:appComponentFactory">
+
+        <activity android:name=".lib.LiveDataWithActivityTestActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".lib.AppComponentFactoryTestActivity" />
+        <activity
+            android:name=".lib.AppCompatTestActivity"
+            android:theme="@style/Theme.AppCompat" />
+    </application>
+</manifest>

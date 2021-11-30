@@ -19,7 +19,6 @@
 package com.tencent.shadow.sample.manager;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.RemoteException;
 
 import com.tencent.shadow.core.common.Logger;
@@ -112,21 +111,12 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
     }
 
 
-    public void startPluginActivity( InstalledPlugin installedPlugin, String partKey, Intent pluginIntent) throws RemoteException, TimeoutException, FailedException {
-        Intent intent = convertActivityIntent(installedPlugin, partKey, pluginIntent);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mPluginLoader.startActivityInPluginProcess(intent);
-
-    }
-
-    public Intent convertActivityIntent(InstalledPlugin installedPlugin, String partKey, Intent pluginIntent) throws RemoteException, TimeoutException, FailedException {
-        loadPlugin(installedPlugin.UUID, partKey);
+    protected void callApplicationOnCreate(String partKey) throws RemoteException {
         Map map = mPluginLoader.getLoadedPlugin();
         Boolean isCall = (Boolean) map.get(partKey);
         if (isCall == null || !isCall) {
             mPluginLoader.callApplicationOnCreate(partKey);
         }
-        return mPluginLoader.convertActivityIntent(pluginIntent);
     }
 
     private void loadPluginLoaderAndRuntime(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
@@ -138,7 +128,7 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
         loadPluginLoader(uuid);
     }
 
-    private void loadPlugin(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
+    protected void loadPlugin(String uuid, String partKey) throws RemoteException, TimeoutException, FailedException {
         loadPluginLoaderAndRuntime(uuid, partKey);
         Map map = mPluginLoader.getLoadedPlugin();
         if (!map.containsKey(partKey)) {

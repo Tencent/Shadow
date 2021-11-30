@@ -18,6 +18,8 @@
 
 package com.tencent.shadow.sample.host;
 
+import static com.tencent.shadow.sample.constant.Constant.PART_KEY_PLUGIN_BASE;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -65,7 +67,17 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 String partKey = (String) partKeySpinner.getSelectedItem();
                 Intent intent = new Intent(MainActivity.this, PluginLoadActivity.class);
-                intent.putExtra(Constant.KEY_PLUGIN_PART_KEY, partKey);
+                switch (partKey) {
+                    //为了演示多进程多插件，其实两个插件内容完全一样，除了所在进程
+                    case Constant.PART_KEY_PLUGIN_MAIN_APP:
+                        intent.putExtra(Constant.KEY_PLUGIN_PART_KEY, PART_KEY_PLUGIN_BASE);
+                        break;
+                    case Constant.PART_KEY_PLUGIN_ANOTHER_APP:
+                        intent.putExtra(Constant.KEY_PLUGIN_PART_KEY, partKey);
+                        ;
+                        break;
+                }
+
                 switch (partKey) {
                     //为了演示多进程多插件，其实两个插件内容完全一样，除了所在进程
                     case Constant.PART_KEY_PLUGIN_MAIN_APP:

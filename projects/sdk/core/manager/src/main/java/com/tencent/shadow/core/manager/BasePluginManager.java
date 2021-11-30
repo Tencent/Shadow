@@ -184,7 +184,11 @@ public abstract class BasePluginManager {
 
 
     /**
-     * 插件apk的so解压
+     * 解压插件apk中的so。
+     * <p>
+     * 插件的ABI和宿主正在使用的保持一致。
+     * 注意：如果宿主没有打包so，它的ABI会被系统自动设置为设备默认值，
+     * 默认值可能和插件apk中打包的ABI不一致，导致插件so解压不正确。
      *
      * @param uuid    插件包的uuid
      * @param partKey 要解压so的插件partkey
@@ -195,6 +199,10 @@ public abstract class BasePluginManager {
             File root = mUnpackManager.getAppDir();
             String filter = "lib/" + getAbi() + "/";
             File soDir = AppCacheFolderManager.getLibDir(root, uuid);
+            if (mLogger.isInfoEnabled()) {
+                mLogger.info("extractSo uuid=={} partKey=={} apkFile=={} soDir=={} filter=={}",
+                        uuid, partKey, apkFile.getAbsolutePath(), soDir.getAbsolutePath(), filter);
+            }
             CopySoBloc.copySo(apkFile, soDir
                     , AppCacheFolderManager.getLibCopiedFile(soDir, partKey), filter);
         } catch (InstallPluginException e) {
@@ -289,12 +297,15 @@ public abstract class BasePluginManager {
 
 
     /**
-     * 业务插件的abi
-     *
-     * @return
+     * 获取插件应该采用的ABI
+     * <p>
+     * 对系统来说插件代码是系统的一部分，所以插件只能用跟宿主一样ABI的so。
+     * 这里查询宿主安装后系统自动决定的ABI目录，而不是Build.SUPPORTED_ABIS，因为宿主可能采用了兼容模式的ABI。
      */
-    public String getAbi() {
-        return null;
+    private String getAbi() {
+        String nativeLibraryDir = mHostContext.getApplicationInfo().nativeLibraryDir;
+        int nextIndexOfLastSlash = nativeLibraryDir.lastIndexOf('/') + 1;
+        return nativeLibraryDir.substring(nextIndexOfLastSlash);
     }
 
     /**

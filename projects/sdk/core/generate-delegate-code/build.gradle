@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath files("${System.getenv().get('ANDROID_HOME')}/platforms/android-${project.COMPILE_SDK_VERSION}/android.jar")
+        classpath group: 'com.tencent.shadow.coding', name: 'get-android-jar', configuration: 'exportAndroidJar'
         classpath 'com.tencent.shadow.coding:code-generator'
     }
 }

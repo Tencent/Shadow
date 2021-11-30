@@ -14,6 +14,7 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 在这个Sample目录下，提供了两种示例工程：
 
 ## 源码依赖SDK的Sample(`projects/sample/source`)
+
 ***
 要测试这个Sample请用Android Studio直接打开clone版本库的根目录。
 ***
@@ -23,9 +24,13 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 * `sample-plugin/sample-loader`是loader的动态实现，业务主要在这里定义插件组件和壳子代理组件的配对关系等。
 * `sample-constant`是在前3者中共用的相同字符串常量。
 * `sample-plugin/sample-runtime`是runtime的动态实现，业务主要在这里定义壳子代理组件的实际类。
-* `sample-plugin/sample-app-lib`是业务App的主要代码，是一个aar库。
-* `sample-plugin/sample-normal-app`是一个apk模块壳子，将`sample-app-lib`打包在其中，演示业务App是可以正常安装运行的。
-* `sample-plugin/sample-plugin-app`也是一个apk模块壳子，同样将`sample-app-lib`打包在其中，但是额外应用了Shadow插件，生成的apk不能正常安装运行。
+* `sample-plugin/sample-base-lib`是业务App的一部分基础代码，是一个aar库。
+* `sample-plugin/sample-base`是一个apk模块壳子，将`sample-base-lib`打包在其中。既用于正常安装运行开发`sample-base-lib`
+  ，又用于编译`sample-base`插件。
+* `sample-plugin/sample-app`是依赖`sample-base-lib`开发的更多业务代码。它编译出的插件apk没有打包`sample-base-lib`
+  ，会在插件运行时依赖`sample-base`插件。
+
+`sample-app`和`sample-base`构成了一个多插件示例，请注意`sample-app/build.gradle`中的`dependsOn = ['sample-base']`设置。
 
 这些工程中对Shadow SDK的依赖完全是源码级的依赖，因此修改Shadow SDK的源码后可以直接运行生效。
 
@@ -33,8 +38,10 @@ manager在加载"插件"时，首先需要先加载"插件"中的runtime和loade
 `sample-host`在构建中会自动打包manager和"插件"到assets中，在运行时自动释放模拟下载过程。
 
 ## 二进制Maven依赖SDK的Sample(`projects/sample/maven`)
+
 ***
-要测试这个Sample请用Android Studio *分别* 打开`projects/sample/maven/host-project`,`projects/sample/maven/manager-project`,`projects/sample/maven/plugin-project`三个目录。
+要测试这个Sample请用Android Studio *分别* 打开`projects/sample/maven/host-project`
+,`projects/sample/maven/manager-project`,`projects/sample/maven/plugin-project`三个目录。
 ***
 
 源码依赖SDK的Sample中对Shadow SDK的依赖配置不适用于正式业务接入。
@@ -46,11 +53,7 @@ Shadow实现了完整的Maven发布脚本，支持方便的Maven依赖。
 甚至**3个工程中依赖的Shadow版本都是独立配置的**，
 使用时请注意这一点。
 
-***
-特别注意，这3个工程中以maven方式引用的SDK，都是需要自行发布到`mavenLocal()`才能使用的。
-因为，对于业务来说，不太可能会跟其他业务使用完全一致的二进制实现。所以Shadow直接发布一份二进制意义不大。
-建议真正接入时按下面介绍，将二进制发布到自己的maven仓库中。
-***
+### 自行发布SDK到Maven仓库方法
 
 在`buildScripts/gradle/maven.gradle`文件中配置了Shadow的Maven发布脚本。
 正式使用时，请修改其中的两个GroupID变量：`coreGroupId`、`dynamicGroupId`，
@@ -86,8 +89,3 @@ adb push sample-manager/build/outputs/apk/debug/sample-manager-debug.apk /data/l
 最后可以用Android Studio打开`host-project`直接运行`sample-host`模块。
 
 `plugin-project`中的`plugin-normal-apk`模块也可以直接安装运行，演示不使用Shadow时插件的运行情况。
-
-## 演示AndroidX正常工作的Sample(`projects/sample/sunflower`)
-这个Sample和`projects/sample/maven`的组织结构是一样的。
-
-主要是将https://github.com/android/sunflower/改造成插件运行起来。

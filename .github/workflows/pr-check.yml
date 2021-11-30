@@ -27,14 +27,16 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: revert gradle wrapper mirror setting
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: buildSdk
-        run: ./gradlew wrapper; ./gradlew buildSdk -S
+        run: ./gradlew buildSdk -S
       - name: lintSdk
-        run: ./gradlew wrapper; ./gradlew lintSdk
+        run: ./gradlew lintSdk
       - name: build sample/source
-        run: ./gradlew wrapper; ./gradlew build
+        run: ./gradlew build
       - name: unit test
-        run: ./gradlew wrapper; ./gradlew jvmTestSdk -S
+        run: ./gradlew jvmTestSdk -S
       - name: run androidTestSdk on API 28 emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -43,7 +45,7 @@ jobs:
           target: default
           arch: x86_64
           profile: pixel_xl
-          script: ./gradlew wrapper; ./gradlew androidTestSdk
+          script: ./gradlew androidTestSdk
       - name: stop gradle deamon for actions/cache
         run: ./gradlew --stop
   build-on-windows:
@@ -68,12 +70,14 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: revert gradle wrapper mirror setting
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: buildSdk
-        run: ./gradlew wrapper; ./gradlew buildSdk -S
+        run: ./gradlew buildSdk -S
       - name: lintSdk
-        run: ./gradlew wrapper; ./gradlew lintSdk
+        run: ./gradlew lintSdk
       - name: build sample/source
-        run: ./gradlew wrapper; ./gradlew build
+        run: ./gradlew build
       - name: stop gradle deamon for actions/cache
         run: ./gradlew --stop
   build-samples:
@@ -93,23 +97,25 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+      - name: revert gradle wrapper mirror setting
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+      - name: revert gradle wrapper mirror setting for sample host-project
+        working-directory: projects/sample/maven/host-project
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+      - name: revert gradle wrapper mirror setting for sample manager-project
+        working-directory: projects/sample/maven/manager-project
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+      - name: revert gradle wrapper mirror setting for sample plugin-project
+        working-directory: projects/sample/maven/plugin-project
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: build sample/maven/host-project
         working-directory: projects/sample/maven/host-project
-        run: ./gradlew wrapper; ./gradlew assemble
+        run: ./gradlew assemble
       - name: build sample/maven/manager-project
         working-directory: projects/sample/maven/manager-project
-        run: ./gradlew wrapper; ./gradlew assemble
+        run: ./gradlew assemble
       - name: build sample/maven/plugin-project
         working-directory: projects/sample/maven/plugin-project
-        run: ./gradlew wrapper; ./gradlew assemble
-      - name: build sample/sunflower/host-project
-        working-directory: projects/sample/sunflower/host-project
-        run: ./gradlew wrapper; ./gradlew assemble
-      - name: build sample/sunflower/manager-project
-        working-directory: projects/sample/sunflower/manager-project
-        run: ./gradlew wrapper; ./gradlew assemble
-      - name: build sample/sunflower/plugin-project
-        working-directory: projects/sample/sunflower/plugin-project
-        run: ./gradlew wrapper; ./gradlew assemble
+        run: ./gradlew assemble
       - name: stop gradle deamon for actions/cache
         run: ./gradlew --stop

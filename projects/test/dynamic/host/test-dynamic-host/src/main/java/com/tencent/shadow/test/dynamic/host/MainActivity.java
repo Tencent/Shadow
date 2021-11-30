@@ -52,9 +52,7 @@ public class MainActivity extends Activity {
         final Spinner partKeySpinner = new Spinner(this);
         ArrayAdapter<String> partKeysAdapter = new ArrayAdapter<>(this, R.layout.part_key_adapter);
         partKeysAdapter.addAll(
-                Constant.PART_KEY_PLUGIN_MAIN_APP,
-                Constant.PART_KEY_MULTIDEX_V1_0_2,
-                Constant.PART_KEY_MULTIDEX_V2_0_1
+                Constant.PART_KEY_PLUGIN_MAIN_APP
         );
         partKeySpinner.setAdapter(partKeysAdapter);
 
@@ -71,12 +69,6 @@ public class MainActivity extends Activity {
                 switch (partKey) {
                     case Constant.PART_KEY_PLUGIN_MAIN_APP:
                         intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.test.plugin.general_cases.lib.usecases.application.TestApplicationActivity");
-                        break;
-                    case Constant.PART_KEY_MULTIDEX_V1_0_2:
-                        intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.test.plugin.particular_cases.multidex.v1_0_2.PluginMultidexV1_0_2Activity");
-                        break;
-                    case Constant.PART_KEY_MULTIDEX_V2_0_1:
-                        intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "com.tencent.shadow.test.plugin.particular_cases.multidex.v2_0_1.PluginMultidexV2_0_1Activity");
                         break;
                 }
                 startActivity(intent);
