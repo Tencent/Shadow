@@ -63,6 +63,24 @@ class ShadowPlugin : Plugin<Project> {
             initAndroidClassPoolBuilder(baseExtension, project)
 
             createPackagePluginTasks(project)
+
+            parseManifest(project)
+        }
+    }
+
+    private fun parseManifest(project: Project){
+        val appExtension: AppExtension = project.extensions.getByType(AppExtension::class.java)
+        appExtension.applicationVariants.all { variant ->
+            variant.outputs.all { output ->
+                val processManifestTask = output.processManifestProvider.get()
+                processManifestTask.doLast {
+                    val manifestFile = File(
+                        (processManifestTask as ProcessMultiApkApplicationManifest).multiApkManifestOutputDirectory.get().asFile,
+                        "AndroidManifest.xml"
+                    )
+                    rebuildManifest(manifestFile)
+                }
+            }
         }
     }
 
@@ -99,20 +117,6 @@ class ShadowPlugin : Plugin<Project> {
         } catch (e: InvalidUserDataException) {
             throw Error("请在android{} DSL之前apply plugin: 'com.tencent.shadow.plugin'", e)
         }
-        
-        val appExtension: AppExtension = it.extensions.getByType(AppExtension::class.java)
-              appExtension.applicationVariants.all { variant ->
-                  variant.outputs.all { output ->
-                      val processManifestTask = output.processManifestProvider.get()
-                      processManifestTask.doLast {
-                          val manifestFile = File(
-                              (processManifestTask as ProcessMultiApkApplicationManifest).multiApkManifestOutputDirectory.get().asFile,
-                              "AndroidManifest.xml"
-                          )
-                          rebuildManifest(manifestFile)
-                      }
-                  }
-              }
     }
 
     private fun initAndroidClassPoolBuilder(
