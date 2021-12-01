@@ -115,10 +115,14 @@ public abstract class BasePluginManager {
 
     protected InstalledPlugin.Part getPluginPartByPartKey(String uuid, String partKey) {
         InstalledPlugin installedPlugin = mInstalledDao.getInstalledPluginByUUID(uuid);
-        if (installedPlugin != null) {
-            return installedPlugin.getPart(partKey);
+        if (installedPlugin == null) {
+            throw new RuntimeException("没有找到uuid:" + uuid);
         }
-        throw new RuntimeException("没有找到Part partKey:" + partKey);
+        InstalledPlugin.Part part = installedPlugin.getPart(partKey);
+        if (part == null) {
+            throw new RuntimeException("没有找到Part partKey:" + partKey);
+        }
+        return part;
     }
 
     protected InstalledPlugin getInstalledPlugin(String uuid) {
