@@ -1,5 +1,8 @@
+import java.nio.file.Files
+
 rootProject.name = 'shadow'
 
+copyLocalPropertiesForIncludeBuilds()
 includeBuild 'projects/sdk/coding'
 includeBuild 'projects/sdk/core'
 includeBuild 'projects/sdk/dynamic'
@@ -77,4 +80,22 @@ def includeSampleDynamicApk() {
     project(':sample-hello-api-holder').projectDir = file('projects/sample/dynamic-apk/sample-hello-api-holder')
     project(':sample-hello-apk').projectDir = file('projects/sample/dynamic-apk/sample-hello-apk')
     project(':sample-hello-host').projectDir = file('projects/sample/dynamic-apk/sample-hello-host')
+}
+
+/**
+ * Android Studio当前不会为IncludeBuild创建包含sdk.dir的local.properties
+ * 使得没有ANDROID_HOME或等效环境变量时仅依赖根目录的local.properties无法编译IncludeBuild。
+ * 为了使此含有IncludeBuild的项目和其他不含有IncludeBuild的普通Android工程一样可以在
+ * 只有根目录的local.properties情况下正常编译，用此任务复制local.properties。
+ */
+def copyLocalPropertiesForIncludeBuilds() {
+    def rootFile = file('local.properties')
+    if (rootFile.exists()) {
+        ['coding', 'core', 'dynamic'].forEach {
+            def includeBuildFile = file("projects/sdk/${it}/local.properties")
+            if (!includeBuildFile.exists()) {
+                Files.copy(rootFile.toPath(), includeBuildFile.toPath())
+            }
+        }
+    }
 }
