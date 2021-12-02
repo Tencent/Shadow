@@ -101,13 +101,13 @@ jobs:
         run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: revert gradle wrapper mirror setting for sample host-project
         working-directory: projects/sample/maven/host-project
-        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-6.6.1-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: revert gradle wrapper mirror setting for sample manager-project
         working-directory: projects/sample/maven/manager-project
-        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-6.6.1-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: revert gradle wrapper mirror setting for sample plugin-project
         working-directory: projects/sample/maven/plugin-project
-        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-6.6.1-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: build sample/maven/host-project
         working-directory: projects/sample/maven/host-project
         run: ./gradlew assemble
