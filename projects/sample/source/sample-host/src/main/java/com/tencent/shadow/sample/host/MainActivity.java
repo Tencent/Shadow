@@ -34,6 +34,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.tencent.shadow.sample.constant.Constant;
+import com.tencent.shadow.sample.host.plugin_view.HostAddPluginViewActivity;
 
 
 public class MainActivity extends Activity {
@@ -90,6 +91,14 @@ public class MainActivity extends Activity {
             }
         });
         rootView.addView(startPluginButton);
+
+        Button startHostAddPluginViewActivityButton = new Button(this);
+        startHostAddPluginViewActivityButton.setText("宿主添加插件View");
+        startHostAddPluginViewActivityButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, HostAddPluginViewActivity.class);
+            startActivity(intent);
+        });
+        rootView.addView(startHostAddPluginViewActivityButton);
 
         setContentView(rootView);
 

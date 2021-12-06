@@ -67,6 +67,7 @@
             android:authorities="${applicationId}.provider.test"
             android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestProvider" />
 
+        <service android:name=".usecases.service.HostAddPluginViewService" />
     </application>
 
 </manifest>
