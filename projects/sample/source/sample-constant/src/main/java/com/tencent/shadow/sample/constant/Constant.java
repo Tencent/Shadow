@@ -30,4 +30,5 @@ final public class Constant {
     public static final int FROM_ID_NOOP = 1000;
     public static final int FROM_ID_START_ACTIVITY = 1002;
     public static final int FROM_ID_CLOSE = 1003;
+    public static final int FROM_ID_LOAD_VIEW_TO_HOST = 1004;
 }

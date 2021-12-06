@@ -75,23 +75,26 @@
         android:theme="@android:style/Theme.DeviceDefault"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="com.tencent.shadow.sample.host.MainActivity"
-            >
+        <activity android:name="com.tencent.shadow.sample.host.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".plugin_view.HostAddPluginViewActivity"
+            android:process=":plugin" />
+
         <provider
             android:authorities="${applicationId}.contentprovider.authority.dynamic"
             android:name="com.tencent.shadow.core.runtime.container.PluginContainerContentProvider"
             android:grantUriPermissions="true"
-            android:process=":plugin"
-            />
-        <service android:name="com.tencent.shadow.sample.host.PluginProcessPPS"
-            android:process=":plugin"
-            />
+            android:process=":plugin" />
+
+        <service
+            android:name="com.tencent.shadow.sample.host.PluginProcessPPS"
+            android:process=":plugin" />
         <service
             android:name="com.tencent.shadow.sample.host.Plugin2ProcessPPS"
             android:process=":plugin2" />
@@ -136,6 +139,11 @@
 
             />
         <!--dynamic activity注册 end -->
+        <receiver android:name=".plugin_view.MainProcessManagerReceiver">
+            <intent-filter>
+                <action android:name="sample_host.manager.startPluginService" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

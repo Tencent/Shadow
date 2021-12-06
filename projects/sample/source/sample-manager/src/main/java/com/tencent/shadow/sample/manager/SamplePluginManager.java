@@ -25,6 +25,7 @@ import static com.tencent.shadow.sample.constant.Constant.PART_KEY_PLUGIN_MAIN_A
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -80,8 +81,24 @@ public class SamplePluginManager extends FastPluginManager {
             onStartActivity(context, bundle, callback);
         } else if (fromId == Constant.FROM_ID_CLOSE) {
             close();
+        } else if (fromId == Constant.FROM_ID_LOAD_VIEW_TO_HOST) {
+            loadViewToHost(context, bundle);
         } else {
             throw new IllegalArgumentException("不认识的fromId==" + fromId);
+        }
+    }
+
+    private void loadViewToHost(final Context context, Bundle bundle) {
+        Intent pluginIntent = new Intent();
+        pluginIntent.setClassName(
+                context.getPackageName(),
+                "com.tencent.shadow.sample.plugin.app.lib.usecases.service.HostAddPluginViewService"
+        );
+        pluginIntent.putExtras(bundle);
+        try {
+            mPluginLoader.startPluginService(pluginIntent);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
         }
     }
 

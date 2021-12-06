@@ -19,5 +19,6 @@
 <resources>
     <!-- Simple strings. -->
     <string name="app_name">Shadow主测试用例集合</string>
+    <string name="host_add_plugin_view">这是插件中的string资源</string>
 </resources>
 
