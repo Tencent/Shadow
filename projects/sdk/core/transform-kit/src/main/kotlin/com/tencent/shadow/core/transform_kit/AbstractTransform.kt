@@ -83,9 +83,12 @@ abstract class AbstractTransform(
 
     private fun CtClass.debugWriteJar(outputEntryName: String?, outputStream: ZipOutputStream) {
         //忽略META-INF
-        if (outputEntryName?.startsWith("META-INF/") == true) {
-            return
-        }
+        if (outputEntryName != null
+            && listOf<(String) -> Boolean>(
+                { it.startsWith("META-INF/") },
+                { it == "module-info.class" },
+            ).any { it(outputEntryName) }
+        ) return
 
         try {
             val entryName = outputEntryName ?: (name.replace('.', '/') + ".class")
