@@ -52,12 +52,12 @@ public class ShadowWebViewLayoutInflater extends FixedContextLayoutInflater{
     }
 
     @Override
-    Pair<String,String> changeViewNameAndPrefix(String prefix,String name) {
+    Pair<String, String> changeViewNameAndPrefix(String name, String prefix) {
         if (AndroidWebView.equals(prefix + name)) {
             prefix = ShadowPackagePrefix;
             name = ShadowWebView;
         }
-        return new Pair<>(name,prefix);
+        return new Pair<>(name, prefix);
     }
 
 
