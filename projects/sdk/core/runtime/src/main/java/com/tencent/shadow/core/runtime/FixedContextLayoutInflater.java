@@ -33,6 +33,10 @@ import android.view.View;
  * @author cubershi
  */
 public abstract class FixedContextLayoutInflater extends LayoutInflater {
+    /**
+     * 复制自
+     * com.android.internal.policy.PhoneLayoutInflater#sClassPrefixList
+     */
     private static final String[] sClassPrefixList = {
             "android.widget.",
             "android.webkit.",
@@ -49,10 +53,14 @@ public abstract class FixedContextLayoutInflater extends LayoutInflater {
 
     @Override
     protected View onCreateView(String name, AttributeSet attrs) throws ClassNotFoundException {
+        //模仿com.android.internal.policy.PhoneLayoutInflater#onCreateView实现
+        //xml中一些系统view省略了包名，这里在尝试拼上包名
         for (String prefix : sClassPrefixList) {
             try {
-                Pair<String,String> result = changeViewNameAndPrefix(prefix, name);
-                View view = createView(result.first, result.second, attrs);
+                Pair<String, String> afterChange = changeViewNameAndPrefix(name, prefix);
+                name = afterChange.first;
+                prefix = afterChange.second;
+                View view = createView(name, prefix, attrs);
                 if (view != null) {
                     return view;
                 }
@@ -72,6 +80,6 @@ public abstract class FixedContextLayoutInflater extends LayoutInflater {
 
     abstract LayoutInflater createNewContextLayoutInflater(Context context);
 
-    abstract Pair<String,String> changeViewNameAndPrefix(String prefix, String name);
+    abstract Pair<String, String> changeViewNameAndPrefix(String name, String prefix);
 
 }
