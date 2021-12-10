@@ -23,6 +23,16 @@ apply from: '../../../buildScripts/gradle/common.gradle'
 
 allprojects {
     group 'com.tencent.shadow.core'
+    buildscript {
+        repositories {
+            if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+                maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+            } else {
+                google()
+                jcenter()
+            }
+        }
+    }
 }
 
 tasks.create('test').dependsOn subprojects.collect { it.getTasksByName('test', false) }
