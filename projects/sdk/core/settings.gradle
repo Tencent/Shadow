@@ -1,6 +1,5 @@
 includeBuild '../coding'
-include 'generate-delegate-code',
-        'loader',
+include 'loader',
         'runtime',
         'activity-container',
         'transform',

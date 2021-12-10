@@ -343,13 +343,18 @@ class ActivityCodeGenerator {
     val pluginActivity = definePluginActivity()
     val shadowActivityDelegate = defineShadowActivityDelegate()
 
+    init {
+        addMethods()
+    }
+
     fun defineActivityDelegate() =
-            TypeSpec.interfaceBuilder(CS_HostActivityDelegate)
-                    .addModifiers(Modifier.PUBLIC)
-                    .addJavadoc(commonJavadoc
-                            + "HostActivity的被委托者接口\n"
-                            + "被委托者通过实现这个接口中声明的方法达到替代委托者实现的目的，从而将HostActivity的行为动态化。\n"
-                    )
+        TypeSpec.interfaceBuilder(CS_HostActivityDelegate)
+            .addModifiers(Modifier.PUBLIC)
+            .addJavadoc(
+                commonJavadoc
+                        + "HostActivity的被委托者接口\n"
+                        + "被委托者通过实现这个接口中声明的方法达到替代委托者实现的目的，从而将HostActivity的行为动态化。\n"
+            )
 
     fun defineActivityDelegator() =
             TypeSpec.interfaceBuilder(CS_HostActivityDelegator)
@@ -407,41 +412,41 @@ class ActivityCodeGenerator {
                     )
                     .addJavadoc(commonJavadoc)
                     .addAnnotation(
-                            AnnotationSpec.builder(SuppressLint::class.java)
-                                    .addMember("value", "\"NewApi\"")
-                                    .build()
+                        AnnotationSpec.builder(SuppressLint::class.java)
+                            .addMember("value", "\"NewApi\"")
+                            .build()
                     )
-                    .addAnnotation(
-                            AnnotationSpec.builder(SuppressWarnings::class.java)
-                                    .addMember("value", "{\"unchecked\", \"JavadocReference\"}")
-                                    .build()
-                    )
+                .addAnnotation(
+                    AnnotationSpec.builder(SuppressWarnings::class.java)
+                        .addMember("value", "{\"unchecked\", \"JavadocReference\"}")
+                        .build()
+                )
 
-    fun generate(outputDir: File) {
-        val activityContainerOutput = File(outputDir, "activity_container")
-        val runtimeOutput = File(outputDir, "runtime")
-        val loaderOutput = File(outputDir, "loader")
-        activityContainerOutput.mkdirs()
-        runtimeOutput.mkdirs()
-        loaderOutput.mkdirs()
+    fun generate(outputDir: File, moduleName: String) {
+        outputDir.mkdirs()
 
-        addMethods()
-        writeOutJavaFiles(activityContainerOutput, runtimeOutput, loaderOutput)
-    }
-
-    fun writeOutJavaFiles(activityContainerOutput: File, runtimeOutput: File, loaderOutput: File) {
-        JavaFile.builder(ACTIVITY_CONTAINER_PACKAGE, activityDelegate.build())
-                .build().writeTo(activityContainerOutput)
-        JavaFile.builder(ACTIVITY_CONTAINER_PACKAGE, activityDelegator.build())
-                .build().writeTo(activityContainerOutput)
-        JavaFile.builder(ACTIVITY_CONTAINER_PACKAGE, pluginContainerActivity.build())
-                .build().writeTo(activityContainerOutput)
-        JavaFile.builder(ACTIVITY_CONTAINER_PACKAGE, nativePluginContainerActivity.build())
-                .build().writeTo(activityContainerOutput)
-        JavaFile.builder(RUNTIME_PACKAGE, pluginActivity.build())
-                .build().writeTo(runtimeOutput)
-        JavaFile.builder(DELEGATE_PACKAGE, shadowActivityDelegate.build())
-                .build().writeTo(loaderOutput)
+        when (moduleName) {
+            "activity_container" -> {
+                listOf(
+                    activityDelegate,
+                    activityDelegator,
+                    pluginContainerActivity,
+                    nativePluginContainerActivity,
+                ).forEach {
+                    JavaFile.builder(ACTIVITY_CONTAINER_PACKAGE, it.build())
+                        .build().writeTo(outputDir)
+                }
+            }
+            "runtime" -> {
+                JavaFile.builder(RUNTIME_PACKAGE, pluginActivity.build())
+                    .build().writeTo(outputDir)
+            }
+            "loader" -> {
+                JavaFile.builder(DELEGATE_PACKAGE, shadowActivityDelegate.build())
+                    .build().writeTo(outputDir)
+            }
+            else -> throw IllegalArgumentException("非法的moduleName：$moduleName")
+        }
     }
 
     fun addMethods() {

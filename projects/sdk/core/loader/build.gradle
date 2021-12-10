@@ -1,10 +1,19 @@
+import com.tencent.shadow.coding.code_generator.ActivityCodeGenerator
+
+buildscript {
+    dependencies {
+        classpath 'com.tencent.shadow.coding:android-jar'
+        classpath 'com.tencent.shadow.coding:code-generator'
+    }
+}
+
 apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
 apply plugin: 'kotlin'
 
 java {
     sourceSets {
-        main.java.srcDirs += project(':generate-delegate-code').buildDir.path + '/generated/DelegateCode/loader'
+        main.java.srcDirs += 'build/generated/sources/code-generator'
     }
 }
 
@@ -28,4 +37,15 @@ dependencies {
     api project(':load-parameters')
 }
 
-compileJava.dependsOn(project(":generate-delegate-code").getTasksByName("generateDelegateCode", false).first())
+def generateCode = tasks.register('generateCode') {
+    def outputDir = layout.buildDirectory.dir('generated/sources/code-generator')
+    outputs.dir(outputDir)
+            .withPropertyName('outputDir')
+    doLast {
+        ActivityCodeGenerator codeGenerator = new ActivityCodeGenerator()
+        codeGenerator.generate(outputDir.get().getAsFile(), "loader")
+    }
+}
+
+compileJava.dependsOn(generateCode)
+compileKotlin.dependsOn(generateCode)

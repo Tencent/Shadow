@@ -8,11 +8,20 @@
  * 因此暂定这个模块不混淆，保持Debug版和Release版无差别。
  */
 
+import com.tencent.shadow.coding.code_generator.ActivityCodeGenerator
+
+buildscript {
+    dependencies {
+        classpath 'com.tencent.shadow.coding:android-jar'
+        classpath 'com.tencent.shadow.coding:code-generator'
+    }
+}
+
 apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
 java {
     sourceSets {
-        main.java.srcDirs += project(':generate-delegate-code').buildDir.path + '/generated/DelegateCode/runtime'
+        main.java.srcDirs += 'build/generated/sources/code-generator'
     }
 }
 
@@ -20,4 +29,14 @@ dependencies{
     compileOnly project(':activity-container')
 }
 
-compileJava.dependsOn(project(":generate-delegate-code").getTasksByName("generateDelegateCode", false).first())
+def generateCode = tasks.register('generateCode') {
+    def outputDir = layout.buildDirectory.dir('generated/sources/code-generator')
+    outputs.dir(outputDir)
+            .withPropertyName('outputDir')
+    doLast {
+        ActivityCodeGenerator codeGenerator = new ActivityCodeGenerator()
+        codeGenerator.generate(outputDir.get().getAsFile(), "runtime")
+    }
+}
+
+compileJava.dependsOn(generateCode)
