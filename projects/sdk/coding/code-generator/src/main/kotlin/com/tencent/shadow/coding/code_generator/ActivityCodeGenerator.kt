@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.app.NativeActivity
+import android.content.ComponentCallbacks2
 import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.Window
@@ -385,8 +386,9 @@ class ActivityCodeGenerator {
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                     .superclass(ClassName.get(RUNTIME_PACKAGE, "ShadowContext"))
                     .addSuperinterfaces(listOf(
-                            ClassName.get(Window.Callback::class.java),
-                            ClassName.get(KeyEvent.Callback::class.java)
+                        ClassName.get(ComponentCallbacks2::class.java),
+                        ClassName.get(Window.Callback::class.java),
+                        ClassName.get(KeyEvent.Callback::class.java)
                     ))
                     .addAnnotation(
                             AnnotationSpec.builder(SuppressLint::class.java)
