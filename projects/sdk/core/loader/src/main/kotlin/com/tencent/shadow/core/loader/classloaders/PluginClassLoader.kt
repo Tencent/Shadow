@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.loader.classloaders
 
 import android.os.Build
+import com.tencent.shadow.core.runtime.PluginManifest
 import dalvik.system.BaseDexClassLoader
 import org.jetbrains.annotations.TestOnly
 import java.io.File
@@ -109,6 +110,11 @@ class PluginClassLoader(
         }
 
         return clazz
+    }
+
+    internal fun loadPluginManifest(): PluginManifest {
+        val clazz = findClass("com.tencent.shadow.core.manifest_parser.PluginManifest")
+        return PluginManifest::class.java.cast(clazz.newInstance())
     }
 
 }

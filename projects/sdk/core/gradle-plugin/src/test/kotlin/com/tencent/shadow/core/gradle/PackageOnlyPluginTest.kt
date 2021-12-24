@@ -46,6 +46,7 @@ class PackageOnlyPluginTest {
                 .withProjectDir(PLUGIN1_PROJECT_DIR)
                 .withPluginClasspath()
                 .withArguments(listOf(
+                        "-xgeneratePluginDebugPluginManifest",
                         "-Pdisable_shadow_transform=true",
                         ":plugin1:packageOnlyApkPlugin"
                 ))

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1"
+    android:versionName="local" package="com.tencent.shadow.sample.host">
+
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="28" />
+
+    <uses-feature android:glEsVersion="0x00020000" />
+
+    <application android:debuggable="true" android:icon="@android:drawable/sym_def_app_icon"
+        android:label="@string/app_name"
+        android:name="com.tencent.shadow.sample.plugin.app.lib.UseCaseApplication"
+        android:appComponentFactory="com.tencent.shadow.test.plugin.androidx_cases.lib.TestComponentFactory"
+        android:theme="@android:style/Theme.NoTitleBar">
+
+        <meta-data android:name="test_meta" android:value="test_value" />
+
+        <activity android:theme="@style/TestPluginTheme"
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreate" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivitySetTheme" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOptionMenu" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOnCreate" />
+
+        <activity android:configChanges="orientation|screenSize|fontScale"
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOrientation"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityWindowSoftMode"
+            android:windowSoftInputMode="stateVisible" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestDBContentProviderActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityReCreateBySystem" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.TestReceiverActivity"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.TestDynamicReceiverActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.fragment.TestDynamicFragmentActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.fragment.TestXmlFragmentActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.dialog.TestDialogActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.packagemanager.TestPackageManagerActivity" />
+
+        <receiver
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.receiver.MyReceiver">
+
+            <intent-filter>
+
+                <action android:name="com.tencent.test.action" />
+
+            </intent-filter>
+            />
+        </receiver>
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestFileProviderActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.application.TestApplicationActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.context.ActivityContextSubDirTestActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.context.ApplicationContextSubDirTestActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.host_communication.PluginUseHostClassActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.webview.WebViewActivity" />
+
+        <activity
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.fragment.TestDialogFragmentActivity" />
+
+        <provider android:authorities="com.tencent.shadow.sample.host.provider.test"
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestProvider" />
+
+        <service
+            android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.service.HostAddPluginViewService" />
+
+    </application>
+
+</manifest>

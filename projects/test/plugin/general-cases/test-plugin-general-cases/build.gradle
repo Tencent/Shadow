@@ -49,6 +49,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-remote:3.3.0'
     androidTestImplementation "androidx.test:runner:1.3.0"
+
+    //Shadow Transform后业务代码会有一部分实际引用runtime中的类
+    //如果不以compileOnly方式依赖，会导致其他Transform或者Proguard找不到这些类
+    pluginCompileOnly 'com.tencent.shadow.core:runtime'
 }
 
 buildscript {
