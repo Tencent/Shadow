@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class PackageManagerInvokeRedirect {
 
-    private static PluginPackageManager getPluginPackageManager(ClassLoader classLoaderOfInvokeCode) {
+    public static PluginPackageManager getPluginPackageManager(ClassLoader classLoaderOfInvokeCode) {
         return PluginPartInfoManager.getPluginInfo(classLoaderOfInvokeCode).packageManager;
     }
 

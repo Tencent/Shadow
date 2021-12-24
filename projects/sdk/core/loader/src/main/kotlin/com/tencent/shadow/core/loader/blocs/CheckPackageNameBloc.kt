@@ -19,33 +19,16 @@
 package com.tencent.shadow.core.loader.blocs
 
 import android.content.Context
-import android.content.pm.PackageInfo
-import android.os.Build
-import com.tencent.shadow.core.load_parameters.LoadParameters
 import com.tencent.shadow.core.loader.exceptions.ParsePluginApkException
-import com.tencent.shadow.core.loader.infos.*
+import com.tencent.shadow.core.runtime.PluginManifest
 
-/**
- * 解析插件apk逻辑
- *
- * @author cubershi
- */
-object ParsePluginApkBloc {
-    /**
-     * 解析插件apk
-     *
-     * @param pluginFile 插件apk文件
-     * @return 解析信息
-     * @throws ParsePluginApkException 解析失败时抛出
-     */
+object CheckPackageNameBloc {
     @Throws(ParsePluginApkException::class)
-    fun parse(
-        packageArchiveInfo: PackageInfo,
-        manifestInfo: ManifestInfo,
-        loadParameters: LoadParameters,
-        hostAppContext: Context
-    ): PluginInfo {
-        if (packageArchiveInfo.applicationInfo.packageName != hostAppContext.packageName) {
+    fun check(
+            pluginManifest: PluginManifest,
+            hostAppContext: Context
+    ) {
+        if (pluginManifest.applicationPackageName != hostAppContext.packageName) {
             /*
             要求插件和宿主包名一致有两方面原因：
             1.正常的构建过程中，aapt会将包名写入到arsc文件中。插件正常安装运行时，如果以
@@ -63,41 +46,7 @@ object ParsePluginApkBloc {
 
             我们也可以始终认为Shadow App是宿主的扩展代码，使用是宿主的一部分，那么采用宿主的包名就是理所应当的了。
              */
-            throw ParsePluginApkException("插件和宿主包名不一致。宿主:${hostAppContext.packageName} 插件:${packageArchiveInfo.applicationInfo.packageName}")
+            throw ParsePluginApkException("插件和宿主包名不一致。宿主:${hostAppContext.packageName} 插件:${pluginManifest.applicationPackageName}")
         }
-
-        /*
-        partKey的作用是用来区分一个Component是来自于哪个插件apk的
-         */
-        val partKey = loadParameters.partKey
-
-        val pluginInfo = PluginInfo(
-                loadParameters.businessName,
-            partKey,
-            packageArchiveInfo.applicationInfo.packageName,
-            packageArchiveInfo.applicationInfo.className
-        )
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            pluginInfo.appComponentFactory = packageArchiveInfo.applicationInfo.appComponentFactory
-        }
-        packageArchiveInfo.activities?.forEach {
-            pluginInfo.putActivityInfo(PluginActivityInfo(it.name, it.themeResource, it))
-        }
-
-        val receiveMap = manifestInfo.receivers.map { it.name to it }.toMap()
-        packageArchiveInfo.receivers?.forEach {
-            pluginInfo.putReceiverInfo(
-                PluginReceiverInfo(
-                    it.name,
-                    it,
-                    receiveMap[it.name]?.actions()
-                )
-            )
-        }
-        packageArchiveInfo.services?.forEach { pluginInfo.putServiceInfo(PluginServiceInfo(it.name)) }
-        packageArchiveInfo.providers?.forEach {
-            pluginInfo.putPluginProviderInfo(PluginProviderInfo(it.name, it.authority, it))
-        }
-        return pluginInfo
     }
 }

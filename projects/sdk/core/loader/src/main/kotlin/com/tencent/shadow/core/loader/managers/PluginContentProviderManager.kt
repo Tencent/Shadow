@@ -20,11 +20,12 @@ package com.tencent.shadow.core.loader.managers
 
 import android.content.ContentProvider
 import android.content.Context
+import android.content.pm.ProviderInfo
 import android.net.Uri
 import android.os.Bundle
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo
 import com.tencent.shadow.core.loader.infos.PluginParts
-import com.tencent.shadow.core.loader.infos.PluginProviderInfo
+import com.tencent.shadow.core.runtime.PluginManifest
 import com.tencent.shadow.core.runtime.UriConverter
 import java.util.*
 import kotlin.collections.HashSet
@@ -44,7 +45,7 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
     private val providerAuthorityMap = HashMap<String, String>()
 
 
-    private val pluginProviderInfoMap = HashMap<String, HashSet<PluginProviderInfo>?>()
+    private val pluginProviderInfoMap = HashMap<String, HashSet<PluginManifest.ProviderInfo>?>()
 
 
     override fun parse(uriString: String): Uri {
@@ -66,13 +67,13 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
         return pluginUri
     }
 
-    fun addContentProviderInfo(partKey: String, pluginProviderInfo: PluginProviderInfo, containerProviderInfo: ContainerProviderInfo) {
-        if (providerMap.containsKey(pluginProviderInfo.authority)) {
+    fun addContentProviderInfo(partKey: String, pluginProviderInfo: PluginManifest.ProviderInfo, containerProviderInfo: ContainerProviderInfo) {
+        if (providerMap.containsKey(pluginProviderInfo.authorities)) {
             throw RuntimeException("重复添加 ContentProvider")
         }
 
-        providerAuthorityMap[pluginProviderInfo.authority!!] = containerProviderInfo.authority
-        var pluginProviderInfos: HashSet<PluginProviderInfo>? = null
+        providerAuthorityMap[pluginProviderInfo.authorities] = containerProviderInfo.authority
+        var pluginProviderInfos: HashSet<PluginManifest.ProviderInfo>? = null
         if (pluginProviderInfoMap.containsKey(partKey)) {
             pluginProviderInfos = pluginProviderInfoMap[partKey]
         } else {
@@ -82,15 +83,23 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
         pluginProviderInfoMap.put(partKey, pluginProviderInfos)
     }
 
-    fun createContentProviderAndCallOnCreate(mContext: Context, partKey: String, pluginParts: PluginParts?) {
+    fun createContentProviderAndCallOnCreate(context: Context, partKey: String, pluginParts: PluginParts?) {
         pluginProviderInfoMap[partKey]?.forEach {
             try {
                 val contentProvider = pluginParts!!.appComponentFactory
                         .instantiateProvider(pluginParts.classLoader, it.className)
-                contentProvider?.attachInfo(mContext, it.providerInfo)
-                providerMap[it.authority!!] = contentProvider
+
+                //convert PluginManifest.ProviderInfo to android.content.pm.ProviderInfo
+                val providerInfo = ProviderInfo()
+                providerInfo.packageName = context.packageName
+                providerInfo.name = it.className
+                providerInfo.authority = it.authorities
+                providerInfo.grantUriPermissions = true //插件没有权限管理机制
+
+                contentProvider?.attachInfo(context, providerInfo)
+                providerMap[it.authorities] = contentProvider
             } catch (e: Exception) {
-                throw RuntimeException("partKey==$partKey className==${it.className} providerInfo==${it.providerInfo}", e)
+                throw RuntimeException("partKey==$partKey className==${it.className} authorities==${it.authorities}", e)
             }
         }
 
