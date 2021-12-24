@@ -19,7 +19,6 @@
 package com.tencent.shadow.core.loader
 
 import android.content.Context
-import android.content.pm.PackageInfo
 import android.os.Handler
 import android.os.Looper
 import android.os.Parcel
@@ -68,11 +67,6 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
      * @GuardedBy("mLock")
      */
     abstract fun getComponentManager():ComponentManager
-
-    /**
-     * @GuardedBy("mLock")
-     */
-    private val mPluginPackageInfoSet: MutableSet<PackageInfo> = hashSetOf()
 
     private lateinit var mPluginServiceManager: PluginServiceManager
 
@@ -158,20 +152,12 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
         return LoadPluginBloc.loadPlugin(
                 mExecutorService,
-                mPluginPackageInfoSet,
-                ::allPluginPackageInfo,
                 mComponentManager,
                 mLock,
                 mPluginPartsMap,
                 mHostAppContext,
                 installedApk,
                 loadParameters)
-    }
-
-    private fun allPluginPackageInfo(): Array<PackageInfo> {
-        mLock.withLock {
-            return mPluginPackageInfoSet.toTypedArray()
-        }
     }
 
     override fun getHostActivityDelegate(aClass: Class<out HostActivityDelegator>): HostActivityDelegate {

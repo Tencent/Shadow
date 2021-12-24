@@ -29,6 +29,8 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Build;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -148,8 +150,14 @@ public class ShadowApplication extends ShadowContext {
                 = new ShadowActivityLifecycleCallbacks.Holder(mHostApplication);
     }
 
-    public void setBroadcasts(Map<String, List<String>> broadcast){
-        mBroadcasts = broadcast;
+    public void setBroadcasts(PluginManifest.ReceiverInfo[] receiverInfos) {
+        Map<String, List<String>> classNameToActions = new HashMap<>();
+        if (receiverInfos != null) {
+            for (PluginManifest.ReceiverInfo receiverInfo : receiverInfos) {
+                classNameToActions.put(receiverInfo.className, Arrays.asList(receiverInfo.actions));
+            }
+        }
+        mBroadcasts = classNameToActions;
     }
 
     public void attachBaseContext(Context base) {
