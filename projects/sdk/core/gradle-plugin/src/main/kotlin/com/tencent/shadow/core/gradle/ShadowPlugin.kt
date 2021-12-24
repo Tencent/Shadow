@@ -18,14 +18,18 @@
 
 package com.tencent.shadow.core.gradle
 
+import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.tasks.ProcessMultiApkApplicationManifest
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
+import com.tencent.shadow.core.manifest_parser.generatePluginManifest
 import com.tencent.shadow.core.transform.ShadowTransform
 import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
 import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
 import org.gradle.api.*
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.provider.Property
 import java.io.File
 import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.jvm.isAccessible
@@ -61,6 +65,8 @@ class ShadowPlugin : Plugin<Project> {
             initAndroidClassPoolBuilder(baseExtension, project)
 
             createPackagePluginTasks(project)
+
+            createGeneratePluginManifestTasks(project)
         }
     }
 
@@ -80,6 +86,42 @@ class ShadowPlugin : Plugin<Project> {
                 it.group = "plugin"
                 it.description = "打包所有插件"
             }.dependsOn(tasks)
+        }
+    }
+
+    private fun createGeneratePluginManifestTasks(project: Project) {
+        val appExtension: AppExtension = project.extensions.getByType(AppExtension::class.java)
+        appExtension.applicationVariants.filter { variant ->
+            variant.productFlavors.any { flavor ->
+                flavor.dimension == ShadowTransform.DimensionName &&
+                        flavor.name == ShadowTransform.ApplyShadowTransformFlavorName
+            }
+        }.forEach { pluginVariant ->
+            val output = pluginVariant.outputs.first()
+            val processManifestTask = output.processManifestProvider.get()
+            val manifestFile = (processManifestTask as ProcessMultiApkApplicationManifest).mainMergedManifest.get().asFile
+            val variantName = manifestFile.parentFile.name
+            val outputDir = File(project.buildDir, "generated/source/pluginManifest/$variantName")
+
+            // 添加生成PluginManifest.java任务
+            val task = project.tasks.register("generate${variantName.capitalize()}PluginManifest") {
+                it.dependsOn(processManifestTask)
+                it.inputs.file(manifestFile)
+                it.outputs.dir(outputDir).withPropertyName("outputDir")
+                val packageForR = (project.tasks.getByName("processPluginDebugResources").property("namespace") as Property<String>).get()
+                it.doLast {
+                    generatePluginManifest(manifestFile,
+                            outputDir,
+                            "com.tencent.shadow.core.manifest_parser",
+                            packageForR)
+                }
+            }
+            project.tasks.getByName("compile${variantName.capitalize()}JavaWithJavac").dependsOn(task)
+
+            // 把PluginManifest.java添加为源码
+            appExtension.sourceSets.getByName(variantName).java {
+                srcDir(outputDir)
+            }
         }
     }
 

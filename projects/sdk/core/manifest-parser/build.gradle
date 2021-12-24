@@ -1,0 +1,22 @@
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.squareup:javapoet:1.11.1'
+    implementation project(':runtime')
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'commons-io:commons-io:2.9.0'
+    testImplementation 'com.tencent.shadow.coding:java-build-config'
+}
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+}

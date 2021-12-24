@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tencent.shadow.test.hostapp" android:versionCode="1" android:versionName="local">
+
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="28" />
+    <application android:name="com.tencent.shadow.sample.plugin.app.lib.UseCaseApplication" />
+</manifest>
