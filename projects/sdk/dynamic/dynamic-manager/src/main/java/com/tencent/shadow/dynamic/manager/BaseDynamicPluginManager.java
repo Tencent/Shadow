@@ -114,7 +114,7 @@ abstract public class BaseDynamicPluginManager extends BasePluginManager impleme
     }
 
     public final void waitServiceConnected(int timeout, TimeUnit timeUnit) throws TimeoutException {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
+        if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
             throw new RuntimeException("waitServiceConnected 不能在主线程中调用");
         }
         try {
