@@ -45,7 +45,7 @@ class PluginServiceManager(mPluginLoader: ShadowPluginLoader, mHostContext: Cont
     private val mainThreadHandler = Handler(Looper.getMainLooper())
 
     private fun <T> execInMainThread(action: () -> T): T {
-        if (Looper.myLooper() == Looper.getMainLooper()) {
+        if (Thread.currentThread() === Looper.getMainLooper().thread) {
             return action()
         } else {
             val countDownLatch = CountDownLatch(1)
