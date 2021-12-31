@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.manager;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -33,14 +34,21 @@ import com.tencent.shadow.core.manager.installplugin.InstalledPluginDBHelper;
 import com.tencent.shadow.core.manager.installplugin.InstalledType;
 import com.tencent.shadow.core.manager.installplugin.ODexBloc;
 import com.tencent.shadow.core.manager.installplugin.PluginConfig;
+import com.tencent.shadow.core.manager.installplugin.SafeZipFile;
 import com.tencent.shadow.core.manager.installplugin.UnpackManager;
 
 import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public abstract class BasePluginManager {
     private static final Logger mLogger = LoggerFactory.getLogger(BasePluginManager.class);
@@ -201,7 +209,14 @@ public abstract class BasePluginManager {
     public final void extractSo(String uuid, String partKey, File apkFile) throws InstallPluginException {
         try {
             File root = mUnpackManager.getAppDir();
-            String filter = "lib/" + getAbi() + "/";
+            String pluginPreferredAbi = getPluginPreferredAbi(getPluginSupportedAbis(), apkFile);
+            if (pluginPreferredAbi.isEmpty()) {
+                if (mLogger.isInfoEnabled()) {
+                    mLogger.info("插件没有so");
+                }
+                return;
+            }
+            String filter = "lib/" + pluginPreferredAbi + "/";
             File soDir = AppCacheFolderManager.getLibDir(root, uuid);
             if (mLogger.isInfoEnabled()) {
                 mLogger.info("extractSo uuid=={} partKey=={} apkFile=={} soDir=={} filter=={}",
@@ -228,7 +243,14 @@ public abstract class BasePluginManager {
         try {
             File root = mUnpackManager.getAppDir();
             String key = type == InstalledType.TYPE_PLUGIN_LOADER ? "loader" : "runtime";
-            String filter = "lib/" + getAbi() + "/";
+            String pluginPreferredAbi = getPluginPreferredAbi(getPluginSupportedAbis(), apkFile);
+            if (pluginPreferredAbi.isEmpty()) {
+                if (mLogger.isInfoEnabled()) {
+                    mLogger.info(key + "没有so");
+                }
+                return;
+            }
+            String filter = "lib/" + pluginPreferredAbi + "/";
             File soDir = AppCacheFolderManager.getLibDir(root, uuid);
             CopySoBloc.copySo(apkFile, soDir
                     , AppCacheFolderManager.getLibCopiedFile(soDir, key), filter);
@@ -299,17 +321,100 @@ public abstract class BasePluginManager {
         return suc;
     }
 
+    /**
+     * 当前插件希望采用的ABI。
+     * 子类可以override重新决定。
+     *
+     * @param pluginSupportedAbis 从getPluginSupportedAbis方法得到的可选ABI列表
+     * @param apkFile             插件apk文件
+     * @return 最终决定的ABI。插件没有so时返回空字符串。
+     * @throws InstallPluginException 读取apk文件失败时抛出
+     */
+    protected String getPluginPreferredAbi(String[] pluginSupportedAbis, File apkFile)
+            throws InstallPluginException {
+        ZipFile zipFile;
+        try {
+            zipFile = new SafeZipFile(apkFile);
+        } catch (IOException e) {
+            throw new InstallPluginException("读取apk失败，apkFile==" + apkFile, e);
+        }
+
+        //找出插件apk中lib目录下都有哪些子目录
+        Set<String> subDirsInLib = new LinkedHashSet<>();
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            String name = entry.getName();
+            if (name.startsWith("lib/")) {
+                String[] split = name.split("/");
+                if (split.length == 3) {// like "lib/arm64-v8a/libabc.so"
+                    subDirsInLib.add(split[1]);
+                }
+            }
+        }
+
+        for (String supportedAbi : pluginSupportedAbis) {
+            if (subDirsInLib.contains(supportedAbi)) {
+                return supportedAbi;
+            }
+        }
+        return "";
+    }
 
     /**
-     * 获取插件应该采用的ABI
-     * <p>
-     * 对系统来说插件代码是系统的一部分，所以插件只能用跟宿主一样ABI的so。
-     * 这里查询宿主安装后系统自动决定的ABI目录，而不是Build.SUPPORTED_ABIS，因为宿主可能采用了兼容模式的ABI。
+     * 获取可用的ABI列表。
+     * 和Build.SUPPORTED_ABIS的区别是，这是宿主已经决定了当前进程用32位so还是64位so了，
+     * 所以可用的ABI只能是其中一部分。
      */
-    private String getAbi() {
+    private String[] getPluginSupportedAbis() {
         String nativeLibraryDir = mHostContext.getApplicationInfo().nativeLibraryDir;
         int nextIndexOfLastSlash = nativeLibraryDir.lastIndexOf('/') + 1;
-        return nativeLibraryDir.substring(nextIndexOfLastSlash);
+        String instructionSet = nativeLibraryDir.substring(nextIndexOfLastSlash);
+        if (!isKnownInstructionSet(instructionSet)) {
+            throw new IllegalStateException("不认识的instructionSet==" + instructionSet);
+        }
+        boolean is64Bit = is64BitInstructionSet(instructionSet);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return is64Bit ? Build.SUPPORTED_64_BIT_ABIS : Build.SUPPORTED_32_BIT_ABIS;
+        } else {
+            String cpuAbi = Build.CPU_ABI;
+            String cpuAbi2 = Build.CPU_ABI2;
+            ArrayList<String> list = new ArrayList<>(2);
+            if (cpuAbi != null && !cpuAbi.isEmpty()) {
+                list.add(cpuAbi);
+            }
+            if (cpuAbi2 != null && !cpuAbi2.isEmpty()) {
+                list.add(cpuAbi2);
+            }
+            return list.toArray(new String[0]);
+        }
+    }
+
+    /**
+     * 根据VMRuntime.ABI_TO_INSTRUCTION_SET_MAP
+     */
+    private static boolean isKnownInstructionSet(String instructionSet) {
+        return "arm".equals(instructionSet) ||
+                "mips".equals(instructionSet) ||
+                "mips64".equals(instructionSet) ||
+                "x86".equals(instructionSet) ||
+                "x86_64".equals(instructionSet) ||
+                "arm64".equals(instructionSet);
+    }
+
+    /**
+     * Returns whether the given {@code instructionSet} is 64 bits.
+     *
+     * @param instructionSet a string representing an instruction set.
+     * @return true if given {@code instructionSet} is 64 bits, false otherwise.
+     * <p>
+     * copy from VMRuntime.java
+     */
+    private static boolean is64BitInstructionSet(String instructionSet) {
+        return "arm64".equals(instructionSet) ||
+                "x86_64".equals(instructionSet) ||
+                "mips64".equals(instructionSet);
     }
 
     /**
