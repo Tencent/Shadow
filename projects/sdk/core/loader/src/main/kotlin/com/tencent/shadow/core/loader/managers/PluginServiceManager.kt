@@ -44,18 +44,17 @@ class PluginServiceManager(mPluginLoader: ShadowPluginLoader, mHostContext: Cont
         UnsafePluginServiceManager(mPluginLoader, mHostContext)
     private val mainThreadHandler = Handler(Looper.getMainLooper())
 
-    private fun <T> execInMainThread(action: () -> T): T {
+    private inline fun <reified T> execInMainThread(crossinline action: () -> T): T {
         if (Thread.currentThread() === Looper.getMainLooper().thread) {
             return action()
         } else {
             val countDownLatch = CountDownLatch(1)
-            val result = arrayOfNulls<Any>(1)
+            val result = arrayOfNulls<T>(1)
             mainThreadHandler.post {
                 result[0] = action()
                 countDownLatch.countDown()
             }
             countDownLatch.await()
-            @Suppress("UNCHECKED_CAST")
             return result[0] as T
         }
     }
