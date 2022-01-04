@@ -352,10 +352,5 @@ private class PluginManifestBuilder(
                         else -> throw IllegalArgumentException("不认识$it")
                     }
                 }
-
-        private fun String.capitalize() =
-                replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-                }
     }
 }
