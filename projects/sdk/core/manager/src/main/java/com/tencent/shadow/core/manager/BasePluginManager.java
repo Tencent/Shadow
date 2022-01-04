@@ -22,6 +22,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Pair;
 
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
@@ -112,13 +113,14 @@ public abstract class BasePluginManager {
      * 将插件信息持久化到数据库
      *
      * @param pluginConfig 插件配置信息
+     * @param soDirMap     key:type+partKey
      */
-    public final void onInstallCompleted(PluginConfig pluginConfig) {
+    public final void onInstallCompleted(PluginConfig pluginConfig,
+                                         Map<String, String> soDirMap) {
         File root = mUnpackManager.getAppDir();
-        String soDir = AppCacheFolderManager.getLibDir(root, pluginConfig.UUID).getAbsolutePath();
         String oDexDir = AppCacheFolderManager.getODexDir(root, pluginConfig.UUID).getAbsolutePath();
 
-        mInstalledDao.insert(pluginConfig, soDir, oDexDir);
+        mInstalledDao.insert(pluginConfig, soDirMap, oDexDir);
     }
 
     protected InstalledPlugin.Part getPluginPartByPartKey(String uuid, String partKey) {
@@ -176,8 +178,9 @@ public abstract class BasePluginManager {
 
     /**
      * odex优化
-     * @param uuid 插件包的uuid
-     * @param type 要oDex的插件类型 @class IntalledType  loader or runtime
+     *
+     * @param uuid    插件包的uuid
+     * @param type    要oDex的插件类型 @class IntalledType  loader or runtime
      * @param apkFile 插件apk文件
      */
     public final void oDexPluginLoaderOrRunTime(String uuid, int type, File apkFile) throws InstallPluginException {
@@ -205,25 +208,39 @@ public abstract class BasePluginManager {
      * @param uuid    插件包的uuid
      * @param partKey 要解压so的插件partkey
      * @param apkFile 插件apk文件
+     * @return soDirMap条目
      */
-    public final void extractSo(String uuid, String partKey, File apkFile) throws InstallPluginException {
+    public final Pair<String, String> extractSo(String uuid, String partKey, File apkFile) throws InstallPluginException {
         try {
             File root = mUnpackManager.getAppDir();
+            File soDir = AppCacheFolderManager.getLibDir(root, uuid);
+            String soDirMapKey = InstalledType.TYPE_PLUGIN + partKey;
+            String soDirPath = soDir.getAbsolutePath();
+
             String pluginPreferredAbi = getPluginPreferredAbi(getPluginSupportedAbis(), apkFile);
             if (pluginPreferredAbi.isEmpty()) {
                 if (mLogger.isInfoEnabled()) {
                     mLogger.info("插件没有so");
                 }
-                return;
+            } else {
+                String filter = "lib/" + pluginPreferredAbi + "/";
+
+                // 插件如果设置了android:extractNativeLibs="false"，则不需要解压出so
+                boolean needExtractNativeLibs = needExtractNativeLibs(apkFile, filter);
+
+                if (mLogger.isInfoEnabled()) {
+                    mLogger.info("extractSo uuid=={} partKey=={} apkFile=={} soDir=={} filter=={} needExtractNativeLibs=={}",
+                            uuid, partKey, apkFile.getAbsolutePath(), soDir.getAbsolutePath(), filter, needExtractNativeLibs);
+                }
+
+                if (needExtractNativeLibs) {
+                    CopySoBloc.copySo(apkFile, soDir
+                            , AppCacheFolderManager.getLibCopiedFile(soDir, partKey), filter);
+                } else {
+                    soDirPath = apkFile.getAbsolutePath() + "!/" + filter;
+                }
             }
-            String filter = "lib/" + pluginPreferredAbi + "/";
-            File soDir = AppCacheFolderManager.getLibDir(root, uuid);
-            if (mLogger.isInfoEnabled()) {
-                mLogger.info("extractSo uuid=={} partKey=={} apkFile=={} soDir=={} filter=={}",
-                        uuid, partKey, apkFile.getAbsolutePath(), soDir.getAbsolutePath(), filter);
-            }
-            CopySoBloc.copySo(apkFile, soDir
-                    , AppCacheFolderManager.getLibCopiedFile(soDir, partKey), filter);
+            return new Pair<>(soDirMapKey, soDirPath);
         } catch (InstallPluginException e) {
             if (mLogger.isErrorEnabled()) {
                 mLogger.error("extractSo exception:", e);
@@ -235,25 +252,34 @@ public abstract class BasePluginManager {
     /**
      * 插件apk的so解压
      *
-     * @param uuid 插件包的uuid
-     * @param type 要oDex的插件类型 @class IntalledType  loader or runtime
+     * @param uuid    插件包的uuid
+     * @param type    要oDex的插件类型 @class IntalledType  loader or runtime
      * @param apkFile 插件apk文件
+     * @return soDirMap条目
      */
-    public final void extractLoaderOrRunTimeSo(String uuid, int type, File apkFile) throws InstallPluginException {
+    public final Pair<String, String> extractLoaderOrRunTimeSo(String uuid,
+                                                               int type,
+                                                               File apkFile)
+            throws InstallPluginException {
         try {
             File root = mUnpackManager.getAppDir();
             String key = type == InstalledType.TYPE_PLUGIN_LOADER ? "loader" : "runtime";
             String pluginPreferredAbi = getPluginPreferredAbi(getPluginSupportedAbis(), apkFile);
+            String filter = "lib/" + pluginPreferredAbi + "/";
+            File soDir = AppCacheFolderManager.getLibDir(root, uuid);
+
             if (pluginPreferredAbi.isEmpty()) {
                 if (mLogger.isInfoEnabled()) {
                     mLogger.info(key + "没有so");
                 }
-                return;
+            } else {
+                CopySoBloc.copySo(apkFile, soDir
+                        , AppCacheFolderManager.getLibCopiedFile(soDir, key), filter);
             }
-            String filter = "lib/" + pluginPreferredAbi + "/";
-            File soDir = AppCacheFolderManager.getLibDir(root, uuid);
-            CopySoBloc.copySo(apkFile, soDir
-                    , AppCacheFolderManager.getLibCopiedFile(soDir, key), filter);
+
+            String soDirMapKey = Integer.toString(type) + null;// 同InstalledDao.parseConfig
+            String soDirPath = soDir.getAbsolutePath();
+            return new Pair<>(soDirMapKey, soDirPath);
         } catch (InstallPluginException e) {
             if (mLogger.isErrorEnabled()) {
                 mLogger.error("extractLoaderOrRunTimeSo exception:", e);
@@ -415,6 +441,28 @@ public abstract class BasePluginManager {
         return "arm64".equals(instructionSet) ||
                 "x86_64".equals(instructionSet) ||
                 "mips64".equals(instructionSet);
+    }
+
+    private static boolean needExtractNativeLibs(File apkFile, String filter) throws InstallPluginException {
+        //android:extractNativeLibs是API 23引入的
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        ZipFile zipFile;
+        try {
+            zipFile = new SafeZipFile(apkFile);
+        } catch (IOException e) {
+            throw new InstallPluginException("读取apk失败，apkFile==" + apkFile, e);
+        }
+        Enumeration<? extends ZipEntry> entries = zipFile.entries();
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = entries.nextElement();
+            String name = entry.getName();
+            if (name.startsWith(filter)) {
+                return entry.getMethod() != ZipEntry.STORED;
+            }
+        }
+        return false;
     }
 
     /**

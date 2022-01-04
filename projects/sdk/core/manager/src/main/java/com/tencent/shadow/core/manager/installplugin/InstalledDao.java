@@ -28,6 +28,7 @@ import org.json.JSONException;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,12 +45,15 @@ public class InstalledDao {
      * 根据插件配置信息插入一组数据
      *
      * @param pluginConfig 插件配置信息
-     * @param soDir
+     * @param soDirMap     key:type+partKey
      * @param oDexDir
      */
-    public void insert(PluginConfig pluginConfig, String soDir, String oDexDir) {
+    public void insert(PluginConfig pluginConfig, Map<String, String> soDirMap, String oDexDir) {
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
-        List<ContentValues> contentValuesList = parseConfig(pluginConfig, soDir, oDexDir);
+        if (soDirMap == null) {
+            soDirMap = Collections.emptyMap();
+        }
+        List<ContentValues> contentValuesList = parseConfig(pluginConfig, soDirMap, oDexDir);
         db.beginTransaction();
         try {
             for (ContentValues contentValues : contentValuesList) {
@@ -174,13 +178,18 @@ public class InstalledDao {
         return installedPlugins;
     }
 
-    private List<ContentValues> parseConfig(PluginConfig pluginConfig, String soDir, String oDexDir) {
+    private List<ContentValues> parseConfig(PluginConfig pluginConfig,
+                                            Map<String, String> soDirMap,// key:type+partKey
+                                            String oDexDir
+    ) {
         List<InstalledRow> installedRows = new ArrayList<>();
         if (pluginConfig.pluginLoader != null) {
+            String soDir = soDirMap.get(Integer.toString(InstalledType.TYPE_PLUGIN_LOADER) + null);
             installedRows.add(new InstalledRow(pluginConfig.pluginLoader.hash, null, pluginConfig.pluginLoader.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_LOADER,
                     soDir, oDexDir));
         }
         if (pluginConfig.runTime != null) {
+            String soDir = soDirMap.get(Integer.toString(InstalledType.TYPE_PLUGIN_RUNTIME) + null);
             installedRows.add(new InstalledRow(pluginConfig.runTime.hash, null, pluginConfig.runTime.file.getAbsolutePath(), InstalledType.TYPE_PLUGIN_RUNTIME,
                     soDir, oDexDir));
         }
@@ -188,11 +197,13 @@ public class InstalledDao {
             Set<Map.Entry<String, PluginConfig.PluginFileInfo>> plugins = pluginConfig.plugins.entrySet();
             for (Map.Entry<String, PluginConfig.PluginFileInfo> plugin : plugins) {
                 PluginConfig.PluginFileInfo fileInfo = plugin.getValue();
+                String partKey = plugin.getKey();
+                String soDir = soDirMap.get(InstalledType.TYPE_PLUGIN + partKey);
                 installedRows.add(
                         new InstalledRow(
                                 fileInfo.hash,
                                 fileInfo.businessName,
-                                plugin.getKey(),
+                                partKey,
                                 fileInfo.dependsOn,
                                 fileInfo.file.getAbsolutePath(),
                                 InstalledType.TYPE_PLUGIN,
