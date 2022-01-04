@@ -1,5 +1,6 @@
 task buildSdk() {
     dependsOn gradle.includedBuild('core').task(':gradle-plugin:assemble')
+    dependsOn gradle.includedBuild('core').task(':manifest-parser:assemble')
     dependsOn gradle.includedBuild('core').task(':common:assemble')
     dependsOn gradle.includedBuild('core').task(':loader:assemble')
     dependsOn gradle.includedBuild('core').task(':manager:assemble')
@@ -112,6 +113,25 @@ publishing {
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'activity-container', publicationVersion))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'manifest-parser', publicationVersion))
+
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
+        manifestParser(MavenPublication) {
+            groupId coreGroupId
+            artifactId 'manifest-parser'
+            version publicationVersion
+            artifact("$corePath/manifest-parser/build/libs/manifest-parser.jar")
+            artifact sourceJar("manifestParser", "$corePath/manifest-parser")
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
+                dependencies.append(getDependencyNode('compile', 'com.squareup', 'javapoet', '1.11.1'))
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
 
                 def scm = root.appendNode('scm')
                 setScm(scm)
@@ -444,6 +464,7 @@ publishing {
 }
 
 setGeneratePomFileAndDepends('gradlePlugin')
+setGeneratePomFileAndDepends('manifestParser')
 setGeneratePomFileAndDepends('common')
 setGeneratePomFileAndDepends('loadParameters')
 setGeneratePomFileAndDepends('coreLoader')
