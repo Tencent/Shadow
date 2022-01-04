@@ -18,9 +18,12 @@
 
 package com.tencent.shadow.core.gradle
 
+import com.android.SdkConstants.ANDROID_MANIFEST_XML
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.tasks.ManifestProcessorTask
+import com.android.build.gradle.tasks.ProcessApplicationManifest
 import com.android.build.gradle.tasks.ProcessMultiApkApplicationManifest
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import com.tencent.shadow.core.manifest_parser.generatePluginManifest
@@ -99,7 +102,7 @@ class ShadowPlugin : Plugin<Project> {
         }.forEach { pluginVariant ->
             val output = pluginVariant.outputs.first()
             val processManifestTask = output.processManifestProvider.get()
-            val manifestFile = (processManifestTask as ProcessMultiApkApplicationManifest).mainMergedManifest.get().asFile
+            val manifestFile = getManifestFile(processManifestTask)
             val variantName = manifestFile.parentFile.name
             val outputDir = File(project.buildDir, "generated/source/pluginManifest/$variantName")
 
@@ -108,20 +111,22 @@ class ShadowPlugin : Plugin<Project> {
                 it.dependsOn(processManifestTask)
                 it.inputs.file(manifestFile)
                 it.outputs.dir(outputDir).withPropertyName("outputDir")
-                val packageForR = (project.tasks.getByName("processPluginDebugResources").property("namespace") as Property<String>).get()
+
+                val packageForR = getPackageForR(project, variantName)
+
                 it.doLast {
-                    generatePluginManifest(manifestFile,
-                            outputDir,
-                            "com.tencent.shadow.core.manifest_parser",
-                            packageForR)
+                    generatePluginManifest(
+                        manifestFile,
+                        outputDir,
+                        "com.tencent.shadow.core.manifest_parser",
+                        packageForR
+                    )
                 }
             }
             project.tasks.getByName("compile${variantName.capitalize()}JavaWithJavac").dependsOn(task)
 
             // 把PluginManifest.java添加为源码
-            appExtension.sourceSets.getByName(variantName).java {
-                srcDir(outputDir)
-            }
+            appExtension.sourceSets.getByName(variantName).java.srcDir(outputDir)
         }
     }
 
@@ -173,6 +178,42 @@ class ShadowPlugin : Plugin<Project> {
             return method.call(plugin) as BaseExtension
         } else {
             return project.extensions.getByName("android") as BaseExtension
+        }
+    }
+
+    companion object {
+        private fun getManifestFile(processManifestTask: ManifestProcessorTask) =
+            when (processManifestTask) {
+                is ProcessMultiApkApplicationManifest -> {
+                    processManifestTask.mainMergedManifest.get().asFile
+                }
+                is ProcessApplicationManifest -> {
+                    try {
+                        processManifestTask.mergedManifest.get().asFile
+                    } catch (e: NoSuchMethodError) {
+                        //AGP小于4.1.0
+                        val dir =
+                            processManifestTask.outputs.files.files
+                                .first { it.path.contains("merged_manifests") }
+                        File(dir, ANDROID_MANIFEST_XML)
+                    }
+                }
+                else -> throw IllegalStateException("不支持的Task类型:${processManifestTask.javaClass}")
+            }
+
+        private fun getPackageForR(project: Project, variantName: String): String {
+            val linkApplicationAndroidResourcesTask =
+                project.tasks.getByName("process${variantName.capitalize()}Resources")
+            return (when {
+
+                linkApplicationAndroidResourcesTask.hasProperty("namespace") -> {
+                    linkApplicationAndroidResourcesTask.property("namespace")
+                }
+                linkApplicationAndroidResourcesTask.hasProperty("originalApplicationId") -> {
+                    linkApplicationAndroidResourcesTask.property("originalApplicationId")
+                }
+                else -> throw IllegalStateException("不支持的AGP版本")
+            } as Property<String>).get()
         }
     }
 

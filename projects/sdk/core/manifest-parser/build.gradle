@@ -12,6 +12,7 @@ dependencies {
 compileKotlin {
     kotlinOptions {
         jvmTarget = "1.6"
+        apiVersion = "1.3"// 兼容低版本Gradle和https://youtrack.jetbrains.com/issue/KT-39389
     }
 }
 
