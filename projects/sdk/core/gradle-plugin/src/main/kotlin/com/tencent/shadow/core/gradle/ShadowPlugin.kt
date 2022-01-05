@@ -71,6 +71,19 @@ class ShadowPlugin : Plugin<Project> {
 
             createGeneratePluginManifestTasks(project)
         }
+
+        checkKotlinAndroidPluginForPluginManifestTask(project)
+    }
+
+    /**
+     * GeneratePluginManifestTask会向android DSL添加新的java源码目录，
+     * 而kotlin-android会在syncKotlinAndAndroidSourceSets中接管java的源码目录，
+     * 从而使后添加到android DSL中的java目录失效。
+     */
+    private fun checkKotlinAndroidPluginForPluginManifestTask(project: Project) {
+        if (project.plugins.hasPlugin("kotlin-android")) {
+            throw Error("必须在kotlin-android之前应用com.tencent.shadow.plugin")
+        }
     }
 
     private fun createPackagePluginTasks(project: Project) {
