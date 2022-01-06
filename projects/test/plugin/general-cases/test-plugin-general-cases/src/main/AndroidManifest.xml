@@ -67,6 +67,7 @@
                 <action android:name="com.tencent.test.normal.action" />
             </intent-filter>
         </receiver>
+        <receiver android:name=".lib.usecases.receiver.ReceiverWithoutAction" />
 
         <activity android:name=".lib.usecases.provider.TestFileProviderActivity" />
 
