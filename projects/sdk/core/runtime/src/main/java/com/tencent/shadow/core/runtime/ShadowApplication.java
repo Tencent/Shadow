@@ -29,9 +29,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Build;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,7 +39,7 @@ public class ShadowApplication extends ShadowContext {
 
     private Application mHostApplication;
 
-    private Map<String, List<String>> mBroadcasts;
+    private Map<String, String[]> mBroadcasts;
 
     private ShadowAppComponentFactory mAppComponentFactory;
 
@@ -68,16 +66,19 @@ public class ShadowApplication extends ShadowContext {
 
         isCallOnCreate = true;
 
-        for (Map.Entry<String, List<String>> entry : mBroadcasts.entrySet()) {
+        for (Map.Entry<String, String[]> entry : mBroadcasts.entrySet()) {
             try {
-                Class<?> clazz = mPluginClassLoader.loadClass(entry.getKey());
+                String receiverClassname = entry.getKey();
+                Class<?> clazz = mPluginClassLoader.loadClass(receiverClassname);
                 BroadcastReceiver receiver = ((BroadcastReceiver) clazz.newInstance());
-                mAppComponentFactory.instantiateReceiver(mPluginClassLoader, entry.getKey(), null);
+                mAppComponentFactory.instantiateReceiver(mPluginClassLoader, receiverClassname, null);
 
                 IntentFilter intentFilter = new IntentFilter();
-                for (String action:entry.getValue()
-                     ) {
-                    intentFilter.addAction(action);
+                String[] receiverActions = entry.getValue();
+                if (receiverActions != null) {
+                    for (String action : receiverActions) {
+                        intentFilter.addAction(action);
+                    }
                 }
                 registerReceiver(receiver, intentFilter);
             } catch (Exception e) {
@@ -151,10 +152,10 @@ public class ShadowApplication extends ShadowContext {
     }
 
     public void setBroadcasts(PluginManifest.ReceiverInfo[] receiverInfos) {
-        Map<String, List<String>> classNameToActions = new HashMap<>();
+        Map<String, String[]> classNameToActions = new HashMap<>();
         if (receiverInfos != null) {
             for (PluginManifest.ReceiverInfo receiverInfo : receiverInfos) {
-                classNameToActions.put(receiverInfo.className, Arrays.asList(receiverInfo.actions));
+                classNameToActions.put(receiverInfo.className, receiverInfo.actions);
             }
         }
         mBroadcasts = classNameToActions;
