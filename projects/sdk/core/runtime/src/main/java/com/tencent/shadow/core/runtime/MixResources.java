@@ -281,4 +281,13 @@ public class MixResources extends ResourcesWrapper {
             return mHostResources.openRawResourceFd(id);
         }
     }
+
+    @Override
+    public int getIdentifier(String name, String defType, String defPackage) {
+        try {
+            return super.getIdentifier(name, defType, defPackage);
+        } catch (NotFoundException e) {
+            return mHostResources.getIdentifier(name, defType, defPackage);
+        }
+    }
 }
