@@ -1,0 +1,64 @@
+buildscript {
+    repositories {
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            jcenter()
+        }
+        mavenLocal()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$TestAGPVersion"
+        classpath "com.tencent.shadow.core:gradle-plugin:$ShadowVersion"
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.tencent.shadow.plugin'
+
+allprojects {
+    ext.COMPILE_SDK_VERSION = 29
+    ext.MIN_SDK_VERSION = 16
+    ext.TARGET_SDK_VERSION = 28
+    ext.VERSION_CODE = 1
+    ext.VERSION_NAME = "local"
+    repositories {
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            jcenter()
+        }
+    }
+}
+
+ext.disable_shadow_transform = true
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION
+
+    defaultConfig {
+        applicationId "com.tencent.shadow.test.gradle.stub_project"
+        minSdkVersion MIN_SDK_VERSION
+        targetSdkVersion TARGET_SDK_VERSION
+        versionCode VERSION_CODE
+        versionName VERSION_NAME
+    }
+}
+
+dependencies {
+    //Shadow Transform后业务代码会有一部分实际引用runtime中的类
+    //如果不以compileOnly方式依赖，会导致其他Transform或者Proguard找不到这些类
+    pluginCompileOnly "com.tencent.shadow.core:runtime:$ShadowVersion"
+}
+
+repositories {
+    if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+        maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+    } else {
+        google()
+        jcenter()
+    }
+    mavenLocal()
+}

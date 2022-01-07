@@ -95,6 +95,12 @@ def corePath = 'projects/sdk/core'
 def dynamicGroupId = 'com.tencent.shadow.dynamic'
 def dynamicPath = 'projects/sdk/dynamic'
 
+task getPublicationVersion() {
+    doLast {
+        println "publicationVersion:$publicationVersion"
+    }
+}
+
 publishing {
     publications {
         gradlePlugin(MavenPublication) {
@@ -108,7 +114,6 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
-                dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform-kit', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'transform', publicationVersion))
                 dependencies.append(getDependencyNode('compile', coreGroupId, 'runtime', publicationVersion))
@@ -243,7 +248,6 @@ publishing {
                 def root = asNode()
                 def dependencies = root.appendNode('dependencies')
                 dependencies.append(getDependencyNode('compile', 'org.jetbrains.kotlin', 'kotlin-stdlib-jdk7', kotlin_version))
-                dependencies.append(getDependencyNode('compile', 'com.android.tools.build', 'gradle', build_gradle_version))
                 dependencies.append(getDependencyNode('compile', 'org.javassist', 'javassist', '3.28.0-GA'))
 
                 def scm = root.appendNode('scm')

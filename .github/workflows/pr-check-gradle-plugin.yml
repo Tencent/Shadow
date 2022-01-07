@@ -1,0 +1,37 @@
+name: gradle-plugin-agp-compat-test
+
+on:
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'projects/sdk/core/gradle-plugin/**'
+
+jobs:
+  gradle-plugin-agp-compat-test:
+    runs-on: ubuntu-latest
+    env:
+      DISABLE_TENCENT_MAVEN_MIRROR: true
+    steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
+      - name: checkout
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: revert gradle wrapper mirror setting
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+      - name: revert gradle wrapper mirror setting
+        working-directory: projects/test/gradle-plugin-agp-compat-test
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+      - name: test AGP compatibility when core.gradle-plugin changed
+        working-directory: projects/test/gradle-plugin-agp-compat-test
+        run: ./test.sh
+
+      - name: stop gradle deamon for actions/cache
+        run: ./gradlew --stop

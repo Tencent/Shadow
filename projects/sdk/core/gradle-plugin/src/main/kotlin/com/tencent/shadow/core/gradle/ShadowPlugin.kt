@@ -18,32 +18,25 @@
 
 package com.tencent.shadow.core.gradle
 
-import com.android.SdkConstants.ANDROID_MANIFEST_XML
 import com.android.build.gradle.AppExtension
-import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.tasks.ManifestProcessorTask
-import com.android.build.gradle.tasks.ProcessApplicationManifest
-import com.android.build.gradle.tasks.ProcessMultiApkApplicationManifest
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import com.tencent.shadow.core.manifest_parser.generatePluginManifest
 import com.tencent.shadow.core.transform.ShadowTransform
 import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
 import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
 import org.gradle.api.*
-import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.provider.Property
 import java.io.File
-import kotlin.reflect.full.declaredFunctions
-import kotlin.reflect.jvm.isAccessible
 
 class ShadowPlugin : Plugin<Project> {
 
     private lateinit var androidClassPoolBuilder: ClassPoolBuilder
     private lateinit var contextClassLoader: ClassLoader
+    private lateinit var agpCompat: AGPCompat
 
     override fun apply(project: Project) {
-        val baseExtension = getBaseExtension(project)
+        agpCompat = buildAgpCompat(project)
+        val baseExtension = project.extensions.getByName("android") as BaseExtension
 
         //在这里取到的contextClassLoader包含运行时库(classpath方式引入的)shadow-runtime
         contextClassLoader = Thread.currentThread().contextClassLoader
@@ -114,9 +107,9 @@ class ShadowPlugin : Plugin<Project> {
             }
         }.forEach { pluginVariant ->
             val output = pluginVariant.outputs.first()
-            val processManifestTask = output.processManifestProvider.get()
-            val manifestFile = getManifestFile(processManifestTask)
-            val variantName = manifestFile.parentFile.name
+            val processManifestTask = agpCompat.getProcessManifestTask(output)
+            val manifestFile = agpCompat.getManifestFile(processManifestTask)
+            val variantName = pluginVariant.name
             val outputDir = File(project.buildDir, "generated/source/pluginManifest/$variantName")
 
             // 添加生成PluginManifest.java任务
@@ -125,7 +118,7 @@ class ShadowPlugin : Plugin<Project> {
                 it.inputs.file(manifestFile)
                 it.outputs.dir(outputDir).withPropertyName("outputDir")
 
-                val packageForR = getPackageForR(project, variantName)
+                val packageForR = agpCompat.getPackageForR(project, variantName)
 
                 it.doLast {
                     generatePluginManifest(
@@ -144,15 +137,15 @@ class ShadowPlugin : Plugin<Project> {
     }
 
     private fun addFlavorForTransform(baseExtension: BaseExtension) {
-        baseExtension.flavorDimensionList.add(ShadowTransform.DimensionName)
+        agpCompat.addFlavorDimension(baseExtension, ShadowTransform.DimensionName)
         try {
             baseExtension.productFlavors.create(ShadowTransform.NoShadowTransformFlavorName) {
                 it.dimension = ShadowTransform.DimensionName
-                it.isDefault = true
+                agpCompat.setProductFlavorDefault(it, true)
             }
             baseExtension.productFlavors.create(ShadowTransform.ApplyShadowTransformFlavorName) {
                 it.dimension = ShadowTransform.DimensionName
-                it.isDefault = false
+                agpCompat.setProductFlavorDefault(it, false)
             }
         } catch (e: InvalidUserDataException) {
             throw Error("请在android{} DSL之前apply plugin: 'com.tencent.shadow.plugin'", e)
@@ -183,50 +176,9 @@ class ShadowPlugin : Plugin<Project> {
         var useHostContext: Array<String> = emptyArray()
     }
 
-    fun getBaseExtension(project: Project): BaseExtension {
-        val plugin = project.plugins.getPlugin(AppPlugin::class.java)
-        if (com.android.builder.model.Version.ANDROID_GRADLE_PLUGIN_VERSION == "3.0.0") {
-            val method = BasePlugin::class.declaredFunctions.first { it.name == "getExtension" }
-            method.isAccessible = true
-            return method.call(plugin) as BaseExtension
-        } else {
-            return project.extensions.getByName("android") as BaseExtension
-        }
-    }
-
     companion object {
-        private fun getManifestFile(processManifestTask: ManifestProcessorTask) =
-            when (processManifestTask) {
-                is ProcessMultiApkApplicationManifest -> {
-                    processManifestTask.mainMergedManifest.get().asFile
-                }
-                is ProcessApplicationManifest -> {
-                    try {
-                        processManifestTask.mergedManifest.get().asFile
-                    } catch (e: NoSuchMethodError) {
-                        //AGP小于4.1.0
-                        val dir =
-                            processManifestTask.outputs.files.files
-                                .first { it.path.contains("merged_manifests") }
-                        File(dir, ANDROID_MANIFEST_XML)
-                    }
-                }
-                else -> throw IllegalStateException("不支持的Task类型:${processManifestTask.javaClass}")
-            }
-
-        private fun getPackageForR(project: Project, variantName: String): String {
-            val linkApplicationAndroidResourcesTask =
-                project.tasks.getByName("process${variantName.capitalize()}Resources")
-            return (when {
-
-                linkApplicationAndroidResourcesTask.hasProperty("namespace") -> {
-                    linkApplicationAndroidResourcesTask.property("namespace")
-                }
-                linkApplicationAndroidResourcesTask.hasProperty("originalApplicationId") -> {
-                    linkApplicationAndroidResourcesTask.property("originalApplicationId")
-                }
-                else -> throw IllegalStateException("不支持的AGP版本")
-            } as Property<String>).get()
+        private fun buildAgpCompat(project: Project): AGPCompat {
+            return AGPCompatImpl()
         }
     }
 
