@@ -98,7 +98,7 @@ class PluginClassLoader(
             }
             if (clazz == null) {
                 try {
-                    clazz = findClass(className)!!
+                    clazz = findClass(className)
                 } catch (e: ClassNotFoundException) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         e.addSuppressed(suppressed)

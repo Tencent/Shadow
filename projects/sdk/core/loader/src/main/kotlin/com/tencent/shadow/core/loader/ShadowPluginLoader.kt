@@ -129,7 +129,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
                 realAction()
                 waitUiLock.countDown()
             }
-            waitUiLock.await();
+            waitUiLock.await()
         }
     }
 

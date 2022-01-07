@@ -38,7 +38,7 @@ class CombineClassLoader(private val classLoaders: Array<out ClassLoader>, paren
             if (c == null) {
                 for (classLoader in classLoaders) {
                     try {
-                        c = classLoader.loadClass(name)!!
+                        c = classLoader.loadClass(name)
                         break
                     } catch (e: ClassNotFoundException) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
