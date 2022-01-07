@@ -1,0 +1,4 @@
+rootProject.name = 'gradle-plugin-agp-compat-test'
+if (SetGradleVersion != 'true') {
+    include 'stub-project'
+}
