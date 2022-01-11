@@ -30,6 +30,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
@@ -141,7 +142,7 @@ public class DbCompatibilityTest {
         InstalledDao installedDao = new InstalledDao(dbHelper);
 
         for (String configJson : configs) {
-            installedDao.insert(PluginConfig.parseFromJson(configJson, context.getCacheDir()), null, null);
+            installedDao.insert(PluginConfig.parseFromJson(new JSONObject(configJson), context.getCacheDir()), null, null);
         }
 
         dbHelper.close();

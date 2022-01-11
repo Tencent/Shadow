@@ -92,10 +92,15 @@ public abstract class PluginTest {
         intent.putExtra(Constant.KEY_PLUGIN_PART_KEY, partKey);
         intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, pluginIntent.getComponent().getClassName());
         intent.putExtra(Constant.KEY_EXTRAS, pluginIntent.getExtras());
+        intent.putExtra(Constant.KEY_FROM_ID, getFromId());
         ActivityScenario.launch(intent);
     }
 
     protected Class<? extends Activity> getJumpActivityClass() {
         return JumpToPluginActivity.class;
+    }
+
+    protected int getFromId() {
+        return Constant.FROM_ID_START_ACTIVITY;
     }
 }

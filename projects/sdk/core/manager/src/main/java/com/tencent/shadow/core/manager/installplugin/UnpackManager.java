@@ -18,28 +18,28 @@
 
 package com.tencent.shadow.core.manager.installplugin;
 
+import static com.tencent.shadow.core.utils.Md5.md5File;
+
 import com.tencent.shadow.core.common.Logger;
 import com.tencent.shadow.core.common.LoggerFactory;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
-import static com.tencent.shadow.core.utils.Md5.md5File;
 
 
 public class UnpackManager {
 
     private static final Logger mLogger = LoggerFactory.getLogger(UnpackManager.class);
 
-    private static final String UNPACK_DONE_PRE_FIX = "unpacked.";
     private static final String CONFIG_FILENAME = "config.json";//todo #28 json的格式需要沉淀文档。
     private static final String DEFAULT_STORE_DIR_NAME = "ShadowPluginManager";
 
@@ -69,56 +69,48 @@ public class UnpackManager {
      * @param target Target
      * @return 插件解包的目标目录
      */
-    File getPluginUnpackDir(String appHash, File target) {
+    public File getPluginUnpackDir(String appHash, File target) {
         return new File(getVersionDir(appHash), target.getName());
     }
 
-    /**
-     * 判断一个插件是否已经解包了
-     *
-     * @param target Target
-     * @return <code>true</code>表示已经解包了,即无需下载。
-     */
-    boolean isPluginUnpacked(String versionHash, File target) {
-        File pluginUnpackDir = getPluginUnpackDir(versionHash, target);
-        return isDirUnpacked(pluginUnpackDir);
+    public String zipHash(File zip) {
+        return md5File(zip);
     }
 
-    /**
-     * 判断一个插件解包目录是否解包了
-     *
-     * @param pluginUnpackDir 插件解包目录
-     * @return <code>true</code>表示已经解包了,即无需下载。
-     */
-    boolean isDirUnpacked(File pluginUnpackDir) {
-        File tag = getUnpackedTag(pluginUnpackDir);
-        return tag.exists();
-    }
+    public JSONObject getConfigJson(File zip) {
+        ZipFile zipFile = null;
+        try {
+            zipFile = new SafeZipFile(zip);
+            ZipEntry entry = zipFile.getEntry(CONFIG_FILENAME);
+            InputStream inputStream = zipFile.getInputStream(entry);
+            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder sb = new StringBuilder();
+            for (String line; (line = br.readLine()) != null; ) {
+                sb.append(line);
+            }
 
+            return new JSONObject(sb.toString());
+        } catch (JSONException | IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (zipFile != null) {
+                    zipFile.close();
+                }
+            } catch (IOException e) {
+                mLogger.warn("zip关闭时出错忽略", e);
+            }
+        }
+    }
 
     /**
      * 解包一个下载好的插件
-     *  @param zipHash 插件包的hash
-     * @param target  插件包
+     *
+     * @param target          插件包
+     * @param pluginUnpackDir 解压目录
      */
-    public PluginConfig unpackPlugin(String zipHash, File target) throws IOException, JSONException {
-        if (zipHash == null) {
-            zipHash = md5File(target);
-        }
-        File pluginUnpackDir = getPluginUnpackDir(zipHash, target);
-
+    public void unpackPlugin(File target, File pluginUnpackDir) throws IOException {
         pluginUnpackDir.mkdirs();
-        File tag = getUnpackedTag(pluginUnpackDir);
-
-        if (isDirUnpacked(pluginUnpackDir)) {
-            try {
-                return getDownloadedPluginInfoFromPluginUnpackedDir(pluginUnpackDir, zipHash);
-            } catch (Exception e) {
-                if (!tag.delete()) {
-                    throw new IOException("解析版本信息失败，且无法删除标记:" + tag.getAbsolutePath());
-                }
-            }
-        }
         MinFileUtils.cleanDirectory(pluginUnpackDir);
 
         ZipFile zipFile = null;
@@ -131,13 +123,6 @@ public class UnpackManager {
                     MinFileUtils.writeOutZipEntry(zipFile, entry, pluginUnpackDir, entry.getName());
                 }
             }
-
-            PluginConfig pluginConfig = getDownloadedPluginInfoFromPluginUnpackedDir(pluginUnpackDir, zipHash);
-
-            // 外边创建完成标记
-            tag.createNewFile();
-
-            return pluginConfig;
         } finally {
             try {
                 if (zipFile != null) {
@@ -147,28 +132,6 @@ public class UnpackManager {
                 mLogger.warn("zip关闭时出错忽略", e);
             }
         }
-    }
-
-    File getUnpackedTag(File pluginUnpackDir) {
-        return new File(pluginUnpackDir.getParentFile(), UNPACK_DONE_PRE_FIX + pluginUnpackDir.getName());
-    }
-
-    PluginConfig getDownloadedPluginInfoFromPluginUnpackedDir(File pluginUnpackDir, String appHash)
-            throws IOException, JSONException {
-        File config = new File(pluginUnpackDir, CONFIG_FILENAME);
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(config)));
-        StringBuilder stringBuilder = new StringBuilder("");
-        String lineStr;
-        try {
-            while ((lineStr = br.readLine()) != null) {
-                stringBuilder.append(lineStr).append("\n");
-            }
-        } finally {
-            //noinspection ThrowFromFinallyBlock
-            br.close();
-        }
-        String versionJson = stringBuilder.toString();
-        return PluginConfig.parseFromJson(versionJson, pluginUnpackDir);
     }
 
 }
