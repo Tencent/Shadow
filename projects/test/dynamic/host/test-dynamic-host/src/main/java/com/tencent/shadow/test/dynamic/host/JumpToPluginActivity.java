@@ -20,6 +20,7 @@ package com.tencent.shadow.test.dynamic.host;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -104,15 +105,18 @@ public class JumpToPluginActivity extends Activity {
         HostApplication.getApp().loadPluginManager(PluginHelper.getInstance().pluginManagerFile);
 
         Bundle bundle = new Bundle();
+        Intent intent = getIntent();
         bundle.putString(Constant.KEY_PLUGIN_ZIP_PATH, PluginHelper.getInstance().pluginZipFile.getAbsolutePath());
-        bundle.putString(Constant.KEY_PLUGIN_PART_KEY, getIntent().getStringExtra(Constant.KEY_PLUGIN_PART_KEY));
-        bundle.putString(Constant.KEY_ACTIVITY_CLASSNAME, getIntent().getStringExtra(Constant.KEY_ACTIVITY_CLASSNAME));
-        bundle.putBundle(Constant.KEY_EXTRAS, getIntent().getBundleExtra(Constant.KEY_EXTRAS));
+        bundle.putString(Constant.KEY_PLUGIN_PART_KEY, intent.getStringExtra(Constant.KEY_PLUGIN_PART_KEY));
+        bundle.putString(Constant.KEY_ACTIVITY_CLASSNAME, intent.getStringExtra(Constant.KEY_ACTIVITY_CLASSNAME));
+        bundle.putBundle(Constant.KEY_EXTRAS, intent.getBundleExtra(Constant.KEY_EXTRAS));
+
+        int fromId = intent.getIntExtra(Constant.KEY_FROM_ID, Constant.FROM_ID_NOOP);
 
         final SimpleIdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
         idlingResource.setIdleState(false);
         HostApplication.getApp().getPluginManager()
-                .enter(this, Constant.FROM_ID_START_ACTIVITY, bundle, new EnterCallback() {
+                .enter(this, fromId, bundle, new EnterCallback() {
                     @Override
                     public void onShowLoadingView(View view) {
 

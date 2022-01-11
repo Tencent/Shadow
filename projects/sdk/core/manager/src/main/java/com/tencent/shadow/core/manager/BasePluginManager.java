@@ -39,6 +39,7 @@ import com.tencent.shadow.core.manager.installplugin.SafeZipFile;
 import com.tencent.shadow.core.manager.installplugin.UnpackManager;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,7 +105,21 @@ public abstract class BasePluginManager {
      * @return PluginConfig
      */
     public final PluginConfig installPluginFromZip(File zip, String hash) throws IOException, JSONException {
-        return mUnpackManager.unpackPlugin(hash, zip);
+        String zipHash;
+        if (hash != null) {
+            zipHash = hash;
+        } else {
+            zipHash = mUnpackManager.zipHash(zip);
+        }
+        File pluginUnpackDir = mUnpackManager.getPluginUnpackDir(zipHash, zip);
+        JSONObject configJson = mUnpackManager.getConfigJson(zip);
+        PluginConfig pluginConfig = PluginConfig.parseFromJson(configJson, pluginUnpackDir);
+
+        if (!pluginConfig.isUnpacked()) {
+            mUnpackManager.unpackPlugin(zip, pluginUnpackDir);
+        }
+
+        return pluginConfig;
     }
 
     /**

@@ -16,31 +16,22 @@
  *
  */
 
-package com.tencent.shadow.test.cases.plugin_service;
+package com.tencent.shadow.test.cases.plugin_main;
 
-import android.app.Activity;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.filters.LargeTest;
 
-import com.tencent.shadow.test.PluginTest;
-import com.tencent.shadow.test.dynamic.host.BindPluginServiceActivity;
 import com.tencent.shadow.test.lib.constant.Constant;
 
-public abstract class PluginServiceAppTest extends PluginTest {
+import org.junit.runner.RunWith;
 
-    /**
-     * 要启动的插件的PartKey
-     */
-    @Override
-    protected String getPartKey() {
-        return Constant.PART_KEY_PLUGIN_SERVICE_FOR_HOST;
-    }
 
-    @Override
-    protected Class<? extends Activity> getJumpActivityClass() {
-        return BindPluginServiceActivity.class;
-    }
+@RunWith(AndroidJUnit4.class)
+@LargeTest
+public class ReinstallPluginTest extends BasicTest {
 
     @Override
     protected int getFromId() {
-        return Constant.FROM_ID_BIND_SERVICE;
+        return Constant.FROM_ID_REINSTALL_PLUGIN;
     }
 }

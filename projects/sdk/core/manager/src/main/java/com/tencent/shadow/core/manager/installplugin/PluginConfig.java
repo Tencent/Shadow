@@ -61,6 +61,24 @@ public class PluginConfig {
      */
     public File storageDir;
 
+    public boolean isUnpacked() {
+        boolean pluginLoaderUnpacked = true;
+        if (pluginLoader != null) {
+            pluginLoaderUnpacked = pluginLoader.file.exists();
+        }
+
+        boolean runtimeUnpacked = true;
+        if (runTime != null) {
+            runtimeUnpacked = runTime.file.exists();
+        }
+
+        boolean pluginsUnpacked = true;
+        for (PluginFileInfo pluginFileInfo : plugins.values()) {
+            pluginsUnpacked = pluginsUnpacked && pluginFileInfo.file.exists();
+        }
+        return pluginLoaderUnpacked && runtimeUnpacked && pluginsUnpacked;
+    }
+
     public static class FileInfo {
         public final File file;
         public final String hash;
@@ -88,12 +106,10 @@ public class PluginConfig {
         }
     }
 
-
-    public static PluginConfig parseFromJson(String json, File storageDir) throws JSONException {
-        JSONObject jsonObject = new JSONObject(json);
+    public static PluginConfig parseFromJson(JSONObject configJson, File storageDir) throws JSONException {
         PluginConfig pluginConfig = new PluginConfig();
-        pluginConfig.version = jsonObject.getInt("version");
-        JSONArray compact_version_json = jsonObject.optJSONArray("compact_version");
+        pluginConfig.version = configJson.getInt("version");
+        JSONArray compact_version_json = configJson.optJSONArray("compact_version");
         if (compact_version_json != null && compact_version_json.length() > 0) {
             pluginConfig.compact_version = new int[compact_version_json.length()];
             for (int i = 0; i < compact_version_json.length(); i++) {
@@ -101,20 +117,20 @@ public class PluginConfig {
             }
         }
         //todo #27 json的版本检查和不兼容检查
-        pluginConfig.UUID = jsonObject.getString("UUID");
-        pluginConfig.UUID_NickName = jsonObject.getString("UUID_NickName");
+        pluginConfig.UUID = configJson.getString("UUID");
+        pluginConfig.UUID_NickName = configJson.getString("UUID_NickName");
 
-        JSONObject loaderJson = jsonObject.optJSONObject("pluginLoader");
+        JSONObject loaderJson = configJson.optJSONObject("pluginLoader");
         if (loaderJson != null) {
             pluginConfig.pluginLoader = getFileInfo(loaderJson, storageDir);
         }
 
-        JSONObject runtimeJson = jsonObject.optJSONObject("runtime");
+        JSONObject runtimeJson = configJson.optJSONObject("runtime");
         if (runtimeJson != null) {
             pluginConfig.runTime = getFileInfo(runtimeJson, storageDir);
         }
 
-        JSONArray pluginArray = jsonObject.optJSONArray("plugins");
+        JSONArray pluginArray = configJson.optJSONArray("plugins");
         if (pluginArray != null && pluginArray.length() > 0) {
             for (int i = 0; i < pluginArray.length(); i++) {
                 JSONObject plugin = pluginArray.getJSONObject(i);
