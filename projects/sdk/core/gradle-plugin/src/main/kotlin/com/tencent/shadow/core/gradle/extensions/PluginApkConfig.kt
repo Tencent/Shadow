@@ -29,7 +29,6 @@ open class PluginApkConfig {
      */
     var businessName = ""
 
-    var apkName = ""
     var apkPath = ""
     var buildTask = ""
     var dependsOn: Array<String> = emptyArray()
