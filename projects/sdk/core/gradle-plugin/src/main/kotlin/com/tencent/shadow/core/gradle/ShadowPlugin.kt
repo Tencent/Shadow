@@ -86,7 +86,7 @@ class ShadowPlugin : Plugin<Project> {
 
         val tasks = mutableListOf<Task>()
         for (i in buildTypes) {
-            println("buildTypes = " + i.name)
+            project.logger.info("buildTypes = " + i.name)
             val task = createPackagePluginTask(project, i)
             tasks.add(task)
         }

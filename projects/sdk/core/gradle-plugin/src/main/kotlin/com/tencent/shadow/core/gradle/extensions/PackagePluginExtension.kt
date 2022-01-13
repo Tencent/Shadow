@@ -123,15 +123,15 @@ open class PackagePluginExtension {
         when {
             uuidFile.exists() -> {
                 json["UUID"] = uuidFile.readText()
-                println("uuid = " + json["UUID"] + " 由文件生成")
+                project.logger.info("uuid = " + json["UUID"] + " 由文件生成")
             }
             this.uuid.isEmpty() -> {
                 json["UUID"] = UUID.randomUUID().toString().toUpperCase()
-                println("uuid = " + json["UUID"] + " 随机生成")
+                project.logger.info("uuid = " + json["UUID"] + " 随机生成")
             }
             else -> {
                 json["UUID"] = this.uuid
-                println("uuid = " + json["UUID"] + " 由配置生成")
+                project.logger.info("uuid = " + json["UUID"] + " 由配置生成")
             }
         }
 
