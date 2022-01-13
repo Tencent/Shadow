@@ -88,7 +88,7 @@ open class ShadowPluginHelper {
             if (checkExist && !runtimeFile.exists()) {
                 throw IllegalArgumentException(runtimeFile.absolutePath + " , runtime file not exist...")
             }
-            println("runtimeFile = $runtimeFile")
+            project.logger.info("runtimeFile = $runtimeFile")
             return runtimeFile
         }
 
@@ -104,7 +104,7 @@ open class ShadowPluginHelper {
             if (checkExist && !loaderFile.exists()) {
                 throw IllegalArgumentException(loaderFile.absolutePath + " , loader file not exist...")
             }
-            println("loaderFile = $loaderFile")
+            project.logger.info("loaderFile = $loaderFile")
             return loaderFile
 
         }
@@ -114,7 +114,7 @@ open class ShadowPluginHelper {
             if (checkExist && !pluginFile.exists()) {
                 throw IllegalArgumentException(pluginFile.absolutePath + " , plugin file not exist...")
             }
-            println("pluginFile = $pluginFile")
+            project.logger.info("pluginFile = $pluginFile")
             return pluginFile
         }
     }
