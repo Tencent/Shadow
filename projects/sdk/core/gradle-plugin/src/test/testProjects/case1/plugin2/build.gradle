@@ -56,7 +56,6 @@ shadow {
                     pluginApk1 {
                         partKey = 'plugin2'
                         buildTask = ':plugin2:assemblePluginDebug'
-                        apkName = 'plugin2-plugin-debug.apk'
                         //这里因为单元测试时，会把项目根目录设置成case1的根目录
                         apkPath = 'plugin2/build/outputs/apk/plugin/debug/plugin2-plugin-debug.apk'
                         dependsOn = ['Core', 'Base']
