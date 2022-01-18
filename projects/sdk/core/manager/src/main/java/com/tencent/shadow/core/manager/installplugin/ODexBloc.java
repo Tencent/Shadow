@@ -18,6 +18,8 @@
 
 package com.tencent.shadow.core.manager.installplugin;
 
+import android.os.Build;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +30,20 @@ public class ODexBloc {
 
     private static ConcurrentHashMap<String, Object> sLocks = new ConcurrentHashMap<>();
 
+    /**
+     * DexClassLoader的optimizedDirectory参数从API 26起就无效了
+     * 此方法统一判断这一特性是否生效
+     *
+     * @return <code>true</code>表示ODexBloc还有作用
+     */
+    public static boolean isEffective() {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.O;
+    }
+
     public static void oDexPlugin(File apkFile, File oDexDir, File copiedTagFile) throws InstallPluginException {
+        if (!isEffective()) {
+            return;
+        }
 
         String key = apkFile.getAbsolutePath();
         Object lock = sLocks.get(key);
