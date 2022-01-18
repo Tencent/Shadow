@@ -133,7 +133,8 @@ public abstract class BasePluginManager {
     public final void onInstallCompleted(PluginConfig pluginConfig,
                                          Map<String, String> soDirMap) {
         File root = mUnpackManager.getAppDir();
-        String oDexDir = AppCacheFolderManager.getODexDir(root, pluginConfig.UUID).getAbsolutePath();
+        String oDexDir = ODexBloc.isEffective() ?
+                AppCacheFolderManager.getODexDir(root, pluginConfig.UUID).getAbsolutePath() : null;
 
         mInstalledDao.insert(pluginConfig, soDirMap, oDexDir);
     }
@@ -178,6 +179,10 @@ public abstract class BasePluginManager {
      * @param partKey 要oDex的插件partkey
      */
     public final void oDexPlugin(String uuid, String partKey, File apkFile) throws InstallPluginException {
+        if (!ODexBloc.isEffective()) {
+            return;
+        }
+
         try {
             File root = mUnpackManager.getAppDir();
             File oDexDir = AppCacheFolderManager.getODexDir(root, uuid);
@@ -199,6 +204,10 @@ public abstract class BasePluginManager {
      * @param apkFile 插件apk文件
      */
     public final void oDexPluginLoaderOrRunTime(String uuid, int type, File apkFile) throws InstallPluginException {
+        if (!ODexBloc.isEffective()) {
+            return;
+        }
+
         try {
             File root = mUnpackManager.getAppDir();
             File oDexDir = AppCacheFolderManager.getODexDir(root, uuid);
