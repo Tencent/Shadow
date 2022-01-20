@@ -47,6 +47,7 @@ dependencies {
     implementation 'com.tencent.shadow.core:loader'
     implementation 'com.tencent.shadow.core:activity-container'
     implementation project(':custom-view')
+    implementation 'androidx.test.espresso:espresso-idling-resource:3.3.0'
 }
 
 def createCopyTask(projectName, buildType, name, apkName) {
