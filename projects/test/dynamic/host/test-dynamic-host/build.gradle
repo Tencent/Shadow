@@ -18,6 +18,7 @@ android {
     }
     sourceSets {
         debug {
+            assets.srcDir('build/generated/assets/test-dynamic-dumb-manager/debug/')
             assets.srcDir('build/generated/assets/test-dynamic-manager/debug/')
             assets.srcDir('build/generated/assets/plugin-zip/debug/')
         }
@@ -69,16 +70,31 @@ def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
 
 def generateAssets(generateAssetsTask, buildType) {
 
-    def moduleName = 'test-dynamic-manager'
+    def testDynamicDumpManagerModuleName = 'test-dynamic-dumb-manager'
+    def testDynamicManagerModuleName = 'test-dynamic-manager'
+    def dumbManagerApkFile = file(
+            "${project(":test-dynamic-dumb-manager").getBuildDir()}" +
+                    "/outputs/apk/${buildType}/" +
+                    "${testDynamicDumpManagerModuleName}-${buildType}.apk"
+    )
     def pluginManagerApkFile = file(
             "${project(":test-dynamic-manager").getBuildDir()}" +
                     "/outputs/apk/${buildType}/" +
-                    "${moduleName}-${buildType}.apk"
+                    "${testDynamicManagerModuleName}-${buildType}.apk"
     )
+    generateAssetsTask.dependsOn createCopyTask(
+            ':test-dynamic-dumb-manager',
+            buildType,
+            testDynamicDumpManagerModuleName,
+            'dumb-manager.apk',
+            dumbManagerApkFile,
+            "assemble${buildType.capitalize()}"
+    )
+
     generateAssetsTask.dependsOn createCopyTask(
             ':test-dynamic-manager',
             buildType,
-            moduleName,
+            testDynamicManagerModuleName,
             'pluginmanager.apk',
             pluginManagerApkFile,
             "assemble${buildType.capitalize()}"

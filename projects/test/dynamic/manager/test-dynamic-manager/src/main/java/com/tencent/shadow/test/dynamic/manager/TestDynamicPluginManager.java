@@ -2,6 +2,7 @@ package com.tencent.shadow.test.dynamic.manager;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.tencent.shadow.dynamic.host.EnterCallback;
 import com.tencent.shadow.dynamic.host.PluginManagerImpl;
@@ -46,6 +47,8 @@ final public class TestDynamicPluginManager implements PluginManagerImpl {
             activityPluginManager.enter(context, fromId, bundle, callback);
         } else if (fromId == Constant.FROM_ID_REINSTALL_PLUGIN) {
             reinstallPluginTestDynamicPluginManager.enter(context, fromId, bundle, callback);
+        } else if (fromId == Constant.FROM_ID_NOOP) {
+            Log.i("Manager", "enter fromId == Constant.FROM_ID_NOOP");
         } else {
             throw new RuntimeException("不认识的fromId==" + fromId);
         }
