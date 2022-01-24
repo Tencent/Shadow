@@ -49,6 +49,7 @@ final public class TestDynamicPluginManager implements PluginManagerImpl {
             reinstallPluginTestDynamicPluginManager.enter(context, fromId, bundle, callback);
         } else if (fromId == Constant.FROM_ID_NOOP) {
             Log.i("Manager", "enter fromId == Constant.FROM_ID_NOOP");
+            activityPluginManager.enter(context, fromId, bundle, callback);
         } else {
             throw new RuntimeException("不认识的fromId==" + fromId);
         }
