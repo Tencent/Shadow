@@ -36,3 +36,30 @@ git checkout -b new_branch_name FETCH_HEAD
 1. 尽量原子化的提交，配有较为清晰的提交信息。
 
 我们会根据大家的PR再调整PR的要求的。
+
+# 开发指引
+
+## Debug编译期代码(Gradle插件、Transform等)
+
+Shadow的`coding`和`core.gradle-plugin`、`core.manifest-parser`、`core.transform`,`core.transform-kit`
+等模块都是在插件工程的编译期执行的。如果需要Debug它们，需要额外的配置。
+
+1. 添加`Remote JVM Debug` Configuration。在Android Studio的`Run`菜单中找到`Edit Configuration`。 点"＋"（Add New
+   Configuration），选择`Remote JVM Debug`，配置参数一般采用默认值不用修改。
+   `Name`可以任意修改成方便识别的名字，稍后在工具栏执行时选择。 复制`Command line arguments for remote JVM`。
+   一般的默认值是:`-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005`。
+   将这行复制到`gradle.properties`中的`org.gradle.jvmargs=-Xmx4096m`后面作为更多的参数，注意加上空格。 然后将其中的`suspend=n`
+   改为`suspend=y`，表示让JVM启动Gradle时等待Debugger连接，再继续执行。
+
+2. 终止正在运行的Gradle Daemon。在命令行执行`./gradlew --stop`，终止掉没有采用新参数的JVM进程。
+
+3. Debug编译期代码。通过`./gradlew`或者Android Studio的Gradle sync，或运行`sample-host`等任务， 都会在一启动时因为前面的`suspend=y`
+   卡住。这时再选择刚刚添加的`Remote JVM Debug` Configuration， 点击`Debug`执行按钮，即可连接上Gradle JVM。如果在`ShadowPlugin`
+   或者某个Transform代码中设置了断点， 就会正常在断点处暂停。 注意选择`Remote JVM Debug` Configuration的位置同选择`sample-host`
+   等模块在同一个菜单中。 并且Android Studio可以同时执行多个Configuration，先运行`sample-host`， 再Debug `Remote JVM Debug`
+   Configuration是没有问题的。
+
+4. 在其他不是Shadow源码工程中，也可以同样设置`gradle.properties`参数，在其中执行Gradle任务。
+   然后切换到Shadow源码工程中执行Debug `Remote JVM Debug` Configuration， 也可以Debug Shadow在其他工程中的编译期代码执行情况。
+
+5. 还原。回退对`gradle.properties`的修改，然后执行`./gradlew --stop`。以上所有改动的作用即可恢复。
