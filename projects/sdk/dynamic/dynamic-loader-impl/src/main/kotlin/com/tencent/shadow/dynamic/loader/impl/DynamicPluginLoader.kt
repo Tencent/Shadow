@@ -46,11 +46,11 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     private val mDynamicLoaderClassLoader: ClassLoader = DynamicPluginLoader::class.java.classLoader!!
 
-    private var mContext: Context;
+    private var mContext: Context
 
-    private lateinit var mUuidManager: UuidManager;
+    private lateinit var mUuidManager: UuidManager
 
-    private var mUuid: String;
+    private var mUuid: String
 
     private val mUiHandler = Handler(Looper.getMainLooper())
 
@@ -72,8 +72,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
         } catch (e: Exception) {
             throw RuntimeException("当前的classLoader找不到PluginLoader的实现", e)
         }
-        mContext = hostContext;
-        mUuid = uuid;
+        mContext = hostContext
+        mUuid = uuid
     }
 
     fun loadPlugin(partKey: String) {
@@ -118,7 +118,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
                 componentName = realAction()
                 waitUiLock.countDown()
             }
-            waitUiLock.await();
+            waitUiLock.await()
         }
 
         return componentName
@@ -141,7 +141,7 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
                 stopped = realAction()
                 waitUiLock.countDown()
             }
-            waitUiLock.await();
+            waitUiLock.await()
         }
         return stopped
     }
@@ -221,8 +221,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     fun <T> ClassLoader.getInterface(clazz: Class<T>, className: String): T {
         try {
             val interfaceImplementClass = loadClass(className)
-            val interfaceImplement = interfaceImplementClass.newInstance()!!
-            return clazz.cast(interfaceImplement)!!
+            val interfaceImplement = interfaceImplementClass.newInstance()
+            return clazz.cast(interfaceImplement) as T
         } catch (e: ClassNotFoundException) {
             throw Exception(e)
         } catch (e: InstantiationException) {
