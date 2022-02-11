@@ -47,7 +47,7 @@ abstract class ClassTransform(val project: Project) : Transform() {
      * 获取输入文件对应的输出文件路径.即将文件this路径中的inputDir部分替换为outputDir.
      */
     fun File.toOutputFile(inputDir: File, outputDir: File): File {
-        return File(outputDir, FileUtils.relativePossiblyNonExistingPath(this, inputDir))
+        return File(outputDir, this.toRelativeString(inputDir))
     }
 
     fun input(inputs: Collection<com.android.build.api.transform.TransformInput>,
