@@ -134,6 +134,7 @@
             android:hardwareAccelerated="true"
             android:theme="@style/troop_Transparent"
             />
+        <activity android:name=".UpdateManagerImplTestActivity" />
         <!--dynamic activity注册 end -->
     </application>
 

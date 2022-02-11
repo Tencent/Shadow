@@ -63,7 +63,10 @@ public class ActivityTestDynamicPluginManager extends FastPluginManager {
     @Override
     public void enter(final Context context, long fromId, Bundle bundle, final EnterCallback callback) {
         if (fromId == Constant.FROM_ID_NOOP) {
-            //do nothing.
+            final View view = LayoutInflater.from(mCurrentContext).inflate(R.layout.activity_load_plugin, null);
+            if (view == null) {
+                throw new NullPointerException("view == null");
+            }
         } else if (fromId == Constant.FROM_ID_START_ACTIVITY) {
             onStartActivity(context, bundle, callback);
         } else {

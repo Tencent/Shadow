@@ -14,6 +14,7 @@ includeSampleDynamicApk()
 def includeTest() {
     include 'test-dynamic-host',
             'test-dynamic-manager',
+            'test-dynamic-dumb-manager',
             'test-dynamic-loader',
             'test-dynamic-runtime',
             'constant',
@@ -30,6 +31,7 @@ def includeTest() {
             'test-none-dynamic-host'
     project(':test-dynamic-host').projectDir = file('projects/test/dynamic/host/test-dynamic-host')
     project(':test-dynamic-manager').projectDir = file('projects/test/dynamic/manager/test-dynamic-manager')
+    project(':test-dynamic-dumb-manager').projectDir = file('projects/test/dynamic/manager/test-dynamic-dumb-manager')
     project(':test-dynamic-loader').projectDir = file('projects/test/dynamic/plugin/test-dynamic-loader')
     project(':test-dynamic-runtime').projectDir = file('projects/test/dynamic/plugin/test-dynamic-runtime')
     project(':constant').projectDir = file('projects/test/lib/constant')

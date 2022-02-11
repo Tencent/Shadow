@@ -35,12 +35,15 @@ public class PluginHelper {
      */
     public final static String sPluginManagerName = "pluginmanager.apk";
 
+    public final static String sDumbManagerName = "dumb-manager.apk";
+
     /**
      * 动态加载的插件包，里面包含以下几个部分，插件apk，插件框架apk（loader apk和runtime apk）, apk信息配置关系json文件
      */
     public final static String sPluginZip = BuildConfig.DEBUG ? "plugin-debug.zip" : "plugin-release.zip";
 
     public File pluginManagerFile;
+    public File dumbManagerFile;
 
     public File pluginZipFile;
 
@@ -58,6 +61,7 @@ public class PluginHelper {
     }
 
     public void init(Context context) {
+        dumbManagerFile = new File(context.getFilesDir(), sDumbManagerName);
         pluginManagerFile = new File(context.getFilesDir(), sPluginManagerName);
         pluginZipFile = new File(context.getFilesDir(), sPluginZip);
 
@@ -74,6 +78,9 @@ public class PluginHelper {
 
     private void preparePlugin() {
         try {
+            InputStream dumbManagerIs = mContext.getAssets().open(sDumbManagerName);
+            FileUtils.copyInputStreamToFile(dumbManagerIs, dumbManagerFile);
+
             InputStream is = mContext.getAssets().open(sPluginManagerName);
             FileUtils.copyInputStreamToFile(is, pluginManagerFile);
 
