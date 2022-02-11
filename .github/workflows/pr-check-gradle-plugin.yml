@@ -5,6 +5,11 @@ on:
     branches: [ master ]
     paths:
       - 'projects/sdk/core/gradle-plugin/**'
+      - 'projects/sdk/core/manifest-parser/**'
+      - 'projects/sdk/core/transform/**'
+      - 'projects/sdk/core/transform-kit/**'
+      - 'projects/sdk/coding/**'
+      - 'projects/test/gradle-plugin-agp-compat-test/**'
 
 jobs:
   gradle-plugin-agp-compat-test:
