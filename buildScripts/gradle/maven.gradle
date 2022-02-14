@@ -38,6 +38,7 @@ task testSdk() {
 }
 
 apply plugin: 'maven-publish'
+//apply plugin: 'com.github.dcendents.android-maven'
 
 static def getDependencyNode(scope, groupId, artifactId, version) {
     Node node = new Node(null, 'dependency')
@@ -58,7 +59,7 @@ def gitShortRev() {
 }
 
 def setScm(scm) {
-    scm.appendNode('connection', "https://github.com/${System.getenv("GITHUB_ACTOR")}/Shadow.git")
+    scm.appendNode('connection', "https://github.com/newzerohelper/Shadow.git")
 
     def commit
     if ("${System.env.CI}".equalsIgnoreCase("true")) {
@@ -66,7 +67,7 @@ def setScm(scm) {
     } else {
         commit = gitShortRev()
     }
-    scm.appendNode('url', "https://github.com/${System.getenv("GITHUB_ACTOR")}/Shadow/commit/$commit")
+    scm.appendNode('url', "https://github.com/newzerohelper/Shadow/commit/$commit")
 }
 
 def setGeneratePomFileAndDepends(publicationName) {
@@ -89,10 +90,10 @@ def sourceJar(String name, String path) {
     }
 }
 
-def publicationVersion = project.ARTIFACT_VERSION
-def coreGroupId = 'com.tencent.shadow.core'
+def publicationVersion = '2.2.2'
+def coreGroupId = 'com.github.newzerohepler.shadow.core'
 def corePath = 'projects/sdk/core'
-def dynamicGroupId = 'com.tencent.shadow.dynamic'
+def dynamicGroupId = 'com.github.newzerohepler.shadow.dynamic'
 def dynamicPath = 'projects/sdk/dynamic'
 
 task getPublicationVersion() {
@@ -462,7 +463,14 @@ publishing {
                 url "https://maven.pkg.github.com/" + "${System.env.GITHUB_REPOSITORY}".toLowerCase()
             }
         } else {
-            mavenLocal()
+            maven {
+                name = "GitHubPackages"
+                credentials {
+                    username = 'fsd@jshxlsp.com'
+                    password = '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'
+                }
+                url "https://maven.pkg.github.com/zeronewhepler/Shadow"
+            }
         }
     }
 }
