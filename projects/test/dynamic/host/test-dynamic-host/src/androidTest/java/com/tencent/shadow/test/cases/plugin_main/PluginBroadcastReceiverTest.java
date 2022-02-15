@@ -37,13 +37,13 @@ public class PluginBroadcastReceiverTest extends PluginMainAppTest {
      * 动态广播测试
      */
     @Test
-    public void testDynamicBroadcastReceiver(){
+    public void testDynamicBroadcastReceiver() {
         //测试动态广播可以正常收到，并且action，extra，以及context都是正确的
         Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button_dynamic"))).
                 perform(ViewActions.click());
         matchTextWithViewTag("text",
-                String.format("action:%s msg:%s isShadowContext:%s",INTENT_DYNAMIC_ACTION,
-                        MSG_DYNAMIC,"true"));
+                String.format("action:%s msg:%s isShadowContext:%s", INTENT_DYNAMIC_ACTION,
+                        MSG_DYNAMIC, "true"));
 
         //测试动态广播反注册后就收不到广播了
         Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button_unRegister_dynamic"))).
@@ -51,17 +51,18 @@ public class PluginBroadcastReceiverTest extends PluginMainAppTest {
         matchTextWithViewTag("text", "");
 
     }
+
     /**
      * 静态广播测试
      */
     @Test
-    public void testStaticBroadcastReceiver(){
+    public void testStaticBroadcastReceiver() {
         //测试静态广播可以正常收到，并且action，extra，以及context都是正确的
         Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("button_static"))).
                 perform(ViewActions.click());
 
         matchTextWithViewTag("text",
-                String.format("action:%s msg:%s isShadowContext:%s",INTENT_NORMAL_ACTION,
-                        MSG_NORMAL,"true"));
+                String.format("action:%s msg:%s isShadowContext:%s", INTENT_NORMAL_ACTION,
+                        MSG_NORMAL, "true"));
     }
 }

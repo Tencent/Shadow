@@ -26,9 +26,9 @@ import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
 import org.gradle.api.Project
 
 class ShadowTransform(
-        project: Project,
-        classPoolBuilder: ClassPoolBuilder,
-        private val useHostContext: () -> Array<String>
+    project: Project,
+    classPoolBuilder: ClassPoolBuilder,
+    private val useHostContext: () -> Array<String>
 ) : AbstractTransform(project, classPoolBuilder) {
     companion object {
         const val SelfClassNamePlaceholder =

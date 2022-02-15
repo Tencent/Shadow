@@ -53,6 +53,6 @@ public class TestDynamicFragmentActivity extends BaseActivity {
         Bundle bundle = new Bundle();
         bundle.putString("msg", msg);
         TestFragment testFragment = TestFragment.newInstance(bundle);
-        getFragmentManager().beginTransaction().add(R.id.fragment_container,testFragment).commit();
+        getFragmentManager().beginTransaction().add(R.id.fragment_container, testFragment).commit();
     }
 }

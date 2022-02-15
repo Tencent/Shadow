@@ -27,7 +27,8 @@ class PendingIntentTransform : SpecificTransform() {
 
     companion object {
         const val AndroidPendingIntentClassname = "android.app.PendingIntent"
-        const val ShadowPendingIntentClassname = "com.tencent.shadow.core.runtime.ShadowPendingIntent"
+        const val ShadowPendingIntentClassname =
+            "com.tencent.shadow.core.runtime.ShadowPendingIntent"
     }
 
     val codeConverter = CodeConverter()
@@ -36,8 +37,10 @@ class PendingIntentTransform : SpecificTransform() {
         val pendingIntentMethod = mClassPool[AndroidPendingIntentClassname].methods!!
         val shadowPendingIntentMethod = mClassPool[ShadowPendingIntentClassname].methods!!
 
-        val method_getPengdingIntent = pendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity" }
-        val shadow_method_getPengdingIntent = shadowPendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity" }!!
+        val method_getPengdingIntent =
+            pendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity" }
+        val shadow_method_getPengdingIntent =
+            shadowPendingIntentMethod.filter { it.name == "getService" || it.name == "getActivity" }!!
 
         for (ctAndroidMethod in method_getPengdingIntent) {
             for (ctShadowMedthod in shadow_method_getPengdingIntent) {
@@ -49,7 +52,7 @@ class PendingIntentTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    filterRefClasses(allInputClass, listOf(AndroidPendingIntentClassname))
+                filterRefClasses(allInputClass, listOf(AndroidPendingIntentClassname))
 
             override fun transform(ctClass: CtClass) {
                 try {

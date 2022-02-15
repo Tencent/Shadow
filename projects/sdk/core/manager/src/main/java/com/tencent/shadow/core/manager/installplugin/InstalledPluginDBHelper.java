@@ -151,7 +151,7 @@ public class InstalledPluginDBHelper extends SQLiteOpenHelper {
                 db.endTransaction();
             }
         }
-        if(oldVersion < 3){
+        if (oldVersion < 3) {
             db.beginTransaction();
             try {
                 //添加列COLUMN_HOST_WHITELIST

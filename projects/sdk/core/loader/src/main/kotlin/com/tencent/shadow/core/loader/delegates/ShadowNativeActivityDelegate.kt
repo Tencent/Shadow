@@ -47,7 +47,7 @@ class ShadowNativeActivityDelegate(mDI: DI) : ShadowActivityDelegate(mDI),
     //预期只有NativeActivity会调用这个方法
     override fun getPackageManager(): PackageManager {
         val pluginPackageManager =
-                PackageManagerInvokeRedirect.getPluginPackageManager(mPluginActivity.classLoader)
+            PackageManagerInvokeRedirect.getPluginPackageManager(mPluginActivity.classLoader)
         return object : PackageManagerWrapper(mHostActivityDelegator.superGetPackageManager()) {
             override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo {
                 return pluginPackageManager.getActivityInfo(component, flags)

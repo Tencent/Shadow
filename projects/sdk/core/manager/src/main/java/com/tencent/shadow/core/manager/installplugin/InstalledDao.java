@@ -77,7 +77,7 @@ public class InstalledDao {
      * @return 影响的数据行数
      */
     public int deleteByUUID(String UUID) {
-        int row ;
+        int row;
         SQLiteDatabase db = mDBHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -92,7 +92,7 @@ public class InstalledDao {
     /**
      * 根据uuid和APPID获取对应的插件信息
      *
-     * @param UUID  插件的发布id
+     * @param UUID 插件的发布id
      * @return 插件安装数据
      */
     @SuppressLint("Range")

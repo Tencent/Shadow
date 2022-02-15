@@ -21,8 +21,9 @@ package com.tencent.shadow.core.transform_kit
 import javassist.ClassPool
 import javassist.CtClass
 
-abstract class AbstractTransformManager(ctClassInputMap: Map<CtClass, InputClass>,
-                                        private val classPool: ClassPool
+abstract class AbstractTransformManager(
+    ctClassInputMap: Map<CtClass, InputClass>,
+    private val classPool: ClassPool
 ) {
     private val allInputClass = ctClassInputMap.keys
 

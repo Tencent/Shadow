@@ -54,7 +54,7 @@ public class TestActivityReCreate extends Activity {
         setContentView(R.layout.layout_recreate);
         TextView textView = findViewById(R.id.tv_msg);
         boolean isRecreate = getIntent().getBooleanExtra("reCreate", false);
-        textView.setText("isRecreate:"+isRecreate);
+        textView.setText("isRecreate:" + isRecreate);
         ToastUtil.showToast(this, "onCreate");
     }
 

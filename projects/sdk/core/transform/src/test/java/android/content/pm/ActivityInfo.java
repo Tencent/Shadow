@@ -18,5 +18,5 @@
 
 package android.content.pm;
 
-public class ActivityInfo extends PackageItemInfo{
+public class ActivityInfo extends PackageItemInfo {
 }

@@ -34,30 +34,30 @@ public class AppCacheFolderManager {
     }
 
 
-    public static File getODexDir(File root,String key){
-        return new File(getODexRootDir(root), key+ "_odex");
+    public static File getODexDir(File root, String key) {
+        return new File(getODexRootDir(root), key + "_odex");
     }
 
-    public static File getODexCopiedFile(File oDexDir,String key){
-        return new File(oDexDir, key+ "_oDexed");
-    }
-
-
-    private static File getODexRootDir(File root){
-        return new File(root,"oDex");
-    }
-
-    public static File getLibDir(File root,String key){
-        return new File(getLibRootDir(root), key+ "_lib");
-    }
-
-    public static File getLibCopiedFile(File soDir,String key){
-        return new File(soDir, key+ "_copied");
+    public static File getODexCopiedFile(File oDexDir, String key) {
+        return new File(oDexDir, key + "_oDexed");
     }
 
 
-    private static File getLibRootDir(File root){
-        return new File(root,"lib");
+    private static File getODexRootDir(File root) {
+        return new File(root, "oDex");
+    }
+
+    public static File getLibDir(File root, String key) {
+        return new File(getLibRootDir(root), key + "_lib");
+    }
+
+    public static File getLibCopiedFile(File soDir, String key) {
+        return new File(soDir, key + "_copied");
+    }
+
+
+    private static File getLibRootDir(File root) {
+        return new File(root, "lib");
     }
 
 }

@@ -25,25 +25,26 @@ import com.tencent.shadow.core.transform_kit.SpecificTransform
 import javassist.ClassPool
 import javassist.CtClass
 
-class TransformManager(ctClassInputMap: Map<CtClass, InputClass>,
-                       classPool: ClassPool,
-                       useHostContext: () -> Array<String>
+class TransformManager(
+    ctClassInputMap: Map<CtClass, InputClass>,
+    classPool: ClassPool,
+    useHostContext: () -> Array<String>
 ) : AbstractTransformManager(ctClassInputMap, classPool) {
 
     override val mTransformList: List<SpecificTransform> = listOf(
-            ApplicationTransform(),
-            ActivityTransform(),
-            ServiceTransform(),
-            IntentServiceTransform(),
-            InstrumentationTransform(),
-            FragmentSupportTransform(),
-            DialogSupportTransform(),
-            WebViewTransform(),
-            ContentProviderTransform(),
-            PackageManagerTransform(),
-            PackageItemInfoTransform(),
-            AppComponentFactoryTransform(),
-            LayoutInflaterTransform(),
-            KeepHostContextTransform(useHostContext())
+        ApplicationTransform(),
+        ActivityTransform(),
+        ServiceTransform(),
+        IntentServiceTransform(),
+        InstrumentationTransform(),
+        FragmentSupportTransform(),
+        DialogSupportTransform(),
+        WebViewTransform(),
+        ContentProviderTransform(),
+        PackageManagerTransform(),
+        PackageItemInfoTransform(),
+        AppComponentFactoryTransform(),
+        LayoutInflaterTransform(),
+        KeepHostContextTransform(useHostContext())
     )
 }

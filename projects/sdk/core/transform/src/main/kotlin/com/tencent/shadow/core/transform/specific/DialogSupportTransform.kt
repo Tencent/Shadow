@@ -28,7 +28,8 @@ class DialogSupportTransform : SpecificTransform() {
     companion object {
         const val ShadowActivityClassname = "com.tencent.shadow.core.runtime.ShadowActivity"
         const val AndroidDialogClassname = "android.app.Dialog"
-        const val DialogSupportTransformClassname = "com.tencent.shadow.core.runtime.ShadowDialogSupport"
+        const val DialogSupportTransformClassname =
+            "com.tencent.shadow.core.runtime.ShadowDialogSupport"
     }
 
     override fun setup(allInputClass: Set<CtClass>) {
@@ -44,12 +45,20 @@ class DialogSupportTransform : SpecificTransform() {
         setOwnerActivityMethod.methodInfo.descriptor = "($shadowActivitySig)V"
         getOwnerActivityMethod.methodInfo.descriptor = "()$shadowActivitySig"
 
-        val dialogSetOwnerActivityMethod = shadowDialogSupport.getMethod("dialogSetOwnerActivity",
-                Descriptor.ofMethod(CtClass.voidType,
-                        arrayOf(androidDialog, shadowActivity)))
-        val dialogGetOwnerActivityMethod = shadowDialogSupport.getMethod("dialogGetOwnerActivity",
-                Descriptor.ofMethod(shadowActivity,
-                        arrayOf(androidDialog)))
+        val dialogSetOwnerActivityMethod = shadowDialogSupport.getMethod(
+            "dialogSetOwnerActivity",
+            Descriptor.ofMethod(
+                CtClass.voidType,
+                arrayOf(androidDialog, shadowActivity)
+            )
+        )
+        val dialogGetOwnerActivityMethod = shadowDialogSupport.getMethod(
+            "dialogGetOwnerActivity",
+            Descriptor.ofMethod(
+                shadowActivity,
+                arrayOf(androidDialog)
+            )
+        )
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) = allInputClass

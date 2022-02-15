@@ -39,7 +39,7 @@ public class TestApplicationActivity extends BaseActivity {
         mText.setText("isCallOnCreate:" + TestApplication.getInstance().isOnCreate);
     }
 
-    public void doClick(View view){
+    public void doClick(View view) {
 
     }
 }

@@ -32,7 +32,7 @@ public class TestWebView extends WebView {
         return this;
     }
 
-    void testNewWebView(){
+    void testNewWebView() {
         WebView webView = new WebView(new Context());
     }
 }

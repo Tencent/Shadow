@@ -16,7 +16,7 @@ class CommonJarSettingsPlugin : Plugin<Project> {
         java.sourceCompatibility = JavaVersion.VERSION_1_7
         java.targetCompatibility = JavaVersion.VERSION_1_7
 
-        project.dependencies.add("compileOnly","com.tencent.shadow.coding:android-jar")
+        project.dependencies.add("compileOnly", "com.tencent.shadow.coding:android-jar")
 
     }
 }

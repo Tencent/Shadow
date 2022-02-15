@@ -29,7 +29,7 @@ import android.os.Bundle;
 public class ShadowPendingIntent {
 
     public static PendingIntent getService(Context context, int requestCode,
-                                            Intent intent,  int flags) {
+                                           Intent intent, int flags) {
         //todo #51 实现PendingIntent 中的 Service和广播
         return PendingIntent.getService(context, requestCode, intent, flags);
     }
@@ -44,7 +44,7 @@ public class ShadowPendingIntent {
                                             Intent intent, int flags, Bundle options) {
         if (context instanceof ShadowContext && intent.getComponent() != null) {
             ShadowContext shadowContext = (ShadowContext) context;
-            if(shadowContext.getPendingIntentConverter() != null){
+            if (shadowContext.getPendingIntentConverter() != null) {
                 intent = shadowContext.getPendingIntentConverter().convertPluginActivityIntent(intent);
             }
             context = shadowContext.getBaseContext();

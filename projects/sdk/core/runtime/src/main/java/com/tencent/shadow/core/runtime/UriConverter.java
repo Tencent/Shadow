@@ -75,14 +75,14 @@ public class UriConverter {
     }
 
     public static void notifyChange(ContentResolver resolver, Uri uri, ContentObserver observer,
-            boolean syncToNetwork) {
+                                    boolean syncToNetwork) {
         Uri containerUri = UriConverter.parse(uri.toString());
         resolver.notifyChange(containerUri, observer, syncToNetwork);
     }
 
     @TargetApi(Build.VERSION_CODES.O)
     public static void notifyChange(ContentResolver resolver, Uri uri, ContentObserver observer,
-            int flags) {
+                                    int flags) {
         Uri containerUri = UriConverter.parse(uri.toString());
         resolver.notifyChange(containerUri, observer, flags);
     }

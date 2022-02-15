@@ -46,7 +46,7 @@ public class TestActivityWindowSoftMode extends Activity {
                         this,
                         "测试WindowSoftMode",
                         "TAG_SOFT_MODE",
-                        "SOFT_INPUT_STATE_VISIBLE:"+is_state_visible
+                        "SOFT_INPUT_STATE_VISIBLE:" + is_state_visible
                 )
         );
 

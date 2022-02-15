@@ -38,6 +38,7 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
      * value : plugin ContentProvider
      */
     private val providerMap = HashMap<String, ContentProvider>()
+
     /**
      * key : plugin Authority
      * value :  containerProvider Authority
@@ -67,7 +68,11 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
         return pluginUri
     }
 
-    fun addContentProviderInfo(partKey: String, pluginProviderInfo: PluginManifest.ProviderInfo, containerProviderInfo: ContainerProviderInfo) {
+    fun addContentProviderInfo(
+        partKey: String,
+        pluginProviderInfo: PluginManifest.ProviderInfo,
+        containerProviderInfo: ContainerProviderInfo
+    ) {
         if (providerMap.containsKey(pluginProviderInfo.authorities)) {
             throw RuntimeException("重复添加 ContentProvider")
         }
@@ -83,11 +88,15 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
         pluginProviderInfoMap.put(partKey, pluginProviderInfos)
     }
 
-    fun createContentProviderAndCallOnCreate(context: Context, partKey: String, pluginParts: PluginParts?) {
+    fun createContentProviderAndCallOnCreate(
+        context: Context,
+        partKey: String,
+        pluginParts: PluginParts?
+    ) {
         pluginProviderInfoMap[partKey]?.forEach {
             try {
                 val contentProvider = pluginParts!!.appComponentFactory
-                        .instantiateProvider(pluginParts.classLoader, it.className)
+                    .instantiateProvider(pluginParts.classLoader, it.className)
 
                 //convert PluginManifest.ProviderInfo to android.content.pm.ProviderInfo
                 val providerInfo = ProviderInfo()
@@ -99,7 +108,10 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
                 contentProvider?.attachInfo(context, providerInfo)
                 providerMap[it.authorities] = contentProvider
             } catch (e: Exception) {
-                throw RuntimeException("partKey==$partKey className==${it.className} authorities==${it.authorities}", e)
+                throw RuntimeException(
+                    "partKey==$partKey className==${it.className} authorities==${it.authorities}",
+                    e
+                )
             }
         }
 

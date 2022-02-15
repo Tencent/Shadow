@@ -39,7 +39,12 @@ class BinderPluginServiceConnection internal constructor(internal val mRemote: I
                 _data.writeInt(0)
             }
             _data.writeStrongBinder(service)
-            mRemote.transact(PluginServiceConnection.TRANSACTION_onServiceConnected, _data, _reply, 0)
+            mRemote.transact(
+                PluginServiceConnection.TRANSACTION_onServiceConnected,
+                _data,
+                _reply,
+                0
+            )
             _reply.readException()
         } finally {
             _reply.recycle()
@@ -59,7 +64,12 @@ class BinderPluginServiceConnection internal constructor(internal val mRemote: I
             } else {
                 _data.writeInt(0)
             }
-            mRemote.transact(PluginServiceConnection.TRANSACTION_onServiceDisconnected, _data, _reply, 0)
+            mRemote.transact(
+                PluginServiceConnection.TRANSACTION_onServiceDisconnected,
+                _data,
+                _reply,
+                0
+            )
             _reply.readException()
         } finally {
             _reply.recycle()

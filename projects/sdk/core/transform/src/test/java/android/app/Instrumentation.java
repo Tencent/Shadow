@@ -22,7 +22,8 @@ import android.content.Intent;
 
 public class Instrumentation {
 
-    public static class ActivityResult{
-        public ActivityResult(int code, Intent intent){}
+    public static class ActivityResult {
+        public ActivityResult(int code, Intent intent) {
+        }
     }
 }

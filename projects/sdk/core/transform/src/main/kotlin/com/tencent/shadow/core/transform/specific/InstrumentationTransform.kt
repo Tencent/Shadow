@@ -28,13 +28,15 @@ import javassist.CtMethod
 class InstrumentationTransform : SpecificTransform() {
     companion object {
         const val AndroidInstrumentationClassname = "android.app.Instrumentation"
-        const val ShadowInstrumentationClassname = "com.tencent.shadow.core.runtime.ShadowInstrumentation"
+        const val ShadowInstrumentationClassname =
+            "com.tencent.shadow.core.runtime.ShadowInstrumentation"
     }
 
     override fun setup(allInputClass: Set<CtClass>) {
         val shadowInstrumentation = mClassPool[ShadowInstrumentationClassname]
 
-        val newShadowApplicationMethods = shadowInstrumentation.getDeclaredMethods("newShadowApplication")
+        val newShadowApplicationMethods =
+            shadowInstrumentation.getDeclaredMethods("newShadowApplication")
 
         val newShadowActivityMethod = shadowInstrumentation.getDeclaredMethod("newShadowActivity")
 
@@ -43,9 +45,9 @@ class InstrumentationTransform : SpecificTransform() {
 
             override fun transform(ctClass: CtClass) {
                 ReplaceClassName.replaceClassName(
-                        ctClass,
-                        AndroidInstrumentationClassname,
-                        ShadowInstrumentationClassname
+                    ctClass,
+                    AndroidInstrumentationClassname,
+                    ShadowInstrumentationClassname
                 )
             }
         })
@@ -55,7 +57,12 @@ class InstrumentationTransform : SpecificTransform() {
             override fun transform(ctClass: CtClass) {
                 ctClass.defrost()
                 val codeConverter = CodeConverter()
-                newShadowApplicationMethods.forEach { codeConverter.redirectMethodCall("newApplication", it) }
+                newShadowApplicationMethods.forEach {
+                    codeConverter.redirectMethodCall(
+                        "newApplication",
+                        it
+                    )
+                }
 
                 codeConverter.redirectMethodCall("newActivity", newShadowActivityMethod)
                 try {

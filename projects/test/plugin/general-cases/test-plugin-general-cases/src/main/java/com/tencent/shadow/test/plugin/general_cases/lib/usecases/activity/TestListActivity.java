@@ -70,7 +70,7 @@ public class TestListActivity extends Activity {
                 holder.textView = convertView.findViewById(R.id.lli_text);
                 convertView.setTag(holder);
             } else {
-                holder = (Holder)convertView.getTag();
+                holder = (Holder) convertView.getTag();
             }
             String className = getItem(position).toString();
             if (className.indexOf(".") != -1) {

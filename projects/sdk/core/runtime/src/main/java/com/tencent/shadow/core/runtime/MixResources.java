@@ -35,7 +35,7 @@ public class MixResources extends ResourcesWrapper {
 
     private Resources mHostResources;
 
-    public MixResources(Resources hostResources,Resources pluginResources) {
+    public MixResources(Resources hostResources, Resources pluginResources) {
         super(pluginResources);
         mHostResources = hostResources;
     }
@@ -61,9 +61,9 @@ public class MixResources extends ResourcesWrapper {
     @Override
     public String getString(int id, Object... formatArgs) throws NotFoundException {
         try {
-            return super.getString(id,formatArgs);
+            return super.getString(id, formatArgs);
         } catch (NotFoundException e) {
-            return mHostResources.getString(id,formatArgs);
+            return mHostResources.getString(id, formatArgs);
         }
     }
 
@@ -109,7 +109,7 @@ public class MixResources extends ResourcesWrapper {
         try {
             return super.getDrawable(id, theme);
         } catch (NotFoundException e) {
-            return mHostResources.getDrawable(id,theme);
+            return mHostResources.getDrawable(id, theme);
         }
     }
 
@@ -132,7 +132,7 @@ public class MixResources extends ResourcesWrapper {
         try {
             return super.getDrawableForDensity(id, density, theme);
         } catch (Exception e) {
-            return mHostResources.getDrawableForDensity(id,density,theme);
+            return mHostResources.getDrawableForDensity(id, density, theme);
         }
     }
 
@@ -144,13 +144,14 @@ public class MixResources extends ResourcesWrapper {
             return mHostResources.getColor(id);
         }
     }
+
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public int getColor(int id, Theme theme) throws NotFoundException {
         try {
-            return super.getColor(id,theme);
+            return super.getColor(id, theme);
         } catch (NotFoundException e) {
-            return mHostResources.getColor(id,theme);
+            return mHostResources.getColor(id, theme);
         }
     }
 
@@ -162,13 +163,14 @@ public class MixResources extends ResourcesWrapper {
             return mHostResources.getColorStateList(id);
         }
     }
+
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public ColorStateList getColorStateList(int id, Theme theme) throws NotFoundException {
         try {
-            return super.getColorStateList(id,theme);
+            return super.getColorStateList(id, theme);
         } catch (NotFoundException e) {
-            return mHostResources.getColorStateList(id,theme);
+            return mHostResources.getColorStateList(id, theme);
         }
     }
 
@@ -186,7 +188,7 @@ public class MixResources extends ResourcesWrapper {
         try {
             return super.getLayout(id);
         } catch (NotFoundException e) {
-           return mHostResources.getLayout(id);
+            return mHostResources.getLayout(id);
         }
     }
 
@@ -211,9 +213,9 @@ public class MixResources extends ResourcesWrapper {
     @Override
     public CharSequence getText(int id, CharSequence def) {
         try {
-            return super.getText(id,def);
+            return super.getText(id, def);
         } catch (NotFoundException e) {
-            return mHostResources.getText(id,def);
+            return mHostResources.getText(id, def);
         }
     }
 
@@ -267,9 +269,9 @@ public class MixResources extends ResourcesWrapper {
     @Override
     public InputStream openRawResource(int id, TypedValue value) throws NotFoundException {
         try {
-            return super.openRawResource(id,value);
+            return super.openRawResource(id, value);
         } catch (NotFoundException e) {
-            return mHostResources.openRawResource(id,value);
+            return mHostResources.openRawResource(id, value);
         }
     }
 

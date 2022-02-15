@@ -35,6 +35,7 @@ public interface HelloWorldUpdater {
 
     /**
      * 获取本地最新可用的
+     *
      * @return <code>null</code>表示本地没有可用的
      */
     File getLatest();

@@ -10,10 +10,12 @@ import com.tencent.shadow.core.runtime.ShadowContext
 import java.io.File
 
 object CreatePluginApplicationInfoBloc {
-    fun create(installedApk: InstalledApk,
-               loadParameters: LoadParameters,
-               pluginManifest: PluginManifest,
-               hostAppContext: Context): ApplicationInfo {
+    fun create(
+        installedApk: InstalledApk,
+        loadParameters: LoadParameters,
+        pluginManifest: PluginManifest,
+        hostAppContext: Context
+    ): ApplicationInfo {
         val result = ApplicationInfo(hostAppContext.applicationInfo)
         result.sourceDir = installedApk.apkFilePath
         result.nativeLibraryDir = installedApk.libraryPath

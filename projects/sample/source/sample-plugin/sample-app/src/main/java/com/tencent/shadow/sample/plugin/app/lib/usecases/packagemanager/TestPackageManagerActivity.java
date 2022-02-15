@@ -61,34 +61,34 @@ public class TestPackageManagerActivity extends BaseActivity {
     }
 
 
-    public void getApplicationInfo(View view){
+    public void getApplicationInfo(View view) {
         try {
-            ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(),0);
-            mTvTextView.setText("ApplicationInfo className:"+applicationInfo.className+
-                    "\nnativeLibraryDir:"+applicationInfo.nativeLibraryDir
-            +"\nmetaData:"+applicationInfo.metaData);
+            ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), 0);
+            mTvTextView.setText("ApplicationInfo className:" + applicationInfo.className +
+                    "\nnativeLibraryDir:" + applicationInfo.nativeLibraryDir
+                    + "\nmetaData:" + applicationInfo.metaData);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
     }
 
 
-    public void getActivityInfo(View view){
+    public void getActivityInfo(View view) {
         try {
-            ActivityInfo activityInfo = getPackageManager().getActivityInfo(new ComponentName(this,this.getClass()),0);
-            mTvTextView.setText("activityInfo name:"+activityInfo.name
-                    +"\npackageName:"+activityInfo.packageName);
+            ActivityInfo activityInfo = getPackageManager().getActivityInfo(new ComponentName(this, this.getClass()), 0);
+            mTvTextView.setText("activityInfo name:" + activityInfo.name
+                    + "\npackageName:" + activityInfo.packageName);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
     }
 
 
-    public void getPackageInfo(View view){
+    public void getPackageInfo(View view) {
         try {
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(),0);
-            mTvTextView.setText("packageInfo versionName:"+packageInfo.versionName
-                    +"\nversionCode:"+packageInfo.versionCode);
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            mTvTextView.setText("packageInfo versionName:" + packageInfo.versionName
+                    + "\nversionCode:" + packageInfo.versionCode);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

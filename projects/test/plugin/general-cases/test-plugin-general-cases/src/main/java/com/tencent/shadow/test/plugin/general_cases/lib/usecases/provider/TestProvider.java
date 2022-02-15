@@ -32,7 +32,7 @@ import android.support.annotation.Nullable;
  * TestProvider
  * Created by 90Chris on 2016/5/1.
  */
-public class TestProvider extends ContentProvider{
+public class TestProvider extends ContentProvider {
     private TestDBHelper mOpenHelper;
 
     @Override
@@ -54,7 +54,7 @@ public class TestProvider extends ContentProvider{
         final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
 
         Cursor cursor = null;
-        switch ( buildUriMatcher().match(uri)) {
+        switch (buildUriMatcher().match(uri)) {
             case TEST:
                 cursor = db.query(TestProviderInfo.TestEntry.TABLE_NAME, projection, selection, selectionArgs, sortOrder, null, null);
                 break;

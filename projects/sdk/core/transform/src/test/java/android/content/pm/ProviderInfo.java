@@ -18,5 +18,5 @@
 
 package android.content.pm;
 
-public class ProviderInfo extends PackageItemInfo{
+public class ProviderInfo extends PackageItemInfo {
 }

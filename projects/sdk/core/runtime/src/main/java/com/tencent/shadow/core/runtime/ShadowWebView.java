@@ -77,52 +77,52 @@ public class ShadowWebView extends WebView {
         init(context);
     }
 
-    private void init(Context context){
+    private void init(Context context) {
         mContext = context;
         setWebViewClient(new WebViewClient());
     }
 
     @Override
     public void loadUrl(String url) {
-        if(url.startsWith(ANDROID_ASSET_PREFIX)){
-            url = url.replace(ANDROID_ASSET_PREFIX,REPLACE_ASSET_PREFIX);
+        if (url.startsWith(ANDROID_ASSET_PREFIX)) {
+            url = url.replace(ANDROID_ASSET_PREFIX, REPLACE_ASSET_PREFIX);
         }
         super.loadUrl(url);
     }
 
     @Override
     public void setWebViewClient(WebViewClient client) {
-        super.setWebViewClient(new WarpWebViewClient(client,mContext));
+        super.setWebViewClient(new WarpWebViewClient(client, mContext));
     }
 
-    class WarpWebViewClient extends WebViewClient{
+    class WarpWebViewClient extends WebViewClient {
 
         private WebViewClient mWebViewClient;
         private Context mContext;
 
-        public WarpWebViewClient(WebViewClient webViewClient,Context context){
+        public WarpWebViewClient(WebViewClient webViewClient, Context context) {
             mWebViewClient = webViewClient;
             mContext = context;
         }
 
-        private WebResourceResponse getInterceptResponse(String url){
-            if(url.startsWith(REPLACE_ASSET_PREFIX)){
+        private WebResourceResponse getInterceptResponse(String url) {
+            if (url.startsWith(REPLACE_ASSET_PREFIX)) {
                 int end = url.indexOf("?");
                 if (end == -1) {
                     end = url.length();
                 }
                 String filePath = url.substring(REPLACE_ASSET_PREFIX.length(), end);
                 String mime = "text/html";
-                if (filePath.contains(".css")){
+                if (filePath.contains(".css")) {
                     mime = "text/css";
-                }else if(filePath.contains(".js")){
+                } else if (filePath.contains(".js")) {
                     mime = "application/x-javascript";
-                }else if(filePath.contains(".jpg") || filePath.contains(".gif") ||
-                        filePath.contains(".png") || filePath.contains(".jpeg")){
+                } else if (filePath.contains(".jpg") || filePath.contains(".gif") ||
+                        filePath.contains(".png") || filePath.contains(".jpeg")) {
                     mime = "image/*";
                 }
                 try {
-                    return new WebResourceResponse(mime,"utf-8",mContext.getAssets().open(filePath));
+                    return new WebResourceResponse(mime, "utf-8", mContext.getAssets().open(filePath));
                 } catch (IOException ignored) {
                 }
             }
@@ -164,7 +164,7 @@ public class ShadowWebView extends WebView {
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
             WebResourceResponse resourceResponse = getInterceptResponse(url);
-            if(resourceResponse != null){
+            if (resourceResponse != null) {
                 return resourceResponse;
             }
             return mWebViewClient.shouldInterceptRequest(view, url);
@@ -175,7 +175,7 @@ public class ShadowWebView extends WebView {
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
             String url = request.getUrl().toString();
             WebResourceResponse resourceResponse = getInterceptResponse(url);
-            if(resourceResponse != null){
+            if (resourceResponse != null) {
                 return resourceResponse;
             }
             return mWebViewClient.shouldInterceptRequest(view, request);

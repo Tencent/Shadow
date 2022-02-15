@@ -25,9 +25,9 @@ import org.gradle.internal.classloader.VisitableURLClassLoader
 import java.io.File
 
 class AndroidClassPoolBuilder(
-        project: Project,
-        val contextClassLoader: ClassLoader,
-        val androidJar: File
+    project: Project,
+    val contextClassLoader: ClassLoader,
+    val androidJar: File
 ) : ClassPoolBuilder {
     private val logger = project.logger
 

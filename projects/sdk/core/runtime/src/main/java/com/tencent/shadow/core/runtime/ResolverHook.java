@@ -46,20 +46,20 @@ public class ResolverHook {
 
     @TargetApi(Build.VERSION_CODES.O)
     public static Cursor query(ContentResolver resolver, Uri uri, String[] projection, Bundle queryArgs,
-            CancellationSignal cancellationSignal) {
+                               CancellationSignal cancellationSignal) {
         Uri containerUri = UriConverter.parse(uri.toString());
         return resolver.query(containerUri, projection, queryArgs, cancellationSignal);
     }
 
     public static Cursor query(ContentResolver resolver, Uri uri, String[] projection, String selection,
-            String[] selectionArgs, String sortOrder) {
+                               String[] selectionArgs, String sortOrder) {
         Uri containerUri = UriConverter.parse(uri.toString());
         return resolver.query(containerUri, projection, selection, selectionArgs, sortOrder);
     }
 
     public static Cursor query(ContentResolver resolver, Uri uri, String[] projection, String selection,
-            String[] selectionArgs, String sortOrder,
-            CancellationSignal cancellationSignal) {
+                               String[] selectionArgs, String sortOrder,
+                               CancellationSignal cancellationSignal) {
         Uri containerUri = UriConverter.parse(uri.toString());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             return resolver.query(containerUri, projection, selection, selectionArgs, sortOrder, cancellationSignal);

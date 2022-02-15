@@ -38,20 +38,22 @@ class PackageMultiPluginTest {
     @Test
     fun testPackageMultiPlugin() {
         GradleRunner.create()
-                .withProjectDir(ROOT_PROJECT_DIR)
-                .withPluginClasspath()
-                .withArguments("clean")
-                .build()
+            .withProjectDir(ROOT_PROJECT_DIR)
+            .withPluginClasspath()
+            .withArguments("clean")
+            .build()
 
         val result = GradleRunner.create()
-                .withProjectDir(ROOT_PROJECT_DIR)
-                .withPluginClasspath()
-                .withArguments(listOf(
-                        "-xgeneratePluginDebugPluginManifest",
-                        "-Pdisable_shadow_transform=true",
-                        ":plugin1:PackageMultiPlugin"
-                ))
-                .build()
+            .withProjectDir(ROOT_PROJECT_DIR)
+            .withPluginClasspath()
+            .withArguments(
+                listOf(
+                    "-xgeneratePluginDebugPluginManifest",
+                    "-Pdisable_shadow_transform=true",
+                    ":plugin1:PackageMultiPlugin"
+                )
+            )
+            .build()
 
         val outcome = result.task(":plugin1:PackageMultiPlugin")!!.outcome
 
@@ -92,7 +94,8 @@ class PackageMultiPluginTest {
     }
 
     private fun assertJson() {
-        val jsonFile = File(PLUGIN1_PROJECT_DIR, "build/intermediates/generatePluginConfig/debug/config.json")
+        val jsonFile =
+            File(PLUGIN1_PROJECT_DIR, "build/intermediates/generatePluginConfig/debug/config.json")
         val json = JSONParser().parse(jsonFile.bufferedReader()) as JSONObject
         Assert.assertEquals(4L, json["version"])
 
@@ -120,7 +123,10 @@ class PackageMultiPluginTest {
         val hostWhiteListJson = pluginJson["hostWhiteList"] as JSONArray
         Assert.assertEquals(2, hostWhiteListJson.size)
 
-        val case2JsonFile = File(PLUGIN2_PROJECT_DIR, "/build/intermediates/generatePluginConfig/plugin2Debug/config.json")
+        val case2JsonFile = File(
+            PLUGIN2_PROJECT_DIR,
+            "/build/intermediates/generatePluginConfig/plugin2Debug/config.json"
+        )
         val case2Json = JSONParser().parse(case2JsonFile.bufferedReader()) as JSONObject
         Assert.assertEquals(case2Json["UUID"], json["UUID"])
     }

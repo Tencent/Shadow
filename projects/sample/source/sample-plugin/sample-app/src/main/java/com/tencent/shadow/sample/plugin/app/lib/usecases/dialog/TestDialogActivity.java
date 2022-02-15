@@ -46,14 +46,13 @@ public class TestDialogActivity extends BaseActivity {
     }
 
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_dialog_activity);
     }
 
-    public void show(View view){
+    public void show(View view) {
         TestDialog dialog = new TestDialog(this);
         dialog.setContentView(R.layout.layout_dialog);
 

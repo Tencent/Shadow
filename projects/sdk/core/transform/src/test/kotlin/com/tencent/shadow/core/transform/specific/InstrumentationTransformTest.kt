@@ -42,9 +42,9 @@ class InstrumentationTransformTest : AbstractTransformTest() {
 
         allInputClass.forEach {
             Assert.assertEquals(
-                    "Instrumentation父类应该都变为了ShadowInstrumentation",
-                    "com.tencent.shadow.core.runtime.ShadowInstrumentation",
-                    it.classFile.superclass
+                "Instrumentation父类应该都变为了ShadowInstrumentation",
+                "com.tencent.shadow.core.runtime.ShadowInstrumentation",
+                it.classFile.superclass
             )
         }
     }

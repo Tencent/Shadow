@@ -53,7 +53,7 @@ public class PackageManagerInvokeRedirect {
     }
 
     public static ServiceInfo getServiceInfo(ClassLoader classLoaderOfInvokeCode, ComponentName component, int flags) throws PackageManager.NameNotFoundException {
-        return getPluginPackageManager(classLoaderOfInvokeCode).getServiceInfo(component,flags);
+        return getPluginPackageManager(classLoaderOfInvokeCode).getServiceInfo(component, flags);
     }
 
     public static PackageInfo getPackageInfo(ClassLoader classLoaderOfInvokeCode, String packageName, int flags) throws PackageManager.NameNotFoundException {
@@ -79,7 +79,7 @@ public class PackageManagerInvokeRedirect {
     }
 
     public static ResolveInfo resolveService(ClassLoader classLoaderOfInvokeCode, Intent intent, int flags) {
-        return getPluginPackageManager(classLoaderOfInvokeCode).resolveService(intent,flags);
+        return getPluginPackageManager(classLoaderOfInvokeCode).resolveService(intent, flags);
     }
 
 }

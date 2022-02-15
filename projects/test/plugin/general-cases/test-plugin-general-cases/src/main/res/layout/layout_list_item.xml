@@ -4,6 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <TextView
         android:id="@+id/lli_text"
         android:layout_width="match_parent"
@@ -12,5 +13,5 @@
         android:gravity="center_vertical"
         android:padding="10dp"
         android:textColor="#cccccc"
-        tools:text="Test"/>
+        tools:text="Test" />
 </LinearLayout>

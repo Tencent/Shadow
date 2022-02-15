@@ -45,7 +45,7 @@ public class TestActivityReCreateBySystem extends Activity {
 
         @Override
         public Bundle getPageParams() {
-            Bundle bundle= new Bundle();
+            Bundle bundle = new Bundle();
             bundle.putString("url", "https://www.baidu.com");
             return bundle;
         }

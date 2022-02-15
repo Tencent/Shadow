@@ -61,6 +61,7 @@ class ActivityCodeGenerator {
         const val DELEGATE_PACKAGE = "com.tencent.shadow.core.loader.delegates"
 
         const val PREFIX = "Generated"
+
         //CS:const string
         const val CS_HostActivityDelegate = "${PREFIX}HostActivityDelegate"
         const val CS_HostActivityDelegator = "${PREFIX}HostActivityDelegator"
@@ -73,10 +74,11 @@ class ActivityCodeGenerator {
         const val CS_pluginActivity_field = "pluginActivity"
 
         val classPool = ClassPool.getDefault()
+
         init {
             // 兼容javassist升级后的ClassPool#appendSystemPath()改动：
             // https://github.com/jboss-javassist/javassist/commit/e41e0790c0cb073e9e2e30071afecfcdc4621d42
-            if (javassist.bytecode.ClassFile.MAJOR_VERSION < javassist.bytecode.ClassFile.JAVA_9){
+            if (javassist.bytecode.ClassFile.MAJOR_VERSION < javassist.bytecode.ClassFile.JAVA_9) {
                 val cl = Thread.currentThread().contextClassLoader
                 classPool.appendClassPath(LoaderClassPath(cl))
             }
@@ -102,12 +104,12 @@ class ActivityCodeGenerator {
             ctClass.name = name
 
             mapOf(
-                    Activity::class to "ShadowActivity",
-                    Application::class to "ShadowApplication"
+                Activity::class to "ShadowActivity",
+                Application::class to "ShadowApplication"
             ).forEach {
                 val newClassName = "$RUNTIME_PACKAGE.${it.value}"
                 renameMap[Descriptor.toJvmName(it.key.java.name)] =
-                        Descriptor.toJvmName(newClassName)
+                    Descriptor.toJvmName(newClassName)
 
                 newClassNames.add(newClassName)
             }
@@ -120,9 +122,9 @@ class ActivityCodeGenerator {
             val allMethods = clazz.methods.toMutableSet()
             allMethods.addAll(clazz.declaredMethods)
             return allMethods
-                    .filter {
-                        it.declaringClass != Object::class.java
-                    }
+                .filter {
+                    it.declaringClass != Object::class.java
+                }
         }
 
         /**
@@ -135,11 +137,11 @@ class ActivityCodeGenerator {
 
             fun addMethod(name: String, vararg args: Class<*>) {
                 val method =
-                        try {
-                            clazz.getDeclaredMethod(name, * args)
-                        } catch (e: NoSuchMethodException) {
-                            clazz.getMethod(name, * args)
-                        }
+                    try {
+                        clazz.getDeclaredMethod(name, * args)
+                    } catch (e: NoSuchMethodException) {
+                        clazz.getMethod(name, * args)
+                    }
                 set.add(method)
             }
 
@@ -160,12 +162,12 @@ class ActivityCodeGenerator {
             callbacks.addAll(getCustomMethods(clazz))
 
             val startWithOnMethods = getActivityMethods(clazz)
-                    .filter {
-                        java.lang.reflect.Modifier.isPublic(it.modifiers) or
-                                java.lang.reflect.Modifier.isProtected(it.modifiers)
-                    }.filter {
-                        it.name.startsWith("on")
-                    }
+                .filter {
+                    java.lang.reflect.Modifier.isPublic(it.modifiers) or
+                            java.lang.reflect.Modifier.isProtected(it.modifiers)
+                }.filter {
+                    it.name.startsWith("on")
+                }
             callbacks.addAll(startWithOnMethods)
 
             val callbackInterface = getActivityMethods(clazz).filter {
@@ -224,13 +226,13 @@ class ActivityCodeGenerator {
             val builder = MethodSpec.methodBuilder(methodName)
             parameters.forEach {
                 builder.addParameter(
-                        ParameterSpec.builder(it.parameterizedType, it.name).build()
+                    ParameterSpec.builder(it.parameterizedType, it.name).build()
                 )
             }
             builder.addExceptions(
-                    exceptionTypes.map {
-                        TypeName.get(it)
-                    }
+                exceptionTypes.map {
+                    TypeName.get(it)
+                }
             )
             builder.addTypeVariables(typeParameters.map {
                 TypeVariableName.get(it)
@@ -266,32 +268,32 @@ class ActivityCodeGenerator {
          */
         private fun Class<*>.isSafeForLowApi(): Boolean {
             val safeType: List<String?> = listOf(
-                    android.app.Activity::class,
-                    android.app.Dialog::class,
-                    android.app.Fragment::class,
-                    android.content.ComponentName::class,
-                    android.content.Context::class,
-                    android.content.Intent::class,
-                    android.content.res.Configuration::class,
-                    android.content.res.Resources.Theme::class,
-                    android.content.res.Resources::class,
-                    android.graphics.Bitmap::class,
-                    android.graphics.Canvas::class,
-                    android.net.Uri::class,
-                    android.os.Bundle::class,
-                    android.util.AttributeSet::class,
-                    android.view.ActionMode.Callback::class,
-                    android.view.ActionMode::class,
-                    android.view.ContextMenu.ContextMenuInfo::class,
-                    android.view.ContextMenu::class,
-                    android.view.KeyEvent::class,
-                    android.view.Menu::class,
-                    android.view.MenuItem::class,
-                    android.view.MotionEvent::class,
-                    android.view.View::class,
-                    android.view.WindowManager.LayoutParams::class,
-                    android.view.accessibility.AccessibilityEvent::class,
-                    android.view.LayoutInflater::class
+                android.app.Activity::class,
+                android.app.Dialog::class,
+                android.app.Fragment::class,
+                android.content.ComponentName::class,
+                android.content.Context::class,
+                android.content.Intent::class,
+                android.content.res.Configuration::class,
+                android.content.res.Resources.Theme::class,
+                android.content.res.Resources::class,
+                android.graphics.Bitmap::class,
+                android.graphics.Canvas::class,
+                android.net.Uri::class,
+                android.os.Bundle::class,
+                android.util.AttributeSet::class,
+                android.view.ActionMode.Callback::class,
+                android.view.ActionMode::class,
+                android.view.ContextMenu.ContextMenuInfo::class,
+                android.view.ContextMenu::class,
+                android.view.KeyEvent::class,
+                android.view.Menu::class,
+                android.view.MenuItem::class,
+                android.view.MotionEvent::class,
+                android.view.View::class,
+                android.view.WindowManager.LayoutParams::class,
+                android.view.accessibility.AccessibilityEvent::class,
+                android.view.LayoutInflater::class
             ).map { it.java.canonicalName }
 
             return isPrimitive or
@@ -305,10 +307,11 @@ class ActivityCodeGenerator {
             val builder = MethodSpec.methodBuilder(methodName)
             parameters.forEach {
                 builder.addParameter(
-                        ParameterSpec.builder(
-                                if (it.type.isSafeForLowApi()) it.parameterizedType else Object::class.java,
-                                it.name)
-                                .build()
+                    ParameterSpec.builder(
+                        if (it.type.isSafeForLowApi()) it.parameterizedType else Object::class.java,
+                        it.name
+                    )
+                        .build()
                 )
             }
             if (exceptionTypes.isNotEmpty()) {
@@ -329,7 +332,8 @@ class ActivityCodeGenerator {
         }
     }
 
-    val commonJavadoc = "由\n" + "{@link com.tencent.shadow.coding.code_generator.ActivityCodeGenerator}\n" + "自动生成\n"
+    val commonJavadoc =
+        "由\n" + "{@link com.tencent.shadow.coding.code_generator.ActivityCodeGenerator}\n" + "自动生成\n"
 
     val activityDelegate = defineActivityDelegate()
     val activityDelegator = defineActivityDelegator()
@@ -358,71 +362,74 @@ class ActivityCodeGenerator {
             )
 
     fun defineActivityDelegator() =
-            TypeSpec.interfaceBuilder(CS_HostActivityDelegator)
-                    .addModifiers(Modifier.PUBLIC)
-                    .addJavadoc(commonJavadoc
-                            + "HostActivityDelegator作为委托者的接口。主要提供它的委托方法的super方法，\n"
-                            + "以便Delegate可以通过这个接口调用到Activity的super方法。\n"
-                    )
+        TypeSpec.interfaceBuilder(CS_HostActivityDelegator)
+            .addModifiers(Modifier.PUBLIC)
+            .addJavadoc(
+                commonJavadoc
+                        + "HostActivityDelegator作为委托者的接口。主要提供它的委托方法的super方法，\n"
+                        + "以便Delegate可以通过这个接口调用到Activity的super方法。\n"
+            )
 
     fun definePluginContainerActivity(className: String, superclass: Type) =
-            TypeSpec.classBuilder(className)
-                    .addModifiers(Modifier.ABSTRACT)
-                    .superclass(superclass)
-                    .addSuperinterface(ClassName.get(ACTIVITY_CONTAINER_PACKAGE, CS_HostActivityDelegator))
-                    .addAnnotation(
-                            AnnotationSpec.builder(SuppressLint::class.java)
-                                    .addMember("value", "{\"NewApi\", \"MissingPermission\"}")
-                                    .build()
-                    )
-                    .addField(
-                            ClassName.get(ACTIVITY_CONTAINER_PACKAGE, CS_HostActivityDelegate),
-                            CS_delegate_field
-                    )
-                    .addJavadoc(commonJavadoc)
+        TypeSpec.classBuilder(className)
+            .addModifiers(Modifier.ABSTRACT)
+            .superclass(superclass)
+            .addSuperinterface(ClassName.get(ACTIVITY_CONTAINER_PACKAGE, CS_HostActivityDelegator))
+            .addAnnotation(
+                AnnotationSpec.builder(SuppressLint::class.java)
+                    .addMember("value", "{\"NewApi\", \"MissingPermission\"}")
+                    .build()
+            )
+            .addField(
+                ClassName.get(ACTIVITY_CONTAINER_PACKAGE, CS_HostActivityDelegate),
+                CS_delegate_field
+            )
+            .addJavadoc(commonJavadoc)
 
     fun definePluginActivity() =
-            TypeSpec.classBuilder(CS_PluginActivity)
-                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                    .superclass(ClassName.get(RUNTIME_PACKAGE, "ShadowContext"))
-                    .addSuperinterfaces(listOf(
-                        ClassName.get(ComponentCallbacks2::class.java),
-                        ClassName.get(Window.Callback::class.java),
-                        ClassName.get(KeyEvent.Callback::class.java)
-                    ))
-                    .addAnnotation(
-                            AnnotationSpec.builder(SuppressLint::class.java)
-                                    .addMember("value", "{\"NullableProblems\", \"deprecation\"}")
-                                    .build()
-                    )
-                    .addField(
-                            ClassName.get(ACTIVITY_CONTAINER_PACKAGE, CS_HostActivityDelegator),
-                            CS_delegator_field
-                    )
-                    .addJavadoc(commonJavadoc)
+        TypeSpec.classBuilder(CS_PluginActivity)
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .superclass(ClassName.get(RUNTIME_PACKAGE, "ShadowContext"))
+            .addSuperinterfaces(
+                listOf(
+                    ClassName.get(ComponentCallbacks2::class.java),
+                    ClassName.get(Window.Callback::class.java),
+                    ClassName.get(KeyEvent.Callback::class.java)
+                )
+            )
+            .addAnnotation(
+                AnnotationSpec.builder(SuppressLint::class.java)
+                    .addMember("value", "{\"NullableProblems\", \"deprecation\"}")
+                    .build()
+            )
+            .addField(
+                ClassName.get(ACTIVITY_CONTAINER_PACKAGE, CS_HostActivityDelegator),
+                CS_delegator_field
+            )
+            .addJavadoc(commonJavadoc)
 
     fun defineShadowActivityDelegate() =
-            TypeSpec.classBuilder(CS_ShadowActivityDelegate)
-                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                    .superclass(ClassName.get(DELEGATE_PACKAGE, "ShadowDelegate"))
-                    .addSuperinterface(
-                            ClassName.get(ACTIVITY_CONTAINER_PACKAGE, CS_HostActivityDelegate)
-                    )
-                    .addField(
-                            ClassName.get(RUNTIME_PACKAGE, CS_PluginActivity),
-                            CS_pluginActivity_field
-                    )
-                    .addJavadoc(commonJavadoc)
-                    .addAnnotation(
-                        AnnotationSpec.builder(SuppressLint::class.java)
-                            .addMember("value", "\"NewApi\"")
-                            .build()
-                    )
-                .addAnnotation(
-                    AnnotationSpec.builder(SuppressWarnings::class.java)
-                        .addMember("value", "{\"unchecked\", \"JavadocReference\"}")
-                        .build()
-                )
+        TypeSpec.classBuilder(CS_ShadowActivityDelegate)
+            .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+            .superclass(ClassName.get(DELEGATE_PACKAGE, "ShadowDelegate"))
+            .addSuperinterface(
+                ClassName.get(ACTIVITY_CONTAINER_PACKAGE, CS_HostActivityDelegate)
+            )
+            .addField(
+                ClassName.get(RUNTIME_PACKAGE, CS_PluginActivity),
+                CS_pluginActivity_field
+            )
+            .addJavadoc(commonJavadoc)
+            .addAnnotation(
+                AnnotationSpec.builder(SuppressLint::class.java)
+                    .addMember("value", "\"NewApi\"")
+                    .build()
+            )
+            .addAnnotation(
+                AnnotationSpec.builder(SuppressWarnings::class.java)
+                    .addMember("value", "{\"unchecked\", \"JavadocReference\"}")
+                    .build()
+            )
 
     fun generate(outputDir: File, moduleName: String) {
         outputDir.mkdirs()
@@ -457,25 +464,25 @@ class ActivityCodeGenerator {
 
         //将Activity可以被调用的方法都暴露出来
         activityDelegator.addMethods(
-                otherMethods.map { it.toInterfaceMethodSpec() }
+            otherMethods.map { it.toInterfaceMethodSpec() }
         )
 
         //TODO:这些方法应该不需要定义出来，但先对齐原手工实现的类，保证单元测试检测生成类和原手工写的类一致可以通过。
         activityDelegator.addMethods(
-                activityCallbackMethods.filter {
-                    it.hasSameDefineIn(Window.Callback::class.java)
-                }.map { it.toInterfaceMethodSpec() }
+            activityCallbackMethods.filter {
+                it.hasSameDefineIn(Window.Callback::class.java)
+            }.map { it.toInterfaceMethodSpec() }
         )
 
         //添加系统会调用的方法的对应super方法，这些super方法实现时实现为调用super同名方法
         activityDelegator.addMethods(
-                activityCallbackMethods.map { it.toInterfaceMethodSpec("super") }
+            activityCallbackMethods.map { it.toInterfaceMethodSpec("super") }
         )
 
         //TODO:这些方法并不需要添加super前缀方法，但先对齐原手工实现的类，保证单元测试检测生成类和原手工写的类一致可以通过。
         activityDelegator.addMethods(
-                otherMethods.filterNot { activityCallbackMethods.contains(it) }
-                        .map { it.toInterfaceMethodSpec("super") }
+            otherMethods.filterNot { activityCallbackMethods.contains(it) }
+                .map { it.toInterfaceMethodSpec("super") }
         )
 
         //对系统会调用的方法转调到hostActivityDelegate去，再生成对应的super方法
@@ -501,33 +508,33 @@ class ActivityCodeGenerator {
         }
 
         pluginActivity.addMethods(
-                activityCallbackMethodsModified
-                        .filterNot { it.name == "getResources" }
-                        .filterNot { it.name == "getClassLoader" }
-                        .map {
-                            defineMethodXXX(it, true)
-                        }
+            activityCallbackMethodsModified
+                .filterNot { it.name == "getResources" }
+                .filterNot { it.name == "getClassLoader" }
+                .map {
+                    defineMethodXXX(it, true)
+                }
         )
 
         pluginActivity.addMethods(
-                otherMethodsModified
-                        .filterNot {
-                            it.hasSameMethodIn(ContextThemeWrapper::class.java)
-                        }
-                        .filterNot { getCustomMethods(ModifiedActivityClass).contains(it) }
-                        .map {
-                            defineMethodXXX(it, false)
-                        }
-                        .toList()
+            otherMethodsModified
+                .filterNot {
+                    it.hasSameMethodIn(ContextThemeWrapper::class.java)
+                }
+                .filterNot { getCustomMethods(ModifiedActivityClass).contains(it) }
+                .map {
+                    defineMethodXXX(it, false)
+                }
+                .toList()
         )
 
         //实现所有Delegate方法
         shadowActivityDelegate.addMethods(
-                activityCallbackMethodsModified
-                        .filter { it.isNotModified() }
-                        .map {
-                            implementDelegateMethod(it)
-                        }
+            activityCallbackMethodsModified
+                .filter { it.isNotModified() }
+                .map {
+                    implementDelegateMethod(it)
+                }
         )
     }
 
@@ -595,10 +602,10 @@ class ActivityCodeGenerator {
             it.name
         }
         val invokeMethod =
-                if (hasSuperMethod)
-                    "super${method.name.capitalize()}"
-                else
-                    "${method.name}"
+            if (hasSuperMethod)
+                "super${method.name.capitalize()}"
+            else
+                "${method.name}"
         methodBuilder.addStatement("${ret}${CS_delegator_field}.${invokeMethod}($args)")
 
         return methodBuilder.build()
@@ -625,11 +632,11 @@ class ActivityCodeGenerator {
     }
 
     fun defineMethodXXX(method: Method, hasSuperMethod: Boolean) =
-            if (method.isNotModified()) {
-                defineMethod(method, hasSuperMethod)
-            } else {
-                defineAbstractMethod(method)
-            }
+        if (method.isNotModified()) {
+            defineMethod(method, hasSuperMethod)
+        } else {
+            defineAbstractMethod(method)
+        }
 
     fun implementDelegateMethod(method: Method): MethodSpec {
         val methodBuilder = method.toMethodSpecBuilderWithObjectType()
@@ -638,7 +645,10 @@ class ActivityCodeGenerator {
 
         val ret = if (method.returnType == Void::class.javaPrimitiveType) "" else "return "
         val args = method.parameters.joinToString(separator = ", ") {
-            (if (it.type.isSafeForLowApi()) CodeBlock.of("\$L", it.name) else CodeBlock.of("(\$T) \$L", it.parameterizedType, it.name)).toString()
+            (if (it.type.isSafeForLowApi()) CodeBlock.of(
+                "\$L",
+                it.name
+            ) else CodeBlock.of("(\$T) \$L", it.parameterizedType, it.name)).toString()
         }
         methodBuilder.addStatement("${ret}${CS_pluginActivity_field}.${method.name}($args)")
 

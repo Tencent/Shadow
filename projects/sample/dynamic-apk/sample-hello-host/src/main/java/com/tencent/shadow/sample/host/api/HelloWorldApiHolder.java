@@ -25,7 +25,7 @@ import java.io.File;
 
 public class HelloWorldApiHolder {
 
-    public static IHelloWorld getHelloWorld(File apk){
+    public static IHelloWorld getHelloWorld(File apk) {
         final FixedPathPmUpdater fixedPathPmUpdater = new FixedPathPmUpdater(apk);
         File tempPm = fixedPathPmUpdater.getLatest();
         if (tempPm != null) {

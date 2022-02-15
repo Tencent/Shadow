@@ -53,17 +53,17 @@ public class TestActivityOrientation extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_orientation);
-        ToastUtil.showToast(this,"onCreate");
+        ToastUtil.showToast(this, "onCreate");
     }
 
 
-    public void setOrientation(View view){
-       int orientation =  getRequestedOrientation();
-       if(orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
-           setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-       }else {
-           setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-       }
+    public void setOrientation(View view) {
+        int orientation = getRequestedOrientation();
+        if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        } else {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
     }
 
     @Override

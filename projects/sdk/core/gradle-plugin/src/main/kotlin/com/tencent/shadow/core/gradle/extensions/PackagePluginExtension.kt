@@ -55,10 +55,10 @@ open class PackagePluginExtension {
     }
 
     fun toJson(
-            project: Project,
-            loaderApkName: String,
-            runtimeApkName: String,
-            buildType: PluginBuildType
+        project: Project,
+        loaderApkName: String,
+        runtimeApkName: String,
+        buildType: PluginBuildType
     ): JSONObject {
         val json = JSONObject()
 

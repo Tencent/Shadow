@@ -25,48 +25,49 @@ import android.content.pm.*
 import com.tencent.shadow.core.runtime.PluginPackageManager
 
 @SuppressLint("WrongConstant")
-internal class PluginPackageManagerImpl(private val pluginApplicationInfoFromPluginManifest: ApplicationInfo,
-                                        private val pluginArchiveFilePath: String,
-                                        private val componentManager: ComponentManager,
-                                        private val hostPackageManager: PackageManager
+internal class PluginPackageManagerImpl(
+    private val pluginApplicationInfoFromPluginManifest: ApplicationInfo,
+    private val pluginArchiveFilePath: String,
+    private val componentManager: ComponentManager,
+    private val hostPackageManager: PackageManager
 ) : PluginPackageManager {
     override fun getApplicationInfo(packageName: String, flags: Int): ApplicationInfo =
-            if (packageName.isPlugin()) {
-                getPluginApplicationInfo(flags)
-            } else {
-                hostPackageManager.getApplicationInfo(packageName, flags)
-            }
+        if (packageName.isPlugin()) {
+            getPluginApplicationInfo(flags)
+        } else {
+            hostPackageManager.getApplicationInfo(packageName, flags)
+        }
 
     override fun getPackageInfo(packageName: String, flags: Int): PackageInfo? =
-            if (packageName.isPlugin()) {
-                val packageInfo = hostPackageManager.getPackageArchiveInfo(pluginArchiveFilePath, flags)
-                if (packageInfo != null) {
-                    packageInfo.applicationInfo = getPluginApplicationInfo(flags)
-                }
-                packageInfo
-            } else {
-                hostPackageManager.getPackageInfo(packageName, flags)
+        if (packageName.isPlugin()) {
+            val packageInfo = hostPackageManager.getPackageArchiveInfo(pluginArchiveFilePath, flags)
+            if (packageInfo != null) {
+                packageInfo.applicationInfo = getPluginApplicationInfo(flags)
             }
+            packageInfo
+        } else {
+            hostPackageManager.getPackageInfo(packageName, flags)
+        }
 
     override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo? =
-            getComponentInfo(
-                    component,
-                    flags,
-                    ComponentManager::getArchiveFilePathForActivity,
-                    PackageManager.GET_ACTIVITIES,
-                    { it?.activities },
-                    PackageManager::getActivityInfo
-            )
+        getComponentInfo(
+            component,
+            flags,
+            ComponentManager::getArchiveFilePathForActivity,
+            PackageManager.GET_ACTIVITIES,
+            { it?.activities },
+            PackageManager::getActivityInfo
+        )
 
     override fun getServiceInfo(component: ComponentName, flags: Int): ServiceInfo? =
-            getComponentInfo(
-                    component,
-                    flags,
-                    ComponentManager::getArchiveFilePathForService,
-                    PackageManager.GET_SERVICES,
-                    { it?.services },
-                    PackageManager::getServiceInfo
-            )
+        getComponentInfo(
+            component,
+            flags,
+            ComponentManager::getArchiveFilePathForService,
+            PackageManager.GET_SERVICES,
+            { it?.services },
+            PackageManager::getServiceInfo
+        )
 
     override fun resolveActivity(intent: Intent, flags: Int): ResolveInfo? {
         val component = intent.component
@@ -95,19 +96,19 @@ internal class PluginPackageManagerImpl(private val pluginApplicationInfoFromPlu
     }
 
     private fun <T : ComponentInfo> getComponentInfo(
-            component: ComponentName,
-            flags: Int,
-            getArchiveFilePath: ComponentManager.(String) -> String?,
-            componentGetFlag: Int,
-            getFromPackageInfo: (PackageInfo?) -> Array<T>?,
-            getFromHost: PackageManager.(component: ComponentName, flags: Int) -> T?
+        component: ComponentName,
+        flags: Int,
+        getArchiveFilePath: ComponentManager.(String) -> String?,
+        componentGetFlag: Int,
+        getFromPackageInfo: (PackageInfo?) -> Array<T>?,
+        getFromHost: PackageManager.(component: ComponentName, flags: Int) -> T?
     ): T? {
 
         if (component.packageName.isPlugin()) {
             val archiveFilePath = componentManager.getArchiveFilePath(component.className)
             if (archiveFilePath != null) {
                 val packageInfo = hostPackageManager.getPackageArchiveInfo(
-                        archiveFilePath, componentGetFlag or flags
+                    archiveFilePath, componentGetFlag or flags
                 )
                 val componentInfo = getFromPackageInfo(packageInfo)?.find {
                     it.name == component.className
@@ -124,7 +125,7 @@ internal class PluginPackageManagerImpl(private val pluginApplicationInfoFromPlu
         val (className, archiveFilePath) = componentManager.getArchiveFilePathForProvider(name)
         if (archiveFilePath != null) {
             val packageInfo = hostPackageManager.getPackageArchiveInfo(
-                    archiveFilePath, PackageManager.GET_PROVIDERS or flags
+                archiveFilePath, PackageManager.GET_PROVIDERS or flags
             )
             val componentInfo = packageInfo?.providers?.find {
                 it.name == className
@@ -137,24 +138,27 @@ internal class PluginPackageManagerImpl(private val pluginApplicationInfoFromPlu
     }
 
     override fun queryContentProviders(processName: String?, uid: Int, flags: Int) =
-            if (processName == null) {
-                val allNormalProviders =
-                        hostPackageManager.queryContentProviders(null, 0, flags)
-                val allPluginProviders = allPluginProviders(flags)
-                listOf(allNormalProviders, allPluginProviders).flatten()
-            } else if (processName == pluginApplicationInfoFromPluginManifest.processName &&
-                    uid == pluginApplicationInfoFromPluginManifest.uid) {
-                allPluginProviders(flags)
-            } else {
-                hostPackageManager.queryContentProviders(processName, uid, flags)
-            }
+        if (processName == null) {
+            val allNormalProviders =
+                hostPackageManager.queryContentProviders(null, 0, flags)
+            val allPluginProviders = allPluginProviders(flags)
+            listOf(allNormalProviders, allPluginProviders).flatten()
+        } else if (processName == pluginApplicationInfoFromPluginManifest.processName &&
+            uid == pluginApplicationInfoFromPluginManifest.uid
+        ) {
+            allPluginProviders(flags)
+        } else {
+            hostPackageManager.queryContentProviders(processName, uid, flags)
+        }
 
     private fun allPluginProviders(flags: Int): List<ProviderInfo> =
-            componentManager.getAllArchiveFilePaths().flatMap {
-                val packageInfo = hostPackageManager.getPackageArchiveInfo(it,
-                        PackageManager.GET_PROVIDERS or flags)
-                packageInfo?.providers?.asList().orEmpty()
-            }
+        componentManager.getAllArchiveFilePaths().flatMap {
+            val packageInfo = hostPackageManager.getPackageArchiveInfo(
+                it,
+                PackageManager.GET_PROVIDERS or flags
+            )
+            packageInfo?.providers?.asList().orEmpty()
+        }
 
     private fun String.isPlugin() = pluginApplicationInfoFromPluginManifest.packageName == this
 
@@ -163,7 +167,10 @@ internal class PluginPackageManagerImpl(private val pluginApplicationInfoFromPlu
 
         val needMetaData = flags and PackageManager.GET_META_DATA != 0
         if (needMetaData) {
-            val packageInfo = hostPackageManager.getPackageArchiveInfo(pluginArchiveFilePath, PackageManager.GET_META_DATA)!!
+            val packageInfo = hostPackageManager.getPackageArchiveInfo(
+                pluginArchiveFilePath,
+                PackageManager.GET_META_DATA
+            )!!
             val metaData = packageInfo.applicationInfo.metaData
             copy.metaData = metaData
         }

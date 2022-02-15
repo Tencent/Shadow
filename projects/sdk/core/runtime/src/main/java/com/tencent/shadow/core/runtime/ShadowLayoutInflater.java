@@ -68,7 +68,7 @@ public class ShadowLayoutInflater extends ShadowWebViewLayoutInflater {
     private static class InnerInflater extends ShadowLayoutInflater {
         private InnerInflater(LayoutInflater original, Context newContext, String partKey) {
             super(original, newContext, partKey);
-            setFactory2(new ShadowFactory2(partKey,this));
+            setFactory2(new ShadowFactory2(partKey, this));
         }
     }
 

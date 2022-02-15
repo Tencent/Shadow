@@ -59,7 +59,7 @@ public class TestActivityWindowSoftMode extends BaseActivity {
         boolean is_state_visible = layoutParams.softInputMode == WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE;
 
         TextView textView = findViewById(R.id.result);
-        textView.setText("SOFT_INPUT_STATE_VISIBLE:"+is_state_visible);
+        textView.setText("SOFT_INPUT_STATE_VISIBLE:" + is_state_visible);
 
         mEditText = findViewById(R.id.edit_view);
         mEditText.requestFocus();
