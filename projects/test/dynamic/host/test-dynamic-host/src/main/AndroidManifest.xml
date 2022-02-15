@@ -85,20 +85,18 @@
         <provider
             android:authorities="${applicationId}.contentprovider.authority.dynamic"
             android:name="com.tencent.shadow.core.runtime.container.PluginContainerContentProvider"
-            android:grantUriPermissions="true"
-            />
+            android:grantUriPermissions="true" />
 
-        <service android:name=".PluginProcessPPS"
-            />
+        <service android:name=".PluginProcessPPS" />
         <service
             android:name=".PluginServiceProcessPPS"
             android:process=".plugin_service" />
 
-        <activity android:name=".PluginLoadActivity"
+        <activity
+            android:name=".PluginLoadActivity"
             android:launchMode="standard"
             android:screenOrientation="portrait"
-            android:theme="@style/troop_Transparent"
-            />
+            android:theme="@style/troop_Transparent" />
 
         <activity android:name=".JumpToPluginActivity" />
 
@@ -114,8 +112,7 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:theme="@style/troop_Transparent"
-            />
+            android:theme="@style/troop_Transparent" />
 
         <activity
             android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginSingleInstance1ProxyActivity"
@@ -123,8 +120,7 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:theme="@style/troop_Transparent"
-            />
+            android:theme="@style/troop_Transparent" />
 
         <activity
             android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginSingleTask1ProxyActivity"
@@ -132,8 +128,7 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:theme="@style/troop_Transparent"
-            />
+            android:theme="@style/troop_Transparent" />
         <!--dynamic activity注册 end -->
     </application>
 

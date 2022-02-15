@@ -89,7 +89,7 @@ public class DynamicRuntime {
     }
 
 
-    private static void recoveryClassLoader() throws Exception{
+    private static void recoveryClassLoader() throws Exception {
         ClassLoader contextClassLoader = DynamicRuntime.class.getClassLoader();
         ClassLoader child = contextClassLoader;
         ClassLoader tmpClassLoader = contextClassLoader.getParent();
@@ -132,7 +132,7 @@ public class DynamicRuntime {
      * @throws Exception 失败时抛出
      */
     static void hackParentClassLoader(ClassLoader classLoader,
-                                              ClassLoader newParentClassLoader) throws Exception {
+                                      ClassLoader newParentClassLoader) throws Exception {
         Field field = getParentField();
         if (field == null) {
             throw new RuntimeException("在ClassLoader.class中没找到类型为ClassLoader的parent域");

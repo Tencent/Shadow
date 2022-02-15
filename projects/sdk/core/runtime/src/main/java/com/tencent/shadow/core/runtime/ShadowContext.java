@@ -148,9 +148,9 @@ public class ShadowContext extends SubDirContextThemeWrapper {
         /**
          * 启动Activity
          *
-         * @param delegator 发起启动的activity的delegator
-         * @param intent    插件内传来的Intent.
-         * @param callingActivity   调用者
+         * @param delegator       发起启动的activity的delegator
+         * @param intent          插件内传来的Intent.
+         * @param callingActivity 调用者
          * @return <code>true</code>表示该Intent是为了启动插件内Activity的,已经被正确消费了.
          * <code>false</code>表示该Intent不是插件内的Activity.
          */

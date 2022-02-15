@@ -83,17 +83,16 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".DefaultContainerActivity"
+        <activity
+            android:name=".DefaultContainerActivity"
             android:screenOrientation="portrait"
-            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
-            />
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection" />
 
-        <activity android:name=".SingleTaskContainerActivity"
+        <activity
+            android:name=".SingleTaskContainerActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
-            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
-            />
-
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection" />
 
 
         <provider

@@ -35,6 +35,7 @@ public class TestProviderInfo {
     public static final class TestEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_TEST).build();
+
         protected static Uri buildUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }

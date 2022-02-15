@@ -97,8 +97,8 @@ public abstract class ShadowService extends ShadowContext {
         //todo #37 支持Service设置Foreground
         //mHostServiceDelegator.stopForeground(removeNotification);
     }
-    
-    public final void startForeground(int id, Notification notification, int foregroundServiceType){
+
+    public final void startForeground(int id, Notification notification, int foregroundServiceType) {
 
     }
 

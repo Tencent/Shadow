@@ -45,7 +45,8 @@ public abstract class PluginTest {
 
     /**
      * 要启动的插件intent
-     * @return  插件Activity intent
+     *
+     * @return 插件Activity intent
      */
     abstract protected Intent getLaunchIntent();
 
@@ -56,10 +57,11 @@ public abstract class PluginTest {
 
     /**
      * 检测view
+     *
      * @param tag  view的tag
      * @param text view上的文字
      */
-    public void matchTextWithViewTag(String tag,String text){
+    public void matchTextWithViewTag(String tag, String text) {
         Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is(tag)))
                 .check(ViewAssertions.matches(ViewMatchers.withText(text)));
     }

@@ -52,7 +52,9 @@ public class MainActivity extends Activity {
                     public void run() {
                         //hello.apk 里实现了 IHelloWorld
                         final IHelloWorld api = HelloWorldApiHolder.getHelloWorld(PluginHelper.getInstance().helloApkFile);
-                        if (api == null) { return; }
+                        if (api == null) {
+                            return;
+                        }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

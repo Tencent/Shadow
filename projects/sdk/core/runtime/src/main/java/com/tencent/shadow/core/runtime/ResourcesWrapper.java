@@ -43,8 +43,8 @@ public class ResourcesWrapper extends Resources {
 
     private Resources mBase;
 
-    public ResourcesWrapper(Resources base){
-        super(base.getAssets(),base.getDisplayMetrics(),base.getConfiguration());
+    public ResourcesWrapper(Resources base) {
+        super(base.getAssets(), base.getDisplayMetrics(), base.getConfiguration());
         mBase = base;
     }
 

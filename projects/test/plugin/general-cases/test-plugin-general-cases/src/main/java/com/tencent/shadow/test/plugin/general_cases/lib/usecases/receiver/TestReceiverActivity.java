@@ -86,7 +86,7 @@ public class TestReceiverActivity extends WithIdlingResourceActivity {
         sendBroadcast(intent);
     }
 
-    public void TestUnregisterDynamicBraodcast(View view){
+    public void TestUnregisterDynamicBraodcast(View view) {
         mTextView.setText("");
         unregisterReceiver(mBroadcastReceiver);
         TestDynamicBraodcast(view);
@@ -96,7 +96,7 @@ public class TestReceiverActivity extends WithIdlingResourceActivity {
             public void run() {
                 mIdlingResource.setIdleState(true);
             }
-        },2000);
+        }, 2000);
     }
 
     private class DynamicBroadcastReceiver extends BroadcastReceiver {

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Tencent is pleased to support the open source community by making Tencent Shadow available.
   ~ Copyright (C) 2019 THL A29 Limited, a Tencent company.  All rights reserved.
   ~
@@ -24,46 +23,38 @@
     android:background="@android:color/white"
     android:orientation="horizontal">
 
-   <LinearLayout
-       android:layout_width="match_parent"
-       android:layout_height="wrap_content"
-       android:orientation="vertical"
-       android:layout_gravity="center"
-       >
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textSize="18sp"
-          android:textColor="@android:color/black"
-          android:padding="20dp"
-          android:text="AndroidManifest中设置了windowSoftInputMode属性为stateVisible,输入法应该自动弹出"
-          />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="20dp"
+            android:text="AndroidManifest中设置了windowSoftInputMode属性为stateVisible,输入法应该自动弹出" />
 
 
-      <TextView
-          android:id="@+id/result"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textSize="18sp"
-          android:textColor="@android:color/black"
-          android:padding="20dp"
-          />
+        <TextView
+            android:id="@+id/result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="20dp" />
 
-   </LinearLayout>
-
+    </LinearLayout>
 
 
-
-
-   <EditText
-       android:id="@+id/edit_view"
-       android:layout_gravity="bottom"
-       android:hint="请输入"
-       android:layout_width="match_parent"
-       android:layout_height="40dp" />
-
-
-
+    <EditText
+        android:id="@+id/edit_view"
+        android:layout_gravity="bottom"
+        android:hint="请输入"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
 
 
 </FrameLayout>

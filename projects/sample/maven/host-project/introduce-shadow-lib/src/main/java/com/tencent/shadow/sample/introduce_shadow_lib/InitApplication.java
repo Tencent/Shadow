@@ -3,6 +3,7 @@ package com.tencent.shadow.sample.introduce_shadow_lib;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+
 import com.tencent.shadow.core.common.LoggerFactory;
 import com.tencent.shadow.dynamic.host.DynamicPluginManager;
 import com.tencent.shadow.dynamic.host.DynamicRuntime;

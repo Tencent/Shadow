@@ -119,7 +119,7 @@ public class TestFileProviderActivity extends Activity {
             mFile = new File(filePath);
         }
     }
-    
+
     private int targetSdkVersion() {
         return getApplicationContext().getApplicationInfo().targetSdkVersion;
     }

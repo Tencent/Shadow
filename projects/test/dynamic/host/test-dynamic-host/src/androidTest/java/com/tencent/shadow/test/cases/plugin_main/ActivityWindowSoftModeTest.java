@@ -50,7 +50,7 @@ public class ActivityWindowSoftModeTest extends PluginMainAppTest {
     @Test
     public void testBasicUsage() {
 
-        matchTextWithViewTag("TAG_SOFT_MODE","SOFT_INPUT_STATE_VISIBLE:true");
+        matchTextWithViewTag("TAG_SOFT_MODE", "SOFT_INPUT_STATE_VISIBLE:true");
     }
 
 }

@@ -53,9 +53,10 @@ abstract class AbstractTransformTest {
     /**
      * 查找目标class对象的目标method
      */
-    fun getTargetMethods(classPool: ClassPool,
-                         targetClassNames: Array<String>,
-                         targetMethodName: Array<String>
+    fun getTargetMethods(
+        classPool: ClassPool,
+        targetClassNames: Array<String>,
+        targetMethodName: Array<String>
     ): List<CtMethod> {
         val method_targets = ArrayList<CtMethod>()
         for (targetClassName in targetClassNames) {
@@ -79,11 +80,22 @@ abstract class AbstractTransformTest {
                     val pos = iterator.next()
                     val c = iterator.byteAt(pos)
                     if (c == Opcode.INVOKEINTERFACE || c == Opcode.INVOKESPECIAL
-                            || c == Opcode.INVOKESTATIC || c == Opcode.INVOKEVIRTUAL) {
+                        || c == Opcode.INVOKESTATIC || c == Opcode.INVOKEVIRTUAL
+                    ) {
                         val index = iterator.u16bitAt(pos + 1)
-                        val cname = constPool.eqMember(ctMethod.name, ctMethod.methodInfo2.descriptor, index)
+                        val cname = constPool.eqMember(
+                            ctMethod.name,
+                            ctMethod.methodInfo2.descriptor,
+                            index
+                        )
                         val className = ctMethod.declaringClass.name
-                        val matched = cname != null && matchClass(ctMethod.name, ctMethod.methodInfo.descriptor, className, cname, clazz.classPool)
+                        val matched = cname != null && matchClass(
+                            ctMethod.name,
+                            ctMethod.methodInfo.descriptor,
+                            className,
+                            cname,
+                            clazz.classPool
+                        )
                         if (matched) {
                             return true
                         }
@@ -94,7 +106,13 @@ abstract class AbstractTransformTest {
         return false
     }
 
-    private fun matchClass(methodName: String, methodDescriptor: String, classname: String, name: String, pool: ClassPool): Boolean {
+    private fun matchClass(
+        methodName: String,
+        methodDescriptor: String,
+        classname: String,
+        name: String,
+        pool: ClassPool
+    ): Boolean {
         if (classname == name)
             return true
 

@@ -73,28 +73,60 @@ class ContentProviderTransform : SpecificTransform() {
         val bundleClass = classPool["android.os.Bundle"]
         val observerClass = classPool["android.database.ContentObserver"]
 
-        val callMethod = resolverClass.getMethod("call", Descriptor.ofMethod(bundleClass,
-                arrayOf(uriClass, stringClass, stringClass, bundleClass)))
-        val newCallMethod = targetClass.getMethod("call", Descriptor.ofMethod(bundleClass,
-                arrayOf(resolverClass, uriClass, stringClass, stringClass, bundleClass)))
+        val callMethod = resolverClass.getMethod(
+            "call", Descriptor.ofMethod(
+                bundleClass,
+                arrayOf(uriClass, stringClass, stringClass, bundleClass)
+            )
+        )
+        val newCallMethod = targetClass.getMethod(
+            "call", Descriptor.ofMethod(
+                bundleClass,
+                arrayOf(resolverClass, uriClass, stringClass, stringClass, bundleClass)
+            )
+        )
         codeConverter.redirectMethodCallToStatic(callMethod, newCallMethod)
 
-        val notifyMethod1 = resolverClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
-                arrayOf(uriClass, observerClass)))
-        val newNotifyMethod1 = targetClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
-                arrayOf(resolverClass, uriClass, observerClass)))
+        val notifyMethod1 = resolverClass.getMethod(
+            "notifyChange", Descriptor.ofMethod(
+                CtClass.voidType,
+                arrayOf(uriClass, observerClass)
+            )
+        )
+        val newNotifyMethod1 = targetClass.getMethod(
+            "notifyChange", Descriptor.ofMethod(
+                CtClass.voidType,
+                arrayOf(resolverClass, uriClass, observerClass)
+            )
+        )
         codeConverter.redirectMethodCallToStatic(notifyMethod1, newNotifyMethod1)
 
-        val notifyMethod2 = resolverClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
-                arrayOf(uriClass, observerClass, CtClass.booleanType)))
-        val newNotifyMethod2 = targetClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
-                arrayOf(resolverClass, uriClass, observerClass, CtClass.booleanType)))
+        val notifyMethod2 = resolverClass.getMethod(
+            "notifyChange", Descriptor.ofMethod(
+                CtClass.voidType,
+                arrayOf(uriClass, observerClass, CtClass.booleanType)
+            )
+        )
+        val newNotifyMethod2 = targetClass.getMethod(
+            "notifyChange", Descriptor.ofMethod(
+                CtClass.voidType,
+                arrayOf(resolverClass, uriClass, observerClass, CtClass.booleanType)
+            )
+        )
         codeConverter.redirectMethodCallToStatic(notifyMethod2, newNotifyMethod2)
 
-        val notifyMethod3 = resolverClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
-                arrayOf(uriClass, observerClass, CtClass.intType)))
-        val newNotifyMethod3 = targetClass.getMethod("notifyChange", Descriptor.ofMethod(CtClass.voidType,
-                arrayOf(resolverClass, uriClass, observerClass, CtClass.intType)))
+        val notifyMethod3 = resolverClass.getMethod(
+            "notifyChange", Descriptor.ofMethod(
+                CtClass.voidType,
+                arrayOf(uriClass, observerClass, CtClass.intType)
+            )
+        )
+        val newNotifyMethod3 = targetClass.getMethod(
+            "notifyChange", Descriptor.ofMethod(
+                CtClass.voidType,
+                arrayOf(resolverClass, uriClass, observerClass, CtClass.intType)
+            )
+        )
         codeConverter.redirectMethodCallToStatic(notifyMethod3, newNotifyMethod3)
 
         return codeConverter
@@ -108,7 +140,7 @@ class ContentProviderTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    filterRefClasses(allInputClass, listOf(AndroidUriClassname))
+                filterRefClasses(allInputClass, listOf(AndroidUriClassname))
 
             override fun transform(ctClass: CtClass) {
                 try {
@@ -122,7 +154,7 @@ class ContentProviderTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    filterRefClasses(allInputClass, listOf(uriBuilderName))
+                filterRefClasses(allInputClass, listOf(uriBuilderName))
 
             override fun transform(ctClass: CtClass) {
                 try {
@@ -136,7 +168,7 @@ class ContentProviderTransform : SpecificTransform() {
 
         newStep(object : TransformStep {
             override fun filter(allInputClass: Set<CtClass>) =
-                    filterRefClasses(allInputClass, listOf(resolverName))
+                filterRefClasses(allInputClass, listOf(resolverName))
 
             override fun transform(ctClass: CtClass) {
                 try {

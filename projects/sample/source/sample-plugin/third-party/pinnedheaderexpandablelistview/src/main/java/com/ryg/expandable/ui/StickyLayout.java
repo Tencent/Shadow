@@ -1,27 +1,27 @@
 /**
- The MIT License (MIT)
-
- Copyright (c) 2014 singwhatiwanna
- https://github.com/singwhatiwanna
- http://blog.csdn.net/singwhatiwanna
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
+ * The MIT License (MIT)
+ * <p>
+ * Copyright (c) 2014 singwhatiwanna
+ * https://github.com/singwhatiwanna
+ * http://blog.csdn.net/singwhatiwanna
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * <p>
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * <p>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package com.ryg.expandable.ui;
@@ -98,7 +98,7 @@ public class StickyLayout extends LinearLayout {
     }
 
     private void initData() {
-        int headerId= getResources().getIdentifier("sticky_header", "id", getContext().getPackageName());
+        int headerId = getResources().getIdentifier("sticky_header", "id", getContext().getPackageName());
         int contentId = getResources().getIdentifier("sticky_content", "id", getContext().getPackageName());
         if (headerId != 0 && contentId != 0) {
             mHeader = findViewById(headerId);
@@ -128,37 +128,37 @@ public class StickyLayout extends LinearLayout {
         int y = (int) event.getY();
 
         switch (event.getAction()) {
-        case MotionEvent.ACTION_DOWN: {
-            mLastXIntercept = x;
-            mLastYIntercept = y;
-            mLastX = x;
-            mLastY = y;
-            intercepted = 0;
-            break;
-        }
-        case MotionEvent.ACTION_MOVE: {
-            int deltaX = x - mLastXIntercept;
-            int deltaY = y - mLastYIntercept;
-            if (mDisallowInterceptTouchEventOnHeader && y <= getHeaderHeight()) {
+            case MotionEvent.ACTION_DOWN: {
+                mLastXIntercept = x;
+                mLastYIntercept = y;
+                mLastX = x;
+                mLastY = y;
                 intercepted = 0;
-            } else if (Math.abs(deltaY) <= Math.abs(deltaX)) {
-                intercepted = 0;
-            } else if (mStatus == STATUS_EXPANDED && deltaY <= -mTouchSlop) {
-                intercepted = 1;
-            } else if (mGiveUpTouchEventListener != null) {
-                if (mGiveUpTouchEventListener.giveUpTouchEvent(event) && deltaY >= mTouchSlop) {
-                    intercepted = 1;
-                }
+                break;
             }
-            break;
-        }
-        case MotionEvent.ACTION_UP: {
-            intercepted = 0;
-            mLastXIntercept = mLastYIntercept = 0;
-            break;
-        }
-        default:
-            break;
+            case MotionEvent.ACTION_MOVE: {
+                int deltaX = x - mLastXIntercept;
+                int deltaY = y - mLastYIntercept;
+                if (mDisallowInterceptTouchEventOnHeader && y <= getHeaderHeight()) {
+                    intercepted = 0;
+                } else if (Math.abs(deltaY) <= Math.abs(deltaX)) {
+                    intercepted = 0;
+                } else if (mStatus == STATUS_EXPANDED && deltaY <= -mTouchSlop) {
+                    intercepted = 1;
+                } else if (mGiveUpTouchEventListener != null) {
+                    if (mGiveUpTouchEventListener.giveUpTouchEvent(event) && deltaY >= mTouchSlop) {
+                        intercepted = 1;
+                    }
+                }
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                intercepted = 0;
+                mLastXIntercept = mLastYIntercept = 0;
+                break;
+            }
+            default:
+                break;
         }
 
         if (DEBUG) {
@@ -175,35 +175,35 @@ public class StickyLayout extends LinearLayout {
         int x = (int) event.getX();
         int y = (int) event.getY();
         switch (event.getAction()) {
-        case MotionEvent.ACTION_DOWN: {
-            break;
-        }
-        case MotionEvent.ACTION_MOVE: {
-            int deltaX = x - mLastX;
-            int deltaY = y - mLastY;
-            if (DEBUG) {
-                Log.d(TAG, "mHeaderHeight=" + mHeaderHeight + "  deltaY=" + deltaY + "  mlastY=" + mLastY);
+            case MotionEvent.ACTION_DOWN: {
+                break;
             }
-            mHeaderHeight += deltaY;
-            setHeaderHeight(mHeaderHeight);
-            break;
-        }
-        case MotionEvent.ACTION_UP: {
-            // 这里做了下判断，当松开手的时候，会自动向两边滑动，具体向哪边滑，要看当前所处的位置
-            int destHeight = 0;
-            if (mHeaderHeight <= mOriginalHeaderHeight * 0.5) {
-                destHeight = 0;
-                mStatus = STATUS_COLLAPSED;
-            } else {
-                destHeight = mOriginalHeaderHeight;
-                mStatus = STATUS_EXPANDED;
+            case MotionEvent.ACTION_MOVE: {
+                int deltaX = x - mLastX;
+                int deltaY = y - mLastY;
+                if (DEBUG) {
+                    Log.d(TAG, "mHeaderHeight=" + mHeaderHeight + "  deltaY=" + deltaY + "  mlastY=" + mLastY);
+                }
+                mHeaderHeight += deltaY;
+                setHeaderHeight(mHeaderHeight);
+                break;
             }
-            // 慢慢滑向终点
-            this.smoothSetHeaderHeight(mHeaderHeight, destHeight, 500);
-            break;
-        }
-        default:
-            break;
+            case MotionEvent.ACTION_UP: {
+                // 这里做了下判断，当松开手的时候，会自动向两边滑动，具体向哪边滑，要看当前所处的位置
+                int destHeight = 0;
+                if (mHeaderHeight <= mOriginalHeaderHeight * 0.5) {
+                    destHeight = 0;
+                    mStatus = STATUS_COLLAPSED;
+                } else {
+                    destHeight = mOriginalHeaderHeight;
+                    mStatus = STATUS_EXPANDED;
+                }
+                // 慢慢滑向终点
+                this.smoothSetHeaderHeight(mHeaderHeight, destHeight, 500);
+                break;
+            }
+            default:
+                break;
         }
         mLastX = x;
         mLastY = y;
@@ -243,7 +243,9 @@ public class StickyLayout extends LinearLayout {
                 if (modifyOriginalHeaderHeight) {
                     setOriginalHeaderHeight(to);
                 }
-            };
+            }
+
+            ;
 
         }.start();
     }

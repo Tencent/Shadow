@@ -25,7 +25,7 @@ import java.io.File;
 
 public class Shadow {
 
-    public static PluginManager getPluginManager(File apk){
+    public static PluginManager getPluginManager(File apk) {
         final FixedPathPmUpdater fixedPathPmUpdater = new FixedPathPmUpdater(apk);
         File tempPm = fixedPathPmUpdater.getLatest();
         if (tempPm != null) {

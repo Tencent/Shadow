@@ -37,13 +37,13 @@ import java.io.File
  *                                 |
  *  PluginClassLoaderB        PluginClassLoaderC
  *
-*/
+ */
 class PluginClassLoader(
-        dexPath: String,
-        optimizedDirectory: File?,
-        librarySearchPath: String?,
-        parent: ClassLoader,
-        private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?
+    dexPath: String,
+    optimizedDirectory: File?,
+    librarySearchPath: String?,
+    parent: ClassLoader,
+    private val specialClassLoader: ClassLoader?, hostWhiteList: Array<String>?
 ) : BaseDexClassLoader(dexPath, optimizedDirectory, librarySearchPath, parent) {
 
     /**

@@ -30,7 +30,7 @@ import java.util.HashMap;
 
 /**
  * 具备创建自定义View功能的Factory2
- *
+ * <p>
  * // TODO #36 实现LayoutInflater 的 filter功能
  */
 public class ShadowFactory2 implements LayoutInflater.Factory2 {
@@ -145,8 +145,6 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
         } while (cl != null);
         return false;
     }
-
-
 
 
 }

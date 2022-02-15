@@ -40,7 +40,7 @@ import com.tencent.shadow.test.plugin.general_cases.lib.usecases.WithIdlingResou
 
 public class TestStartServiceActivity extends WithIdlingResourceActivity {
 
-    private Intent serviceIntent ;
+    private Intent serviceIntent;
 
     private TestService.MyLocalServiceBinder binder;
 
@@ -110,7 +110,7 @@ public class TestStartServiceActivity extends WithIdlingResourceActivity {
         }
     }
 
-    private void setIdle(){
+    private void setIdle() {
         mHandler.removeCallbacksAndMessages(null);
         mIdlingResource.setIdleState(false);
         mHandler.postDelayed(new Runnable() {
@@ -118,7 +118,7 @@ public class TestStartServiceActivity extends WithIdlingResourceActivity {
             public void run() {
                 mIdlingResource.setIdleState(true);
             }
-        },2000);
+        }, 2000);
     }
 
     @Override
@@ -133,8 +133,8 @@ public class TestStartServiceActivity extends WithIdlingResourceActivity {
             mHandler.removeCallbacksAndMessages(null);
             String text = intent.getStringExtra("result");
             String oldText = mTextView.getText().toString();
-            if(!TextUtils.isEmpty(oldText)){
-                text = oldText+"-"+text;
+            if (!TextUtils.isEmpty(oldText)) {
+                text = oldText + "-" + text;
             }
             mTextView.setText(text);
             mIdlingResource.setIdleState(true);

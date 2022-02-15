@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Tencent is pleased to support the open source community by making Tencent Shadow available.
   ~ Copyright (C) 2019 THL A29 Limited, a Tencent company.  All rights reserved.
   ~
@@ -22,18 +21,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:gravity="center"
-    >
+    android:gravity="center">
 
-   <TextView
-       android:id="@+id/result"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:textSize="18sp"
-       android:textColor="@android:color/black"
-       android:padding="20dp"
-       android:layout_gravity="center"
-       />
+    <TextView
+        android:id="@+id/result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:padding="20dp"
+        android:layout_gravity="center" />
 
 
 </FrameLayout>

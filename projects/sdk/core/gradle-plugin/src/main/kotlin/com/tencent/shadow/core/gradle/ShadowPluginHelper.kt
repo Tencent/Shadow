@@ -76,15 +76,22 @@ open class ShadowPluginHelper {
             return String(buf)
         }
 
-        fun getRuntimeApkFile(project: Project, buildType: PluginBuildType, checkExist: Boolean): File {
+        fun getRuntimeApkFile(
+            project: Project,
+            buildType: PluginBuildType,
+            checkExist: Boolean
+        ): File {
             val packagePlugin = project.extensions.findByName("packagePlugin")
             val extension = packagePlugin as PackagePluginExtension
 
             val splitList = buildType.runtimeApkConfig.second.split(":")
-            val runtimeFileParent = splitList[splitList.lastIndex].replace("assemble", "").toLowerCase()
+            val runtimeFileParent =
+                splitList[splitList.lastIndex].replace("assemble", "").toLowerCase()
             val runtimeApkName: String = buildType.runtimeApkConfig.first
-            val runtimeFile = File("${project.rootDir}" +
-                    "/${extension.runtimeApkProjectPath}/build/outputs/apk/$runtimeFileParent/$runtimeApkName")
+            val runtimeFile = File(
+                "${project.rootDir}" +
+                        "/${extension.runtimeApkProjectPath}/build/outputs/apk/$runtimeFileParent/$runtimeApkName"
+            )
             if (checkExist && !runtimeFile.exists()) {
                 throw IllegalArgumentException(runtimeFile.absolutePath + " , runtime file not exist...")
             }
@@ -92,15 +99,22 @@ open class ShadowPluginHelper {
             return runtimeFile
         }
 
-        fun getLoaderApkFile(project: Project, buildType: PluginBuildType, checkExist: Boolean): File {
+        fun getLoaderApkFile(
+            project: Project,
+            buildType: PluginBuildType,
+            checkExist: Boolean
+        ): File {
             val packagePlugin = project.extensions.findByName("packagePlugin")
             val extension = packagePlugin as PackagePluginExtension
 
             val loaderApkName: String = buildType.loaderApkConfig.first
             val splitList = buildType.loaderApkConfig.second.split(":")
-            val loaderFileParent = splitList[splitList.lastIndex].replace("assemble", "").toLowerCase()
-            val loaderFile = File("${project.rootDir}" +
-                    "/${extension.loaderApkProjectPath}/build/outputs/apk/$loaderFileParent/$loaderApkName")
+            val loaderFileParent =
+                splitList[splitList.lastIndex].replace("assemble", "").toLowerCase()
+            val loaderFile = File(
+                "${project.rootDir}" +
+                        "/${extension.loaderApkProjectPath}/build/outputs/apk/$loaderFileParent/$loaderApkName"
+            )
             if (checkExist && !loaderFile.exists()) {
                 throw IllegalArgumentException(loaderFile.absolutePath + " , loader file not exist...")
             }
@@ -109,7 +123,11 @@ open class ShadowPluginHelper {
 
         }
 
-        fun getPluginFile(project: Project, pluginConfig: PluginApkConfig, checkExist: Boolean): File {
+        fun getPluginFile(
+            project: Project,
+            pluginConfig: PluginApkConfig,
+            checkExist: Boolean
+        ): File {
             val pluginFile = File(project.rootDir, pluginConfig.apkPath)
             if (checkExist && !pluginFile.exists()) {
                 throw IllegalArgumentException(pluginFile.absolutePath + " , plugin file not exist...")

@@ -50,7 +50,7 @@ public class PrintActivityResultActivity extends WithIdlingResourceActivity {
         }
         String className = getIntent().getStringExtra(KEY_TARGET_CLASS);
         Intent intent = new Intent();
-        intent.setClassName(this,className);
+        intent.setClassName(this, className);
         intent.putExtra(KEY_FROM_JUMP, true);
         startActivityForResult(intent, 1001);
     }

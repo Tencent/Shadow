@@ -129,7 +129,8 @@ class ShadowPlugin : Plugin<Project> {
                     )
                 }
             }
-            project.tasks.getByName("compile${variantName.capitalize()}JavaWithJavac").dependsOn(task)
+            project.tasks.getByName("compile${variantName.capitalize()}JavaWithJavac")
+                .dependsOn(task)
 
             // 把PluginManifest.java添加为源码
             appExtension.sourceSets.getByName(variantName).java.srcDir(outputDir)

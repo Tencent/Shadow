@@ -53,7 +53,7 @@ public interface HostContentProviderDelegate {
 
     int update(Uri uri, ContentValues values, String selection, String[] selectionArgs);
 
-    int bulkInsert( Uri uri,  ContentValues[] values);
+    int bulkInsert(Uri uri, ContentValues[] values);
 
     Bundle call(String method, String arg, Bundle extras);
 

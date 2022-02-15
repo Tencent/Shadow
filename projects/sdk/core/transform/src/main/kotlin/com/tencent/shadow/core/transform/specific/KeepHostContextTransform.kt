@@ -31,9 +31,7 @@ class KeepHostContextTransform(private val rules: Array<String>) : SpecificTrans
     }
 
     data class Rule(
-            val ctClass: CtClass
-            , val ctMethod: CtMethod
-            , val convertArgs: Array<Int>
+        val ctClass: CtClass, val ctMethod: CtMethod, val convertArgs: Array<Int>
     )
 
     private fun String.assertRuleHasOnlyOneChar(char: Char) {
@@ -54,8 +52,10 @@ class KeepHostContextTransform(private val rules: Array<String>) : SpecificTrans
             val indexOfLastDot = classNameAndMethodNamePart.indexOfLast { it == '.' }
 
             val className = classNameAndMethodNamePart.substring(0, indexOfLastDot)
-            val methodName = classNameAndMethodNamePart.substring(indexOfLastDot + 1, indexOfLeftParenthesis)
-            val methodParametersClassName = rule.substring(indexOfLeftParenthesis + 1, indexOfRightParenthesis).split(',')
+            val methodName =
+                classNameAndMethodNamePart.substring(indexOfLastDot + 1, indexOfLeftParenthesis)
+            val methodParametersClassName =
+                rule.substring(indexOfLeftParenthesis + 1, indexOfRightParenthesis).split(',')
             val keepSpecifying = rule.substring(indexOfRightParenthesis + 1)
 
             val ctClass = appClasses.find {
@@ -64,7 +64,7 @@ class KeepHostContextTransform(private val rules: Array<String>) : SpecificTrans
 
             val parametersCtClass = methodParametersClassName.map {
                 mClassPool.getOrNull(it)
-                        ?: throw ClassNotFoundException("没有找到${rule}中指定的类$it")
+                    ?: throw ClassNotFoundException("没有找到${rule}中指定的类$it")
             }.toTypedArray()
             val ctMethod = ctClass.getDeclaredMethod(methodName, parametersCtClass)
 
@@ -83,7 +83,8 @@ class KeepHostContextTransform(private val rules: Array<String>) : SpecificTrans
         for (rule in rules) {
             val targetClass = rule.ctClass
             val ctMethod = rule.ctMethod
-            val cloneMethod = CtNewMethod.copy(ctMethod, ctMethod.name + "_KeepHostContext", targetClass, null)
+            val cloneMethod =
+                CtNewMethod.copy(ctMethod, ctMethod.name + "_KeepHostContext", targetClass, null)
 
             val newBodyBuilder = StringBuilder()
             newBodyBuilder.append("${ctMethod.name}(")
@@ -107,7 +108,7 @@ class KeepHostContextTransform(private val rules: Array<String>) : SpecificTrans
 
             newStep(object : TransformStep {
                 override fun filter(allInputClass: Set<CtClass>) =
-                        filterRefClasses(allInputClass, listOf(targetClass.name))
+                    filterRefClasses(allInputClass, listOf(targetClass.name))
 
                 override fun transform(ctClass: CtClass) {
                     if (ctClass != targetClass)

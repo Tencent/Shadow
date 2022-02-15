@@ -24,13 +24,19 @@ import com.tencent.shadow.dynamic.host.PluginLoaderImpl
 import com.tencent.shadow.dynamic.host.UuidManager
 import com.tencent.shadow.dynamic.loader.PluginLoader
 
-internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPluginLoader) : android.os.Binder(), PluginLoaderImpl {
+internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPluginLoader) :
+    android.os.Binder(), PluginLoaderImpl {
     override fun setUuidManager(uuidManager: UuidManager?) {
         mDynamicPluginLoader.setUuidManager(uuidManager)
     }
 
     @Throws(android.os.RemoteException::class)
-    public override fun onTransact(code: Int, data: android.os.Parcel, reply: android.os.Parcel?, flags: Int): Boolean {
+    public override fun onTransact(
+        code: Int,
+        data: android.os.Parcel,
+        reply: android.os.Parcel?,
+        flags: Int
+    ): Boolean {
         when (code) {
             IBinder.INTERFACE_TRANSACTION -> {
                 reply!!.writeString(PluginLoader.DESCRIPTOR)
@@ -67,11 +73,15 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 } else {
                     _arg0 = null
                 }
-                val _result = mDynamicPluginLoader.convertActivityIntent(_arg0!!)//todo #32 去掉这个不安全的!!
+                val _result =
+                    mDynamicPluginLoader.convertActivityIntent(_arg0!!)//todo #32 去掉这个不安全的!!
                 reply!!.writeNoException()
                 if (_result != null) {
                     reply.writeInt(1)
-                    _result.writeToParcel(reply, android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE)
+                    _result.writeToParcel(
+                        reply,
+                        android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE
+                    )
                 } else {
                     reply.writeInt(0)
                 }
@@ -89,7 +99,10 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 reply!!.writeNoException()
                 if (_result != null) {
                     reply.writeInt(1)
-                    _result.writeToParcel(reply, android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE)
+                    _result.writeToParcel(
+                        reply,
+                        android.os.Parcelable.PARCELABLE_WRITE_RETURN_VALUE
+                    )
                 } else {
                     reply.writeInt(0)
                 }
@@ -119,7 +132,11 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 val _arg1 = BinderPluginServiceConnection(data.readStrongBinder())
                 val _arg2: Int
                 _arg2 = data.readInt()
-                val _result = mDynamicPluginLoader.bindPluginService(_arg0!!, _arg1, _arg2)//todo #32 去掉这个不安全的!!
+                val _result = mDynamicPluginLoader.bindPluginService(
+                    _arg0!!,
+                    _arg1,
+                    _arg2
+                )//todo #32 去掉这个不安全的!!
                 reply!!.writeNoException()
                 reply.writeInt(if (_result) 1 else 0)
                 return true
@@ -132,7 +149,11 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
             }
             PluginLoader.TRANSACTION_startActivityInPluginProcess -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
-                mDynamicPluginLoader.startActivityInPluginProcess(Intent.CREATOR.createFromParcel(data))
+                mDynamicPluginLoader.startActivityInPluginProcess(
+                    Intent.CREATOR.createFromParcel(
+                        data
+                    )
+                )
                 reply!!.writeNoException()
                 return true
             }

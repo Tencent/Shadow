@@ -58,7 +58,7 @@ public class MainActivity extends Activity {
 
     public void startPlugin(View view) {
         final HostApplication application = (HostApplication) getApplication();
-        application.loadPlugin(PART_MAIN, new Runnable(){
+        application.loadPlugin(PART_MAIN, new Runnable() {
             @Override
             public void run() {
                 Intent pluginIntent = new Intent();

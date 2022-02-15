@@ -11,6 +11,7 @@ final public class TestDynamicPluginManager implements PluginManagerImpl {
     final private ActivityTestDynamicPluginManager activityPluginManager;
     final private ServiceTestDynamicPluginManager serviceTestDynamicPluginManager;
     final private ReinstallPluginTestDynamicPluginManager reinstallPluginTestDynamicPluginManager;
+
     public TestDynamicPluginManager(Context context) {
         this.activityPluginManager = new ActivityTestDynamicPluginManager(context);
         this.serviceTestDynamicPluginManager = new ServiceTestDynamicPluginManager(context);

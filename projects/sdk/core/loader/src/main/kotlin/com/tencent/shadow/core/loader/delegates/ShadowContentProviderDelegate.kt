@@ -31,7 +31,8 @@ import android.os.ParcelFileDescriptor
 import com.tencent.shadow.core.loader.managers.PluginContentProviderManager
 import com.tencent.shadow.core.runtime.container.HostContentProviderDelegate
 
-class ShadowContentProviderDelegate(private val mProviderManager: PluginContentProviderManager) : ShadowDelegate(), HostContentProviderDelegate {
+class ShadowContentProviderDelegate(private val mProviderManager: PluginContentProviderManager) :
+    ShadowDelegate(), HostContentProviderDelegate {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         mProviderManager.getAllContentProvider().forEach {
@@ -56,9 +57,16 @@ class ShadowContentProviderDelegate(private val mProviderManager: PluginContentP
     }
 
 
-    override fun query(uri: Uri, projection: Array<String>?, selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
+    override fun query(
+        uri: Uri,
+        projection: Array<String>?,
+        selection: String?,
+        selectionArgs: Array<String>?,
+        sortOrder: String?
+    ): Cursor? {
         val pluginUri = mProviderManager.convert2PluginUri(uri)
-        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.query(pluginUri, projection, selection, selectionArgs, sortOrder)
+        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!
+            .query(pluginUri, projection, selection, selectionArgs, sortOrder)
     }
 
     override fun getType(uri: Uri): String? {
@@ -68,37 +76,53 @@ class ShadowContentProviderDelegate(private val mProviderManager: PluginContentP
 
     override fun insert(uri: Uri, values: ContentValues): Uri? {
         val pluginUri = mProviderManager.convert2PluginUri(uri)
-        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.insert(pluginUri, values)
+        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!
+            .insert(pluginUri, values)
     }
 
     override fun delete(uri: Uri, selection: String?, selectionArgs: Array<String>?): Int {
         val pluginUri = mProviderManager.convert2PluginUri(uri)
-        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.delete(pluginUri, selection, selectionArgs)
+        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!
+            .delete(pluginUri, selection, selectionArgs)
     }
 
-    override fun update(uri: Uri, values: ContentValues?, selection: String?, selectionArgs: Array<String>?): Int {
+    override fun update(
+        uri: Uri,
+        values: ContentValues?,
+        selection: String?,
+        selectionArgs: Array<String>?
+    ): Int {
         val pluginUri = mProviderManager.convert2PluginUri(uri)
-        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.update(pluginUri, values, selection, selectionArgs)
+        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!
+            .update(pluginUri, values, selection, selectionArgs)
     }
 
     override fun bulkInsert(uri: Uri, values: Array<out ContentValues>): Int {
         val pluginUri = mProviderManager.convert2PluginUri(uri)
-        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.bulkInsert(pluginUri, values)
+        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!
+            .bulkInsert(pluginUri, values)
     }
 
     override fun call(method: String, arg: String?, extras: Bundle): Bundle? {
         val pluginUri = mProviderManager.convert2PluginUri(extras)
-        return mProviderManager.getPluginContentProvider(pluginAuthority = pluginUri.authority!!)!!.call(method, arg, extras)
+        return mProviderManager.getPluginContentProvider(pluginAuthority = pluginUri.authority!!)!!
+            .call(method, arg, extras)
     }
 
     override fun openFile(uri: Uri, mode: String): ParcelFileDescriptor? {
         val pluginUri = mProviderManager.convert2PluginUri(uri)
-        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.openFile(pluginUri, mode)
+        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!
+            .openFile(pluginUri, mode)
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    override fun openFile(uri: Uri, mode: String, signal: CancellationSignal?): ParcelFileDescriptor? {
+    override fun openFile(
+        uri: Uri,
+        mode: String,
+        signal: CancellationSignal?
+    ): ParcelFileDescriptor? {
         val pluginUri = mProviderManager.convert2PluginUri(uri)
-        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!.openFile(pluginUri, mode, signal)
+        return mProviderManager.getPluginContentProvider(pluginUri.authority!!)!!
+            .openFile(pluginUri, mode, signal)
     }
 }

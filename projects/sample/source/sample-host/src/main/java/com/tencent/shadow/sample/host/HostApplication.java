@@ -60,12 +60,14 @@ public class HostApplication extends Application {
 
         HostUiLayerProvider.init(this);
     }
-    private static void setWebViewDataDirectorySuffix(){
+
+    private static void setWebViewDataDirectorySuffix() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             return;
         }
         WebView.setDataDirectorySuffix(Application.getProcessName());
     }
+
     private static void detectNonSdkApiUsageOnAndroidP() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
             return;

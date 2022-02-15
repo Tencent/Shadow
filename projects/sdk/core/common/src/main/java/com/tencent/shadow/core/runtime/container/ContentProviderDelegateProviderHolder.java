@@ -48,7 +48,7 @@ public class ContentProviderDelegateProviderHolder {
     }
 
     interface DelegateProviderHolderPrepareListener {
-         void onPrepare();
+        void onPrepare();
     }
 
 }

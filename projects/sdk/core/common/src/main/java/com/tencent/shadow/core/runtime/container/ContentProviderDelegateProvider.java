@@ -33,5 +33,5 @@ public interface ContentProviderDelegateProvider {
      *
      * @return HostContentProvider被委托者
      */
-    HostContentProviderDelegate  getHostContentProviderDelegate();
+    HostContentProviderDelegate getHostContentProviderDelegate();
 }

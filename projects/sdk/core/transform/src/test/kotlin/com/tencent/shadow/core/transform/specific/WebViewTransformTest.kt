@@ -33,7 +33,10 @@ class WebViewTransformTest : AbstractTransformTest() {
 
     @Test
     fun testWebViewTransform() {
-        val allInputClass = setOf(sLoader["test.TestWebView"], sLoader["com.tencent.shadow.core.runtime.ShadowWebView"])
+        val allInputClass = setOf(
+            sLoader["test.TestWebView"],
+            sLoader["com.tencent.shadow.core.runtime.ShadowWebView"]
+        )
 
         val webViewTransform = WebViewTransform()
         webViewTransform.mClassPool = sLoader
@@ -54,28 +57,31 @@ class WebViewTransformTest : AbstractTransformTest() {
         }
     }
 
-    private fun beforeTransformCheck(clazz: CtClass){
+    private fun beforeTransformCheck(clazz: CtClass) {
         if (clazz.classFile.name == "test.TestWebView") {
-            Assert.assertTrue(webViewClazz.name+" 构造器方法调用应该可以找到",
-                    matchConstructorCallInClass(webViewClazz.name,clazz)
+            Assert.assertTrue(
+                webViewClazz.name + " 构造器方法调用应该可以找到",
+                matchConstructorCallInClass(webViewClazz.name, clazz)
             )
         }
     }
 
-    private fun afterTransformCheck(clazz: CtClass){
+    private fun afterTransformCheck(clazz: CtClass) {
         if (clazz.classFile.name == "test.TestWebView") {
             Assert.assertEquals(
-                    "WebView父类应该都变为了ShadowWebView",
-                    "com.tencent.shadow.core.runtime.ShadowWebView",
-                    clazz.classFile.superclass
+                "WebView父类应该都变为了ShadowWebView",
+                "com.tencent.shadow.core.runtime.ShadowWebView",
+                clazz.classFile.superclass
             )
 
-            Assert.assertTrue(webViewClazz.name+"构造器方法调用应该没有了",
-                    !matchConstructorCallInClass(webViewClazz.name,clazz)
+            Assert.assertTrue(
+                webViewClazz.name + "构造器方法调用应该没有了",
+                !matchConstructorCallInClass(webViewClazz.name, clazz)
             )
 
-            Assert.assertTrue(shadowWebViewClazz.name+" 构造器方法调用应该可以找到",
-                    matchConstructorCallInClass(shadowWebViewClazz.name,clazz)
+            Assert.assertTrue(
+                shadowWebViewClazz.name + " 构造器方法调用应该可以找到",
+                matchConstructorCallInClass(shadowWebViewClazz.name, clazz)
             )
         }
     }

@@ -34,8 +34,9 @@ import java.util.concurrent.CountDownLatch
 internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     companion object {
         private const val CORE_LOADER_FACTORY_IMPL_NAME =
-                "com.tencent.shadow.dynamic.loader.impl.CoreLoaderFactoryImpl"
+            "com.tencent.shadow.dynamic.loader.impl.CoreLoaderFactoryImpl"
     }
+
     fun setUuidManager(p0: UuidManager?) {
         if (p0 != null)
             mUuidManager = p0
@@ -44,7 +45,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
 
     private val mPluginLoader: ShadowPluginLoader
 
-    private val mDynamicLoaderClassLoader: ClassLoader = DynamicPluginLoader::class.java.classLoader!!
+    private val mDynamicLoaderClassLoader: ClassLoader =
+        DynamicPluginLoader::class.java.classLoader!!
 
     private var mContext: Context;
 
@@ -62,11 +64,14 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     init {
         try {
             val coreLoaderFactory = mDynamicLoaderClassLoader.getInterface(
-                    CoreLoaderFactory::class.java,
-                    CORE_LOADER_FACTORY_IMPL_NAME
+                CoreLoaderFactory::class.java,
+                CORE_LOADER_FACTORY_IMPL_NAME
             )
             mPluginLoader = coreLoaderFactory.build(hostContext)
-            DelegateProviderHolder.setDelegateProvider(mPluginLoader.delegateProviderKey, mPluginLoader)
+            DelegateProviderHolder.setDelegateProvider(
+                mPluginLoader.delegateProviderKey,
+                mPluginLoader
+            )
             ContentProviderDelegateProviderHolder.setContentProviderDelegateProvider(mPluginLoader)
             mPluginLoader.onCreate()
         } catch (e: Exception) {
@@ -83,9 +88,9 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     }
 
     fun getLoadedPlugin(): MutableMap<String, Boolean> {
-        val plugins  = mPluginLoader.getAllPluginPart()
+        val plugins = mPluginLoader.getAllPluginPart()
         val loadPlugins = hashMapOf<String, Boolean>()
-        for(part in plugins){
+        for (part in plugins) {
             loadPlugins[part.key] = part.value.application.isCallOnCreate
         }
         return loadPlugins
@@ -147,7 +152,11 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
     }
 
     @Synchronized
-    fun bindPluginService(pluginServiceIntent: Intent, binderPsc: BinderPluginServiceConnection, flags: Int): Boolean {
+    fun bindPluginService(
+        pluginServiceIntent: Intent,
+        binderPsc: BinderPluginServiceConnection,
+        flags: Int
+    ): Boolean {
 
         fun realAction(): Boolean {
             if (mConnectionMap[binderPsc.mRemote] == null) {
@@ -155,7 +164,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
             }
 
             val connWrapper = mConnectionMap[binderPsc.mRemote]!!
-            return mPluginLoader.getPluginServiceManager().bindPluginService(pluginServiceIntent, connWrapper, flags)
+            return mPluginLoader.getPluginServiceManager()
+                .bindPluginService(pluginServiceIntent, connWrapper, flags)
         }
         // 确保在ui线程调用
         var stop: Boolean = false
@@ -191,7 +201,8 @@ internal class DynamicPluginLoader(hostContext: Context, uuid: String) {
         }
     }
 
-    private class ServiceConnectionWrapper(private val mConnection: BinderPluginServiceConnection) : ServiceConnection {
+    private class ServiceConnectionWrapper(private val mConnection: BinderPluginServiceConnection) :
+        ServiceConnection {
 
         override fun onServiceDisconnected(name: ComponentName) {
             mConnection.onServiceDisconnected(name)

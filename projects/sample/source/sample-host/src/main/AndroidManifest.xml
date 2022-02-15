@@ -98,11 +98,11 @@
         <service
             android:name="com.tencent.shadow.sample.host.Plugin2ProcessPPS"
             android:process=":plugin2" />
+
         <activity
             android:name="com.tencent.shadow.sample.host.PluginLoadActivity"
             android:launchMode="standard"
-            android:screenOrientation="portrait"
-            />
+            android:screenOrientation="portrait" />
 
         <!--dynamic activity注册
           注意configChanges需要全注册
@@ -115,8 +115,7 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
             android:theme="@style/troop_Transparent"
-            android:multiprocess="true"
-            />
+            android:multiprocess="true" />
 
         <activity
             android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginSingleInstance1ProxyActivity"
@@ -125,8 +124,7 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
             android:theme="@style/troop_Transparent"
-            android:multiprocess="true"
-            />
+            android:multiprocess="true" />
 
         <activity
             android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginSingleTask1ProxyActivity"

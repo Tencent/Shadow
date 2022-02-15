@@ -1,6 +1,7 @@
 package com.tencent.shadow.sample.introduce_shadow_lib;
 
 import android.util.Log;
+
 import com.tencent.shadow.core.common.ILoggerFactory;
 import com.tencent.shadow.core.common.Logger;
 

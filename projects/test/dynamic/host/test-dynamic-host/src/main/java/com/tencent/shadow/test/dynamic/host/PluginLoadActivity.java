@@ -60,26 +60,26 @@ public class PluginLoadActivity extends Activity {
 
                 HostApplication.getApp().getPluginManager()
                         .enter(PluginLoadActivity.this, Constant.FROM_ID_START_ACTIVITY, bundle, new EnterCallback() {
-                    @Override
-                    public void onShowLoadingView(final View view) {
-                        mHandler.post(new Runnable() {
                             @Override
-                            public void run() {
-                                mViewGroup.addView(view);
+                            public void onShowLoadingView(final View view) {
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mViewGroup.addView(view);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onCloseLoadingView() {
+                                finish();
+                            }
+
+                            @Override
+                            public void onEnterComplete() {
+
                             }
                         });
-                    }
-
-                    @Override
-                    public void onCloseLoadingView() {
-                        finish();
-                    }
-
-                    @Override
-                    public void onEnterComplete() {
-
-                    }
-                });
             }
         });
     }

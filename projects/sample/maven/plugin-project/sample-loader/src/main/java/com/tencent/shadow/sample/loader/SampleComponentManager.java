@@ -2,6 +2,7 @@ package com.tencent.shadow.sample.loader;
 
 import android.content.ComponentName;
 import android.content.Context;
+
 import com.tencent.shadow.core.loader.infos.ContainerProviderInfo;
 import com.tencent.shadow.core.loader.managers.ComponentManager;
 

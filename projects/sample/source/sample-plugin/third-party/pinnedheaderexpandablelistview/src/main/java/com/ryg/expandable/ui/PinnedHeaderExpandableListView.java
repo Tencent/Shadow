@@ -1,27 +1,27 @@
 /**
- The MIT License (MIT)
-
- Copyright (c) 2014 singwhatiwanna
- https://github.com/singwhatiwanna
- http://blog.csdn.net/singwhatiwanna
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
+ * The MIT License (MIT)
+ * <p>
+ * Copyright (c) 2014 singwhatiwanna
+ * https://github.com/singwhatiwanna
+ * http://blog.csdn.net/singwhatiwanna
+ * <p>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * <p>
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ * <p>
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package com.ryg.expandable.ui;
@@ -97,10 +97,11 @@ public class PinnedHeaderExpandableListView extends ExpandableListView implement
 
     /**
      * 给group添加点击事件监听
-     * @param onGroupClickListener 监听
+     *
+     * @param onGroupClickListener   监听
      * @param isHeaderGroupClickable 表示header是否可点击<br/>
-     * note : 当不想group可点击的时候，需要在OnGroupClickListener#onGroupClick中返回true，
-     * 并将isHeaderGroupClickable设为false即可
+     *                               note : 当不想group可点击的时候，需要在OnGroupClickListener#onGroupClick中返回true，
+     *                               并将isHeaderGroupClickable设为false即可
      */
     public void setOnGroupClickListener(OnGroupClickListener onGroupClickListener, boolean isHeaderGroupClickable) {
         mIsHeaderGroupClickable = isHeaderGroupClickable;
@@ -165,7 +166,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView implement
                 if (touchTarget == mTouchTarget && mTouchTarget.isClickable()) {
                     mTouchTarget.performClick();
                     invalidate(new Rect(0, 0, mHeaderWidth, mHeaderHeight));
-                } else if (mIsHeaderGroupClickable){
+                } else if (mIsHeaderGroupClickable) {
                     int groupPosition = getPackedPositionGroup(getExpandableListPosition(pos));
                     if (groupPosition != INVALID_POSITION && mActionDownHappened) {
                         if (isGroupExpanded(groupPosition)) {
@@ -188,7 +189,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView implement
             return view;
         }
 
-        ViewGroup parent = (ViewGroup)view;
+        ViewGroup parent = (ViewGroup) view;
         int childrenCount = parent.getChildCount();
         final boolean customOrder = isChildrenDrawingOrderEnabled();
         View target = null;
@@ -262,7 +263,7 @@ public class PinnedHeaderExpandableListView extends ExpandableListView implement
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem,
-            int visibleItemCount, int totalItemCount) {
+                         int visibleItemCount, int totalItemCount) {
         if (totalItemCount > 0) {
             refreshHeader();
         }

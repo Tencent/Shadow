@@ -37,20 +37,20 @@ import com.tencent.shadow.core.runtime.ShadowApplication
 object CreateApplicationBloc {
     @Throws(CreateApplicationException::class)
     fun createShadowApplication(
-            pluginClassLoader: PluginClassLoader,
-            loadParameters: LoadParameters,
-            pluginManifest: PluginManifest,
-            resources: Resources,
-            hostAppContext: Context,
-            componentManager: ComponentManager,
-            pluginApplicationInfo: ApplicationInfo,
-            appComponentFactory: ShadowAppComponentFactory
+        pluginClassLoader: PluginClassLoader,
+        loadParameters: LoadParameters,
+        pluginManifest: PluginManifest,
+        resources: Resources,
+        hostAppContext: Context,
+        componentManager: ComponentManager,
+        pluginApplicationInfo: ApplicationInfo,
+        appComponentFactory: ShadowAppComponentFactory
     ): ShadowApplication {
         try {
             val appClassName = pluginManifest.applicationClassName
-                    ?: ShadowApplication::class.java.name
+                ?: ShadowApplication::class.java.name
             val shadowApplication =
-                    appComponentFactory.instantiateApplication(pluginClassLoader, appClassName)
+                appComponentFactory.instantiateApplication(pluginClassLoader, appClassName)
             val partKey = loadParameters.partKey
             shadowApplication.setPluginResources(resources)
             shadowApplication.setPluginClassLoader(pluginClassLoader)

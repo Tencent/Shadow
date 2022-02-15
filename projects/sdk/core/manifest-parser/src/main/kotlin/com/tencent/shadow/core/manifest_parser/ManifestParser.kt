@@ -11,7 +11,12 @@ import java.io.File
  * @param packageName   生成类的包名
  * @param packageForR   生成对R.java引用时需要的R文件的包名
  */
-fun generatePluginManifest(xmlFile: File, outputDir: File, packageName: String, packageForR: String) {
+fun generatePluginManifest(
+    xmlFile: File,
+    outputDir: File,
+    packageName: String,
+    packageForR: String
+) {
     val androidManifest = AndroidManifestReader().read(xmlFile)
     val generator = PluginManifestGenerator(packageForR)
     generator.generate(androidManifest, outputDir, packageName)

@@ -68,29 +68,29 @@ class AndroidManifestReader {
 
         manifestAttribute(AndroidManifestKeys.`package`)
         listOf(
-                AndroidManifestKeys.name,
-                AndroidManifestKeys.theme,
-                AndroidManifestKeys.appComponentFactory,
+            AndroidManifestKeys.name,
+            AndroidManifestKeys.theme,
+            AndroidManifestKeys.appComponentFactory,
         ).forEach(::applicationAttribute)
         return globalAttributes
     }
 
     private fun readComponents(application: Element?) =
-            listOf(
-                    AndroidManifestKeys.activity to ::parseActivity,
-                    AndroidManifestKeys.service to ::parseService,
-                    AndroidManifestKeys.receiver to ::parseReceiver,
-                    AndroidManifestKeys.provider to ::parseProvider,
-            ).map { (componentKey, parseMethod) ->
-                val componentArray = parseComponents(application, componentKey, parseMethod)
-                componentKey to componentArray
-            }
+        listOf(
+            AndroidManifestKeys.activity to ::parseActivity,
+            AndroidManifestKeys.service to ::parseService,
+            AndroidManifestKeys.receiver to ::parseReceiver,
+            AndroidManifestKeys.provider to ::parseProvider,
+        ).map { (componentKey, parseMethod) ->
+            val componentArray = parseComponents(application, componentKey, parseMethod)
+            componentKey to componentArray
+        }
 
 
     private fun parseComponents(
-            application: Element?,
-            componentKey: String,
-            parseFunction: (Element) -> ComponentMap
+        application: Element?,
+        componentKey: String,
+        parseFunction: (Element) -> ComponentMap
     ): Array<ComponentMap> {
         if (application == null) {
             return emptyArray()
@@ -111,9 +111,9 @@ class AndroidManifestReader {
         val activityMap = parseComponent(element).toMutableMap()
 
         listOf(
-                AndroidManifestKeys.theme,
-                AndroidManifestKeys.configChanges,
-                AndroidManifestKeys.windowSoftInputMode,
+            AndroidManifestKeys.theme,
+            AndroidManifestKeys.configChanges,
+            AndroidManifestKeys.windowSoftInputMode,
         ).forEach { attributeKey ->
             activityMap.putAttributeIfNotNull(element, attributeKey)
         }
@@ -136,7 +136,8 @@ class AndroidManifestReader {
     }
 
     private fun parseReceiverActions(receiverElement: Element): List<String> {
-        val intentFilters = receiverElement.getElementsByTagName(AndroidManifestKeys.`intent-filter`)
+        val intentFilters =
+            receiverElement.getElementsByTagName(AndroidManifestKeys.`intent-filter`)
         val collectionList = mutableListOf<String>()
         for (i in 0 until intentFilters.length) {
             val intentFilter = intentFilters.item(i)
@@ -163,13 +164,14 @@ class AndroidManifestReader {
     private fun parseComponent(element: Element): ComponentMap {
         val componentName = element.getAttribute(AndroidManifestKeys.name)
         return mapOf(
-                AndroidManifestKeys.name to componentName
+            AndroidManifestKeys.name to componentName
         )
     }
 
     private fun MutableComponentMap.putAttributeIfNotNull(
-            componentElement: Element,
-            attributeKey: String) {
+        componentElement: Element,
+        attributeKey: String
+    ) {
         if (componentElement.hasAttribute(attributeKey)) {
             this[attributeKey] = componentElement.getAttribute(attributeKey)
         }

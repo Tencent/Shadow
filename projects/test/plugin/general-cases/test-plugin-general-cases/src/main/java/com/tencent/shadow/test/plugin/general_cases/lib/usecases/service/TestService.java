@@ -81,9 +81,9 @@ public class TestService extends Service {
     }
 
 
-    private void sendMsg(String msg){
+    private void sendMsg(String msg) {
         Intent intent = new Intent(TestStartServiceActivity.INTENT_ACTION);
-        intent.putExtra("result",msg);
+        intent.putExtra("result", msg);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

@@ -9,6 +9,7 @@ import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 
 import android.content.pm.ServiceInfo;
+
 import java.util.List;
 
 public interface PluginPackageManager {

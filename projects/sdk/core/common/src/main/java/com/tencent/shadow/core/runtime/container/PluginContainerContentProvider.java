@@ -165,9 +165,9 @@ public class PluginContainerContentProvider extends ContentProvider {
         }
     }
 
-    private void checkHostContentProviderDelegate(){
-        if(hostContentProviderDelegate == null){
-            throw new IllegalArgumentException("hostContentProviderDelegate is null ,请检查ContentProviderDelegateProviderHolder.setDelegateProviderHolderPrepareListener是否调用，或"+this.getClass().getSimpleName()+" 是否和插件在同一进程");
+    private void checkHostContentProviderDelegate() {
+        if (hostContentProviderDelegate == null) {
+            throw new IllegalArgumentException("hostContentProviderDelegate is null ,请检查ContentProviderDelegateProviderHolder.setDelegateProviderHolderPrepareListener是否调用，或" + this.getClass().getSimpleName() + " 是否和插件在同一进程");
         }
     }
 }

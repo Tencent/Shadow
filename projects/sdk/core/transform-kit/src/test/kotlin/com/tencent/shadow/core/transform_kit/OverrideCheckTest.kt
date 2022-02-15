@@ -21,10 +21,12 @@ class OverrideCheckTest : AbstractTransformTest() {
             FileUtils.cleanDirectory(buildDir)
         }
 
-        inputClasses = ClassPool(true).get(arrayOf(
+        inputClasses = ClassPool(true).get(
+            arrayOf(
                 "test.override.Bar",
                 "test.override.Foo"
-        ))
+            )
+        )
         overrideCheck.prepare(inputClasses.toSet())
         overrideMap = overrideCheck.getOverrideMethods()
         replaceClass(inputClasses)
@@ -53,9 +55,9 @@ class OverrideCheckTest : AbstractTransformTest() {
         val error = errorResult[name]!!
         Assert.assertEquals(1, error.size)
         Assert.assertTrue(
-                error.any {
-                    it.first.name == "s2"
-                }
+            error.any {
+                it.first.name == "s2"
+            }
         )
     }
 
@@ -74,21 +76,21 @@ class OverrideCheckTest : AbstractTransformTest() {
     private fun findAllOverrideMethods(name: String) {
         val overrideMethods = overrideMap[name]!!
         Assert.assertTrue(
-                overrideMethods.any {
-                    it.first.name == "ss1"
-                }
+            overrideMethods.any {
+                it.first.name == "ss1"
+            }
         )
 
         Assert.assertTrue(
-                overrideMethods.any {
-                    it.first.name == "s1"
-                }
+            overrideMethods.any {
+                it.first.name == "s1"
+            }
         )
 
         Assert.assertTrue(
-                overrideMethods.any {
-                    it.first.name == "s2"
-                }
+            overrideMethods.any {
+                it.first.name == "s2"
+            }
         )
     }
 

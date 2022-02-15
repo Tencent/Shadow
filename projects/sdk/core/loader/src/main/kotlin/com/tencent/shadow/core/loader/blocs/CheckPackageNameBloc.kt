@@ -25,8 +25,8 @@ import com.tencent.shadow.core.runtime.PluginManifest
 object CheckPackageNameBloc {
     @Throws(ParsePluginApkException::class)
     fun check(
-            pluginManifest: PluginManifest,
-            hostAppContext: Context
+        pluginManifest: PluginManifest,
+        hostAppContext: Context
     ) {
         if (pluginManifest.applicationPackageName != hostAppContext.packageName) {
             /*
