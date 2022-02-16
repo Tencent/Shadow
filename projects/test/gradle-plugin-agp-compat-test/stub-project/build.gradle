@@ -45,6 +45,18 @@ android {
         versionCode VERSION_CODE
         versionName VERSION_NAME
     }
+
+    // 测试插件项目存在自定义flavorDimensions
+    flavorDimensions(*flavorDimensionList, 'DimensionA', 'DimensionB')
+    productFlavors {
+        A1 {
+            dimension 'DimensionA'
+        }
+        B2 {
+            dimension 'DimensionB'
+        }
+
+    }
 }
 
 dependencies {
