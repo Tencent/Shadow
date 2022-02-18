@@ -40,9 +40,13 @@ public class PluginHelper {
      */
     public final static String sPluginZip = BuildConfig.DEBUG ? "plugin-debug.zip" : "plugin-release.zip";
 
+    public final static String sPluginReinstallZip = "plugin-reinstall-debug.zip";
+
     public File pluginManagerFile;
 
     public File pluginZipFile;
+
+    public File pluginReinstallZipFile;
 
     public ExecutorService singlePool = Executors.newSingleThreadExecutor();
 
@@ -57,10 +61,12 @@ public class PluginHelper {
     private PluginHelper() {
     }
 
+
+
     public void init(Context context) {
         pluginManagerFile = new File(context.getFilesDir(), sPluginManagerName);
         pluginZipFile = new File(context.getFilesDir(), sPluginZip);
-
+        pluginReinstallZipFile = new File(context.getFilesDir(), sPluginReinstallZip);
         mContext = context.getApplicationContext();
 
         singlePool.execute(new Runnable() {
@@ -79,6 +85,16 @@ public class PluginHelper {
 
             InputStream zip = mContext.getAssets().open(sPluginZip);
             FileUtils.copyInputStreamToFile(zip, pluginZipFile);
+
+            try {
+                InputStream reinstallZip = mContext.getAssets().open(sPluginReinstallZip);
+                FileUtils.copyInputStreamToFile(reinstallZip, pluginReinstallZipFile);
+            }catch (IOException e){
+                // 这个文件可能不存在
+                e.printStackTrace();
+            }
+
+
 
         } catch (IOException e) {
             throw new RuntimeException("从assets中复制apk出错", e);

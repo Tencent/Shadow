@@ -44,7 +44,7 @@ final public class TestDynamicPluginManager implements PluginManagerImpl {
             serviceTestDynamicPluginManager.enter(context, fromId, bundle, callback);
         } else if (fromId == Constant.FROM_ID_START_ACTIVITY) {
             activityPluginManager.enter(context, fromId, bundle, callback);
-        } else if (fromId == Constant.FROM_ID_REINSTALL_PLUGIN) {
+        } else if (fromId == Constant.FROM_ID_REINSTALL_PLUGIN || fromId == Constant.FROM_ID_REINSTALL_PLUGIN_WHEN_USED || fromId == Constant.FROM_ID_REINSTALL_PLUGIN_ONLY) {
             reinstallPluginTestDynamicPluginManager.enter(context, fromId, bundle, callback);
         } else {
             throw new RuntimeException("不认识的fromId==" + fromId);

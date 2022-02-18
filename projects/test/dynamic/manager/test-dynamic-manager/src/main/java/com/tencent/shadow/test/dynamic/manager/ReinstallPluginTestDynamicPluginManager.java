@@ -66,14 +66,21 @@ public class ReinstallPluginTestDynamicPluginManager extends FastPluginManager {
         if (className == null) {
             throw new NullPointerException("className == null");
         }
-        executorService.execute(new Runnable() {
+
+        if(fromId == Constant.FROM_ID_REINSTALL_PLUGIN || fromId == Constant.FROM_ID_REINSTALL_PLUGIN_ONLY) executorService.execute(new Runnable() {
             @Override
             public void run() {
                 try {
+                    String zipPath;
+                    if(fromId == Constant.FROM_ID_REINSTALL_PLUGIN_ONLY){
+                        zipPath = pluginZipPath.replace("plugin-debug.zip", "plugin-reinstall-debug.zip");
+                    }else{
+                        zipPath = pluginZipPath;
+                    }
                     // 安装后卸载再安装
-                    InstalledPlugin installedPlugin = installPlugin(pluginZipPath, null, true);
+                    InstalledPlugin installedPlugin = installPlugin(zipPath, null, true);
                     deleteInstalledPlugin(installedPlugin.UUID);
-                    installedPlugin = installPlugin(pluginZipPath, null, true);
+                    installedPlugin = installPlugin(zipPath, null, true);
 
                     TestManager.uuid = installedPlugin.UUID;
 
@@ -84,6 +91,33 @@ public class ReinstallPluginTestDynamicPluginManager extends FastPluginManager {
                     );
 
                     startPluginActivity(context, installedPlugin, partKey, pluginIntent);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        else if(fromId == Constant.FROM_ID_REINSTALL_PLUGIN_WHEN_USED) executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    // 先卸载之前在用的插件
+                    deleteInstalledPlugin(TestManager.uuid);
+                    // 找 第二次编译的包
+                    String reinstallPluginZipPath = pluginZipPath.replace("plugin-debug.zip", "plugin-reinstall-debug.zip");
+                    // 再安装
+                    InstalledPlugin installedPlugin = installPlugin(reinstallPluginZipPath, null, true);
+
+                    TestManager.uuid = installedPlugin.UUID;
+
+                    Intent pluginIntent = new Intent();
+                    pluginIntent.setClassName(
+                            context.getPackageName(),
+                            className
+                    );
+
+                    startPluginActivity(context, installedPlugin, partKey, pluginIntent);
+
+
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

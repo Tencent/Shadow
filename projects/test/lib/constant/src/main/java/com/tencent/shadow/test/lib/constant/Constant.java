@@ -31,4 +31,6 @@ final public class Constant {
     public static final int FROM_ID_START_ACTIVITY = 1002;
     public static final int FROM_ID_BIND_SERVICE = 1003;
     public static final int FROM_ID_REINSTALL_PLUGIN = 1004;
+    public static final int FROM_ID_REINSTALL_PLUGIN_WHEN_USED = 1005;
+    public static final int FROM_ID_REINSTALL_PLUGIN_ONLY = 1006;
 }

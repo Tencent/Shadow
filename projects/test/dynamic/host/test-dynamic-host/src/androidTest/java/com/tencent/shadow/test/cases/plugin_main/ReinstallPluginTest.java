@@ -23,6 +23,7 @@ import androidx.test.filters.LargeTest;
 
 import com.tencent.shadow.test.lib.constant.Constant;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
@@ -30,8 +31,34 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class ReinstallPluginTest extends BasicTest {
 
+    private int fromId = Constant.FROM_ID_REINSTALL_PLUGIN;
+
     @Override
     protected int getFromId() {
-        return Constant.FROM_ID_REINSTALL_PLUGIN;
+
+        return fromId;
+
     }
+
+    // 单独测试 旧插件是否正常
+    @Test
+    public void testBasicUsage() {
+
+        matchTextWithViewTag("tv_msg", "Activity生命周期测试");
+    }
+
+    // 测试安装旧插件后启动插件，再删除插件安装新插件（reinstall）再启动 新插件
+    // 请确保 assets 中 包含了 旧插件 plugin-debug.zip 和 新插件 plugin-reinstall-debug.zip
+    // 详细内容请看 :test-dynamic-host build.gradle 114行
+    // 路径 project/test/dynamic/host/test-dynamic-host/build.gradle
+
+    @Test
+    public void testReinstallPluginWhenUsed(){
+        matchTextWithViewTag("tv_msg", "Activity生命周期测试");
+        fromId = Constant.FROM_ID_REINSTALL_PLUGIN_WHEN_USED;
+        launchActivity();
+        matchTextWithViewTag("tv", "reinstall");
+    }
+
 }
+

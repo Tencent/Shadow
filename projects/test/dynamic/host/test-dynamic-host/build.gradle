@@ -20,6 +20,7 @@ android {
         debug {
             assets.srcDir('build/generated/assets/test-dynamic-manager/debug/')
             assets.srcDir('build/generated/assets/plugin-zip/debug/')
+            assets.srcDir('build/generated/assets/plugin-reinstall-zip/debug/')
         }
     }
     lintOptions {
@@ -67,6 +68,30 @@ def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
     }.dependsOn("${projectName}:${taskName}")
 }
 
+import groovy.xml.XmlUtil
+// 修改xml 文件的内容
+def changeText(type){
+    def activityXml = "${project(":test-plugin-general-cases").getProjectDir()}"+
+            "/src/main/res/layout/layout_activity_lifecycle.xml"
+    def activityXmlFile = file(activityXml)
+    def layout = new XmlSlurper().parse(activityXmlFile)
+    if(type == 0){
+        layout.TextView.@'android:tag' = "tv_msg"
+        layout.TextView.@'android:text' = "Activity生命周期测试"
+    }else{
+        layout.TextView.@'android:tag' = "tv"
+        layout.TextView.@'android:text' = "reinstall"
+    }
+    def serialize = XmlUtil.serialize(layout)
+    file(activityXml).write(serialize)
+
+    if(type == 0)
+        return ""
+    else
+        return "-reinstall"
+
+}
+
 def generateAssets(generateAssetsTask, buildType) {
 
     def moduleName = 'test-dynamic-manager'
@@ -85,11 +110,17 @@ def generateAssets(generateAssetsTask, buildType) {
     )
 
     def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
+
+    // 如果要测试 ReinstallPluginTest.testReinstallPluginWhenUsed
+    // 请 build 2次， 并修改先后 changeText 的参数， 0 代表 正常插件， 1代表 重新安装的插件
+    // 如果要测试 ReinstallPluginTestOnly.testReinstallPluginOnly
+    // 请 修改 changeText 的参数为 1
+    def mod = changeText(1)
     generateAssetsTask.dependsOn createCopyTask(
             ':test-plugin-general-cases',
             buildType,
-            'plugin-zip',
-            "plugin-${buildType}.zip",
+            "plugin${mod}-zip",
+            "plugin${mod}-${buildType}.zip",
             pluginZip,
             "package${buildType.capitalize()}Plugin"
     )
