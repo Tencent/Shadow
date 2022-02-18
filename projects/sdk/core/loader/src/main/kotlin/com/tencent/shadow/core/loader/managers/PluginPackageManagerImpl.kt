@@ -95,6 +95,8 @@ internal class PluginPackageManagerImpl(
         return hostPackageManager.resolveService(intent, flags)
     }
 
+    override fun getArchiveFilePath() = pluginArchiveFilePath
+
     private fun <T : ComponentInfo> getComponentInfo(
         component: ComponentName,
         flags: Int,
