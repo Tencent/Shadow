@@ -12,14 +12,11 @@ buildscript {
             google()
             jcenter()
         }
-        maven { url 'https://www.jitpack.io' }
-
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$build_gradle_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.tencent.shadow.coding:aar-to-jar-plugin'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 apply from: 'buildScripts/gradle/common.gradle'
