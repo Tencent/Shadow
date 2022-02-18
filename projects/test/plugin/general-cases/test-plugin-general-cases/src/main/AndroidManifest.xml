@@ -95,6 +95,7 @@
         <activity android:name=".lib.usecases.application.ActivityLifecycleCallbacksTestActivity" />
         <activity android:name=".lib.usecases.classloader.TestBootClassloaderActivity" />
         <activity android:name=".lib.usecases.context.TestLayoutInflaterActivity" />
+        <activity android:name=".lib.usecases.context.ContextGetPackageCodePathTestActivity" />
 
         <provider
             android:name=".lib.usecases.provider.TestProvider"

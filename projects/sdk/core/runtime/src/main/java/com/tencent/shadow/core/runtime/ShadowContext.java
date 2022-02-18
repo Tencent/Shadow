@@ -283,6 +283,12 @@ public class ShadowContext extends SubDirContextThemeWrapper {
         }
     }
 
+    @Override
+    public String getPackageCodePath() {
+        PluginPartInfo pluginInfo = PluginPartInfoManager.getPluginInfo(getClassLoader());
+        return pluginInfo.packageManager.getArchiveFilePath();
+    }
+
     private BroadcastReceiverWapper wrapBroadcastReceiver(BroadcastReceiver receiver) {
         if (receiver == null) {
             return null;
