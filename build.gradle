@@ -1,3 +1,5 @@
+import java.nio.file.Files
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 //buildscript不能从其他gradle文件中apply，所以这段buildscript脚本存在于多个子构建中。
@@ -22,3 +24,54 @@ buildscript {
 apply from: 'buildScripts/gradle/common.gradle'
 
 apply from: "buildScripts/gradle/maven.gradle"
+
+task clean {
+    ['coding', 'core', 'dynamic'].forEach {
+        def includeBuildFile = file("projects/sdk/${it}")
+        def list = includeBuildFile.listFiles()
+        list.each {preFile ->
+            preFile.listFiles().each {
+                if(it.path == "${preFile.path}/build"){
+                    delete it
+                }
+
+            }
+        }
+
+    }
+    allprojects {
+        childProject ->
+            if(childProject.name != 'test-dynamic-host')
+                delete childProject.buildDir
+            else {
+                file(childProject.buildDir).listFiles().each {generated ->
+                    if(generated.path != "${childProject.buildDir}/generated")
+                        delete generated
+                    else{
+                        generated.listFiles().each {
+                            if(it.path != "${generated}/assets")
+                                delete it
+                        }
+                    }
+                }
+            }
+    }
+
+}
+
+
+
+def deleteBuildFile(filePath){
+    def b = file(filePath)
+    if(b.exists()){
+        println "delete ${b.path}"
+        delete b
+    }
+
+}
+
+task cleanBuild(){
+    deleteBuildFile('/Users/shidongfan/Desktop/github/neew/Shadow/projects/sdk/core/java-build-config/build')
+    deleteBuildFile('/Users/shidongfan/Desktop/github/neew/Shadow/projects/sdk/core/runtime/build')
+
+}

@@ -18,9 +18,12 @@
 
 package com.tencent.shadow.test.cases.plugin_main;
 
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
+import androidx.test.runner.MonitoringInstrumentation;
 
+import com.tencent.shadow.dynamic.host.BasePluginProcessService;
 import com.tencent.shadow.test.lib.constant.Constant;
 
 import org.junit.Test;
@@ -31,7 +34,7 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class ReinstallPluginTest extends BasicTest {
 
-    private int fromId = Constant.FROM_ID_REINSTALL_PLUGIN;
+    private int fromId = Constant.FROM_ID_REINSTALL_PLUGIN_WHEN_USED;//Constant.FROM_ID_REINSTALL_PLUGIN;
 
     @Override
     protected int getFromId() {
@@ -54,9 +57,9 @@ public class ReinstallPluginTest extends BasicTest {
 
     @Test
     public void testReinstallPluginWhenUsed(){
-        matchTextWithViewTag("tv_msg", "Activity生命周期测试");
+       /* matchTextWithViewTag("tv_msg", "Activity生命周期测试");
         fromId = Constant.FROM_ID_REINSTALL_PLUGIN_WHEN_USED;
-        launchActivity();
+        launchActivity();*/
         matchTextWithViewTag("tv", "reinstall");
     }
 

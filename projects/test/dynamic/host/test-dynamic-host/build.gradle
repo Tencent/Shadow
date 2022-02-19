@@ -115,7 +115,7 @@ def generateAssets(generateAssetsTask, buildType) {
     // 请 build 2次， 并修改先后 changeText 的参数， 0 代表 正常插件， 1代表 重新安装的插件
     // 如果要测试 ReinstallPluginTestOnly.testReinstallPluginOnly
     // 请 修改 changeText 的参数为 1
-    def mod = changeText(1)
+    def mod = changeText(0)
     generateAssetsTask.dependsOn createCopyTask(
             ':test-plugin-general-cases',
             buildType,

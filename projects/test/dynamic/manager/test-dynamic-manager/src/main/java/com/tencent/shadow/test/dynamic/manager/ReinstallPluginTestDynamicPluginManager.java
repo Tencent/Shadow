@@ -18,6 +18,8 @@
 
 package com.tencent.shadow.test.dynamic.manager;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +29,7 @@ import com.tencent.shadow.dynamic.host.EnterCallback;
 import com.tencent.shadow.test.lib.constant.Constant;
 import com.tencent.shadow.test.lib.test_manager.TestManager;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,6 +61,34 @@ public class ReinstallPluginTestDynamicPluginManager extends FastPluginManager {
         return "com.tencent.shadow.test.dynamic.host.PluginProcessPPS";
     }
 
+    public String getProcessName(Context context, int pid) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = am.getRunningAppProcesses();
+        if (runningApps == null) {
+            return "";
+        }
+        for (ActivityManager.RunningAppProcessInfo procInfo : runningApps) {
+            if (procInfo.pid == pid) {
+                return procInfo.processName;
+            }
+        }
+        return "";
+    }
+
+    public int getProcessId(Context context, String name) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningApps = am.getRunningAppProcesses();
+        if (runningApps == null) {
+            return -1;
+        }
+        for (ActivityManager.RunningAppProcessInfo procInfo : runningApps) {
+            if (procInfo.processName.equals(name)) {
+                return procInfo.pid;
+            }
+        }
+        return -1;
+    }
+
     @Override
     public void enter(final Context context, long fromId, Bundle bundle, final EnterCallback callback) {
         final String pluginZipPath = bundle.getString(Constant.KEY_PLUGIN_ZIP_PATH);
@@ -85,12 +116,62 @@ public class ReinstallPluginTestDynamicPluginManager extends FastPluginManager {
                     TestManager.uuid = installedPlugin.UUID;
 
                     Intent pluginIntent = new Intent();
+                    pluginIntent.setComponent(
+                            new ComponentName(context.getPackageName(),className)
+                    );
+
+                    startPluginActivity(context, installedPlugin, partKey, pluginIntent);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        else if(fromId == Constant.FROM_ID_REINSTALL_PLUGIN_WHEN_USED) executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String zipPath;
+                    zipPath = pluginZipPath;
+                    InstalledPlugin installedPlugin = installPlugin(zipPath, null, true);
+                    deleteInstalledPlugin(installedPlugin.UUID);
+                    installedPlugin = installPlugin(zipPath, null, true);
+
+                    TestManager.uuid = installedPlugin.UUID;
+
+                    Intent pluginIntent = new Intent();
+                    pluginIntent.setComponent(
+                            new ComponentName(context.getPackageName(),className)
+                    );
+
+                    startPluginActivity(context, installedPlugin, partKey, pluginIntent);
+
+
+                    int pid = android.os.Process.myPid();
+                    String pName = getProcessName(mCurrentContext,pid);
+
+                    Thread.sleep(5000);
+
+                    //android.os.Process.killProcess(getProcessId(mCurrentContext,".plugin"));
+                    mPpsController.exit();
+
+
+                    // 先卸载之前在用的插件
+                    deleteInstalledPlugin(TestManager.uuid);
+                    // 找 第二次编译的包
+                    String reinstallPluginZipPath = pluginZipPath.replace("plugin-debug.zip", "plugin-reinstall-debug.zip");
+                    // 再安装
+                    installedPlugin = installPlugin(reinstallPluginZipPath, null, true);
+
+                    TestManager.uuid = installedPlugin.UUID;
+
+                    pluginIntent = new Intent();
                     pluginIntent.setClassName(
                             context.getPackageName(),
                             className
                     );
-
                     startPluginActivity(context, installedPlugin, partKey, pluginIntent);
+
+
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
