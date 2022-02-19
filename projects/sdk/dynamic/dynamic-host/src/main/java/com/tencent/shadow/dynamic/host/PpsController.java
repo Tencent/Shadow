@@ -90,10 +90,10 @@ public class PpsController {
         try {
             _data.writeInterfaceToken(PpsBinder.DESCRIPTOR);
             mRemote.transact(PpsBinder.TRANSACTION_exit, _data, _reply, 0);
-            _reply.readException();
+           // _reply.readException();
         } finally {
-            _reply.recycle();
-            _data.recycle();
+            //_reply.recycle();
+            //_data.recycle();
         }
     }
 

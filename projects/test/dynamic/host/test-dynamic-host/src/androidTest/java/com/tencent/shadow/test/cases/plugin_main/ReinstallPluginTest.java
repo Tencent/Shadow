@@ -19,11 +19,15 @@
 package com.tencent.shadow.test.cases.plugin_main;
 
 import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.runner.MonitoringInstrumentation;
 
 import com.tencent.shadow.dynamic.host.BasePluginProcessService;
+import com.tencent.shadow.test.dynamic.host.R;
 import com.tencent.shadow.test.lib.constant.Constant;
 
 import org.junit.Test;

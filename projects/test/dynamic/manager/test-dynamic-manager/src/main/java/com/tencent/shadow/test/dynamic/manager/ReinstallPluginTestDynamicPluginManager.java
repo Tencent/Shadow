@@ -26,6 +26,8 @@ import android.os.Bundle;
 
 import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.EnterCallback;
+import com.tencent.shadow.dynamic.host.PpsController;
+import com.tencent.shadow.dynamic.host.PpsStatus;
 import com.tencent.shadow.test.lib.constant.Constant;
 import com.tencent.shadow.test.lib.test_manager.TestManager;
 
@@ -103,15 +105,12 @@ public class ReinstallPluginTestDynamicPluginManager extends FastPluginManager {
             public void run() {
                 try {
                     String zipPath;
-                    if(fromId == Constant.FROM_ID_REINSTALL_PLUGIN_ONLY){
-                        zipPath = pluginZipPath.replace("plugin-debug.zip", "plugin-reinstall-debug.zip");
-                    }else{
-                        zipPath = pluginZipPath;
-                    }
+                    zipPath = pluginZipPath;
                     // 安装后卸载再安装
+                    //InstalledPlugin installedPlugin = installPlugin(zipPath, null, true);
+                    zipPath = pluginZipPath.replace("plugin-debug.zip", "plugin-reinstall-debug.zip");
+                   // deleteInstalledPlugin(installedPlugin.UUID);
                     InstalledPlugin installedPlugin = installPlugin(zipPath, null, true);
-                    deleteInstalledPlugin(installedPlugin.UUID);
-                    installedPlugin = installPlugin(zipPath, null, true);
 
                     TestManager.uuid = installedPlugin.UUID;
 
@@ -133,9 +132,6 @@ public class ReinstallPluginTestDynamicPluginManager extends FastPluginManager {
                     String zipPath;
                     zipPath = pluginZipPath;
                     InstalledPlugin installedPlugin = installPlugin(zipPath, null, true);
-                    deleteInstalledPlugin(installedPlugin.UUID);
-                    installedPlugin = installPlugin(zipPath, null, true);
-
                     TestManager.uuid = installedPlugin.UUID;
 
                     Intent pluginIntent = new Intent();
@@ -146,16 +142,32 @@ public class ReinstallPluginTestDynamicPluginManager extends FastPluginManager {
                     startPluginActivity(context, installedPlugin, partKey, pluginIntent);
 
 
-                    int pid = android.os.Process.myPid();
-                    String pName = getProcessName(mCurrentContext,pid);
+                    // 先卸载之前在用的插件
 
                     Thread.sleep(5000);
 
-                    //android.os.Process.killProcess(getProcessId(mCurrentContext,".plugin"));
-                    mPpsController.exit();
+                    int pid = getProcessId(mCurrentContext,".plugin");
+                    PpsStatus ppsStatus = mPpsController.getPpsStatus();
+                    if(ppsStatus.runtimeLoaded) {
+                        try {
+                            //android.os.Process.killProcess(pid);
+                            mPpsController.exit();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
 
+                        //android.os.Process.killProcess(pid);
+                    }
 
-                    // 先卸载之前在用的插件
+                    Thread.sleep(5000);
+                   // android.os.Process.killProcess(pid);
+
+                    //
+
+                    //
+
+                    ppsStatus = mPpsController.getPpsStatus();
+
                     deleteInstalledPlugin(TestManager.uuid);
                     // 找 第二次编译的包
                     String reinstallPluginZipPath = pluginZipPath.replace("plugin-debug.zip", "plugin-reinstall-debug.zip");
@@ -165,32 +177,6 @@ public class ReinstallPluginTestDynamicPluginManager extends FastPluginManager {
                     TestManager.uuid = installedPlugin.UUID;
 
                     pluginIntent = new Intent();
-                    pluginIntent.setClassName(
-                            context.getPackageName(),
-                            className
-                    );
-                    startPluginActivity(context, installedPlugin, partKey, pluginIntent);
-
-
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-        else if(fromId == Constant.FROM_ID_REINSTALL_PLUGIN_WHEN_USED) executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    // 先卸载之前在用的插件
-                    deleteInstalledPlugin(TestManager.uuid);
-                    // 找 第二次编译的包
-                    String reinstallPluginZipPath = pluginZipPath.replace("plugin-debug.zip", "plugin-reinstall-debug.zip");
-                    // 再安装
-                    InstalledPlugin installedPlugin = installPlugin(reinstallPluginZipPath, null, true);
-
-                    TestManager.uuid = installedPlugin.UUID;
-
-                    Intent pluginIntent = new Intent();
                     pluginIntent.setClassName(
                             context.getPackageName(),
                             className

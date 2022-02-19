@@ -86,7 +86,7 @@ class PpsBinder extends android.os.Binder {
             case TRANSACTION_exit: {
                 data.enforceInterface(DESCRIPTOR);
                 mPps.exit();
-                reply.writeNoException();
+                //reply.writeNoException();
                 return true;
             }
             case TRANSACTION_getPpsStatus: {

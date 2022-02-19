@@ -128,7 +128,7 @@ public class JumpToPluginActivity extends Activity {
 
                     @Override
                     public void onEnterComplete() {
-
+                            finish();
                     }
                 });
 
