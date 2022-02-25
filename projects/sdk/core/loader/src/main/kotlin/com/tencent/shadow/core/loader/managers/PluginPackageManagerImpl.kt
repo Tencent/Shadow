@@ -38,16 +38,19 @@ internal class PluginPackageManagerImpl(
             hostPackageManager.getApplicationInfo(packageName, flags)
         }
 
-    override fun getPackageInfo(packageName: String, flags: Int): PackageInfo? =
-        if (packageName.isPlugin()) {
+    override fun getPackageInfo(packageName: String, flags: Int): PackageInfo? {
+        val hostPackageInfo = hostPackageManager.getPackageInfo(packageName, flags)
+        return if (packageName.isPlugin()) {
             val packageInfo = hostPackageManager.getPackageArchiveInfo(pluginArchiveFilePath, flags)
             if (packageInfo != null) {
                 packageInfo.applicationInfo = getPluginApplicationInfo(flags)
+                packageInfo.permissions = hostPackageInfo.permissions
             }
             packageInfo
         } else {
-            hostPackageManager.getPackageInfo(packageName, flags)
+            hostPackageInfo
         }
+    }
 
     override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo? =
         getComponentInfo(
