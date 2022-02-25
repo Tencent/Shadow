@@ -31,13 +31,13 @@ public class ODexBloc {
     private static ConcurrentHashMap<String, Object> sLocks = new ConcurrentHashMap<>();
 
     /**
-     * DexClassLoader的optimizedDirectory参数从API 26起就无效了
+     * DexClassLoader的optimizedDirectory参数从API 27起就无效了
      * 此方法统一判断这一特性是否生效
      *
      * @return <code>true</code>表示ODexBloc还有作用
      */
     public static boolean isEffective() {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.O;
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.O_MR1;
     }
 
     public static void oDexPlugin(File apkFile, File oDexDir, File copiedTagFile) throws InstallPluginException {
