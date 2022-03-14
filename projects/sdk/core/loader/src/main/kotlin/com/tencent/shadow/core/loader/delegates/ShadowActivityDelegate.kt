@@ -38,7 +38,10 @@ import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CLA
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_EXTRAS_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_LOADER_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_PART_KEY
-import com.tencent.shadow.core.runtime.*
+import com.tencent.shadow.core.runtime.MixResources
+import com.tencent.shadow.core.runtime.PluginActivity
+import com.tencent.shadow.core.runtime.PluginManifest
+import com.tencent.shadow.core.runtime.ShadowActivity
 import com.tencent.shadow.core.runtime.container.HostActivityDelegate
 import com.tencent.shadow.core.runtime.container.HostActivityDelegator
 
@@ -289,7 +292,7 @@ open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivity
         pluginActivity: ShadowActivity,
         pluginSavedInstanceState: Bundle?
     ) {
-        ShadowActivityLifecycleCallbacks.Holder.notifyPluginActivityPreCreated(
+        mPluginApplication.mActivityLifecycleCallbacksHolder.notifyPluginActivityPreCreated(
             pluginActivity,
             pluginSavedInstanceState
         )
