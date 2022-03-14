@@ -25,10 +25,12 @@ import android.os.Bundle;
 import com.tencent.shadow.core.runtime.container.HostActivityDelegator;
 import com.tencent.shadow.core.runtime.container.PluginContainerActivity;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.lang.ref.WeakReference;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 public interface ShadowActivityLifecycleCallbacks {
 
@@ -96,6 +98,7 @@ public interface ShadowActivityLifecycleCallbacks {
 
         final ShadowActivityLifecycleCallbacks shadowActivityLifecycleCallbacks;
         final Object runtimeObject;
+        private boolean isRegistered;
 
         public Wrapper(ShadowActivityLifecycleCallbacks shadowActivityLifecycleCallbacks, Object runtimeObject) {
             this.shadowActivityLifecycleCallbacks = shadowActivityLifecycleCallbacks;
@@ -354,89 +357,92 @@ public interface ShadowActivityLifecycleCallbacks {
         }
     }
 
-    /**
-     * ShadowActivity和ShadowApplication共用的ActivityLifecycleCallbacks逻辑。
-     * 用一个Map将ActivityLifecycleCallbacks映射成ShadowActivityLifecycleCallbacks。
-     * 同时，持有所有的有注册ActivityLifecycleCallbacks的Holder，
-     * 提供通知所有callbacks onPluginActivityPreCreated事件的方法。
-     */
     class Holder {
-        final private static Set<Holder> sAllHolders = new HashSet<>();
-
-        final private HostActivityDelegator delegator;
-        final private Application application;
-
         final private Map<ShadowActivityLifecycleCallbacks,
-                Wrapper>
-                mActivityLifecycleCallbacksMap = new HashMap<>();
+                WeakReference<Wrapper>>
+                mShadowActivityLifecycleCallbacksWrapperMap = new WeakHashMap<>();
 
-        public Holder(Object hostActivityDelegatorOrApplication) {
-            if (hostActivityDelegatorOrApplication instanceof HostActivityDelegator) {
-                this.delegator = (HostActivityDelegator) hostActivityDelegatorOrApplication;
-                this.application = null;
-            } else {
-                this.delegator = null;
-                this.application = (Application) hostActivityDelegatorOrApplication;
-            }
-        }
+        /**
+         * 针对业务代码自己不持有ActivityLifecycleCallbacks的情况，
+         * 无法通过mShadowActivityLifecycleCallbacksWrapperMap获取所有wrapper，
+         * 需要特别记录所有wrapper。
+         * <p>
+         * 采用弱引用以便不影响Wrapper原本的GC时机，Wrapper至少被系统持有。
+         * <p>
+         * GuardedBy mShadowActivityLifecycleCallbacksWrapperMap
+         */
+        final private Map<ShadowActivityLifecycleCallbacks.Wrapper, Object>
+                mAllShadowActivityLifecycleCallbackWrappers = new WeakHashMap<>();
 
-        private void register(Application.ActivityLifecycleCallbacks callbacks) {
-            if (delegator != null) {
-                delegator.registerActivityLifecycleCallbacks(callbacks);
-            } else {
-                assert application != null;
-                application.registerActivityLifecycleCallbacks(callbacks);
-            }
-        }
-
-        private void unregister(Application.ActivityLifecycleCallbacks callbacks) {
-            if (delegator != null) {
-                delegator.unregisterActivityLifecycleCallbacks(callbacks);
-            } else {
-                assert application != null;
-                application.unregisterActivityLifecycleCallbacks(callbacks);
-            }
-        }
-
-        public void registerActivityLifecycleCallbacks(
-                Object caller,
-                ShadowActivityLifecycleCallbacks callback) {
-            synchronized (sAllHolders) {
-                final ShadowActivityLifecycleCallbacks.Wrapper wrapper
-                        = new ShadowActivityLifecycleCallbacks.Wrapper(callback, caller);
-                mActivityLifecycleCallbacksMap.put(callback, wrapper);
-                register(wrapper);
-                sAllHolders.add(this);
-            }
-        }
-
-        public void unregisterActivityLifecycleCallbacks(
-                ShadowActivityLifecycleCallbacks callback) {
-            synchronized (sAllHolders) {
-                final Application.ActivityLifecycleCallbacks activityLifecycleCallbacks
-                        = mActivityLifecycleCallbacksMap.get(callback);
-                if (activityLifecycleCallbacks != null) {
-                    unregister(activityLifecycleCallbacks);
-                    mActivityLifecycleCallbacksMap.remove(callback);
-                }
-                if (mActivityLifecycleCallbacksMap.isEmpty()) {
-                    sAllHolders.remove(this);
-                }
-            }
-        }
-
-        public static void notifyPluginActivityPreCreated(ShadowActivity pluginActivity, Bundle savedInstanceState) {
-            synchronized (sAllHolders) {
+        public void notifyPluginActivityPreCreated(ShadowActivity pluginActivity,
+                                                   Bundle savedInstanceState) {
+            synchronized (mShadowActivityLifecycleCallbacksWrapperMap) {
                 //onPluginActivityPreCreated中可能会再次调用registerActivityLifecycleCallbacks，
-                //进而修改sAllHolders和mActivityLifecycleCallbacksMap，
+                //进而修改mAllShadowActivityLifecycleCallbackWrappers，
                 //因此需要先复制出待通知的callback，再通知。
-                Holder[] holders = sAllHolders.toArray(new Holder[0]);
-                for (Holder holder : holders) {
-                    Wrapper[] wrappers = holder.mActivityLifecycleCallbacksMap.values().toArray(new Wrapper[0]);
-                    for (ShadowActivityLifecycleCallbacks.Wrapper wrapper : wrappers) {
-                        wrapper.onPluginActivityPreCreated(pluginActivity, savedInstanceState);
+                List<Wrapper> copiedWrappers = new LinkedList<>();
+                Set<Wrapper> wrappers
+                        = mAllShadowActivityLifecycleCallbackWrappers.keySet();
+                for (ShadowActivityLifecycleCallbacks.Wrapper wrapper : wrappers) {
+                    // wrapper是弱引用持有的，需要二次验证其是否处于register状态
+                    if (wrapper != null && wrapper.isRegistered) {
+                        copiedWrappers.add(wrapper);
                     }
                 }
+
+                for (ShadowActivityLifecycleCallbacks.Wrapper wrapper : copiedWrappers) {
+                    wrapper.onPluginActivityPreCreated(pluginActivity, savedInstanceState);
+                }
+            }
+        }
+
+        private ShadowActivityLifecycleCallbacks.Wrapper shadowActivityLifecycleCallbacksToWrapper(
+                ShadowActivityLifecycleCallbacks callbacks,
+                Object caller
+        ) {
+            if (callbacks == null) {
+                return null;
+            }
+            synchronized (mShadowActivityLifecycleCallbacksWrapperMap) {
+                ShadowActivityLifecycleCallbacks.Wrapper wrapper;
+                WeakReference<ShadowActivityLifecycleCallbacks.Wrapper> weakReference
+                        = mShadowActivityLifecycleCallbacksWrapperMap.get(callbacks);
+                wrapper = weakReference == null ? null : weakReference.get();
+                if (wrapper == null) {
+                    wrapper = new ShadowActivityLifecycleCallbacks.Wrapper(callbacks, caller);
+                    mShadowActivityLifecycleCallbacksWrapperMap.put(callbacks,
+                            new WeakReference<>(wrapper));
+                    mAllShadowActivityLifecycleCallbackWrappers.put(wrapper, null);
+                }
+                return wrapper;
+            }
+        }
+
+        void registerActivityLifecycleCallbacks(ShadowActivityLifecycleCallbacks callback,
+                                                Object caller,
+                                                Object hostActivityDelegatorOrApplication) {
+            Wrapper wrapper = shadowActivityLifecycleCallbacksToWrapper(callback, caller);
+            wrapper.isRegistered = true;
+            if (hostActivityDelegatorOrApplication instanceof HostActivityDelegator) {
+                ((HostActivityDelegator) hostActivityDelegatorOrApplication)
+                        .registerActivityLifecycleCallbacks(wrapper);
+            } else {
+                ((Application) hostActivityDelegatorOrApplication)
+                        .registerActivityLifecycleCallbacks(wrapper);
+            }
+        }
+
+        void unregisterActivityLifecycleCallbacks(ShadowActivityLifecycleCallbacks callback,
+                                                  Object caller,
+                                                  Object hostActivityDelegatorOrApplication) {
+            Wrapper wrapper = shadowActivityLifecycleCallbacksToWrapper(callback, caller);
+            wrapper.isRegistered = false;
+            if (hostActivityDelegatorOrApplication instanceof HostActivityDelegator) {
+                ((HostActivityDelegator) hostActivityDelegatorOrApplication)
+                        .unregisterActivityLifecycleCallbacks(wrapper);
+            } else {
+                ((Application) hostActivityDelegatorOrApplication)
+                        .unregisterActivityLifecycleCallbacks(wrapper);
             }
         }
     }

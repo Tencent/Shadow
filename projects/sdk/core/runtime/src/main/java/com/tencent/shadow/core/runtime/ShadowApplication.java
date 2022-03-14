@@ -43,6 +43,9 @@ public class ShadowApplication extends ShadowContext {
 
     private ShadowAppComponentFactory mAppComponentFactory;
 
+    final public ShadowActivityLifecycleCallbacks.Holder mActivityLifecycleCallbacksHolder
+            = new ShadowActivityLifecycleCallbacks.Holder();
+
     public boolean isCallOnCreate;
 
     @Override
@@ -50,16 +53,18 @@ public class ShadowApplication extends ShadowContext {
         return this;
     }
 
-    private ShadowActivityLifecycleCallbacks.Holder lifecycleCallbacksHolder;
-
     public void registerActivityLifecycleCallbacks(
             ShadowActivityLifecycleCallbacks callback) {
-        lifecycleCallbacksHolder.registerActivityLifecycleCallbacks(this, callback);
+        mActivityLifecycleCallbacksHolder.registerActivityLifecycleCallbacks(
+                callback, this, mHostApplication
+        );
     }
 
     public void unregisterActivityLifecycleCallbacks(
             ShadowActivityLifecycleCallbacks callback) {
-        lifecycleCallbacksHolder.unregisterActivityLifecycleCallbacks(callback);
+        mActivityLifecycleCallbacksHolder.unregisterActivityLifecycleCallbacks(
+                callback, this, mHostApplication
+        );
     }
 
     public void onCreate() {
@@ -147,8 +152,6 @@ public class ShadowApplication extends ShadowContext {
     public void setHostApplicationContextAsBase(Context hostAppContext) {
         super.attachBaseContext(hostAppContext);
         mHostApplication = (Application) hostAppContext;
-        lifecycleCallbacksHolder
-                = new ShadowActivityLifecycleCallbacks.Holder(mHostApplication);
     }
 
     public void setBroadcasts(PluginManifest.ReceiverInfo[] receiverInfos) {
