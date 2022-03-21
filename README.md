@@ -66,7 +66,13 @@ Shadow现有的代码满足的是我们自己的业务现在的需求。得益�
 * 开源包含下载能力的manager实现
 
 ## 贡献代码
+
 详见[CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## 许可协议
+
 Tencent Shadow采用`BSD 3-Clause License`，详见[LICENSE](LICENSE.txt)。
+
+## 个人信息保护规则声明
+
+详见[PRIVACY.md](PRIVACY.md)
