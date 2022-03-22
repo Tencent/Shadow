@@ -99,6 +99,7 @@
 
         <provider
             android:name=".lib.usecases.provider.TestProvider"
+            android:grantUriPermissions="true"
             android:authorities="${applicationId}.provider.test" />
 
         <provider
