@@ -103,8 +103,7 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
                 providerInfo.packageName = context.packageName
                 providerInfo.name = it.className
                 providerInfo.authority = it.authorities
-                providerInfo.grantUriPermissions = true //插件没有权限管理机制
-
+                providerInfo.grantUriPermissions = it.grantUriPermissions
                 contentProvider?.attachInfo(context, providerInfo)
                 providerMap[it.authorities] = contentProvider
             } catch (e: Exception) {
