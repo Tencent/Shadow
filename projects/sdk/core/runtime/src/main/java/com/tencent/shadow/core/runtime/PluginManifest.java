@@ -132,10 +132,12 @@ public interface PluginManifest {
 
     final class ProviderInfo extends ComponentInfo {
         public final String authorities;
+        public final boolean grantUriPermissions;
 
-        public ProviderInfo(String className, String authorities) {
+        public ProviderInfo(String className, String authorities, boolean grantUriPermissions) {
             super(className);
             this.authorities = authorities;
+            this.grantUriPermissions = grantUriPermissions;
         }
     }
 

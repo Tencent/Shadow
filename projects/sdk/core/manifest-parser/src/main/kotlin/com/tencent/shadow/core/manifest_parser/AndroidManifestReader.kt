@@ -157,6 +157,7 @@ class AndroidManifestReader {
         val providerMap = parseComponent(element).toMutableMap()
 
         providerMap.putAttributeIfNotNull(element, AndroidManifestKeys.authorities)
+        providerMap.putAttributeIfNotNull(element, AndroidManifestKeys.grantUriPermissions)
 
         return providerMap
     }

@@ -241,6 +241,9 @@ private class PluginManifestBuilder(
 
     private fun toNewProviderInfo(componentMap: ComponentMap): String {
         val authoritiesValue = componentMap[AndroidManifestKeys.authorities]
+        //如果未传值使用android.content.pm.ProviderInfo.grantUriPermissions的默认值false
+        val grantUriPermissions = componentMap[AndroidManifestKeys.grantUriPermissions] ?: false
+
         val authoritiesLiteral =
             if (authoritiesValue != null) {
                 "\"${authoritiesValue}\""
@@ -249,7 +252,7 @@ private class PluginManifestBuilder(
             }
 
         return "new com.tencent.shadow.core.runtime.PluginManifest" +
-                ".ProviderInfo(\"${componentMap[AndroidManifestKeys.name]}\", $authoritiesLiteral)"
+                ".ProviderInfo(\"${componentMap[AndroidManifestKeys.name]}\", $authoritiesLiteral,$grantUriPermissions)"
     }
 
     companion object {

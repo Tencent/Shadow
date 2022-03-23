@@ -17,6 +17,7 @@ sealed class AndroidManifestKeys {
         const val service = "service"
         const val provider = "provider"
         const val receiver = "receiver"
+        const val grantUriPermissions = "android:grantUriPermissions"
     }
 }
 typealias ComponentMapKey = String
