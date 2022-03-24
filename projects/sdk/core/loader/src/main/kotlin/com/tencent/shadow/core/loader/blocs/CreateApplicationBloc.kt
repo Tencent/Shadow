@@ -60,6 +60,7 @@ object CreateApplicationBloc {
             shadowApplication.applicationInfo = pluginApplicationInfo
             shadowApplication.setBusinessName(loadParameters.businessName)
             shadowApplication.setPluginPartKey(partKey)
+            shadowApplication.setShadowApplication(shadowApplication)
 
             //和ShadowActivityDelegate.initPluginActivity一样，attachBaseContext放到最后
             shadowApplication.setHostApplicationContextAsBase(hostAppContext)
