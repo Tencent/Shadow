@@ -288,11 +288,16 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     @Override
     public void unregisterReceiver(BroadcastReceiver receiver) {
-        BroadcastReceiverWrapper wrapper = receiverToWrapper(receiver);
-        if (wrapper != null) {
-            super.unregisterReceiver(wrapper);
-        } else {
-            super.unregisterReceiver(receiver);
+        synchronized (mReceiverWrapperMap) {
+            WeakReference<BroadcastReceiverWrapper> weakReference
+                    = mReceiverWrapperMap.get(receiver);
+            BroadcastReceiverWrapper wrapper = weakReference == null ? null : weakReference.get();
+            if (null != wrapper) {
+                super.unregisterReceiver(wrapper);
+            } else {
+                super.unregisterReceiver(receiver);
+            }
+            mReceiverWrapperMap.remove(receiver);
         }
     }
 
