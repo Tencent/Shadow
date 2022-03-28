@@ -1,0 +1,87 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext{
+        compileSdk = 30
+        minSdk = 26
+        targetSdk = 30
+        versionCode = 1
+        versionName = '1.0'
+        appcompat_version = '1.2.0'
+        core_version = '1.5.0'
+        material_version = '1.0.0'
+        lifecycle_version = '2.4.1'
+        activity_version = "1.4.0"
+        fragment_version = "1.4.1"
+        annotation_version = '1.3.0'
+        room_version = "2.4.1"
+        kotlin_version = '1.5.31'
+        gradle_plugin_version = '7.0.2'
+        nav_version = "2.4.1"
+        paging_version = "3.1.0"
+        sqlite_version = "2.2.0"
+        work_version = "2.7.1"
+        recyclerview_version = '1.2.1'
+        constraint_version = '2.1.3'
+        gson_version = '2.9.0'
+        shadow_version = '2.3.4'
+    }
+    repositories {
+        maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        mavenLocal()
+        maven {
+            url 'https://maven.aliyun.com/repository/central'
+        }
+        maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://maven.aliyun.com/repository/gradle-plugin'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+        }
+        maven {
+            name = "GitHubPackages"
+            url "https://maven.pkg.github.com/tencent/shadow"
+            //一个只读账号兼容Github Packages暂时不支持匿名下载
+            //https://github.community/t/download-from-github-package-registry-without-authentication/14407
+            credentials {
+                username = 'readonlypat'
+                password = '\u0067hp_s3VOOZnLf1bTyvHWblPfaessrVYyEU4JdNbs'
+            }
+        }
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:$gradle_plugin_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.tencent.shadow.core:gradle-plugin:$shadow_version"
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        mavenLocal()
+        maven {
+            url 'https://maven.aliyun.com/repository/central'
+        }
+        maven { url 'https://jitpack.io' }
+        maven {
+            url 'https://maven.aliyun.com/repository/gradle-plugin'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+        }
+        maven {
+            name = "GitHubPackages"
+            url "https://maven.pkg.github.com/tencent/shadow"
+            //一个只读账号兼容Github Packages暂时不支持匿名下载
+            //https://github.community/t/download-from-github-package-registry-without-authentication/14407
+            credentials {
+                username = 'readonlypat'
+                password = '\u0067hp_s3VOOZnLf1bTyvHWblPfaessrVYyEU4JdNbs'
+            }
+        }
+    }
+}
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

@@ -1,0 +1,9 @@
+rootProject.name = "ShadowPluginDemo"
+include ':app'
+include ':constants'
+include ':plugin-app'
+include ':plugin-runtime'
+include ':plugin-loader'
+include ':plugin-manager'
+include ':plugin-another'
+include ':plugin-ablum'

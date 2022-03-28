@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdkVersion project.compileSdk
+
+    defaultConfig {
+        applicationId "com.leelu.plugin_loader"
+        minSdkVersion project.minSdk
+        targetSdkVersion project.targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+    implementation project(path: ':constants')
+
+    implementation "com.tencent.shadow.core:loader:$shadow_version"
+    implementation "com.tencent.shadow.dynamic:loader:$shadow_version"
+    implementation "com.tencent.shadow.dynamic:loader-impl:$shadow_version"
+
+    compileOnly "com.tencent.shadow.core:runtime:$shadow_version"
+    compileOnly "com.tencent.shadow.core:activity-container:$shadow_version"
+    compileOnly "com.tencent.shadow.core:common:$shadow_version"
+    //下面这行依赖是为了防止在proguard的时候找不到LoaderFactory接口
+    compileOnly "com.tencent.shadow.dynamic:host:$shadow_version"
+}
+
+

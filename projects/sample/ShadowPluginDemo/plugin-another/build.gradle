@@ -1,0 +1,104 @@
+plugins {
+    id 'com.android.application'
+    id 'com.tencent.shadow.plugin'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    compileSdkVersion project.compileSdk
+
+    defaultConfig {
+        applicationId "com.leelu.plugin_another"
+        minSdkVersion project.minSdk
+        targetSdkVersion project.targetSdk
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    flavorDimensions "app"
+    // 将插件applicationId设置为和宿主相同
+    productFlavors {
+        plugin {
+            applicationId "com.leelu.shadow"
+            dimension "app"
+        }
+        normal {
+            dimension "app"
+        }
+    }
+}
+
+dependencies {
+    pluginCompileOnly "com.tencent.shadow.core:runtime:$shadow_version"
+    implementation "androidx.core:core-ktx:$core_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "com.google.android.material:material:$material_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
+}
+
+shadow {
+
+    transform {
+//        useHostContext = ['abc']
+    }
+    packagePlugin {
+        pluginTypes {
+            debug {
+                loaderApkConfig = new Tuple2('plugin-loader-debug.apk', ':plugin-loader:assembleDebug')
+                runtimeApkConfig = new Tuple2('plugin-runtime-debug.apk', ':plugin-runtime:assembleDebug')
+                pluginApks {
+                    pluginApk1 {
+                        businessName = 'plugin-another'
+                        partKey = 'plugin-another'
+                        buildTask = ':plugin-another:assemblePluginDebug'
+                        apkPath = 'plugin-another/build/outputs/apk/plugin/debug/plugin-another-plugin-debug.apk'
+                    }
+                }
+
+            }
+
+            release {
+                loaderApkConfig = new Tuple2('plugin-loader-release.apk', ':plugin-loader:assembleRelease')
+                runtimeApkConfig = new Tuple2('plugin-runtime-release.apk', ':plugin-runtime:assembleRelease')
+                pluginApks {
+                    pluginApk1 {
+                        businessName = 'plugin-another'
+                        partKey = 'plugin-another'
+                        buildTask = ':plugin-another:assemblePluginRelease'
+                        apkPath = 'plugin-another/build/outputs/apk/plugin/debug/plugin-another-plugin-release-unsigned.apk'
+/*                        buildTask = ':sample-app:assemblePluginRelease'
+                        apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/release/sample-app-plugin-release.apk'
+                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
+                        dependsOn = ['sample-base']*/
+                    }
+                }
+            }
+        }
+        loaderApkProjectPath = 'plugin-loader'
+        runtimeApkProjectPath = 'plugin-runtime'
+
+        archiveSuffix = System.getenv("PluginSuffix") ?: ""
+        archivePrefix = 'loader'
+        destinationDir = "${getRootProject().getBuildDir()}"
+
+        version = 4
+        compactVersion = [1, 2, 3]
+        uuidNickName = "1.1.5"
+    }
+}
