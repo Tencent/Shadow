@@ -164,7 +164,18 @@ public class InstalledDao {
     @SuppressLint("Range")
     public List<InstalledPlugin> getLastPlugins(int limit) {
         SQLiteDatabase db = mDBHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select uuid from shadowPluginManager where  type = ?   order by installedTime desc limit " + limit, new String[]{String.valueOf(InstalledType.TYPE_UUID)});
+        // 查询所有type为uuid的行，按自增ID主键倒序
+        // 即自增ID越大的uuid为最新安装的
+        Cursor cursor = db.query(
+                InstalledPluginDBHelper.TABLE_NAME_MANAGER,
+                new String[]{InstalledPluginDBHelper.COLUMN_UUID},
+                InstalledPluginDBHelper.COLUMN_TYPE + " = ?",
+                new String[]{String.valueOf(InstalledType.TYPE_UUID)},
+                null,
+                null,
+                InstalledPluginDBHelper.COLUMN_ID + " DESC",
+                Integer.toString(limit)
+        );
         List<String> uuids = new ArrayList<>();
         while (cursor.moveToNext()) {
             String uuid = cursor.getString(cursor.getColumnIndex(InstalledPluginDBHelper.COLUMN_UUID));
