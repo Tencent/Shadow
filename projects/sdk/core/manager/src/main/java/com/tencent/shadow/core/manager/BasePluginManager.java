@@ -319,7 +319,7 @@ public abstract class BasePluginManager {
      * @param limit 最多获取个数
      */
     public final List<InstalledPlugin> getInstalledPlugins(int limit) {
-        return mInstalledDao.getLastPlugins(limit);
+        return mInstalledDao.getLatestPlugins(limit);
     }
 
 
