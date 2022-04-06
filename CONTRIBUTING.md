@@ -63,3 +63,29 @@ Shadow的`coding`和`core.gradle-plugin`、`core.manifest-parser`、`core.transf
    然后切换到Shadow源码工程中执行Debug `Remote JVM Debug` Configuration， 也可以Debug Shadow在其他工程中的编译期代码执行情况。
 
 5. 还原。回退对`gradle.properties`的修改，然后执行`./gradlew --stop`。以上所有改动的作用即可恢复。
+
+## 虚拟机
+
+启动虚拟机
+
+```shell
+~/Library/Android/sdk/emulator/emulator @Pixel_XL_API_28 -noaudio -no-boot-anim -wipe-data -no-snapstorage
+```
+
+其中`Pixel_XL_API_28`来自：
+
+```shell
+~/Library/Android/sdk/emulator/emulator -list-avds
+```
+
+`-noaudio`可以避免耳机切换到通话模式。
+`-wipe-data -no-snapstorage`使得虚拟机完全恢复到新建状态。
+`-no-boot-anim`稍微加快点启动。
+
+## 清理工作区
+
+由于复合构建的存在，Gradle clean任务不能总是很好的完成清理工作区的目的。
+
+```shell
+git clean -fdx -e .idea -e local.properties 
+```
