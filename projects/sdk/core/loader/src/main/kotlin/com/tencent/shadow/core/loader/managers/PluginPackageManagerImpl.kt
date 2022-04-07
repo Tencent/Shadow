@@ -72,6 +72,23 @@ internal class PluginPackageManagerImpl(
             PackageManager::getServiceInfo
         )
 
+    override fun getProviderInfo(component: ComponentName, flags: Int): ProviderInfo {
+        val (className, archiveFilePath)
+                = componentManager.getArchiveFilePathForProviderByClassName(component.className)
+        if (archiveFilePath != null) {
+            val packageInfo = hostPackageManager.getPackageArchiveInfo(
+                archiveFilePath, PackageManager.GET_PROVIDERS or flags
+            )
+            val componentInfo = packageInfo?.providers?.find {
+                it.name == className
+            }
+            if (componentInfo != null) {
+                return componentInfo
+            }
+        }
+        return hostPackageManager.getProviderInfo(component, flags)
+    }
+
     override fun resolveActivity(intent: Intent, flags: Int): ResolveInfo? {
         val component = intent.component
         if (component != null) {
@@ -127,7 +144,9 @@ internal class PluginPackageManagerImpl(
     }
 
     override fun resolveContentProvider(name: String, flags: Int): ProviderInfo? {
-        val (className, archiveFilePath) = componentManager.getArchiveFilePathForProvider(name)
+        val (className, archiveFilePath) = componentManager.getArchiveFilePathForProviderByAction(
+            name
+        )
         if (archiveFilePath != null) {
             val packageInfo = hostPackageManager.getPackageArchiveInfo(
                 archiveFilePath, PackageManager.GET_PROVIDERS or flags

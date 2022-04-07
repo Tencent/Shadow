@@ -36,9 +36,6 @@ import android.view.ViewGroup;
 import com.tencent.shadow.test.plugin.general_cases.lib.gallery.util.UiUtil;
 import com.tencent.shadow.test.plugin.general_cases.lib.usecases.service.TestService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class TestPackageManagerActivity extends Activity {
@@ -185,32 +182,14 @@ public class TestPackageManagerActivity extends Activity {
         int uid = applicationInfo.uid;
         List<ProviderInfo> providerInfos = packageManager.queryContentProviders(processName, uid, PackageManager.MATCH_ALL);
 
-        String size = Integer.toString(providerInfos.size());
-        String name;
-        if (providerInfos.isEmpty()) {
-            name = "";
-        } else {
-            ArrayList<String> names = new ArrayList<>(providerInfos.size());
-            for (ProviderInfo providerInfo : providerInfos) {
-                names.add(providerInfo.name);
-            }
-            Collections.sort(names);
-            name = Arrays.toString(names.toArray());
-        }
+        String size = providerInfos.size() > 0 ? ">0" : "0";
+
         viewGroup.addView(
                 UiUtil.makeItem(
                         this,
                         "queryContentProviders/size",
                         "queryContentProviders/size",
                         size
-                )
-        );
-        viewGroup.addView(
-                UiUtil.makeItem(
-                        this,
-                        "queryContentProviders/name",
-                        "queryContentProviders/name",
-                        name
                 )
         );
     }

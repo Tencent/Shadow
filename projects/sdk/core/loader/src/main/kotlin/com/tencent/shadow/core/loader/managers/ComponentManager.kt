@@ -306,12 +306,26 @@ abstract class ComponentManager : PluginComponentLauncher {
     fun getArchiveFilePathForService(className: String) =
         getArchiveFilePath(className, PluginManifest::getServices)
 
-    fun getArchiveFilePathForProvider(action: String?): kotlin.Pair<String?, String?> {
+    fun getArchiveFilePathForProviderByAction(action: String?): kotlin.Pair<String?, String?> {
         for ((pluginManifest, archiveFilePath) in allLoadedPlugin) {
             val providers = pluginManifest.providers
             if (providers != null) {
                 for (provider in providers) {
                     if (action?.equals(provider.authorities) == true) {
+                        return provider.className to archiveFilePath
+                    }
+                }
+            }
+        }
+        return null to null
+    }
+
+    fun getArchiveFilePathForProviderByClassName(className: String): kotlin.Pair<String?, String?> {
+        for ((pluginManifest, archiveFilePath) in allLoadedPlugin) {
+            val providers = pluginManifest.providers
+            if (providers != null) {
+                for (provider in providers) {
+                    if (className == provider.className) {
                         return provider.className to archiveFilePath
                     }
                 }

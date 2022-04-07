@@ -18,6 +18,8 @@ public interface PluginPackageManager {
 
     ServiceInfo getServiceInfo(ComponentName component, int flags);
 
+    ProviderInfo getProviderInfo(ComponentName component, int flags);
+
     PackageInfo getPackageInfo(String packageName, int flags);
 
     ProviderInfo resolveContentProvider(String name, int flags);

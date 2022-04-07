@@ -22,7 +22,6 @@ import com.tencent.shadow.core.transform.ShadowTransform.Companion.SelfClassName
 import com.tencent.shadow.core.transform_kit.SpecificTransform
 import com.tencent.shadow.core.transform_kit.TransformStep
 import javassist.*
-import java.util.*
 
 class PackageManagerTransform : SpecificTransform() {
     companion object {
@@ -102,6 +101,7 @@ class PackageManagerTransform : SpecificTransform() {
                 "getApplicationInfo",
                 "getActivityInfo",
                 "getServiceInfo",
+                "getProviderInfo",
                 "getPackageInfo",
                 "resolveContentProvider",
                 "queryContentProviders",
