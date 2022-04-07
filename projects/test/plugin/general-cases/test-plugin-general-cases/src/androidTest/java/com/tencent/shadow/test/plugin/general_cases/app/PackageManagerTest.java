@@ -62,8 +62,7 @@ public class PackageManagerTest extends NormalAppTest {
 
     @Test
     public void testQueryContentProvidersName() {
-        matchTextWithViewTag("queryContentProviders/size", "2");
-        matchTextWithViewTag("queryContentProviders/name", "[android.support.v4.content.FileProvider, com.tencent.shadow.test.plugin.general_cases.lib.usecases.provider.TestProvider]");
+        matchTextWithViewTag("queryContentProviders/size", ">0");
     }
 
     @Test
