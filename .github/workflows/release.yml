@@ -3,7 +3,7 @@ name: Publish release
 on:
   release:
     types:
-      - created
+      - published #https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release
 
 jobs:
   build-and-test:
