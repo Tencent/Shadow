@@ -51,9 +51,9 @@ android {
         abortOnError false
     }
 
-    // 将插件的资源ID分区改为大于0x7f的值，使其不同于宿主默认的0x7f
+    // 将插件的资源ID分区改为和宿主0x7F不同的值
     aaptOptions {
-        additionalParameters "--package-id", "0x80"
+        additionalParameters "--package-id", "0x7E", "--allow-reserved-package-id"
     }
 }
 
