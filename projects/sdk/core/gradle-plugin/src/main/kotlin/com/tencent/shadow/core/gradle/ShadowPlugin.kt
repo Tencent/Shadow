@@ -21,6 +21,7 @@ package com.tencent.shadow.core.gradle
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant
+import com.android.sdklib.AndroidVersion.VersionCodes
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import com.tencent.shadow.core.manifest_parser.generatePluginManifest
 import com.tencent.shadow.core.transform.ShadowTransform
@@ -168,7 +169,7 @@ class ShadowPlugin : Plugin<Project> {
      */
     private fun checkAaptPackageIdConfig(pluginVariant: ApplicationVariant) {
         val output = pluginVariant.outputs.first()
-
+        val minSdkVersion = agpCompat.getMinSdkVersion(pluginVariant)
         val processResourcesTask = agpCompat.getProcessResourcesTask(output)
 
         processResourcesTask.doFirst {
@@ -178,19 +179,43 @@ class ShadowPlugin : Plugin<Project> {
                 if (parameter == "--package-id" && parameterList.size >= index + 2) {
                     val packageIdSetting = parameterList[index + 1]
                     val packageIdValue = Integer.decode(packageIdSetting)
-                    if (packageIdValue <= 0x7f) {
-                        throw Error("--package-id必须大于0x7f")
+
+                    if (minSdkVersion > VersionCodes.O) {
+                        if (packageIdValue <= 0x7f) {
+                            throw Error("minSdkVersion大于26时--package-id必须大于0x7f")
+                        } else {
+                            foundPackageIdParameter = true
+                        }
                     } else {
-                        foundPackageIdParameter = true
+                        if (packageIdValue >= 0x7f) {
+                            /*
+                            为了兼容minSDK小于26，且packageId大于0x7f时Android系统的bug，aapt对id进行了修改，
+                            导致Resources中记录的id值和layout中使用的id值不一致。
+                            但是minSDK小于26时可以使用--allow-reserved-package-id选项使用小于0x7f的值。
+                            https://android.googlesource.com/platform/frameworks/base/+/master/tools/aapt2/readme.md#version-2_14
+                            https://developer.android.com/studio/command-line/aapt2#link_options
+                             */
+                            throw Error(
+                                "minSdkVersion小于26时--package-id必须小于0x7f，" +
+                                        "同时使用--allow-reserved-package-id选项。"
+                            )
+                        } else {
+                            foundPackageIdParameter = true
+                        }
                     }
                 }
             }
             if (!foundPackageIdParameter) {
+                val example1 = "aaptOptions {\n" +
+                        "    additionalParameters \"--package-id\", \"0x80\"\n" +
+                        "}"
+                val example2 = "aaptOptions {\n" +
+                        "    additionalParameters \"--package-id\", \"0x7E\", \"--allow-reserved-package-id\"\n" +
+                        "}"
+                val example = if (minSdkVersion > VersionCodes.O) example1 else example2
                 throw Error(
-                    "没有找到--package-id参数。插件需要设置大于0x7f(不同于宿主）的资源ID前缀：\n" +
-                            "aaptOptions {\n" +
-                            "    additionalParameters \"--xxxpackage-id\", \"0x80\"\n" +
-                            "}"
+                    "插件需要利用aapt2的修改资源ID前缀的选项使其与宿主不同。\n" +
+                            "没有找到--package-id参数。示例：\n" + example
                 )
             }
         }

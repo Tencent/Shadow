@@ -2,11 +2,13 @@ package com.tencent.shadow.core.gradle
 
 import com.android.SdkConstants
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariantOutput
 import com.android.build.gradle.internal.dsl.ProductFlavor
 import com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask
 import com.android.build.gradle.tasks.ProcessApplicationManifest
 import com.android.build.gradle.tasks.ProcessMultiApkApplicationManifest
+import com.android.sdklib.AndroidVersion.VersionCodes
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
@@ -125,6 +127,12 @@ internal class AGPCompatImpl : AGPCompat {
             // 设置Default主要是为了IDE中的Build Variants上下文自动选择时不要选成插件，
             // 以便在IDE直接运行插件apk模块时运行Normal版本
         }
+    }
+
+    override fun getMinSdkVersion(pluginVariant: ApplicationVariant): Int {
+        // AGP在版本升级中修改了MergedFlavor的包名，但是它实现的ProductFlavor接口没有变
+        val mergedFlavor = pluginVariant.mergedFlavor as com.android.builder.model.ProductFlavor
+        return mergedFlavor.minSdkVersion?.apiLevel ?: VersionCodes.BASE
     }
 
     companion object {

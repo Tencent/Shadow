@@ -44,5 +44,8 @@ testUnderAGPVersion 3.5.0
 testUnderAGPVersion 3.4.0
 testUnderAGPVersion 3.3.0
 testUnderAGPVersion 3.2.0
-testUnderAGPVersion 3.1.0
+
+# 3.1.0在配合aapt2使用--package-id选项时不能设置小于0x7f的值，因此不再支持
+#testUnderAGPVersion 3.1.0
+
 #更低的版本支持成本过高

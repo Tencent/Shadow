@@ -19,6 +19,7 @@
 package com.tencent.shadow.core.gradle
 
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariantOutput
 import com.android.build.gradle.internal.dsl.ProductFlavor
 import org.gradle.api.Project
@@ -36,4 +37,5 @@ internal interface AGPCompat {
     fun getProcessManifestTask(output: BaseVariantOutput): Task
     fun getProcessResourcesTask(output: BaseVariantOutput): Task
     fun getAaptAdditionalParameters(processResourcesTask: Task): List<String>
+    fun getMinSdkVersion(pluginVariant: ApplicationVariant): Int
 }
