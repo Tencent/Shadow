@@ -97,7 +97,7 @@
             android:name=".PluginLoadActivity"
             android:launchMode="standard"
             android:screenOrientation="portrait"
-            android:theme="@style/troop_Transparent" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 
         <activity android:name=".JumpToPluginActivity" />
 
@@ -113,7 +113,7 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:theme="@style/troop_Transparent" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 
         <activity
             android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginSingleInstance1ProxyActivity"
@@ -121,7 +121,7 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:theme="@style/troop_Transparent" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
 
         <activity
             android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginSingleTask1ProxyActivity"
@@ -129,7 +129,7 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:theme="@style/troop_Transparent" />
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <!--dynamic activity注册 end -->
     </application>
 

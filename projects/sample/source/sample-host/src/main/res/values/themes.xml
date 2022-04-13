@@ -20,11 +20,4 @@
 
     <style name="TestHostTheme" parent="@android:style/Theme.NoTitleBar.Fullscreen" />
 
-    <style name="troop_Transparent" parent="@android:style/Theme">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
-    </style>
 </resources>

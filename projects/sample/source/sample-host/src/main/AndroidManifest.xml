@@ -114,7 +114,7 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:theme="@style/troop_Transparent"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:multiprocess="true" />
 
         <activity
@@ -123,7 +123,7 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:theme="@style/troop_Transparent"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:multiprocess="true" />
 
         <activity
@@ -132,7 +132,7 @@
             android:screenOrientation="portrait"
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
-            android:theme="@style/troop_Transparent"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
             android:multiprocess="true"
 
             />
