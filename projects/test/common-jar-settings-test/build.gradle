@@ -1,0 +1,44 @@
+apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
+
+task disassembleTestClass {
+    dependsOn(compileJava)
+    def classFile = file('build/classes/java/main/Test.class')
+    def outputFile = file('build/classes/java/main/Test.javap.txt')
+    inputs.file(classFile)
+    outputs.file(outputFile)
+    doLast {
+        def proc = "javap -c ${classFile.path}".split(' ').execute()
+        def outputStream = outputFile.newOutputStream()
+        proc.waitForProcessOutput(outputStream, System.err)
+        outputStream.close()
+        if (proc.exitValue() != 0) {
+            throw new GradleException("proc.exitValue() != 0")
+        }
+    }
+}
+
+/**
+ * 通过验证Test.java编译后的反编译结果Test.javap.txt，
+ * 从中找出ByteBuffer.position的方法签名返回类型是ByteBuffer，还是Buffer，
+ * 来确定common-jar-settings是否正确设置了android.jar作为Bootclasspath。
+ *
+ * 如果没有设置android.jar作为Bootclasspath，在用JDK11编译时，
+ * 应用了common-jar-settings的模块可能会调用android.jar中不存在的方法，
+ * 而这些模块应该是允许在Android设备上的。
+ */
+task testJavacBootclasspath {
+    dependsOn(disassembleTestClass)
+    def javapFile = file('build/classes/java/main/Test.javap.txt')
+    doLast {
+        def found = false
+        javapFile.eachLine {
+            if (it.contains("// Method java/nio/ByteBuffer.position:(I)Ljava/nio/Buffer;")) {
+                found = true
+            }
+        }
+
+        if (!found) {
+            throw new GradleException("没有在javap结果中找到预期方法签名，详见测试方法注释")
+        }
+    }
+}

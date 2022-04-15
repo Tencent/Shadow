@@ -16,6 +16,7 @@ def includeTest() {
             'test-dynamic-manager',
             'test-dynamic-loader',
             'test-dynamic-runtime',
+            'common-jar-settings-test',
             'constant',
             'custom-view',
             'plugin-use-host-code-lib',
@@ -32,6 +33,7 @@ def includeTest() {
     project(':test-dynamic-manager').projectDir = file('projects/test/dynamic/manager/test-dynamic-manager')
     project(':test-dynamic-loader').projectDir = file('projects/test/dynamic/plugin/test-dynamic-loader')
     project(':test-dynamic-runtime').projectDir = file('projects/test/dynamic/plugin/test-dynamic-runtime')
+    project(':common-jar-settings-test').projectDir = file('projects/test/common-jar-settings-test')
     project(':constant').projectDir = file('projects/test/lib/constant')
     project(':custom-view').projectDir = file('projects/test/lib/custom-view')
     project(':plugin-use-host-code-lib').projectDir = file('projects/test/lib/plugin-use-host-code-lib')
