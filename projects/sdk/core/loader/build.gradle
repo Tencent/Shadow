@@ -1,4 +1,5 @@
 import com.tencent.shadow.coding.code_generator.ActivityCodeGenerator
+import com.tencent.shadow.coding.common_jar_settings.AndroidJar
 
 buildscript {
     dependencies {
@@ -23,6 +24,8 @@ compileKotlin {
 
     kotlinOptions {
         jvmTarget = "1.6"
+        noJdk = true
+        noStdlib = true
     }
 }
 
@@ -35,6 +38,7 @@ dependencies {
     compileOnly project(':activity-container')
     compileOnly project(':common')
     api project(':load-parameters')
+    compileOnly files(AndroidJar.ANDROID_JAR_PATH)
 }
 
 def generateCode = tasks.register('generateCode') {

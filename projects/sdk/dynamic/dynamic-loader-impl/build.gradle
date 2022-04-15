@@ -1,3 +1,5 @@
+import com.tencent.shadow.coding.common_jar_settings.AndroidJar
+
 apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
 apply plugin: 'kotlin'
@@ -8,6 +10,8 @@ compileKotlin {
 
     kotlinOptions {
         jvmTarget = "1.6"
+        noJdk = true
+        noStdlib = true
     }
 }
 
@@ -18,4 +22,5 @@ dependencies {
     compileOnly 'com.tencent.shadow.core:common'
     compileOnly project(':dynamic-host')
     compileOnly project(':dynamic-loader')
+    compileOnly files(AndroidJar.ANDROID_JAR_PATH)
 }

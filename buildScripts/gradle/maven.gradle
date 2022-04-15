@@ -25,6 +25,7 @@ task jvmTestSdk() {
     dependsOn gradle.includedBuild('coding').task(':test')
     dependsOn gradle.includedBuild('core').task(':test')
     dependsOn gradle.includedBuild('dynamic').task(':test')
+    dependsOn ':common-jar-settings-test:testJavacBootclasspath'
 }
 
 task androidTestSdk() {
