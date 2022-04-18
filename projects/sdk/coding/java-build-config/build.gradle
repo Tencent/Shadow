@@ -36,7 +36,7 @@ def generateCode = tasks.register('generateCode') {
     doLast {
         def versionNameField
                 = FieldSpec.builder(String, "VERSION_NAME", Modifier.PUBLIC, Modifier.STATIC, Modifier.FINAL)
-                .initializer("\"${project.VERSION_NAME}\"").build()
+                .initializer('$S', project.VERSION_NAME).build()
 
         def buildConfigClass = TypeSpec.classBuilder("BuildConfig")
                 .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
