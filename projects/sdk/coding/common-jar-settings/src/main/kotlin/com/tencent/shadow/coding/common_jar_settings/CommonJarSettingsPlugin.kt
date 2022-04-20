@@ -17,9 +17,13 @@ class CommonJarSettingsPlugin : Plugin<Project> {
         java.sourceCompatibility = JavaVersion.VERSION_1_7
         java.targetCompatibility = JavaVersion.VERSION_1_7
 
+        val androidJar = project.files(AndroidJar.ANDROID_JAR_PATH)
         // 将android.jar设置为这些jar工程的bootclasspath，以便javac编译时使用的JDK标准库采用android平台的定义
         project.tasks.withType(JavaCompile::class.java) {
-            it.options.bootstrapClasspath = project.files(AndroidJar.ANDROID_JAR_PATH)
+            it.options.bootstrapClasspath = androidJar
         }
+
+        // IDE不会自动索引bootstrapClasspath，所以把bootstrapClasspath重复添加到compileOnly中
+        project.dependencies.add("compileOnly", androidJar)
     }
 }
