@@ -58,10 +58,18 @@ object CreateResourceBloc {
          */
         applicationInfo.publicSourceDir = hostAppContext.applicationInfo.publicSourceDir
         applicationInfo.sourceDir = hostAppContext.applicationInfo.sourceDir
-        val otherApksAddToResources = arrayOf(
-            *hostAppContext.applicationInfo.sharedLibraryFiles,
-            archiveFilePath
-        )
+
+        // hostSharedLibraryFiles中可能有webview通过私有api注入的webview.apk
+        val hostSharedLibraryFiles = hostAppContext.applicationInfo.sharedLibraryFiles
+        val otherApksAddToResources =
+            if (hostSharedLibraryFiles == null)
+                arrayOf(archiveFilePath)
+            else
+                arrayOf(
+                    *hostSharedLibraryFiles,
+                    archiveFilePath
+                )
+
         applicationInfo.sharedLibraryFiles = otherApksAddToResources
 
         try {
