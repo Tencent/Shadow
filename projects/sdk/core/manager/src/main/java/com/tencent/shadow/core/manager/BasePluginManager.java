@@ -417,15 +417,14 @@ public abstract class BasePluginManager {
      * 所以可用的ABI只能是其中一部分。
      */
     private String[] getPluginSupportedAbis() {
-        String nativeLibraryDir = mHostContext.getApplicationInfo().nativeLibraryDir;
-        int nextIndexOfLastSlash = nativeLibraryDir.lastIndexOf('/') + 1;
-        String instructionSet = nativeLibraryDir.substring(nextIndexOfLastSlash);
-        if (!isKnownInstructionSet(instructionSet)) {
-            throw new IllegalStateException("不认识的instructionSet==" + instructionSet);
-        }
-        boolean is64Bit = is64BitInstructionSet(instructionSet);
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String nativeLibraryDir = mHostContext.getApplicationInfo().nativeLibraryDir;
+            int nextIndexOfLastSlash = nativeLibraryDir.lastIndexOf('/') + 1;
+            String instructionSet = nativeLibraryDir.substring(nextIndexOfLastSlash);
+            if (!isKnownInstructionSet(instructionSet)) {
+                throw new IllegalStateException("不认识的instructionSet==" + instructionSet);
+            }
+            boolean is64Bit = is64BitInstructionSet(instructionSet);
             return is64Bit ? Build.SUPPORTED_64_BIT_ABIS : Build.SUPPORTED_32_BIT_ABIS;
         } else {
             String cpuAbi = Build.CPU_ABI;
