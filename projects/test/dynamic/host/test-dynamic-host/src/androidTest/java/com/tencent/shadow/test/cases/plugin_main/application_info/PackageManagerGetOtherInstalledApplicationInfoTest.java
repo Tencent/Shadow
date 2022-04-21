@@ -1,11 +1,11 @@
 package com.tencent.shadow.test.cases.plugin_main.application_info;
 
+import static android.content.pm.PackageManager.GET_META_DATA;
+
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 
 import androidx.test.core.app.ApplicationProvider;
-
-import static android.content.pm.PackageManager.GET_META_DATA;
 
 /**
  * 在插件中通过PackageManager.getApplicationInfo()获取其他正常安装应用的ApplicationInfo测试。
@@ -21,7 +21,7 @@ public class PackageManagerGetOtherInstalledApplicationInfoTest extends CommonAp
 
     private ApplicationInfo getApplicationInfoFromHost() throws PackageManager.NameNotFoundException {
         PackageManager packageManager = ApplicationProvider.getApplicationContext().getPackageManager();
-        return packageManager.getApplicationInfo("com.android.shell", GET_META_DATA);
+        return packageManager.getApplicationInfo("android", GET_META_DATA);
     }
 
     @Override
