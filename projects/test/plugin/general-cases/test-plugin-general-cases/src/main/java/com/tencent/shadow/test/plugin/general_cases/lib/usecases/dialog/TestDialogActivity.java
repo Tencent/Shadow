@@ -18,9 +18,9 @@
 
 package com.tencent.shadow.test.plugin.general_cases.lib.usecases.dialog;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.ViewGroup;
@@ -34,7 +34,15 @@ public class TestDialogActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TestDialog dialog = new TestDialog(this);
+        TestDialog dialog = new TestDialog(new ContextWrapper(this) {
+            @Override
+            public Context getApplicationContext() {
+                // Android 低版本系统上有(Application)context.getApplicationContext()的代码
+                // 这里返回宿主的Application作为ApplicationContext
+                // https://cs.android.com/android/platform/superproject/+/android-4.0.1_r1:frameworks/base/core/java/android/view/Window.java;l=471
+                return getApplication().getBaseContext().getApplicationContext();
+            }
+        });
 
         dialog.setOwnerActivity(this);
         Activity ownerActivity = dialog.getOwnerActivity();
@@ -52,11 +60,14 @@ public class TestDialogActivity extends Activity {
         dialog.show();
     }
 
-    @SuppressLint("NewApi")
     @Override
     protected void attachBaseContext(Context newBase) {
-        Configuration configuration = new Configuration();
-        Context context = newBase.createConfigurationContext(configuration);
-        super.attachBaseContext(context);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            Configuration configuration = new Configuration();
+            Context context = newBase.createConfigurationContext(configuration);
+            super.attachBaseContext(context);
+        } else {
+            super.attachBaseContext(newBase);
+        }
     }
 }

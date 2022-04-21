@@ -20,6 +20,8 @@ package com.tencent.shadow.test.plugin.general_cases.lib.usecases.dialog;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
@@ -31,7 +33,15 @@ public class TestAlertDialogActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextWrapper(this) {
+            @Override
+            public Context getApplicationContext() {
+                // Android 低版本系统上有(Application)context.getApplicationContext()的代码
+                // 这里返回宿主的Application作为ApplicationContext
+                // https://cs.android.com/android/platform/superproject/+/android-4.0.1_r1:frameworks/base/core/java/android/view/Window.java;l=471
+                return getApplication().getBaseContext().getApplicationContext();
+            }
+        });
 
 
         ViewGroup mItemViewGroup = UiUtil.setAlertDialogBuilderContentView(builder);
