@@ -59,10 +59,8 @@ public class TestInstrumentationActivity extends Activity {
             MyInstrumentation myInstrumentation = new MyInstrumentation();
             TestInstrumentationActivity testActivity = new TestInstrumentationActivity();
             myInstrumentation.callActivityOnDestroy(testActivity);
-        } catch (NullPointerException e) {
-            if (e.getMessage().contains("getHostActivity")) {
-                callActivityOnDestroySuccess = true;
-            }
+        } catch (NullPointerException ignored) {
+            callActivityOnDestroySuccess = true;
         }
 
 
