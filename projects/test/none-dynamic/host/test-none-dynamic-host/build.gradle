@@ -39,15 +39,15 @@ android {
 }
 
 dependencies {
-    implementation 'commons-io:commons-io:2.5'//example复制apk用的.
-    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation "commons-io:commons-io:$commons_io_android_version"//example复制apk用的.
+    implementation "org.slf4j:slf4j-api:$slf4j_version"
 
     implementation 'com.tencent.shadow.core:common'
     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.tencent.shadow.core:loader'
     implementation 'com.tencent.shadow.core:activity-container'
     implementation project(':custom-view')
-    implementation 'androidx.test.espresso:espresso-idling-resource:3.3.0'
+    implementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
 }
 
 def createCopyTask(projectName, buildType, name, apkName) {

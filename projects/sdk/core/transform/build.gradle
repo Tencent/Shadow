@@ -2,7 +2,7 @@ apply plugin: 'kotlin'
 
 dependencies {
     api project(':transform-kit')
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$junit_version"
     testImplementation project(path: ':transform-kit', configuration: 'tests')
 }
 

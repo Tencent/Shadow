@@ -41,8 +41,8 @@ android {
 }
 
 dependencies {
-    implementation 'commons-io:commons-io:2.5'//sample-host从assets中复制插件用的
-    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation "commons-io:commons-io:$commons_io_android_version"//sample-host从assets中复制插件用的
+    implementation "org.slf4j:slf4j-api:$slf4j_version"
 
     implementation 'com.tencent.shadow.core:common'
     implementation 'com.tencent.shadow.dynamic:dynamic-host'

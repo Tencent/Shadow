@@ -2,10 +2,10 @@ apply plugin: 'kotlin'
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.squareup:javapoet:1.11.1'
+    implementation "com.squareup:javapoet:$javapoet_version"
     implementation project(':runtime')
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'commons-io:commons-io:2.9.0'
+    testImplementation "junit:junit:$junit_version"
+    testImplementation "commons-io:commons-io:$commons_io_jvm_version"
     testImplementation 'com.tencent.shadow.coding:java-build-config'
 }
 

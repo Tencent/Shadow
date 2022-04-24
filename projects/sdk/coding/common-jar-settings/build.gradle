@@ -14,7 +14,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.squareup:javapoet:1.11.1'
+        classpath "com.squareup:javapoet:$javapoet_version"
     }
 }
 
@@ -35,7 +35,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.android.tools.build:gradle:$build_gradle_version"
     implementation "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$junit_version"
     testImplementation gradleTestKit()
 }
 

@@ -5,5 +5,5 @@ dependencies {
     compileOnly project(':common')
     api project(':load-parameters')
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$junit_version"
 }

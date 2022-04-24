@@ -31,7 +31,7 @@ compileKotlin {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$junit_version"
 
     implementation 'com.tencent.shadow.coding:java-build-config'
     api project(':runtime')

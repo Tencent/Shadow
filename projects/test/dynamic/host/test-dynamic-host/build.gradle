@@ -32,20 +32,20 @@ android {
 }
 
 dependencies {
-    implementation 'commons-io:commons-io:2.5'//example复制apk用的.
-    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation "commons-io:commons-io:$commons_io_android_version"//example复制apk用的.
+    implementation "org.slf4j:slf4j-api:$slf4j_version"
 
     implementation 'com.tencent.shadow.core:common'
     implementation 'com.tencent.shadow.dynamic:dynamic-host'
     implementation project(':constant')
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:core:1.3.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-remote:3.3.0'
-    implementation 'androidx.test.espresso:espresso-idling-resource:3.3.0'
-    androidTestImplementation "androidx.test:runner:1.3.0"
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test:core:$androidx_test_version"
+    androidTestImplementation "androidx.test.ext:junit:$androidx_test_junit_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test.espresso:espresso-remote:$espresso_version"
+    implementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
+    androidTestImplementation "androidx.test:runner:$androidx_test_version"
 
     implementation project(':plugin-use-host-code-lib')
     implementation project(':test-manager')
