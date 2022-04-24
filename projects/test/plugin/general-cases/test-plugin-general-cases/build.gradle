@@ -41,19 +41,19 @@ android {
 }
 
 dependencies {
-    implementation 'com.android.support:support-annotations:28.0.0'
-    implementation 'com.android.support:support-v4:27.1.1'
+    implementation "com.android.support:support-annotations:$android_support_annotations_version"
+    implementation "com.android.support:support-v4:$android_support_version"
     implementation project(':custom-view')
-    pluginCompileOnly 'androidx.test.espresso:espresso-idling-resource:3.3.0'
-    normalImplementation 'androidx.test.espresso:espresso-idling-resource:3.3.0'
+    pluginCompileOnly "androidx.test.espresso:espresso-idling-resource:$espresso_version"
+    normalImplementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
     pluginCompileOnly project(':plugin-use-host-code-lib')
 
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:core:1.3.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-remote:3.3.0'
-    androidTestImplementation "androidx.test:runner:1.3.0"
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test:core:$androidx_test_version"
+    androidTestImplementation "androidx.test.ext:junit:$androidx_test_junit_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test.espresso:espresso-remote:$espresso_version"
+    androidTestImplementation "androidx.test:runner:$androidx_test_version"
 
     //Shadow Transform后业务代码会有一部分实际引用runtime中的类
     //如果不以compileOnly方式依赖，会导致其他Transform或者Proguard找不到这些类
@@ -74,7 +74,7 @@ buildscript {
         classpath 'com.tencent.shadow.core:runtime'
         classpath 'com.tencent.shadow.core:activity-container'
         classpath 'com.tencent.shadow.core:gradle-plugin'
-        classpath 'org.javassist:javassist:3.28.0-GA'
+        classpath "org.javassist:javassist:$javassist_version"
     }
 }
 

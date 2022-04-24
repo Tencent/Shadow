@@ -3,11 +3,11 @@ apply plugin: 'kotlin'
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api "com.android.tools.build:gradle:$build_gradle_version"
-    api "com.android.tools:common:30.0.3"
-    api 'org.javassist:javassist:3.28.0-GA'
+    api "com.android.tools:common:$android_build_tools_version"
+    api "org.javassist:javassist:$javassist_version"
     api gradleApi()
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'commons-io:commons-io:2.9.0'
+    testImplementation "junit:junit:$junit_version"
+    testImplementation "commons-io:commons-io:$commons_io_jvm_version"
 }
 
 compileKotlin {

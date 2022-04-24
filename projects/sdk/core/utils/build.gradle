@@ -1,8 +1,8 @@
 apply plugin: 'com.tencent.shadow.internal.common-jar-settings'
 
 dependencies {
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$junit_version"
 
     // https://mvnrepository.com/artifact/commons-io/commons-io (requires Java 8)
-    testImplementation 'commons-io:commons-io:2.9.0'
+    testImplementation "commons-io:commons-io:$commons_io_jvm_version"
 }
