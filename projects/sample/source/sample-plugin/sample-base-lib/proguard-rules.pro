@@ -15,3 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+# 这是供sample-app模块依赖的类
+-keep class com.tencent.shadow.sample.plugin.app.lib.gallery.cases.UseCaseManager{*;}
+-keep class com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.*{*;}
+-keep class com.tencent.shadow.sample.plugin.app.lib.gallery.BaseActivity{*;}
+-keep class com.tencent.shadow.sample.plugin.app.lib.gallery.util.*{*;}

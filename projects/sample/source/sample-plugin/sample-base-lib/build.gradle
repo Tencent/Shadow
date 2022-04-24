@@ -14,6 +14,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
 
             signingConfig signingConfigs.create("release")
             signingConfig.initWith(buildTypes.debug.signingConfig)
