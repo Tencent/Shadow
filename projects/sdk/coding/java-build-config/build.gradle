@@ -16,7 +16,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.squareup:javapoet:1.11.1'
+        classpath "com.squareup:javapoet:$javapoet_version"
     }
 }
 

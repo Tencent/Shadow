@@ -2,9 +2,9 @@ apply plugin: 'kotlin'
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.squareup:javapoet:1.11.1'
-    implementation 'org.javassist:javassist:3.28.0-GA'
-    implementation 'junit:junit:4.12'
+    implementation "com.squareup:javapoet:$javapoet_version"
+    implementation "org.javassist:javassist:$javassist_version"
+    implementation "junit:junit:$junit_version"
 
     compileOnly project(':android-jar')
     testImplementation project(':android-jar')
