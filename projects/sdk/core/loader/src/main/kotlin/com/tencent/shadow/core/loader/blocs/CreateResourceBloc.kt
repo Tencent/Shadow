@@ -18,15 +18,20 @@
 
 package com.tencent.shadow.core.loader.blocs
 
-import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
-import android.content.res.AssetManager
+import android.content.res.Configuration
 import android.content.res.Resources
+import android.content.res.XmlResourceParser
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.AttributeSet
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.webkit.WebView
 import java.util.concurrent.CountDownLatch
 
@@ -49,14 +54,12 @@ object CreateResourceBloc {
         try {
             val pluginResource = packageManager.getResourcesForApplication(applicationInfo)
 
-            // API 23以下设置applicationInfo.sharedLibraryFiles无效
-            // API 26以下Resources.getIdentifier只支持从主apk中获取资源
-            // 因此API 26以下采用传统方法通过addAssetPath添加宿主资源
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                pluginResource.assets.addAssetPath(hostApplicationInfo.sourceDir)
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                pluginResource
+            } else {
+                val hostResources = hostAppContext.resources
+                MixResources(pluginResource, hostResources)
             }
-
-            return pluginResource
         } catch (e: PackageManager.NameNotFoundException) {
             throw RuntimeException(e)
         }
@@ -121,11 +124,7 @@ object CreateResourceBloc {
     }
 
     /**
-     * API 25及以下系统，Resources.getIdentifier方法只能查询applicationInfo.sourceDir设置的
-     * 主apk中的资源。因此把插件apk作为主apk添加进去。
-     * 等构造完Resources对象再用addAssetPath方法将宿主资源添加进去。
-     * 我们假设系统只会直接用宿主manifest中固定的资源ID来访问资源，
-     * 并不会用getIdentifier方法查询。
+     * API 25及以下系统，单独构造插件资源
      */
     private fun fillApplicationInfoForLowerApi(
         applicationInfo: ApplicationInfo,
@@ -136,22 +135,261 @@ object CreateResourceBloc {
         applicationInfo.sourceDir = pluginApkPath
         applicationInfo.sharedLibraryFiles = hostApplicationInfo.sharedLibraryFiles
     }
+}
+
+/**
+ * 在API 25及以下代替设置sharedLibraryFiles后通过getResourcesForApplication创建资源的方案。
+ * 因调用addAssetPath方法也无法满足CreateResourceTest涉及的场景。
+ */
+@Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
+@TargetApi(25)
+private class MixResources(
+    private val mainResources: Resources,
+    private val sharedResources: Resources
+) : Resources(mainResources.assets, mainResources.displayMetrics, mainResources.configuration) {
+
+    private var beforeInitDone = false
+    private var updateConfigurationCalledInInit = false
 
     /**
-     * f208e8be 去掉MixResources之后，低版本系统对资源ID分区的支持不完整，
-     * 所以要么在低版本还采用MixResources方案，要么反射addAssetPath方法。
-     * 考虑低版本系统的addAssetPath方法还是比较稳定的，
-     * 并且我们只在API 26以下使用，此时还没有非公开API限制，
-     * addAssetPath作为一个public方法还是比较稳定的。
-     * 权衡之下，添加这个反射方法，而不是恢复MixResources方案。
+     * 低版本系统中Resources构造器中会调用updateConfiguration方法，
+     * 此时mainResources还没有初始化。
      */
-    @SuppressLint("PrivateApi")
-    fun AssetManager.addAssetPath(path: String) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-            throw IllegalAccessError("不支持API26以上环境调用")
+    init {
+        if (updateConfigurationCalledInInit) {
+            updateConfiguration(mainResources.configuration, mainResources.displayMetrics)
         }
-        val method =
-            AssetManager::class.java.getDeclaredMethod("addAssetPath", String::class.java)
-        method.invoke(this, path)
+        beforeInitDone = true
     }
+
+    private fun <R> tryMainThenShared(function: (res: Resources) -> R) = try {
+        function(mainResources)
+    } catch (e: NotFoundException) {
+        function(sharedResources)
+    }
+
+    override fun getText(id: Int) = tryMainThenShared { it.getText(id) }
+
+    override fun getText(id: Int, def: CharSequence?) = tryMainThenShared { it.getText(id, def) }
+
+    override fun getQuantityText(id: Int, quantity: Int) =
+        tryMainThenShared { it.getQuantityText(id, quantity) }
+
+    override fun getString(id: Int) =
+        tryMainThenShared { it.getString(id) }
+
+    override fun getString(id: Int, vararg formatArgs: Any?) =
+        tryMainThenShared { it.getString(id, formatArgs) }
+
+
+    override fun getQuantityString(id: Int, quantity: Int, vararg formatArgs: Any?) =
+        tryMainThenShared { it.getQuantityString(id, quantity, *formatArgs) }
+
+    override fun getQuantityString(id: Int, quantity: Int) =
+        tryMainThenShared {
+            it.getQuantityString(id, quantity)
+        }
+
+    override fun getTextArray(id: Int) =
+        tryMainThenShared {
+            it.getTextArray(id)
+        }
+
+    override fun getStringArray(id: Int) =
+        tryMainThenShared {
+            it.getStringArray(id)
+        }
+
+    override fun getIntArray(id: Int) =
+        tryMainThenShared {
+            it.getIntArray(id)
+        }
+
+    override fun obtainTypedArray(id: Int) =
+        tryMainThenShared {
+            it.obtainTypedArray(id)
+        }
+
+    override fun getDimension(id: Int) =
+        tryMainThenShared {
+            it.getDimension(id)
+        }
+
+    override fun getDimensionPixelOffset(id: Int) =
+        tryMainThenShared {
+            it.getDimensionPixelOffset(id)
+        }
+
+    override fun getDimensionPixelSize(id: Int) =
+        tryMainThenShared {
+            it.getDimensionPixelSize(id)
+        }
+
+    override fun getFraction(id: Int, base: Int, pbase: Int) =
+        tryMainThenShared {
+            it.getFraction(id, base, pbase)
+        }
+
+    override fun getDrawable(id: Int) =
+        tryMainThenShared {
+            it.getDrawable(id)
+        }
+
+    override fun getDrawable(id: Int, theme: Theme?) =
+        tryMainThenShared {
+            it.getDrawable(id, theme)
+        }
+
+    override fun getDrawableForDensity(id: Int, density: Int) =
+        tryMainThenShared {
+            it.getDrawableForDensity(id, density)
+        }
+
+    override fun getDrawableForDensity(id: Int, density: Int, theme: Theme?) =
+        tryMainThenShared {
+            it.getDrawableForDensity(id, density, theme)
+        }
+
+    override fun getMovie(id: Int) =
+        tryMainThenShared {
+            it.getMovie(id)
+        }
+
+    override fun getColor(id: Int) =
+        tryMainThenShared {
+            it.getColor(id)
+        }
+
+    override fun getColor(id: Int, theme: Theme?) =
+        tryMainThenShared {
+            it.getColor(id, theme)
+        }
+
+    override fun getColorStateList(id: Int) =
+        tryMainThenShared {
+            it.getColorStateList(id)
+        }
+
+    override fun getColorStateList(id: Int, theme: Theme?) =
+        tryMainThenShared {
+            it.getColorStateList(id, theme)
+        }
+
+    override fun getBoolean(id: Int) =
+        tryMainThenShared {
+            it.getBoolean(id)
+        }
+
+    override fun getInteger(id: Int) =
+        tryMainThenShared {
+            it.getInteger(id)
+        }
+
+    override fun getLayout(id: Int) =
+        tryMainThenShared {
+            it.getLayout(id)
+        }
+
+    override fun getAnimation(id: Int) =
+        tryMainThenShared {
+            it.getAnimation(id)
+        }
+
+    override fun getXml(id: Int) =
+        tryMainThenShared {
+            it.getXml(id)
+        }
+
+    override fun openRawResource(id: Int) =
+        tryMainThenShared {
+            it.openRawResource(id)
+        }
+
+    override fun openRawResource(id: Int, value: TypedValue?) =
+        tryMainThenShared {
+            it.openRawResource(id, value)
+        }
+
+    override fun openRawResourceFd(id: Int) =
+        tryMainThenShared {
+            it.openRawResourceFd(id)
+        }
+
+    override fun getValue(id: Int, outValue: TypedValue?, resolveRefs: Boolean) =
+        tryMainThenShared {
+            it.getValue(id, outValue, resolveRefs)
+        }
+
+    override fun getValue(name: String?, outValue: TypedValue?, resolveRefs: Boolean) =
+        tryMainThenShared {
+            it.getValue(name, outValue, resolveRefs)
+        }
+
+    override fun getValueForDensity(
+        id: Int,
+        density: Int,
+        outValue: TypedValue?,
+        resolveRefs: Boolean
+    ) =
+        tryMainThenShared {
+            it.getValueForDensity(id, density, outValue, resolveRefs)
+        }
+
+    override fun obtainAttributes(set: AttributeSet?, attrs: IntArray?) =
+        tryMainThenShared {
+            it.obtainAttributes(set, attrs)
+        }
+
+    override fun updateConfiguration(config: Configuration?, metrics: DisplayMetrics?) {
+        if (beforeInitDone) {
+            tryMainThenShared {
+                it.updateConfiguration(config, metrics)
+            }
+        }
+    }
+
+    override fun getDisplayMetrics() =
+        tryMainThenShared {
+            it.getDisplayMetrics()
+        }
+
+    override fun getConfiguration() =
+        tryMainThenShared {
+            it.getConfiguration()
+        }
+
+    override fun getIdentifier(name: String?, defType: String?, defPackage: String?) =
+        tryMainThenShared {
+            it.getIdentifier(name, defType, defPackage)
+        }
+
+    override fun getResourceName(resid: Int) =
+        tryMainThenShared {
+            it.getResourceName(resid)
+        }
+
+    override fun getResourcePackageName(resid: Int) =
+        tryMainThenShared {
+            it.getResourcePackageName(resid)
+        }
+
+    override fun getResourceTypeName(resid: Int) =
+        tryMainThenShared {
+            it.getResourceTypeName(resid)
+        }
+
+    override fun getResourceEntryName(resid: Int) =
+        tryMainThenShared {
+            it.getResourceEntryName(resid)
+        }
+
+    override fun parseBundleExtras(parser: XmlResourceParser?, outBundle: Bundle?) =
+        tryMainThenShared {
+            it.parseBundleExtras(parser, outBundle)
+        }
+
+    override fun parseBundleExtra(tagName: String?, attrs: AttributeSet?, outBundle: Bundle?) =
+        tryMainThenShared {
+            it.parseBundleExtra(tagName, attrs, outBundle)
+        }
 }
