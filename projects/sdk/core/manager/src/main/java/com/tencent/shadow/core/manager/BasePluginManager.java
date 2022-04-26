@@ -382,33 +382,30 @@ public abstract class BasePluginManager {
      */
     protected String getPluginPreferredAbi(String[] pluginSupportedAbis, File apkFile)
             throws InstallPluginException {
-        ZipFile zipFile;
-        try {
-            zipFile = new SafeZipFile(apkFile);
+        try (ZipFile zipFile = new SafeZipFile(apkFile)) {
+            //找出插件apk中lib目录下都有哪些子目录
+            Set<String> subDirsInLib = new LinkedHashSet<>();
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String name = entry.getName();
+                if (name.startsWith("lib/")) {
+                    String[] split = name.split("/");
+                    if (split.length == 3) {// like "lib/arm64-v8a/libabc.so"
+                        subDirsInLib.add(split[1]);
+                    }
+                }
+            }
+
+            for (String supportedAbi : pluginSupportedAbis) {
+                if (subDirsInLib.contains(supportedAbi)) {
+                    return supportedAbi;
+                }
+            }
+            return "";
         } catch (IOException e) {
             throw new InstallPluginException("读取apk失败，apkFile==" + apkFile, e);
         }
-
-        //找出插件apk中lib目录下都有哪些子目录
-        Set<String> subDirsInLib = new LinkedHashSet<>();
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            String name = entry.getName();
-            if (name.startsWith("lib/")) {
-                String[] split = name.split("/");
-                if (split.length == 3) {// like "lib/arm64-v8a/libabc.so"
-                    subDirsInLib.add(split[1]);
-                }
-            }
-        }
-
-        for (String supportedAbi : pluginSupportedAbis) {
-            if (subDirsInLib.contains(supportedAbi)) {
-                return supportedAbi;
-            }
-        }
-        return "";
     }
 
     /**
@@ -471,21 +468,19 @@ public abstract class BasePluginManager {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
-        ZipFile zipFile;
-        try {
-            zipFile = new SafeZipFile(apkFile);
+        try (ZipFile zipFile = new SafeZipFile(apkFile)) {
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String name = entry.getName();
+                if (name.startsWith(filter)) {
+                    return entry.getMethod() != ZipEntry.STORED;
+                }
+            }
+            return false;
         } catch (IOException e) {
             throw new InstallPluginException("读取apk失败，apkFile==" + apkFile, e);
         }
-        Enumeration<? extends ZipEntry> entries = zipFile.entries();
-        while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            String name = entry.getName();
-            if (name.startsWith(filter)) {
-                return entry.getMethod() != ZipEntry.STORED;
-            }
-        }
-        return false;
     }
 
     /**
