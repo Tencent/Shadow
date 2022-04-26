@@ -28,9 +28,12 @@ import com.tencent.shadow.dynamic.loader.PluginLoader;
 import com.tencent.shadow.dynamic.loader.PluginServiceConnection;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 class BinderPluginLoader implements PluginLoader {
     final private IBinder mRemote;
+    final private ConcurrentHashMap<PluginServiceConnection, PluginServiceConnectionBinder> conMap =
+            new ConcurrentHashMap<>();
 
     BinderPluginLoader(IBinder remote) {
         mRemote = remote;
@@ -174,7 +177,12 @@ class BinderPluginLoader implements PluginLoader {
             } else {
                 _data.writeInt(0);
             }
-            _data.writeStrongBinder((((connection != null)) ? (new PluginServiceConnectionBinder(connection)) : (null)));
+            PluginServiceConnectionBinder binder = null;
+            if (connection != null) {
+                binder = new PluginServiceConnectionBinder(connection);
+                conMap.put(connection, binder);
+            }
+            _data.writeStrongBinder(binder);
             _data.writeInt(flags);
             mRemote.transact(TRANSACTION_bindPluginService, _data, _reply, 0);
             _reply.readException();
@@ -192,7 +200,12 @@ class BinderPluginLoader implements PluginLoader {
         Parcel _reply = Parcel.obtain();
         try {
             _data.writeInterfaceToken(DESCRIPTOR);
-            _data.writeStrongBinder((((conn != null)) ? (new PluginServiceConnectionBinder(conn)) : (null)));
+            PluginServiceConnectionBinder binder = null;
+            if (conn != null) {
+                binder = conMap.get(conn);
+                conMap.remove(conn);
+            }
+            _data.writeStrongBinder(binder);
             mRemote.transact(TRANSACTION_unbindService, _data, _reply, 0);
             _reply.readException();
         } finally {
