@@ -26,6 +26,7 @@ import android.view.View;
 
 import com.tencent.shadow.core.manager.installplugin.InstalledPlugin;
 import com.tencent.shadow.dynamic.host.EnterCallback;
+import com.tencent.shadow.test.cases.PluginIntentServiceConnectionTestCase;
 import com.tencent.shadow.test.cases.PluginServiceConnectionTestCase;
 import com.tencent.shadow.test.lib.constant.Constant;
 import com.tencent.shadow.test.lib.test_manager.TestManager;
@@ -80,7 +81,7 @@ public class ServiceTestDynamicPluginManager extends FastPluginManager {
                 systemExitServiceCase.prepareUi();
                 break;
             case "com.tencent.shadow.test.plugin.particular_cases.plugin_service_for_host.SystemExitIntentService":
-                PluginServiceConnectionTestCase systemExitIntentService = new PluginServiceConnectionTestCase(mPluginLoader, pluginIntent);
+                PluginIntentServiceConnectionTestCase systemExitIntentService = new PluginIntentServiceConnectionTestCase(mPluginLoader, pluginIntent);
                 systemExitIntentService.prepareUi();
                 break;
             default:

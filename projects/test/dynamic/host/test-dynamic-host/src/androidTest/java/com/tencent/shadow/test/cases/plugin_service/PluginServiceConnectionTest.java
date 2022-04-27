@@ -40,6 +40,23 @@ public class PluginServiceConnectionTest extends PluginServiceAppTest {
         matchTextWithViewTag("STATUS_VIEW_TAG", "onServiceConnected");
         matchTextWithViewTag("PACKAGE_VIEW_TAG", packageName);
         matchTextWithViewTag("CLASS_VIEW_TAG", ServiceClassName);
+
+        //结束Service，避免影响其他用例
+        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("STOP_BUTTON_TAG"))).perform(ViewActions.click());
+    }
+
+    @Test
+    public void testUnbindService() {
+        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("BIND_BUTTON_TAG"))).perform(ViewActions.click());
+        matchTextWithViewTag("STATUS_VIEW_TAG", "onServiceConnected");
+        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("UNBIND_BUTTON_TAG"))).perform(ViewActions.click());
+
+        // 测试Service在onUnbind时收到的Intent是否还是bind时传入的
+        matchTextWithViewTag("MAGIC_NUMBER_MATCH_TAG", Boolean.toString(true));
+
+        matchTextWithViewTag("STATUS_VIEW_TAG", "onServiceDisconnected");
+        matchTextWithViewTag("PACKAGE_VIEW_TAG", packageName);
+        matchTextWithViewTag("CLASS_VIEW_TAG", ServiceClassName);
     }
 
     @Test

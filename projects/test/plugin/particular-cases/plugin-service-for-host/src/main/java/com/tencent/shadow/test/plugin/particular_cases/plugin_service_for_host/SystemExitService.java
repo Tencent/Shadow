@@ -7,6 +7,10 @@ import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+
 @SuppressWarnings("NullableProblems")
 public class SystemExitService extends Service {
     @Override
@@ -22,5 +26,20 @@ public class SystemExitService extends Service {
                 return super.onTransact(code, data, reply, flags);
             }
         };
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        long magic_number = intent.getLongExtra("magic_number", 0L);
+        File outputFile = new File(getFilesDir(), "SystemExitService.onUnbind");
+        try (BufferedWriter bufferedWriter
+                     = new BufferedWriter(new FileWriter(outputFile, false))) {
+            bufferedWriter.append(Long.toString(magic_number));
+            bufferedWriter.flush();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return super.onUnbind(intent);
     }
 }
