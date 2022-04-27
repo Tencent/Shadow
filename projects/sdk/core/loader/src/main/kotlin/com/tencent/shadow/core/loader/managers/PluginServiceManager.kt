@@ -222,6 +222,8 @@ private open class UnsafePluginServiceManager(
                 // 结束该service
                 isPluginServiceStopped = destroyServiceIfNeed(componentName)
 
+                connection.onServiceDisconnected(componentName)
+
                 break
             }
         }
