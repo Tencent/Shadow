@@ -73,8 +73,16 @@ public abstract class PluginTest {
 
     @Before
     public void launchActivity() {
+        IdlingRegistry idlingRegistry = IdlingRegistry.getInstance();
+
+        // 清理上一个测试失败时可能遗留的锁
+        for (IdlingResource resource : idlingRegistry.getResources()) {
+            idlingRegistry.unregister(resource);
+        }
+
         SimpleIdlingResourceImpl idlingResource = HostApplication.getApp().mIdlingResource;
-        IdlingRegistry.getInstance().register(idlingResource);
+        idlingResource.setIdleState(true);
+        idlingRegistry.register(idlingResource);
         TestManager.TheSimpleIdlingResource = idlingResource;
         launchJumpActivity(getPartKey(), getLaunchIntent());
 
@@ -85,7 +93,8 @@ public abstract class PluginTest {
     @After
     public void unregisterIdlingResource() {
         TestManager.TheSimpleIdlingResource = null;
-        IdlingResource idlingResource = HostApplication.getApp().mIdlingResource;
+        SimpleIdlingResourceImpl idlingResource = HostApplication.getApp().mIdlingResource;
+        idlingResource.setIdleState(true);
         IdlingRegistry.getInstance().unregister(idlingResource);
     }
 
