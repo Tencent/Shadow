@@ -66,7 +66,7 @@ public class ActivityLifecycleCallbacksTest extends PluginMainAppTest {
                 "onActivityDestroyed, " +
                 "onActivityCreated]";
 
-        String api16 = "[onActivityCreated, " +
+        String api27 = "[onActivityCreated, " +
                 "onActivityStarted, " +
                 "onActivityResumed, " +
                 "onActivityPaused, " +
@@ -75,9 +75,13 @@ public class ActivityLifecycleCallbacksTest extends PluginMainAppTest {
                 "onActivityDestroyed, " +
                 "onActivityCreated]";
 
-        String expect = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ? api28 : api29;
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN) {
-            expect = api16;
+        String expect;
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
+            expect = api27;
+        } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
+            expect = api28;
+        } else {
+            expect = api29;
         }
 
         matchTextWithViewTag("ActivityCreateTest", expect);
