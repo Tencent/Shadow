@@ -7,6 +7,15 @@ on:
 jobs:
   build-and-test-on-macos:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - api-level: 16 #16是最低支持的API
+            arch: x86
+          - api-level: 28 #28是项目长期使用的测试API
+            arch: x86_64
+          - api-level: 31 #31是目前最新的稳定API
+            arch: x86_64
     env:
       DISABLE_TENCENT_MAVEN_MIRROR: true
     steps:
@@ -35,13 +44,13 @@ jobs:
         run: ./gradlew build
       - name: unit test
         run: ./gradlew jvmTestSdk -S
-      - name: run androidTestSdk on API 28 emulator
+      - name: run androidTestSdk
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 28
+          api-level: ${{ matrix.api-level }}
           emulator-build: 7425822
           target: default
-          arch: x86_64
+          arch: ${{ matrix.arch }}
           profile: pixel_xl
           script: ./gradlew androidTestSdk
       - name: stop gradle deamon for actions/cache
