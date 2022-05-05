@@ -28,6 +28,7 @@ import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 
 import java.io.File;
@@ -42,10 +43,9 @@ abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
 
     @Test
     public void testGetDataDir() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            String hostDataDir = ApplicationProvider.getApplicationContext().getDataDir().getAbsolutePath();
-            assertTextAndFileExist("TAG_GET_DATA_DIR", hostDataDir + "/" + EXPECT_NAME);
-        }
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
+        String hostDataDir = ApplicationProvider.getApplicationContext().getDataDir().getAbsolutePath();
+        assertTextAndFileExist("TAG_GET_DATA_DIR", hostDataDir + "/" + EXPECT_NAME);
     }
 
     @Test
@@ -94,14 +94,15 @@ abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
 
     @Test
     public void testGetNoBackupFilesDir() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            String hostDir = ApplicationProvider.getApplicationContext().getNoBackupFilesDir().getAbsolutePath();
-            assertTextAndFileExist("TAG_GET_NBF_DIR", hostDir + "/" + EXPECT_NAME);
-        }
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+        String hostDir = ApplicationProvider.getApplicationContext().getNoBackupFilesDir().getAbsolutePath();
+        assertTextAndFileExist("TAG_GET_NBF_DIR", hostDir + "/" + EXPECT_NAME);
+
     }
 
     @Test
     public void testGetExternalFilesDir() {
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
         String hostDir = ApplicationProvider.getApplicationContext().getExternalFilesDir(DIRECTORY_MUSIC).getAbsolutePath();
         assertTextAndFileExist("TAG_GET_EFD_MUSIC", hostDir + "/" + EXPECT_NAME);
         hostDir = ApplicationProvider.getApplicationContext().getExternalFilesDir(DIRECTORY_PODCASTS).getAbsolutePath();
@@ -110,54 +111,54 @@ abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
 
     @Test
     public void testGetExternalFilesDirs() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            File[] hostDirs = ApplicationProvider.getApplicationContext().getExternalFilesDirs(DIRECTORY_MUSIC);
-            File[] expectsDirs = new File[hostDirs.length];
-            for (int i = 0; i < hostDirs.length; i++) {
-                File hostDir = hostDirs[i];
-                File expectDir = new File(hostDir, EXPECT_NAME);
-                expectsDirs[i] = expectDir;
-            }
-            matchTextWithViewTag(
-                    "TAG_GET_EFDS_MUSIC",
-                    Arrays.toString(expectsDirs)
-            );
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
 
-            hostDirs = ApplicationProvider.getApplicationContext().getExternalFilesDirs(DIRECTORY_PODCASTS);
-            expectsDirs = new File[hostDirs.length];
-            for (int i = 0; i < hostDirs.length; i++) {
-                File hostDir = hostDirs[i];
-                File expectDir = new File(hostDir, EXPECT_NAME);
-                expectsDirs[i] = expectDir;
-            }
-            matchTextWithViewTag(
-                    "TAG_GET_EFDS_PODCASTS",
-                    Arrays.toString(expectsDirs)
-            );
+        File[] hostDirs = ApplicationProvider.getApplicationContext().getExternalFilesDirs(DIRECTORY_MUSIC);
+        File[] expectsDirs = new File[hostDirs.length];
+        for (int i = 0; i < hostDirs.length; i++) {
+            File hostDir = hostDirs[i];
+            File expectDir = new File(hostDir, EXPECT_NAME);
+            expectsDirs[i] = expectDir;
         }
+        matchTextWithViewTag(
+                "TAG_GET_EFDS_MUSIC",
+                Arrays.toString(expectsDirs)
+        );
+
+        hostDirs = ApplicationProvider.getApplicationContext().getExternalFilesDirs(DIRECTORY_PODCASTS);
+        expectsDirs = new File[hostDirs.length];
+        for (int i = 0; i < hostDirs.length; i++) {
+            File hostDir = hostDirs[i];
+            File expectDir = new File(hostDir, EXPECT_NAME);
+            expectsDirs[i] = expectDir;
+        }
+        matchTextWithViewTag(
+                "TAG_GET_EFDS_PODCASTS",
+                Arrays.toString(expectsDirs)
+        );
     }
 
     @Test
     public void testGetObbDir() {
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
         String hostDir = ApplicationProvider.getApplicationContext().getObbDir().getAbsolutePath();
         assertTextAndFileExist("TAG_GET_OBB_DIR", hostDir + "/" + EXPECT_NAME);
     }
 
     @Test
     public void testGetObbDirs() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            File[] hostDirs = ApplicationProvider.getApplicationContext().getObbDirs();
-            File[] expectsDirs = new File[hostDirs.length];
-            for (int i = 0; i < hostDirs.length; i++) {
-                File hostDir = hostDirs[i];
-                File expectDir = new File(hostDir, EXPECT_NAME);
-                expectsDirs[i] = expectDir;
-            }
-            matchTextWithViewTag(
-                    "TAG_GET_OBB_DIRS",
-                    Arrays.toString(expectsDirs)
-            );
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
+        File[] hostDirs = ApplicationProvider.getApplicationContext().getObbDirs();
+        File[] expectsDirs = new File[hostDirs.length];
+        for (int i = 0; i < hostDirs.length; i++) {
+            File hostDir = hostDirs[i];
+            File expectDir = new File(hostDir, EXPECT_NAME);
+            expectsDirs[i] = expectDir;
         }
+        matchTextWithViewTag(
+                "TAG_GET_OBB_DIRS",
+                Arrays.toString(expectsDirs)
+        );
     }
 
     @Test
@@ -168,50 +169,49 @@ abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
 
     @Test
     public void testGetCodeCacheDir() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            String hostDir = ApplicationProvider.getApplicationContext().getCodeCacheDir().getAbsolutePath();
-            assertTextAndFileExist("TAG_GET_CODE_CACHE_DIR", hostDir + "/" + EXPECT_NAME);
-        }
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+        String hostDir = ApplicationProvider.getApplicationContext().getCodeCacheDir().getAbsolutePath();
+        assertTextAndFileExist("TAG_GET_CODE_CACHE_DIR", hostDir + "/" + EXPECT_NAME);
     }
 
     @Test
     public void testGetExternalCacheDir() {
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
         String hostDir = ApplicationProvider.getApplicationContext().getExternalCacheDir().getAbsolutePath();
         assertTextAndFileExist("TAG_GET_EXT_CACHE_DIR", hostDir + "/" + EXPECT_NAME);
     }
 
     @Test
     public void testGetExternalCacheDirs() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            File[] hostDirs = ApplicationProvider.getApplicationContext().getExternalCacheDirs();
-            File[] expectsDirs = new File[hostDirs.length];
-            for (int i = 0; i < hostDirs.length; i++) {
-                File hostDir = hostDirs[i];
-                File expectDir = new File(hostDir, EXPECT_NAME);
-                expectsDirs[i] = expectDir;
-            }
-            matchTextWithViewTag(
-                    "TAG_GET_EXT_CACHE_DIRS",
-                    Arrays.toString(expectsDirs)
-            );
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
+        File[] hostDirs = ApplicationProvider.getApplicationContext().getExternalCacheDirs();
+        File[] expectsDirs = new File[hostDirs.length];
+        for (int i = 0; i < hostDirs.length; i++) {
+            File hostDir = hostDirs[i];
+            File expectDir = new File(hostDir, EXPECT_NAME);
+            expectsDirs[i] = expectDir;
         }
+        matchTextWithViewTag(
+                "TAG_GET_EXT_CACHE_DIRS",
+                Arrays.toString(expectsDirs)
+        );
+
     }
 
     @Test
     public void testGetExternalMediaDirs() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            File[] hostDirs = ApplicationProvider.getApplicationContext().getExternalMediaDirs();
-            File[] expectsDirs = new File[hostDirs.length];
-            for (int i = 0; i < hostDirs.length; i++) {
-                File hostDir = hostDirs[i];
-                File expectDir = new File(hostDir, EXPECT_NAME);
-                expectsDirs[i] = expectDir;
-            }
-            matchTextWithViewTag(
-                    "TAG_GET_EXT_MEDIA_DIRS",
-                    Arrays.toString(expectsDirs)
-            );
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+        File[] hostDirs = ApplicationProvider.getApplicationContext().getExternalMediaDirs();
+        File[] expectsDirs = new File[hostDirs.length];
+        for (int i = 0; i < hostDirs.length; i++) {
+            File hostDir = hostDirs[i];
+            File expectDir = new File(hostDir, EXPECT_NAME);
+            expectsDirs[i] = expectDir;
         }
+        matchTextWithViewTag(
+                "TAG_GET_EXT_MEDIA_DIRS",
+                Arrays.toString(expectsDirs)
+        );
     }
 
     @Test
@@ -255,16 +255,15 @@ abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
 
     @Test
     public void testDeleteSharedPreferences() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            matchTextWithViewTag(
-                    "TAG_DEL_SP_FOO",
-                    "success"
-            );
-            matchTextWithViewTag(
-                    "TAG_DEL_SP_BAR",
-                    "success"
-            );
-        }
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
+        matchTextWithViewTag(
+                "TAG_DEL_SP_FOO",
+                "success"
+        );
+        matchTextWithViewTag(
+                "TAG_DEL_SP_BAR",
+                "success"
+        );
     }
 
     @Test
@@ -290,10 +289,9 @@ abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
 
     @Test
     public void testMoveDatabaseFrom() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            matchTextWithViewTag("TAG_MOVE_DB_FROM_FOO", "暂不支持");
-            matchTextWithViewTag("TAG_MOVE_DB_FROM_BAR", "暂不支持");
-        }
+        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
+        matchTextWithViewTag("TAG_MOVE_DB_FROM_FOO", "暂不支持");
+        matchTextWithViewTag("TAG_MOVE_DB_FROM_BAR", "暂不支持");
     }
 
     @Test
