@@ -76,7 +76,7 @@ public class ActivityLifecycleCallbacksTest extends PluginMainAppTest {
                 "onActivityCreated]";
 
         String expect = Build.VERSION.SDK_INT < Build.VERSION_CODES.Q ? api28 : api29;
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT) {
             expect = api16;
         }
 
