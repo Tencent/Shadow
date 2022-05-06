@@ -20,7 +20,6 @@
 
     <style name="TestPluginTheme" parent="@android:style/Theme.WithActionBar">
         <!--插件设置的android:windowIsTranslucent不能生效,宿主中注册的壳子Activity必须设置windowIsTranslucent==true-->
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:background">#64f56701</item>
     </style>
