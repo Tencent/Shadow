@@ -3,6 +3,7 @@
 //buildscript不能从其他gradle文件中apply，所以这段buildscript脚本存在于多个子构建中。
 //请更新buildscript时同步更新。
 buildscript {
+    loadVersions:
     {// 读取versions.properties到ext中，供项目中直接用变量引用版本号
         def versions_properties_path = '../../../buildScripts/gradle/versions.properties'
         def versions = new Properties()
