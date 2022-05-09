@@ -24,6 +24,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.TextView;
@@ -76,6 +78,7 @@ public class TestReceiverActivity extends WithIdlingResourceActivity {
         mIdlingResource.setIdleState(false);
         Intent intent = new Intent(INTENT_NORMAL_ACTION);
         intent.putExtra("msg", MSG_NORMAL);
+        intent.putExtra("custom_parcel", new CustomParcel());
         sendBroadcast(intent);
     }
 
@@ -109,4 +112,32 @@ public class TestReceiverActivity extends WithIdlingResourceActivity {
         }
     }
 
+    public static class CustomParcel implements Parcelable {
+        public CustomParcel() {
+        }
+
+        protected CustomParcel(Parcel in) {
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        public static final Creator<CustomParcel> CREATOR = new Creator<CustomParcel>() {
+            @Override
+            public CustomParcel createFromParcel(Parcel in) {
+                return new CustomParcel(in);
+            }
+
+            @Override
+            public CustomParcel[] newArray(int size) {
+                return new CustomParcel[size];
+            }
+        };
+    }
 }

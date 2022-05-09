@@ -17,6 +17,7 @@ public class BroadcastReceiverWrapper extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        intent.setExtrasClassLoader(mShadowContext.mPluginClassLoader);
         mRealBroadcastReceiver.onReceive(mShadowContext, intent);
     }
 }
