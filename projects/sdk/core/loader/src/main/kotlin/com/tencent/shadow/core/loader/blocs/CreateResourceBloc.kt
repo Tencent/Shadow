@@ -179,7 +179,7 @@ private class MixResources(
         tryMainThenShared { it.getString(id) }
 
     override fun getString(id: Int, vararg formatArgs: Any?) =
-        tryMainThenShared { it.getString(id, formatArgs) }
+        tryMainThenShared { it.getString(id, *formatArgs) }
 
 
     override fun getQuantityString(id: Int, quantity: Int, vararg formatArgs: Any?) =
