@@ -1,0 +1,12 @@
+name: daily-test-avd-29
+
+on:
+  push:
+    branches: [ test-all-avd ]
+
+jobs:
+  job1:
+    uses: ./.github/workflows/test-avd.yml
+    with:
+      api-level: 29
+      arch: x86_64
