@@ -1,0 +1,54 @@
+name: AVD测试
+on:
+  workflow_call:
+    inputs:
+      api-level:
+        required: true
+        type: number
+      arch:
+        required: true
+        type: string
+
+jobs:
+  build-and-test-on-macos:
+    runs-on: macos-latest
+    env:
+      DISABLE_TENCENT_MAVEN_MIRROR: true
+    steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v3.x
+      - name: checkout
+        uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: revert gradle wrapper mirror setting
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+      - name: buildSdk
+        run: ./gradlew buildSdk -S
+      - name: build sample/source
+        run: ./gradlew build
+      - name: unit test
+        run: ./gradlew jvmTestSdk -S
+      - name: run androidTestSdk
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ inputs.api-level }}
+          sdcard-path-or-size: 100M
+          emulator-build: 8420304
+          target: default
+          arch: ${{ inputs.arch }}
+          profile: pixel_2
+          script: ./gradlew androidTestSdk
+      - name: stop gradle deamon for actions/cache
+        run: ./gradlew --stop
