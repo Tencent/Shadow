@@ -45,6 +45,7 @@ internal class PluginPackageManagerImpl(
             if (packageInfo != null) {
                 packageInfo.applicationInfo = getPluginApplicationInfo(flags)
                 packageInfo.permissions = hostPackageInfo.permissions
+                packageInfo.requestedPermissions = hostPackageInfo.requestedPermissions
             }
             packageInfo
         } else {
