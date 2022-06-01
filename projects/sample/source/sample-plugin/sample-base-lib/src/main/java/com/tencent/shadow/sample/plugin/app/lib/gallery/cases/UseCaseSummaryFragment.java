@@ -18,10 +18,13 @@
 
 package com.tencent.shadow.sample.plugin.app.lib.gallery.cases;
 
+import android.app.ActivityOptions;
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,7 +64,35 @@ public class UseCaseSummaryFragment extends Fragment {
                 if (useCase.getPageParams() != null) {
                     intent.putExtras(useCase.getPageParams());
                 }
-                startActivity(intent);
+
+                //只在API 21以上手工测试一下ActivityOptions
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ActivityOptions activityOptions = ActivityOptions.makeCustomAnimation(
+                            getActivity(),
+                            android.R.anim.slide_in_left,
+                            android.R.anim.slide_out_right
+                    );
+
+                    //测试调用makeSceneTransitionAnimation方法传入Activity
+
+                    ActivityOptions.makeSceneTransitionAnimation(
+                            getActivity(),
+                            UseCaseSummaryFragment.this.mCaseName,
+                            "mCaseName"
+                    );
+
+                    //测试调用makeSceneTransitionAnimation方法传入Activity
+                    ActivityOptions.makeSceneTransitionAnimation(
+                            getActivity(),
+                            new Pair<>(UseCaseSummaryFragment.this.mCaseName, "mCaseName")
+                    );
+
+                    startActivity(intent,
+                            activityOptions.toBundle()
+                    );
+                } else {
+                    startActivity(intent);
+                }
             }
         });
     }
