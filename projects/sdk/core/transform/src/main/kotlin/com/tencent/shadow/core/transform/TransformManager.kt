@@ -31,6 +31,15 @@ class TransformManager(
     useHostContext: () -> Array<String>
 ) : AbstractTransformManager(ctClassInputMap, classPool) {
 
+    /**
+     * 按这个列表的顺序应用各子Transform逻辑。
+     *
+     * 注意这个列表的顺序是有关系的，
+     * 比如在ActivityTransform之前的Transform可以看到原本的Activity类型，
+     * 在其之后的Transform在插件中就看不到Activity类型了，
+     * 所有有些Transform在获取方法时要将原本的Activity类型改为ShadowActivity类型，
+     * 因为ActivityTransform在它之前已经生效了。
+     */
     override val mTransformList: List<SpecificTransform> = listOf(
         ApplicationTransform(),
         ActivityTransform(),
@@ -45,6 +54,7 @@ class TransformManager(
         PackageItemInfoTransform(),
         AppComponentFactoryTransform(),
         LayoutInflaterTransform(),
-        KeepHostContextTransform(useHostContext())
+        KeepHostContextTransform(useHostContext()),
+        ActivityOptionsSupportTransform(),
     )
 }
