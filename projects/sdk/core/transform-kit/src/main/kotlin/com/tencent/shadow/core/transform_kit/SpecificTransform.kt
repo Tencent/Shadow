@@ -43,16 +43,6 @@ abstract class SpecificTransform {
         methodInfo.descriptor = other.methodInfo.descriptor
     }
 
-    /**
-     * 过滤引用了某些类型的类
-     */
-    fun filterRefClasses(allAppClass: Set<CtClass>, targetClassList: List<String>) =
-        allAppClass.filter { ctClass ->
-            targetClassList.any { targetClass ->
-                ctClass.refClasses.contains(targetClass)
-            }
-        }.toSet()
-
     fun CtClass.isClassOf(className: String): Boolean {
         var tmp: CtClass? = this
         do {
@@ -135,5 +125,17 @@ abstract class SpecificTransform {
         }
 
         return false
+    }
+
+    companion object {
+        /**
+         * 过滤引用了某些类型的类
+         */
+        fun filterRefClasses(allAppClass: Set<CtClass>, targetClassList: List<String>) =
+            allAppClass.filter { ctClass ->
+                targetClassList.any { targetClass ->
+                    ctClass.refClasses.contains(targetClass)
+                }
+            }.toSet()
     }
 }

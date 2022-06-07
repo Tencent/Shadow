@@ -16,6 +16,10 @@ class SuperSuper {
     protected void ss1() {
 
     }
+
+    final protected void methodCannotOverride() {
+
+    }
 }
 
 class Super extends SuperSuper {
@@ -66,5 +70,16 @@ class Bar extends Foo {
     @Override
     protected void s2(Arg arg) {
         super.s2(arg);
+    }
+}
+
+/**
+ * 这个类通过Foo类型调用其父类SuperSuper类型的方法，
+ * 所以这个类本身并没有引用SuperSuper类型。
+ */
+class UseFooAsSuperSuper {
+    void useFooAsSuperSuper() {
+        Foo foo = new Foo();
+        foo.methodCannotOverride();
     }
 }
