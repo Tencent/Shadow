@@ -4,6 +4,8 @@ group 'com.tencent.shadow.test.lib.plugin-use-host-code-lib'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api 'com.github.bumptech.glide:glide:4.5.0'
+    api 'com.github.bumptech.glide:compiler:4.5.0'
 }
 
 sourceCompatibility = "7"

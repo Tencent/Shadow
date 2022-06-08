@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.tencent.shadow.test.plugin.general_cases.R;
 
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class TestListActivity extends Activity {
             mItemList.addAll(activities);
         }
 
+        Glide.with(this).load("");
         ListView listView = findViewById(R.id.al_list);
         listView.setAdapter(new InnerAdapter());
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
