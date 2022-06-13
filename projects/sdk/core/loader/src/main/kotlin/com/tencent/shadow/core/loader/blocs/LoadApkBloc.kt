@@ -26,6 +26,8 @@ import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.exceptions.LoadApkException
 import com.tencent.shadow.core.loader.infos.PluginParts
 import java.io.File
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * 加载插件到ClassLoader中
@@ -44,16 +46,17 @@ object LoadApkBloc {
     fun loadPlugin(
         installedApk: InstalledApk,
         loadParameters: LoadParameters,
+        lock: ReentrantLock,
         pluginPartsMap: MutableMap<String, PluginParts>
     ): PluginClassLoader {
         val apk = File(installedApk.apkFilePath)
         val odexDir = if (installedApk.oDexPath == null) null else File(installedApk.oDexPath)
-        val dependsOn = loadParameters.dependsOn
+        val dependsOn = lock.withLock { loadParameters.dependsOn }
         //Logger类一定打包在宿主中，所在的classLoader即为加载宿主的classLoader
         val hostClassLoader: ClassLoader = Logger::class.java.classLoader!!
         val hostParentClassLoader = hostClassLoader.parent
-        if (dependsOn == null || dependsOn.isEmpty()) {
-            return PluginClassLoader(
+        return if (dependsOn == null || dependsOn.isEmpty()) {
+            PluginClassLoader(
                 apk.absolutePath,
                 odexDir,
                 installedApk.libraryPath,
@@ -62,32 +65,30 @@ object LoadApkBloc {
                 loadParameters.hostWhiteList
             )
         } else if (dependsOn.size == 1) {
-            val partKey = dependsOn[0]
-            val pluginParts = pluginPartsMap[partKey]
-            if (pluginParts == null) {
-                throw LoadApkException("加载" + loadParameters.partKey + "时它的依赖" + partKey + "还没有加载")
-            } else {
-                return PluginClassLoader(
-                    apk.absolutePath,
-                    odexDir,
-                    installedApk.libraryPath,
-                    pluginParts.classLoader,
-                    null,
-                    loadParameters.hostWhiteList
-                )
+            val pluginParts = lock.withLock {
+                val partKey = dependsOn[0]
+                pluginPartsMap[partKey]
+                    ?: throw LoadApkException("加载" + loadParameters.partKey + "时它的依赖" + partKey + "还没有加载")
             }
+            PluginClassLoader(
+                apk.absolutePath,
+                odexDir,
+                installedApk.libraryPath,
+                pluginParts.classLoader,
+                null,
+                loadParameters.hostWhiteList
+            )
         } else {
-            val dependsOnClassLoaders = dependsOn.map {
-                val pluginParts = pluginPartsMap[it]
-                if (pluginParts == null) {
-                    throw LoadApkException("加载" + loadParameters.partKey + "时它的依赖" + it + "还没有加载")
-                } else {
-                    pluginParts.classLoader
-                }
-            }.toTypedArray()
+            val dependsOnClassLoaders = lock.withLock {
+                dependsOn.map {
+                    val pluginParts = pluginPartsMap[it]
+                    pluginParts?.classLoader
+                        ?: throw LoadApkException("加载" + loadParameters.partKey + "时它的依赖" + it + "还没有加载")
+                }.toTypedArray()
+            }
             val combineClassLoader =
                 CombineClassLoader(dependsOnClassLoaders, hostParentClassLoader)
-            return PluginClassLoader(
+            PluginClassLoader(
                 apk.absolutePath,
                 odexDir,
                 installedApk.libraryPath,

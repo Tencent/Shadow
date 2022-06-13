@@ -50,9 +50,7 @@ object LoadPluginBloc {
             throw LoadPluginException("apkFilePath==null")
         } else {
             val buildClassLoader = executorService.submit(Callable {
-                lock.withLock {
-                    LoadApkBloc.loadPlugin(installedApk, loadParameters, pluginPartsMap)
-                }
+                LoadApkBloc.loadPlugin(installedApk, loadParameters, lock, pluginPartsMap)
             })
 
             val buildPluginManifest = executorService.submit(Callable {
