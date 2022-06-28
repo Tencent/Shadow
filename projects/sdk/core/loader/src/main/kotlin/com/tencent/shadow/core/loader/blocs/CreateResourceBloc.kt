@@ -36,6 +36,21 @@ import android.webkit.WebView
 import java.util.concurrent.CountDownLatch
 
 object CreateResourceBloc {
+    /**
+     * 构造插件Resources时有两个方案，都要解决一个共同的问题：
+     * 系统有可能从宿主Manifest中获取app icon或者logo的资源ID，
+     * 然后直接向插件的Resources对象查询这些资源。
+     *
+     * 第一个方案是MixResources方案，但该方案依赖Resources的Deprecated构造器，
+     * 未来可能会不可用。实际上Resources的构造器如果不取消的话，这个方案可以一直使用下去。
+     *
+     * 第二个方案是利用资源分区，这是一个和AAB设计中dynamic-feature相同的方案，
+     * 将宿主和插件apk添加到同一个Resources对象中。
+     * 尽管构造这种带有多资源ID分区的Resources对象所需的API在低版本系统上就已经有了，
+     * 但通过不断测试发现MAX_API_FOR_MIX_RESOURCES及更低的API系统上，有个别API不能正确支持非0x7f分区的资源。
+     */
+    const val MAX_API_FOR_MIX_RESOURCES = Build.VERSION_CODES.O_MR1
+
     fun create(archiveFilePath: String, hostAppContext: Context): Resources {
         triggerWebViewHookResources(hostAppContext)
 
@@ -45,7 +60,7 @@ object CreateResourceBloc {
         applicationInfo.packageName = hostApplicationInfo.packageName
         applicationInfo.uid = hostApplicationInfo.uid
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT > MAX_API_FOR_MIX_RESOURCES) {
             fillApplicationInfoForNewerApi(applicationInfo, hostApplicationInfo, archiveFilePath)
         } else {
             fillApplicationInfoForLowerApi(applicationInfo, hostApplicationInfo, archiveFilePath)
@@ -54,7 +69,7 @@ object CreateResourceBloc {
         try {
             val pluginResource = packageManager.getResourcesForApplication(applicationInfo)
 
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return if (Build.VERSION.SDK_INT > MAX_API_FOR_MIX_RESOURCES) {
                 pluginResource
             } else {
                 val hostResources = hostAppContext.resources
@@ -142,7 +157,7 @@ object CreateResourceBloc {
  * 因调用addAssetPath方法也无法满足CreateResourceTest涉及的场景。
  */
 @Suppress("DEPRECATION", "OVERRIDE_DEPRECATION")
-@TargetApi(25)
+@TargetApi(CreateResourceBloc.MAX_API_FOR_MIX_RESOURCES)
 private class MixResources(
     private val mainResources: Resources,
     private val sharedResources: Resources
