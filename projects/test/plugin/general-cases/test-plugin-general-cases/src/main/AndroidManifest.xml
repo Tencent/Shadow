@@ -99,6 +99,7 @@
         <activity android:name=".lib.usecases.context.TestLayoutInflaterActivity" />
         <activity android:name=".lib.usecases.context.ContextGetPackageCodePathTestActivity" />
         <activity android:name=".lib.usecases.view.TestViewIdActivity" />
+        <activity android:name=".lib.usecases.view.TestNullRefInXmlActivity" />
 
         <provider
             android:name=".lib.usecases.provider.TestProvider"
