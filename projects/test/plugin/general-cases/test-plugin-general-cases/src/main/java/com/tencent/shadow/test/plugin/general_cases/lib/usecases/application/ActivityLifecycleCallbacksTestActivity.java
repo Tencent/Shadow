@@ -2,7 +2,7 @@ package com.tencent.shadow.test.plugin.general_cases.lib.usecases.application;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;

@@ -21,7 +21,7 @@ package com.tencent.shadow.test.plugin.general_cases.lib.usecases.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.tencent.shadow.test.plugin.general_cases.R;
 

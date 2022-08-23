@@ -20,7 +20,7 @@ package com.tencent.shadow.sample.plugin.app.lib.usecases.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.view.Menu;
 
 import com.tencent.shadow.sample.plugin.app.lib.R;

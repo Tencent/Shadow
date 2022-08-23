@@ -19,7 +19,7 @@
 package com.tencent.shadow.test.plugin.general_cases.lib.usecases.context;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public class ActivityContextSubDirTestActivity extends SubDirContextThemeWrapperTestActivity {
 

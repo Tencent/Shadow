@@ -2,7 +2,7 @@ package com.tencent.shadow.sample.plugin.app.lib.usecases.webview;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.webkit.WebView;
 
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;

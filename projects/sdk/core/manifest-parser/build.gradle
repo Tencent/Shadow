@@ -11,13 +11,13 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "1.6"
-        apiVersion = "1.3"// 兼容低版本Gradle和https://youtrack.jetbrains.com/issue/KT-39389
+        jvmTarget = JavaVersion.VERSION_11.toString()
+        apiVersion = "1.4"// 兼容低版本Gradle和https://youtrack.jetbrains.com/issue/KT-39389
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = "1.6"
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 }

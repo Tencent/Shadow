@@ -3,7 +3,7 @@ package com.tencent.shadow.test.plugin.general_cases.lib.usecases.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.widget.TextView;
 
 public class ApplicationContextActivity extends Activity {

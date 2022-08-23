@@ -28,12 +28,14 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
+
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+
+import androidx.core.content.FileProvider;
 
 import com.tencent.shadow.sample.plugin.app.lib.BuildConfig;
 import com.tencent.shadow.sample.plugin.app.lib.R;
@@ -68,6 +70,7 @@ public class TestFileProviderActivity extends Activity {
     private ImageView mImageView;
     private File mFile;
 
+    @SuppressLint("LongLogTag")
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

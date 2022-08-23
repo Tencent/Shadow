@@ -23,7 +23,7 @@ compileKotlin {
     targetCompatibility = JavaVersion.VERSION_1_7
 
     kotlinOptions {
-        jvmTarget = "1.6"
+        jvmTarget = "1.8"
         noJdk = true
         noStdlib = true
     }

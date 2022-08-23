@@ -19,7 +19,7 @@
 package com.tencent.shadow.sample.plugin.app.lib.usecases.context;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 

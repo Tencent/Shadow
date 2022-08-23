@@ -20,7 +20,7 @@ package com.tencent.shadow.test.plugin.general_cases.lib.usecases;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import androidx.test.espresso.IdlingRegistry;
 

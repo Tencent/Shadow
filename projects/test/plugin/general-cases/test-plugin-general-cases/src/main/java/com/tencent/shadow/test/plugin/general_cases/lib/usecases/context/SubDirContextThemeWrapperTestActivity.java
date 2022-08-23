@@ -26,8 +26,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import android.view.ViewGroup;
 
 import com.tencent.shadow.test.plugin.general_cases.lib.gallery.util.UiUtil;

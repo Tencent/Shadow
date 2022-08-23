@@ -22,7 +22,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.tencent.shadow.test.plugin.general_cases.lib.gallery.util.ToastUtil;
