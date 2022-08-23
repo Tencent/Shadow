@@ -20,11 +20,15 @@ package com.tencent.shadow.sample.plugin.app.lib.usecases.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.transition.Scene;
+
 import androidx.annotation.Nullable;
 
+import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.shadow.sample.plugin.app.lib.R;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.cases.entity.UseCase;
 import com.tencent.shadow.sample.plugin.app.lib.gallery.util.ToastUtil;
+import com.tencent.shadow.sample.plugin.app.lib.wxqqshare.WXQQShareUtils;
 
 public class TestActivityOnCreate extends Activity {
 
@@ -50,6 +54,7 @@ public class TestActivityOnCreate extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_activity_lifecycle);
         ToastUtil.showToast(this, "onCreate");
+        WXQQShareUtils.WXShareText("分享内容", SendMessageToWX.Req.WXSceneSession);
     }
 
     @Override

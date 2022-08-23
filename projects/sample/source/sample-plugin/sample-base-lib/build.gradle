@@ -32,6 +32,6 @@ dependencies {
     implementation "com.android.support:support-annotations:$android_support_annotations_version"
     api "com.android.support:support-v4:$android_support_version"
     api "com.android.support:appcompat-v7:$android_support_version"
-    implementation files('libs/open_sdk_r6008_lite.jar')
-    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
+    api files('libs/open_sdk_r6008_lite.jar')
+    api 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:5.4.0'
 }

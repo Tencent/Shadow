@@ -10,17 +10,29 @@ android {
         versionName project.VERSION_NAME
         testInstrumentationRunner "com.tencent.shadow.test.CustomAndroidJUnitRunner"
     }
+
+    signingConfigs {
+        config {
+            keyAlias "xrcloud"
+            keyPassword "xrcloud123"
+            storeFile file("xrcloud.jks")
+            storePassword "xrcloud123"
+            v2SigningEnabled true
+        }
+    }
     buildTypes {
         debug {
             minifyEnabled false
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         release {
             minifyEnabled true
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            signingConfig signingConfigs.create("release")
+            //signingConfig signingConfigs.create("release")
             signingConfig.initWith(buildTypes.debug.signingConfig)
         }
     }

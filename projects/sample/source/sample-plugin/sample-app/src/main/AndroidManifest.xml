@@ -68,6 +68,29 @@
             android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.provider.TestProvider" />
 
         <service android:name=".usecases.service.HostAddPluginViewService" />
+
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="tencent101852855" />
+            </intent-filter>
+        </activity> <!-- SDK_V2.0引入了AssistActivity，开发者需在androidManifest.xml中注册。代码如下： 不能制定屏幕方向 -->
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" /> <!-- QQ登录配置 end -->
+        <activity
+            android:name="net.xrcloud.wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true" />
     </application>
 
 </manifest>

@@ -18,6 +18,7 @@ buildscript {
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.tencent.shadow.plugin'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion project.COMPILE_SDK_VERSION
@@ -30,12 +31,31 @@ android {
         versionName project.VERSION_NAME
     }
 
+    signingConfigs {
+        config {
+            keyAlias "xrcloud"
+            keyPassword "xrcloud123"
+            storeFile file("xrcloud.jks")
+            storePassword "xrcloud123"
+            v2SigningEnabled true
+        }
+    }
+
     buildTypes {
-        release {
-            minifyEnabled true
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            signingConfig signingConfigs.create("release")
+            //signingConfig signingConfigs.create("release")
+            signingConfig.initWith(buildTypes.debug.signingConfig)
+        }
+        release {
+            minifyEnabled true
+            signingConfig signingConfigs.config
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            //signingConfig signingConfigs.create("release")
             signingConfig.initWith(buildTypes.debug.signingConfig)
         }
     }
@@ -68,6 +88,8 @@ dependencies {
     //Shadow Transform后业务代码会有一部分实际引用runtime中的类
     //如果不以compileOnly方式依赖，会导致其他Transform或者Proguard找不到这些类
     pluginCompileOnly 'com.tencent.shadow.core:runtime'
+    implementation "androidx.core:core-ktx:1.3.2"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 preBuild.dependsOn(":sample-host-lib:jarDebugPackage")
@@ -179,4 +201,7 @@ shadow {
         compactVersion = [1, 2, 3]
         uuidNickName = "1.1.5"
     }
+}
+repositories {
+    mavenCentral()
 }
