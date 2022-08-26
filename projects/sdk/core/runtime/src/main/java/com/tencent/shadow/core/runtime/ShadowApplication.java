@@ -92,9 +92,10 @@ public class ShadowApplication extends ShadowContext {
         for (Map.Entry<String, String[]> entry : mBroadcasts.entrySet()) {
             try {
                 String receiverClassname = entry.getKey();
-                Class<?> clazz = mPluginClassLoader.loadClass(receiverClassname);
-                BroadcastReceiver receiver = ((BroadcastReceiver) clazz.newInstance());
-                mAppComponentFactory.instantiateReceiver(mPluginClassLoader, receiverClassname, null);
+                BroadcastReceiver receiver = mAppComponentFactory.instantiateReceiver(
+                        mPluginClassLoader,
+                        receiverClassname,
+                        null);
 
                 IntentFilter intentFilter = new IntentFilter();
                 String[] receiverActions = entry.getValue();
