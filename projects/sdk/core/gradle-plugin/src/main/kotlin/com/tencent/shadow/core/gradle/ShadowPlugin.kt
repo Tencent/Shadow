@@ -28,6 +28,7 @@ import com.tencent.shadow.core.transform.ShadowTransform
 import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
 import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
 import org.gradle.api.*
+import org.gradle.api.tasks.compile.JavaCompile
 import java.io.File
 
 class ShadowPlugin : Plugin<Project> {
@@ -136,27 +137,29 @@ class ShadowPlugin : Plugin<Project> {
         val outputDir = File(project.buildDir, "generated/source/pluginManifest/$variantName")
 
         // 添加生成PluginManifest.java任务
-        val task = project.tasks.register("generate${variantName.capitalize()}PluginManifest") {
-            it.dependsOn(processManifestTask)
-            it.inputs.file(manifestFile)
-            it.outputs.dir(outputDir).withPropertyName("outputDir")
+        val generatePluginManifestTask =
+            project.tasks.register("generate${variantName.capitalize()}PluginManifest") {
+                it.dependsOn(processManifestTask)
+                it.inputs.file(manifestFile)
+                it.outputs.dir(outputDir).withPropertyName("outputDir")
 
-            val packageForR = agpCompat.getPackageForR(project, variantName)
+                val packageForR = agpCompat.getPackageForR(project, variantName)
 
-            it.doLast {
-                generatePluginManifest(
-                    manifestFile,
-                    outputDir,
-                    "com.tencent.shadow.core.manifest_parser",
-                    packageForR
-                )
+                it.doLast {
+                    generatePluginManifest(
+                        manifestFile,
+                        outputDir,
+                        "com.tencent.shadow.core.manifest_parser",
+                        packageForR
+                    )
+                }
             }
-        }
-        project.tasks.getByName("compile${variantName.capitalize()}JavaWithJavac")
-            .dependsOn(task)
+        val javacTask = project.tasks.getByName("compile${variantName.capitalize()}JavaWithJavac")
+        javacTask.dependsOn(generatePluginManifestTask)
 
         // 把PluginManifest.java添加为源码
-        appExtension.sourceSets.getByName(variantName).java.srcDir(outputDir)
+        val relativePath = project.projectDir.toPath().relativize(outputDir.toPath()).toString()
+        (javacTask as JavaCompile).source(project.fileTree(relativePath))
     }
 
     /**
