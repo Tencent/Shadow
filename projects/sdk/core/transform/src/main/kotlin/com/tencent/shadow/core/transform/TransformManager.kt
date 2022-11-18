@@ -56,5 +56,6 @@ class TransformManager(
         LayoutInflaterTransform(),
         KeepHostContextTransform(useHostContext()),
         ActivityOptionsSupportTransform(),
+        ReceiverSupportTransform(),
     )
 }

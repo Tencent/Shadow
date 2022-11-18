@@ -18,18 +18,15 @@
 
 package com.tencent.shadow.core.runtime;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -234,44 +231,9 @@ public class ShadowContext extends SubDirContextThemeWrapper {
         return mApplicationInfo.packageName;
     }
 
-
-    @Override
-    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
-        return super.registerReceiver(receiverToWrapper(receiver), filter);
-    }
-
-    @Override
-    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter, int flags) {
-        return super.registerReceiver(receiverToWrapper(receiver), filter, flags);
-    }
-
-    @Override
-    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter, String broadcastPermission, Handler scheduler) {
-        return super.registerReceiver(receiverToWrapper(receiver), filter, broadcastPermission, scheduler);
-    }
-
-    @Override
-    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter, String broadcastPermission, Handler scheduler, int flags) {
-        return super.registerReceiver(receiverToWrapper(receiver), filter, broadcastPermission, scheduler, flags);
-    }
-
-    @Override
-    public void unregisterReceiver(BroadcastReceiver receiver) {
-        BroadcastReceiverWrapper wrapper = receiverToWrapper(receiver);
-        if (wrapper != null) {
-            super.unregisterReceiver(wrapper);
-        } else {
-            super.unregisterReceiver(receiver);
-        }
-    }
-
     @Override
     public String getPackageCodePath() {
         PluginPartInfo pluginInfo = PluginPartInfoManager.getPluginInfo(getClassLoader());
         return pluginInfo.packageManager.getArchiveFilePath();
-    }
-
-    private BroadcastReceiverWrapper receiverToWrapper(BroadcastReceiver receiver) {
-        return mShadowApplication.receiverToWrapper(receiver);
     }
 }
