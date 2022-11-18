@@ -211,4 +211,23 @@ public class ShadowApplication extends ShadowContext {
             return wrapper;
         }
     }
+
+    /**
+     * 从 {@link #mReceiverWrapperMap} 获取目标 {@link BroadcastReceiver} 的
+     * {@link BroadcastReceiverWrapper} 。
+     *
+     * @param receiver 目标 {@link BroadcastReceiver} 。
+     * @return 若 {@link #mReceiverWrapperMap} 中包含目标 {@link BroadcastReceiver}
+     * 的 {@link BroadcastReceiverWrapper} 则返回，否则返回 null 。
+     */
+    BroadcastReceiverWrapper getReceiverWrapper(BroadcastReceiver receiver) {
+        if (receiver == null) {
+            return null;
+        }
+        WeakReference<BroadcastReceiverWrapper> weakReference;
+        synchronized (mReceiverWrapperMap) {
+            weakReference = mReceiverWrapperMap.get(receiver);
+        }
+        return weakReference == null ? null : weakReference.get();
+    }
 }

@@ -257,7 +257,7 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
     @Override
     public void unregisterReceiver(BroadcastReceiver receiver) {
-        BroadcastReceiverWrapper wrapper = receiverToWrapper(receiver);
+        BroadcastReceiverWrapper wrapper = mShadowApplication.getReceiverWrapper(receiver);
         if (wrapper != null) {
             super.unregisterReceiver(wrapper);
         } else {
