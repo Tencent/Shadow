@@ -114,5 +114,23 @@ public class MultiDynamicContainer {
             this.containerKey = containerKey;
             this.apkFilePath = installedApk.apkFilePath;
         }
+
+        @Override
+        protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+            Class<?> c = findLoadedClass(name);
+            if (c == null) {
+                // 对于当前apk中的类不进行双亲委派查找
+                // 因为这个ClassLoader中的类比较特殊，Activity等壳子接口的方法上存在当前环境可能不存在的类，
+                // 比如ContextParams这种API 31新引入的类。如果采用双亲委派，PluginContainerActivity等基类
+                // 可能跨ClassLoader加载，会触发HasSameSignatureWithDifferentClassLoaders的校验，
+                // 进而加载所有方法签名上的类型，从而可能在低版本机器上报找不到类的错误。
+                try {
+                    c = findClass(name);
+                } catch (ClassNotFoundException ignored) {
+                    c = super.loadClass(name, resolve);
+                }
+            }
+            return c;
+        }
     }
 }
