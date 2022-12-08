@@ -90,15 +90,25 @@ abstract class ClassTransform(val project: Project) : Transform() {
             it.jarInputs.forEach {
                 val transformInput = TransformInput(it)
                 inputSet.add(transformInput)
-                ZipInputStream(FileInputStream(it.file)).use {
-                    var entry: ZipEntry? = it.nextEntry
-                    while (entry != null) {
-                        if (!entry.isDirectory && entry.name.endsWith(SdkConstants.DOT_CLASS)) {
-                            val inputClass = JarInputClass()
-                            inputClass.onInputClass(it, entry.name)
-                            transformInput.addInputClass(inputClass)
-                        }
-                        entry = it.nextEntry
+                ZipInputStream(FileInputStream(it.file)).use { zis ->
+                    var entry: ZipEntry?
+                    while (true) {
+                        entry = zis.nextEntry
+                        if (entry == null) break
+
+                        val name = entry.name
+
+                        // 忽略一些实际上不会进入编译classpath的文件
+                        if (entry.isDirectory) continue
+                        if (!name.endsWith(SdkConstants.DOT_CLASS)) continue
+                        if (name.startsWith("META-INF/", true)) continue
+                        if (name.endsWith("module-info.class", true)) continue
+                        if (name.endsWith("package-info.class", true)) continue
+
+                        // 记录好entry和name的关系，添加再添加成transform的输入
+                        val inputClass = JarInputClass()
+                        inputClass.onInputClass(zis, name)
+                        transformInput.addInputClass(inputClass)
                     }
                 }
             }
