@@ -8,23 +8,23 @@ class PluginManifestGeneratorTest {
 
     @Test
     fun testCompileCaseAsLittleAsPossible() {
-        testCompile("case_as_little_as_possible.xml", "")
+        testCompile("case_as_little_as_possible.xml")
     }
 
     @Test
     fun testNoAppComponentFactory() {
-        testCompile("noAppComponentFactory.xml", "")
+        testCompile("noAppComponentFactory.xml")
     }
 
     @Test
     fun testCompileSampleApp() {
-        testCompile("sample-app.xml", "com.tencent.shadow.sample.plugin.app.lib")
+        testCompile("sample-app.xml")
     }
 
-    private fun testCompile(case: String, packageForR: String) {
+    private fun testCompile(case: String) {
         val testFile = File(javaClass.classLoader.getResource(case)!!.toURI())
         val androidManifest = AndroidManifestReader().read(testFile)
-        val generator = PluginManifestGenerator(packageForR)
+        val generator = PluginManifestGenerator()
 
         val tempBuildDir = File("build", "PluginManifestGeneratorTest")
         val outputDir = File(tempBuildDir, case)

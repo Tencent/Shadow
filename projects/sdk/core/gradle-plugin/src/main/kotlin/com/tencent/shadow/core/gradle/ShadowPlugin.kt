@@ -30,6 +30,8 @@ import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
 import org.gradle.api.*
 import org.gradle.api.tasks.compile.JavaCompile
 import java.io.File
+import java.net.URLClassLoader
+import java.util.zip.ZipFile
 
 class ShadowPlugin : Plugin<Project> {
 
@@ -65,6 +67,8 @@ class ShadowPlugin : Plugin<Project> {
 
             createPackagePluginTasks(project)
 
+            addLocateApkanalyzerTask(project)
+
             onEachPluginVariant(project) { pluginVariant ->
                 checkAaptPackageIdConfig(pluginVariant)
 
@@ -75,6 +79,44 @@ class ShadowPlugin : Plugin<Project> {
         }
 
         checkKotlinAndroidPluginForPluginManifestTask(project)
+    }
+
+    private fun addLocateApkanalyzerTask(project: Project) {
+        val appExtension: AppExtension =
+            project.extensions.getByType(AppExtension::class.java)
+        val sdkDirectory = appExtension.sdkDirectory
+        val outputFile = project.locateApkanalyzerResultPath()
+
+        project.tasks.register(locateApkanalyzerTaskName) {
+            it.inputs.property("sdkPath", sdkDirectory.path)
+            it.outputs.file(outputFile).withPropertyName("locateApkanalyzerResultPath")
+
+            it.doLast {
+                // 如果其他project的此任务执行过了，就不用再查找了
+                if (outputFile.exists() && File(outputFile.readText()).exists()) {
+                    return@doLast
+                }
+
+                // 找出apkanalyzer.jar.它是build tool的一部分，但位置随着版本有变化，所以这里用搜索文件确定位置
+                // 如果有多个版本，随机取第一个，因为只用decodeXml方法，预期不同版本没什么区别。
+                val apkanalyzerJarFile =
+                    try {
+                        sdkDirectory.walk().filter { it.name.equals("apkanalyzer.jar") }
+                            .first()
+                    } catch (e: NoSuchElementException) {
+                        // https://developer.android.com/studio/command-line/apkanalyzer
+                        // https://developer.android.com/studio/releases/sdk-tools
+                        throw Error(
+                            "找不到apkanalyzer.jar.它来自：" +
+                                    "SDK Tools, Revision 26.1.1 (September 2017)，" +
+                                    "如果高版本SDK也找不到这个文件，Shadow就需要更新了。"
+                        )
+                    }
+
+                outputFile.parentFile.mkdirs()
+                outputFile.writeText(apkanalyzerJarFile.absolutePath)
+            }
+        }
     }
 
     /**
@@ -124,6 +166,7 @@ class ShadowPlugin : Plugin<Project> {
     /**
      * 创建生成PluginManifest.java的任务
      */
+    @Suppress("PrivateApi")// for use BinaryXmlParser(apkanalyzer)
     private fun createGeneratePluginManifestTasks(
         project: Project,
         appExtension: AppExtension,
@@ -131,34 +174,80 @@ class ShadowPlugin : Plugin<Project> {
     ) {
         val output = pluginVariant.outputs.first()
 
-        val processManifestTask = agpCompat.getProcessManifestTask(output)
-        val manifestFile = agpCompat.getManifestFile(processManifestTask)
         val variantName = pluginVariant.name
-        val outputDir = File(project.buildDir, "generated/source/pluginManifest/$variantName")
+        val capitalizeVariantName = variantName.capitalize()
+
+        // 找出ap_文件
+        val processResourcesTask = agpCompat.getProcessResourcesTask(output)
+        val processedResFile = File(
+            processResourcesTask.outputs.files.files.first { it.name.equals("out") },
+            "resources-$variantName.ap_"
+        )
+
+        // decodeBinaryManifestTask输出的apkanalyzer manifest print结果文件
+        val decodeXml = File(
+            project.buildDir,
+            "intermediates/decodeBinaryManifest/$variantName/AndroidManifest.xml"
+        )
+
+        // 添加decodeXml任务
+        val decodeBinaryManifestTask =
+            project.tasks.register("decode${capitalizeVariantName}BinaryManifest") {
+                it.dependsOn(locateApkanalyzerTaskName)
+                it.dependsOn(processResourcesTask)
+                it.inputs.file(processedResFile)
+                it.outputs.file(decodeXml).withPropertyName("decodeXml")
+
+                it.doLast {
+                    val jarPath = File(project.locateApkanalyzerResultPath().readText())
+                    val tempCL = URLClassLoader(arrayOf(jarPath.toURL()), contextClassLoader)
+                    val binaryXmlParserClass =
+                        tempCL.loadClass("com.android.tools.apk.analyzer.BinaryXmlParser")
+                    val decodeXmlMethod = binaryXmlParserClass.getDeclaredMethod(
+                        "decodeXml",
+                        String::class.java,
+                        ByteArray::class.java
+                    )
+
+                    val zipFile = ZipFile(processedResFile)
+                    val binaryXml = zipFile.getInputStream(
+                        zipFile.getEntry("AndroidManifest.xml")
+                    ).readBytes()
+
+                    val outputXmlBytes = decodeXmlMethod.invoke(
+                        null,
+                        "AndroidManifest.xml",
+                        binaryXml
+                    ) as ByteArray
+                    decodeXml.parentFile.mkdirs()
+                    decodeXml.writeBytes(outputXmlBytes)
+                }
+            }
+
 
         // 添加生成PluginManifest.java任务
+        val pluginManifestSourceDir =
+            File(project.buildDir, "generated/source/pluginManifest/$variantName")
         val generatePluginManifestTask =
-            project.tasks.register("generate${variantName.capitalize()}PluginManifest") {
-                it.dependsOn(processManifestTask)
-                it.inputs.file(manifestFile)
-                it.outputs.dir(outputDir).withPropertyName("outputDir")
-
-                val packageForR = agpCompat.getPackageForR(project, variantName)
+            project.tasks.register("generate${capitalizeVariantName}PluginManifest") {
+                it.dependsOn(decodeBinaryManifestTask)
+                it.inputs.file(decodeXml)
+                it.outputs.dir(pluginManifestSourceDir).withPropertyName("pluginManifestSourceDir")
 
                 it.doLast {
                     generatePluginManifest(
-                        manifestFile,
-                        outputDir,
-                        "com.tencent.shadow.core.manifest_parser",
-                        packageForR
+                        decodeXml,
+                        pluginManifestSourceDir,
+                        "com.tencent.shadow.core.manifest_parser"
                     )
                 }
             }
-        val javacTask = project.tasks.getByName("compile${variantName.capitalize()}JavaWithJavac")
+        val javacTask = project.tasks.getByName("compile${capitalizeVariantName}JavaWithJavac")
         javacTask.dependsOn(generatePluginManifestTask)
 
         // 把PluginManifest.java添加为源码
-        val relativePath = project.projectDir.toPath().relativize(outputDir.toPath()).toString()
+        val relativePath =
+            project.projectDir.toPath().relativize(pluginManifestSourceDir.toPath()).toString()
         (javacTask as JavaCompile).source(project.fileTree(relativePath))
     }
 
@@ -288,6 +377,10 @@ class ShadowPlugin : Plugin<Project> {
     }
 
     companion object {
+        const val locateApkanalyzerTaskName = "locateApkanalyzer"
+        private fun Project.locateApkanalyzerResultPath() =
+            File(rootProject.buildDir, "shadow/ApkanalyzerPath.txt")
+
         private fun buildAgpCompat(project: Project): AGPCompat {
             return AGPCompatImpl()
         }

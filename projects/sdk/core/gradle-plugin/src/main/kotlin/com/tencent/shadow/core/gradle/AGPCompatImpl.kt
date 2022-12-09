@@ -1,27 +1,15 @@
 package com.tencent.shadow.core.gradle
 
-import com.android.SdkConstants
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariantOutput
 import com.android.build.gradle.internal.dsl.ProductFlavor
 import com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask
-import com.android.build.gradle.tasks.ProcessApplicationManifest
-import com.android.build.gradle.tasks.ProcessMultiApkApplicationManifest
 import com.android.sdklib.AndroidVersion.VersionCodes
-import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
-import java.io.File
 
 internal class AGPCompatImpl : AGPCompat {
-
-    override fun getProcessManifestTask(output: BaseVariantOutput): Task =
-        try {
-            output.processManifestProvider.get()
-        } catch (e: NoSuchMethodError) {
-            output.processManifest
-        }
 
     override fun getProcessResourcesTask(output: BaseVariantOutput): Task =
         try {
@@ -56,58 +44,6 @@ internal class AGPCompatImpl : AGPCompat {
             val additionalParameters = additionalParametersField.get(aaptOptions) as? List<String>
             additionalParameters ?: listOf()
         }
-
-
-    override fun getManifestFile(processManifestTask: Task) =
-        when (processManifestTask.javaClass.superclass.simpleName) {
-            "ProcessMultiApkApplicationManifest" -> {
-                (processManifestTask as ProcessMultiApkApplicationManifest)
-                    .mainMergedManifest.get().asFile
-            }
-            "ProcessApplicationManifest" -> {
-                try {
-                    (processManifestTask as ProcessApplicationManifest)
-                        .mergedManifest.get().asFile
-                } catch (e: NoSuchMethodError) {
-                    //AGP小于4.1.0
-                    val dir =
-                        processManifestTask.outputs.files.files
-                            .first { it.parentFile.name == "merged_manifests" }
-                    File(dir, SdkConstants.ANDROID_MANIFEST_XML)
-                }
-            }
-            "MergeManifests" -> {
-                val dir = try {// AGP 3.2.0
-                    processManifestTask.outputs.files.files
-                        .first { it.parentFile.parentFile.parentFile.name == "merged_manifests" }
-                } catch (e: NoSuchElementException) {
-                    // AGP 3.1.0
-                    processManifestTask.outputs.files.files
-                        .first { it.path.contains("intermediates${File.separator}manifests${File.separator}full${File.separator}") }
-                }
-                File(dir, SdkConstants.ANDROID_MANIFEST_XML)
-            }
-            else -> throw IllegalStateException("不支持的Task类型:${processManifestTask.javaClass}")
-        }
-
-    override fun getPackageForR(project: Project, variantName: String): String {
-        val linkApplicationAndroidResourcesTask =
-            project.tasks.getByName("process${variantName.capitalize()}Resources")
-        return getStringFromProperty(
-            when {
-                linkApplicationAndroidResourcesTask.hasProperty("namespace") -> {
-                    linkApplicationAndroidResourcesTask.property("namespace")
-                }
-                linkApplicationAndroidResourcesTask.hasProperty("originalApplicationId") -> {
-                    linkApplicationAndroidResourcesTask.property("originalApplicationId")
-                }
-                linkApplicationAndroidResourcesTask.hasProperty("packageName") -> {
-                    linkApplicationAndroidResourcesTask.property("packageName")
-                }
-                else -> throw IllegalStateException("不支持的AGP版本")
-            }
-        )
-    }
 
     override fun addFlavorDimension(baseExtension: BaseExtension, dimensionName: String) {
         val flavorDimensionList = baseExtension.flavorDimensionList

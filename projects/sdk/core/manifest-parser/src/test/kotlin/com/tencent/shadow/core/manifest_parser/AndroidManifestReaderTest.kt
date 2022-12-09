@@ -22,7 +22,7 @@ class AndroidManifestReaderTest {
             androidManifest[AndroidManifestKeys.appComponentFactory]
         )
         Assert.assertEquals(
-            "@android:style/Theme.NoTitleBar",
+            "@ref/0x01030006",
             androidManifest[AndroidManifestKeys.theme]
         )
     }
