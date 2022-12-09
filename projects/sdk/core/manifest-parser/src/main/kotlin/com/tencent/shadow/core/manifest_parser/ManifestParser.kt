@@ -9,15 +9,13 @@ import java.io.File
  *                      一般位于apk工程的build/intermediates/merged_manifest目录中。
  * @param outputDir     生成文件的输出目录
  * @param packageName   生成类的包名
- * @param packageForR   生成对R.java引用时需要的R文件的包名
  */
 fun generatePluginManifest(
     xmlFile: File,
     outputDir: File,
-    packageName: String,
-    packageForR: String
+    packageName: String
 ) {
     val androidManifest = AndroidManifestReader().read(xmlFile)
-    val generator = PluginManifestGenerator(packageForR)
+    val generator = PluginManifestGenerator()
     generator.generate(androidManifest, outputDir, packageName)
 }

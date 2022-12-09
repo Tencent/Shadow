@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tencent.shadow.sample.plugin.app.lib.base.plugin">
 
-    <application android:name="com.tencent.shadow.sample.plugin.app.lib.gallery.TestApplication" />
+    <application
+        android:name="com.tencent.shadow.sample.plugin.app.lib.gallery.TestApplication"
+        android:theme="@style/CustomActivityTheme" />
 </manifest>
 

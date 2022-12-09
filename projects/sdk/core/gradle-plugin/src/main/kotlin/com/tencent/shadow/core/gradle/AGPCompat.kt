@@ -22,19 +22,14 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariantOutput
 import com.android.build.gradle.internal.dsl.ProductFlavor
-import org.gradle.api.Project
 import org.gradle.api.Task
-import java.io.File
 
 /**
  * 不同版本AGP的兼容层
  */
 internal interface AGPCompat {
-    fun getManifestFile(processManifestTask: Task): File
-    fun getPackageForR(project: Project, variantName: String): String
     fun addFlavorDimension(baseExtension: BaseExtension, dimensionName: String)
     fun setProductFlavorDefault(productFlavor: ProductFlavor, isDefault: Boolean)
-    fun getProcessManifestTask(output: BaseVariantOutput): Task
     fun getProcessResourcesTask(output: BaseVariantOutput): Task
     fun getAaptAdditionalParameters(processResourcesTask: Task): List<String>
     fun getMinSdkVersion(pluginVariant: ApplicationVariant): Int
