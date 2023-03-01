@@ -90,7 +90,8 @@ def sourceJar(String name, String path) {
     }
 }
 
-def publicationVersion = project.ARTIFACT_VERSION
+//def publicationVersion = project.ARTIFACT_VERSION
+def publicationVersion = "local_v2.3.0.1"
 def coreGroupId = 'com.tencent.shadow.core'
 def corePath = 'projects/sdk/core'
 def dynamicGroupId = 'com.tencent.shadow.dynamic'

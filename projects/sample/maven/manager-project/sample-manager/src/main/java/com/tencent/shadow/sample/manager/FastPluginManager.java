@@ -89,7 +89,7 @@ public abstract class FastPluginManager extends PluginManagerThatUseDynamicLoade
         for (Future future : futures) {
             future.get();
         }
-        onInstallCompleted(pluginConfig);
+        onInstallCompleted(pluginConfig,null);
 
         return getInstalledPlugins(1).get(0);
     }
