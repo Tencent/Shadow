@@ -68,8 +68,14 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
         View view = null;
         if (sFragmentViews.contains(name)) {
-            if (context instanceof GeneratedPluginActivity) {//fragment的构造在activity中
-                view = ((GeneratedPluginActivity) context).onCreateView(parent, name, context, attrs);
+            GeneratedPluginActivity activity = null;
+            if (context instanceof GeneratedPluginActivity) {
+                activity = (GeneratedPluginActivity) context;
+            } else if (this.mLayoutInflater.getContext() instanceof GeneratedPluginActivity) {
+                activity = (GeneratedPluginActivity) this.mLayoutInflater.getContext();
+            }
+            if (activity != null) {//fragment的构造在activity中
+                view = activity.onCreateView(parent, name, context, attrs);
             }
         }
         else if (name.contains(".")) {//自定义view
