@@ -29,6 +29,7 @@ import android.view.ViewStub;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * 具备创建自定义View功能的Factory2
@@ -59,15 +60,14 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
         mLayoutInflater = layoutInflater;
     }
 
-    private static final String[] sFragmentViews = {
+    private static final List<String> sFragmentViews = Arrays.asList(
             "fragment",
-            "androidx.fragment.app.FragmentContainerView"
-    };
-    
+            "androidx.fragment.app.FragmentContainerView");
+
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
         View view = null;
-        if (Arrays.binarySearch(sFragmentViews, name) >= 0) {
+        if (sFragmentViews.contains(name)) {
             if (context instanceof GeneratedPluginActivity) {//fragment的构造在activity中
                 view = ((GeneratedPluginActivity) context).onCreateView(parent, name, context, attrs);
             }
