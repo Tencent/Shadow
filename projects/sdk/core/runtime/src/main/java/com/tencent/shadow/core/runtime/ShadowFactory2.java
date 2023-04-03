@@ -21,11 +21,13 @@ package com.tencent.shadow.core.runtime;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewStub;
 
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -57,23 +59,27 @@ public class ShadowFactory2 implements LayoutInflater.Factory2 {
         mLayoutInflater = layoutInflater;
     }
 
+    private static final String[] sFragmentViews = {
+            "fragment",
+            "androidx.fragment.app.FragmentContainerView"
+    };
+    
     @Override
     public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
-        View view;
-        if (name.contains(".")) {//自定义view
+        View view = null;
+        if (Arrays.binarySearch(sFragmentViews, name) >= 0) {
+            if (context instanceof GeneratedPluginActivity) {//fragment的构造在activity中
+                view = ((GeneratedPluginActivity) context).onCreateView(parent, name, context, attrs);
+            }
+        }
+        else if (name.contains(".")) {//自定义view
             if (sCreateSystemMap.get(name) == null) {
                 sCreateSystemMap.put(name, mPartKey);
             }
             try {
                 view = createCustomView(name, context, attrs);
-            } catch (Exception e) {
-                view = null;
-            }
-        } else {
-            if (context instanceof PluginActivity) {//fragment的构造在activity中
-                view = ((PluginActivity) context).onCreateView(parent, name, context, attrs);
-            } else {
-                view = null;
+            } catch (Throwable e) {
+                Log.d("ShadowFactory2", "createCustomView: " + e.getMessage());
             }
         }
         return view;
