@@ -14,6 +14,11 @@ public class ShadowFragmentSupport {
     public static ShadowActivity fragmentGetActivity(Fragment fragment) {
         PluginContainerActivity pluginContainerActivity
                 = (PluginContainerActivity) fragment.getActivity();
+        // When a fragment is not attached or has already been detached, 
+        // it needs to behave like Fragment.getActivity(), return null.
+        if (pluginContainerActivity == null) {
+            return null;
+        }
         return (ShadowActivity) PluginActivity.get(pluginContainerActivity);
     }
 
