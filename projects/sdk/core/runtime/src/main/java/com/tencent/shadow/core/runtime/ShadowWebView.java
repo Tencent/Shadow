@@ -79,7 +79,7 @@ public class ShadowWebView extends WebView {
 
     private void init(Context context) {
         mContext = context;
-        setWebViewClient(new WebViewClient());
+        super.setWebViewClient(new WarpWebViewClient(new WebViewClient(), mContext));
     }
 
     @Override
