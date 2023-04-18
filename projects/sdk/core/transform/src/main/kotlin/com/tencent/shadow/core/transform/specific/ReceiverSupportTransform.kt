@@ -20,7 +20,11 @@ package com.tencent.shadow.core.transform.specific
 
 import com.tencent.shadow.core.transform_kit.SpecificTransform
 import com.tencent.shadow.core.transform_kit.TransformStep
-import javassist.*
+import javassist.CodeConverter
+import javassist.CtClass
+import javassist.CtMethod
+import javassist.Modifier
+import javassist.NotFoundException
 import javassist.compiler.Javac.CtFieldWithInit
 
 /**
@@ -70,7 +74,7 @@ class ReceiverSupportTransform : SpecificTransform() {
                     } catch (e: NotFoundException) {
                         null
                     }
-                if (onReceiveMethod != null) {
+                if (onReceiveMethod != null && !Modifier.isVolatile(onReceiveMethod.modifiers)) {
                     targetReceivers.add(ctClass)
                 }
             }
