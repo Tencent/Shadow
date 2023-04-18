@@ -18,6 +18,8 @@
 
 package com.tencent.shadow.sample.host;
 
+import static android.os.Process.myPid;
+
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
@@ -32,8 +34,6 @@ import com.tencent.shadow.sample.host.lib.HostUiLayerProvider;
 import com.tencent.shadow.sample.host.manager.Shadow;
 
 import java.io.File;
-
-import static android.os.Process.myPid;
 
 public class HostApplication extends Application {
     private static HostApplication sApp;
@@ -56,7 +56,9 @@ public class HostApplication extends Application {
             DynamicRuntime.recoveryRuntime(this);
         }
 
-        PluginHelper.getInstance().init(this);
+        if (isProcess(this, getPackageName())) {
+            PluginHelper.getInstance().init(this);
+        }
 
         HostUiLayerProvider.init(this);
     }

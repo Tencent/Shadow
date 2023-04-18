@@ -18,7 +18,11 @@
 
 package com.tencent.shadow.test.dynamic.host;
 
+import static android.os.Process.myPid;
+
+import android.app.ActivityManager;
 import android.app.Application;
+import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
 import android.webkit.WebView;
@@ -46,12 +50,17 @@ public class HostApplication extends Application {
 
         LoggerFactory.setILoggerFactory(new AndroidLogLoggerFactory());
 
-        //在全动态架构中，Activity组件没有打包在宿主而是位于被动态加载的runtime，
-        //为了防止插件crash后，系统自动恢复crash前的Activity组件，此时由于没有加载runtime而发生classNotFound异常，导致二次crash
-        //因此这里恢复加载上一次的runtime
-        DynamicRuntime.recoveryRuntime(this);
+        if (isProcess(this, ":plugin")) {
+            //在全动态架构中，Activity组件没有打包在宿主而是位于被动态加载的runtime，
+            //为了防止插件crash后，系统自动恢复crash前的Activity组件，此时由于没有加载runtime而发生classNotFound异常，导致二次crash
+            //因此这里恢复加载上一次的runtime
+            DynamicRuntime.recoveryRuntime(this);
+        }
 
-        PluginHelper.getInstance().init(this);
+        if (isProcess(this, getPackageName())) {
+            PluginHelper.getInstance().init(this);
+        }
+
 
         //Using WebView from more than one process at once with the same data directory is not supported.
         //https://crbug.com/558377
@@ -91,5 +100,19 @@ public class HostApplication extends Application {
 
     public PluginManager getPluginManager() {
         return mPluginManager;
+    }
+
+    private static boolean isProcess(Context context, String processName) {
+        String currentProcName = "";
+        ActivityManager manager =
+                (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo processInfo : manager.getRunningAppProcesses()) {
+            if (processInfo.pid == myPid()) {
+                currentProcName = processInfo.processName;
+                break;
+            }
+        }
+
+        return currentProcName.endsWith(processName);
     }
 }
