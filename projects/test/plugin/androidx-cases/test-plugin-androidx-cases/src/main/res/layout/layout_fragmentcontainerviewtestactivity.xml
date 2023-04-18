@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.fragment.app.FragmentContainerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_container_view"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:name="com.tencent.shadow.test.plugin.androidx_cases.lib.FooSupportFragment"
+    android:tag="my_tag" />
