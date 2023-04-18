@@ -21,6 +21,8 @@ class ReceiverSupportTransformTest : AbstractTransformTest() {
                     "test.BarReceiver",
                     "test.CatReceiver",
                     "test.DogReceiver",
+                    "test.EggReceiver",
+                    "test.EggReceiver\$FoxReceiver",
                 )
         ].toMutableSet()
 
