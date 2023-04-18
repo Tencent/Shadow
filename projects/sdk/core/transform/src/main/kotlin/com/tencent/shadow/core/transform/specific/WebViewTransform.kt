@@ -20,8 +20,8 @@ package com.tencent.shadow.core.transform.specific
 
 import com.tencent.shadow.core.transform_kit.SpecificTransform
 import com.tencent.shadow.core.transform_kit.TransformStep
-import javassist.CodeConverter
 import javassist.CtClass
+import javassist.EnhancedCodeConverter
 
 class WebViewTransform : SpecificTransform() {
     companion object {
@@ -29,7 +29,7 @@ class WebViewTransform : SpecificTransform() {
         const val ShadowWebViewClassname = "com.tencent.shadow.core.runtime.ShadowWebView"
     }
 
-    val codeConverter = CodeConverter()
+    val codeConverter = EnhancedCodeConverter()
     override fun setup(allInputClass: Set<CtClass>) {
         codeConverter.replaceNew(
             mClassPool[AndroidWebViewClassname],
