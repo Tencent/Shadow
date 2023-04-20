@@ -101,14 +101,19 @@ class ShadowPlugin : Plugin<Project> {
                 // 如果有多个版本，随机取第一个，因为只用decodeXml方法，预期不同版本没什么区别。
                 val apkanalyzerJarFile =
                     try {
-                        sdkDirectory.walk().filter { it.name.equals("apkanalyzer.jar") }
-                            .first()
+                        sdkDirectory.walk().filter { file ->
+                            listOf(
+                                "apkanalyzer.jar",// 低版本build tools
+                                "apkanalyzer-classpath.jar",// 2020-06-05 cmdline-tools version 2.0
+                            ).any { it == file.name }
+                        }.first()
                     } catch (e: NoSuchElementException) {
                         // https://developer.android.com/studio/command-line/apkanalyzer
                         // https://developer.android.com/studio/releases/sdk-tools
+                        // https://cs.android.com/android/platform/superproject/+/master:prebuilts/cmdline-tools/tools/bin/apkanalyzer;l=67;bpv=1;bpt=0
                         throw Error(
-                            "找不到apkanalyzer.jar.它来自：" +
-                                    "SDK Tools, Revision 26.1.1 (September 2017)，" +
+                            "找不到apkanalyzer.它来自：" +
+                                    "cmdline-tools." +
                                     "如果高版本SDK也找不到这个文件，Shadow就需要更新了。"
                         )
                     }
