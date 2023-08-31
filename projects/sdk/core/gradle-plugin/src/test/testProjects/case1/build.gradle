@@ -1,5 +1,14 @@
 buildscript {
-    ext.build_gradle_version = '7.0.3'
+    loadVersions:
+    {// 读取versions.properties到ext中，供项目中直接用变量引用版本号
+        def versions_properties_path = '../../../../../../../../buildScripts/gradle/versions.properties'
+        def versions = new Properties()
+        versions.load(file(versions_properties_path).newReader())
+        versions.forEach { key, stringValue ->
+            def value = stringValue?.isInteger() ? stringValue as Integer : stringValue
+            ext.set(key, value)
+        }
+    }
     repositories {
         if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
             maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
@@ -18,11 +27,6 @@ plugins {
 }
 
 allprojects {
-    ext.COMPILE_SDK_VERSION = 29
-    ext.MIN_SDK_VERSION = 16
-    ext.TARGET_SDK_VERSION = 28
-    ext.VERSION_CODE = 1
-    ext.VERSION_NAME = "local"
     repositories {
         if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
             maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }

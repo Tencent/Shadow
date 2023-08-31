@@ -8,7 +8,8 @@ buildscript {
         def versions_properties_path = '../../../buildScripts/gradle/versions.properties'
         def versions = new Properties()
         versions.load(file(versions_properties_path).newReader())
-        versions.forEach { key, value ->
+        versions.forEach { key, stringValue ->
+            def value = stringValue?.isInteger() ? stringValue as Integer : stringValue
             ext.set(key, value)
         }
     }

@@ -8,25 +8,21 @@ def gitShortRev() {
 }
 
 allprojects {
-    ext.COMPILE_SDK_VERSION = 31
-    ext.MIN_SDK_VERSION = 14
-    ext.TARGET_SDK_VERSION = 28
-    ext.VERSION_CODE = 1
-
+    def versionName, versionSuffix
     if ("${System.env.CI}".equalsIgnoreCase("true")) {
-        ext.VERSION_NAME = System.getenv("GITHUB_REF_SLUG")
+        versionName = System.getenv("GITHUB_REF_SLUG")
     } else {
-        ext.VERSION_NAME = "local"
+        versionName = project.VERSION_NAME
     }
 
     if ("${System.env.PUBLISH_RELEASE}".equalsIgnoreCase("true")) {
-        ext.VERSION_SUFFIX = ""
+        versionSuffix = ""
     } else if ("${System.env.CI}".equalsIgnoreCase("true")) {
-        ext.VERSION_SUFFIX = "-${System.env.GITHUB_SHA_SHORT}-SNAPSHOT"
+        versionSuffix = "-${System.env.GITHUB_SHA_SHORT}-SNAPSHOT"
     } else {
-        ext.VERSION_SUFFIX = "-${gitShortRev()}-SNAPSHOT"
+        versionSuffix = "-${gitShortRev()}-SNAPSHOT"
     }
-    ext.ARTIFACT_VERSION = ext.VERSION_NAME + ext.VERSION_SUFFIX
+    ext.ARTIFACT_VERSION = versionName + versionSuffix
     ext.TEST_HOST_APP_APPLICATION_ID = 'com.tencent.shadow.test.hostapp'
     ext.SAMPLE_HOST_APP_APPLICATION_ID = 'com.tencent.shadow.sample.host'
     repositories {

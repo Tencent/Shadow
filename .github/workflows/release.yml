@@ -15,10 +15,10 @@ jobs:
         uses: rlespinasse/github-slug-action@v3.x
       - name: checkout
         uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
       - uses: actions/cache@v2
         with:
@@ -29,7 +29,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: revert gradle wrapper mirror setting
-        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: buildSdk
         run: ./gradlew buildSdk
       - name: build sample/source
@@ -59,10 +59,10 @@ jobs:
         uses: rlespinasse/github-slug-action@v3.x
       - name: checkout
         uses: actions/checkout@v2
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '11'
+          java-version: '17'
           cache: 'gradle'
       - uses: actions/cache@v2
         with:
@@ -73,7 +73,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: revert gradle wrapper mirror setting
-        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: publish
         run: ./gradlew publish
       - name: stop gradle deamon for actions/cache
