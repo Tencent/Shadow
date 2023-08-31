@@ -29,6 +29,8 @@ function testUnderAGPVersion() {
 
 # 测试版本来源
 # https://developer.android.com/studio/releases/gradle-plugin
+setGradleVersion 7.5
+testUnderAGPVersion 7.4.1
 setGradleVersion 7.4
 testUnderAGPVersion 7.3.1
 setGradleVersion 7.3.3
