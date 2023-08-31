@@ -43,7 +43,16 @@ class ReceiverSupportTransformTest : AbstractTransformTest() {
         val ctClass = dLoader[testClassName]
         val loader = Loader(this.javaClass.classLoader, dLoader)
         loader.delegateLoadingOf("android.content.")
-        val clazz = ctClass.toClass(loader)
+        val clazz = try {
+            loader.loadClass(testClassName)
+        } catch (e: ClassNotFoundException) {
+            ctClass.classPool.toClass(
+                ctClass,
+                test.TestActivity::class.java,
+                loader,
+                test.TestActivity::class.java.protectionDomain
+            )
+        }
 
         //构造实例，调用onReceive方法，检查log记录的字符串List是否符合预期
         val constructor = clazz.getDeclaredConstructor(List::class.java)

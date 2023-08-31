@@ -30,13 +30,26 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: revert gradle wrapper mirror setting
-        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
       - name: revert gradle wrapper mirror setting
         working-directory: projects/test/gradle-plugin-agp-compat-test
-        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.0.2-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
-      - name: test AGP compatibility when core.gradle-plugin changed
+        run: echo 'distributionUrl=https\://services.gradle.org/distributions/gradle-7.5-bin.zip' >  gradle/wrapper/gradle-wrapper.properties
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+      - name: test AGP compatibility when core.gradle-plugin changed with JDK17
         working-directory: projects/test/gradle-plugin-agp-compat-test
-        run: ./test.sh
+        run: ./test_JDK17.sh
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+      - name: test AGP compatibility when core.gradle-plugin changed with JDK11
+        working-directory: projects/test/gradle-plugin-agp-compat-test
+        run: ./test_JDK11.sh
 
       - name: stop gradle deamon for actions/cache
         run: ./gradlew --stop

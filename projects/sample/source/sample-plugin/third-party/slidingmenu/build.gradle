@@ -5,12 +5,10 @@ android {
 
 
     defaultConfig {
-        //noinspection MinSdkTooLow
-        minSdkVersion 5
-        //noinspection ExpiredTargetSdkVersion
-        targetSdkVersion 17
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion project.MIN_SDK_VERSION
+        targetSdkVersion project.TARGET_SDK_VERSION
+        versionCode project.VERSION_CODE
+        versionName project.VERSION_NAME
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 

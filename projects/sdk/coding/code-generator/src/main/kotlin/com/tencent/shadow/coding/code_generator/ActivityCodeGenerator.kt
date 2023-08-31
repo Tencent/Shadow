@@ -10,7 +10,16 @@ import android.content.ComponentCallbacks2
 import android.view.ContextThemeWrapper
 import android.view.KeyEvent
 import android.view.Window
-import com.squareup.javapoet.*
+import com.squareup.javapoet.AnnotationSpec
+import com.squareup.javapoet.ClassName
+import com.squareup.javapoet.CodeBlock
+import com.squareup.javapoet.JavaFile
+import com.squareup.javapoet.MethodSpec
+import com.squareup.javapoet.ParameterSpec
+import com.squareup.javapoet.TypeName
+import com.squareup.javapoet.TypeSpec
+import com.squareup.javapoet.TypeVariableName
+import com.tencent.shadow.core.runtime.NeighborClass
 import javassist.ClassMap
 import javassist.ClassPool
 import javassist.LoaderClassPath
@@ -82,7 +91,8 @@ class ActivityCodeGenerator {
                 val cl = Thread.currentThread().contextClassLoader
                 classPool.appendClassPath(LoaderClassPath(cl))
             }
-            classPool.makeClass("$RUNTIME_PACKAGE.ShadowApplication").toClass()
+            classPool.makeClass("$RUNTIME_PACKAGE.ShadowApplication")
+                .toClass(NeighborClass::class.java)
         }
 
         val ActivityClass = Activity::class.java
@@ -115,7 +125,7 @@ class ActivityCodeGenerator {
             }
 
             ctClass.replaceClassName(renameMap)
-            return ctClass.toClass()
+            return ctClass.toClass(NeighborClass::class.java)
         }
 
         fun getActivityMethods(clazz: Class<*>): List<Method> {

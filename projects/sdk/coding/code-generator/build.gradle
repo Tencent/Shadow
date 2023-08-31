@@ -9,3 +9,15 @@ dependencies {
     compileOnly project(':android-jar')
     testImplementation project(':android-jar')
 }
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.6"
+    }
+}
