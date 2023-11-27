@@ -183,13 +183,14 @@ private class PluginManifestBuilder(val manifestMap: ManifestMap) {
     private fun toNewActivityInfo(componentMap: ComponentMap): String {
         fun makeResIdLiteral(
             key: String,
+            defaultValue: String = "0",
             valueToResId: (value: String) -> String
         ): String {
             val value = componentMap[key] as String?
             val literal = if (value != null) {
                 valueToResId(value)
             } else {
-                "0"
+                defaultValue
             }
             return literal
         }
@@ -204,12 +205,17 @@ private class PluginManifestBuilder(val manifestMap: ManifestMap) {
             it
         }
 
+        val screenOrientation = makeResIdLiteral(AndroidManifestKeys.screenOrientation, "-1") {
+            it
+        }
+
         return "new com.tencent.shadow.core.runtime.PluginManifest" +
                 ".ActivityInfo(" +
                 "\"${componentMap[AndroidManifestKeys.name]}\", " +
                 "$themeLiteral ," +
                 "$configChangesLiteral ," +
-                softInputModeLiteral +
+                "$softInputModeLiteral ," +
+                screenOrientation +
                 ")"
     }
 

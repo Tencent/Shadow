@@ -7,6 +7,7 @@ sealed class AndroidManifestKeys {
         const val name = "android:name"
         const val theme = "android:theme"
         const val configChanges = "android:configChanges"
+        const val screenOrientation = "android:screenOrientation"
         const val windowSoftInputMode = "android:windowSoftInputMode"
         const val authorities = "android:authorities"
         const val `intent-filter` = "intent-filter"

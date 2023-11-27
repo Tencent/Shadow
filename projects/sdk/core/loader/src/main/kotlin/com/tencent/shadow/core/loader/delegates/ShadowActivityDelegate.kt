@@ -188,6 +188,10 @@ open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivity
             pluginActivity.applicationInfo.theme
         }
         pluginActivity.setTheme(activityTheme)
+        val screenOrientation = pluginActivityInfo.screenOrientation
+        if (screenOrientation != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED && screenOrientation != pluginActivity.requestedOrientation) {
+            pluginActivity.requestedOrientation = screenOrientation
+        }
     }
 
     override fun getLoaderVersion() = BuildConfig.VERSION_NAME

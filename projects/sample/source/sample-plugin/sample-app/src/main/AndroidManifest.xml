@@ -24,6 +24,7 @@
         <activity
             android:name="com.tencent.shadow.sample.plugin.app.lib.usecases.activity.TestActivityOrientation"
             android:configChanges="orientation|screenSize|fontScale"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
