@@ -114,6 +114,7 @@ class AndroidManifestReader {
             AndroidManifestKeys.theme,
             AndroidManifestKeys.configChanges,
             AndroidManifestKeys.windowSoftInputMode,
+            AndroidManifestKeys.screenOrientation,
         ).forEach { attributeKey ->
             activityMap.putAttributeIfNotNull(element, attributeKey)
         }

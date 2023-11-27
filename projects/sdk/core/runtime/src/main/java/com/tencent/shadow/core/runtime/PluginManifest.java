@@ -70,15 +70,18 @@ public interface PluginManifest {
         public final int theme;
         public final int configChanges;
         public final int softInputMode;
+        public final int screenOrientation;
 
         public ActivityInfo(String className,
                             int theme,
                             int configChanges,
-                            int softInputMode) {
+                            int softInputMode,
+                            int screenOrientation) {
             super(className);
             this.theme = theme;
             this.configChanges = configChanges;
             this.softInputMode = softInputMode;
+            this.screenOrientation = screenOrientation;
         }
 
         protected ActivityInfo(Parcel in) {
@@ -86,6 +89,7 @@ public interface PluginManifest {
             theme = in.readInt();
             configChanges = in.readInt();
             softInputMode = in.readInt();
+            screenOrientation = in.readInt();
         }
 
         @Override
@@ -94,6 +98,7 @@ public interface PluginManifest {
             dest.writeInt(theme);
             dest.writeInt(configChanges);
             dest.writeInt(softInputMode);
+            dest.writeInt(screenOrientation);
         }
 
         @Override
