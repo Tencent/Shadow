@@ -355,20 +355,39 @@ public abstract class BasePluginManager {
 
     private boolean deletePart(InstalledPlugin.Part part) {
         boolean suc = true;
-        if (!part.pluginFile.delete()) {
+        if (!deleteFileOrDirectory(part.pluginFile)) {
             suc = false;
         }
-        if (part.oDexDir != null) {
-            if (!part.oDexDir.delete()) {
-                suc = false;
-            }
+        if (part.oDexDir != null && !deleteFileOrDirectory(part.oDexDir)) {
+            suc = false;
         }
-        if (part.libraryDir != null) {
-            if (!part.libraryDir.delete()) {
-                suc = false;
-            }
+        if (part.libraryDir != null && !deleteFileOrDirectory(part.libraryDir)) {
+            suc = false;
         }
         return suc;
+    }
+
+    /**
+     * 删除文件或目录,递归删除
+     *
+     * @param fileOrDirectory 文件或目录
+     * @return 是否删除成功
+     */
+    private boolean deleteFileOrDirectory(File fileOrDirectory) {
+        if (fileOrDirectory == null || !fileOrDirectory.exists()) {
+            return true;
+        }
+        if (fileOrDirectory.isDirectory()) {
+            File[] files = fileOrDirectory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (!deleteFileOrDirectory(file)) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return fileOrDirectory.delete();
     }
 
     /**
