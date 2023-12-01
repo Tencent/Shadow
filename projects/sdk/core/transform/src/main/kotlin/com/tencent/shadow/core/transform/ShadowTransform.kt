@@ -18,8 +18,6 @@
 
 package com.tencent.shadow.core.transform
 
-import com.android.build.api.transform.TransformInvocation
-import com.android.build.api.variant.VariantInfo
 import com.tencent.shadow.core.transform_kit.AbstractTransform
 import com.tencent.shadow.core.transform_kit.AbstractTransformManager
 import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
@@ -43,20 +41,10 @@ class ShadowTransform(
     override val mTransformManager: AbstractTransformManager
         get() = _mTransformManager
 
-    override fun beforeTransform(invocation: TransformInvocation) {
-        super.beforeTransform(invocation)
-        _mTransformManager = TransformManager(mCtClassInputMap, classPool, useHostContext)
+    override fun beforeTransform() {
+        super.beforeTransform()
+        _mTransformManager = TransformManager(classPool, useHostContext)
         classPool.makeInterface(SelfClassNamePlaceholder)
     }
 
-    override fun isCacheable(): Boolean {
-        return true
-    }
-
-    override fun getName(): String = "ShadowTransform"
-
-    override fun applyToVariant(variant: VariantInfo): Boolean {
-        return if (variant.isTest) false
-        else variant.flavorNames.contains(ApplyShadowTransformFlavorName)
-    }
 }

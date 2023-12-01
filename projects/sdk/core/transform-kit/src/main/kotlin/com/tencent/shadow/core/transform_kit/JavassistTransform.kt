@@ -18,7 +18,6 @@
 
 package com.tencent.shadow.core.transform_kit
 
-import com.android.build.api.transform.TransformInvocation
 import javassist.ClassPool
 import javassist.CtClass
 import org.gradle.api.Project
@@ -28,30 +27,35 @@ import java.util.zip.ZipInputStream
 
 open class JavassistTransform(project: Project, val classPoolBuilder: ClassPoolBuilder) :
     ClassTransform(project) {
-    val mCtClassInputMap = mutableMapOf<CtClass, InputClass>()
+    /**
+     * 所有classPool.makeClass生成的CtClass存起来，
+     * 等AbstractTransformManager处理类时直接从这里
+     * 拿到所有CtClass作为字节码编辑的输入数据。
+     */
+    val allInputCtClass = mutableSetOf<CtClass>()
     lateinit var classPool: ClassPool
 
-    override fun onOutputClass(entryName: String?, className: String, outputStream: OutputStream) {
+    override fun onOutputClass(className: String, outputStream: OutputStream) {
         classPool[className].writeOut(outputStream)
     }
 
-    override fun DirInputClass.onInputClass(classFile: File, outputFile: File) {
-        classFile.inputStream().use {
-            val ctClass: CtClass = classPool.makeClass(it)
-            addOutput(ctClass.name, outputFile)
-            mCtClassInputMap[ctClass] = this
+    override fun loadDotClassFile(classFile: File): String {
+        val ctClass: CtClass = classFile.inputStream().use {
+            classPool.makeClass(it)
         }
+        allInputCtClass.add(ctClass)
+        return ctClass.name
     }
 
-    override fun JarInputClass.onInputClass(zipInputStream: ZipInputStream, entryName: String) {
+    override fun loadClassFromJar(zipInputStream: ZipInputStream): String {
         val ctClass = classPool.makeClass(zipInputStream)
-        addOutput(ctClass.name, entryName)
-        mCtClassInputMap[ctClass] = this
+        allInputCtClass.add(ctClass)
+        return ctClass.name
     }
 
-    override fun beforeTransform(invocation: TransformInvocation) {
-        super.beforeTransform(invocation)
-        mCtClassInputMap.clear()
+    override fun beforeTransform() {
+        super.beforeTransform()
+        allInputCtClass.clear()
         classPool = classPoolBuilder.build()
     }
 

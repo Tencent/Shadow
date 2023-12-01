@@ -18,18 +18,30 @@
 
 package com.tencent.shadow.core.transform
 
-import com.tencent.shadow.core.transform.specific.*
+import com.tencent.shadow.core.transform.specific.ActivityOptionsSupportTransform
+import com.tencent.shadow.core.transform.specific.ActivityTransform
+import com.tencent.shadow.core.transform.specific.AppComponentFactoryTransform
+import com.tencent.shadow.core.transform.specific.ApplicationTransform
+import com.tencent.shadow.core.transform.specific.ContentProviderTransform
+import com.tencent.shadow.core.transform.specific.DialogSupportTransform
+import com.tencent.shadow.core.transform.specific.FragmentSupportTransform
+import com.tencent.shadow.core.transform.specific.InstrumentationTransform
+import com.tencent.shadow.core.transform.specific.IntentServiceTransform
+import com.tencent.shadow.core.transform.specific.KeepHostContextTransform
+import com.tencent.shadow.core.transform.specific.LayoutInflaterTransform
+import com.tencent.shadow.core.transform.specific.PackageItemInfoTransform
+import com.tencent.shadow.core.transform.specific.PackageManagerTransform
+import com.tencent.shadow.core.transform.specific.ReceiverSupportTransform
+import com.tencent.shadow.core.transform.specific.ServiceTransform
+import com.tencent.shadow.core.transform.specific.WebViewTransform
 import com.tencent.shadow.core.transform_kit.AbstractTransformManager
-import com.tencent.shadow.core.transform_kit.InputClass
 import com.tencent.shadow.core.transform_kit.SpecificTransform
 import javassist.ClassPool
-import javassist.CtClass
 
 class TransformManager(
-    ctClassInputMap: Map<CtClass, InputClass>,
     classPool: ClassPool,
     useHostContext: () -> Array<String>
-) : AbstractTransformManager(ctClassInputMap, classPool) {
+) : AbstractTransformManager(classPool) {
 
     /**
      * 按这个列表的顺序应用各子Transform逻辑。
