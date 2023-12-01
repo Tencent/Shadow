@@ -33,4 +33,5 @@ internal interface AGPCompat {
     fun getProcessResourcesTask(output: BaseVariantOutput): Task
     fun getAaptAdditionalParameters(processResourcesTask: Task): List<String>
     fun getMinSdkVersion(pluginVariant: ApplicationVariant): Int
+    fun hasDeprecatedTransformApi(): Boolean
 }

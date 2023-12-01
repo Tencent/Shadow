@@ -71,6 +71,20 @@ internal class AGPCompatImpl : AGPCompat {
         return mergedFlavor.minSdkVersion?.apiLevel ?: VersionCodes.BASE
     }
 
+    override fun hasDeprecatedTransformApi(): Boolean {
+        try {
+            val version = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION
+            val majorVersion = version.substringBefore('.', "0").toInt()
+            if (majorVersion >= 8) {
+                return false//能parse出来主版本号大于等于8，我们就认为旧版Transform API不可用了。
+            }
+        } catch (ignored: Error) {
+        }
+
+        //读取版本号失败，就推测是旧版本的AGP，就应该有旧版本的Transform API
+        return true
+    }
+
     companion object {
         fun getStringFromProperty(x: Any?): String {
             return when (x) {

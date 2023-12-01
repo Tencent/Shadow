@@ -18,6 +18,9 @@
 
 package com.tencent.shadow.core.gradle
 
+import com.android.build.api.artifact.ScopedArtifact
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.ScopedArtifacts
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant
@@ -25,6 +28,7 @@ import com.android.sdklib.AndroidVersion.VersionCodes
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import com.tencent.shadow.core.manifest_parser.generatePluginManifest
 import com.tencent.shadow.core.transform.DeprecatedTransformWrapper
+import com.tencent.shadow.core.transform.GradleTransformWrapper
 import com.tencent.shadow.core.transform.ShadowTransform
 import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
 import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
@@ -52,15 +56,43 @@ class ShadowPlugin : Plugin<Project> {
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
         if (!project.hasProperty("disable_shadow_transform")) {
-            baseExtension.registerTransform(
-                DeprecatedTransformWrapper(project,
-                    ShadowTransform(
+            val shadowTransform = ShadowTransform(
+                project,
+                lateInitBuilder,
+                { shadowExtension.transformConfig.useHostContext }
+            )
+            if (agpCompat.hasDeprecatedTransformApi()) {
+                baseExtension.registerTransform(
+                    DeprecatedTransformWrapper(
                         project,
-                        lateInitBuilder,
-                        { shadowExtension.transformConfig.useHostContext }
+                        shadowTransform
                     )
                 )
-            )
+            } else {
+                val androidComponentsExtension =
+                    project.extensions.getByName("androidComponents") as ApplicationAndroidComponentsExtension
+                androidComponentsExtension.onVariants(
+                    selector = androidComponentsExtension.selector()
+                        .withFlavor(
+                            ShadowTransform.DimensionName
+                                    to ShadowTransform.ApplyShadowTransformFlavorName
+                        )
+                ) { variant ->
+                    val taskProvider = project.tasks.register(
+                        "${variant.name}ShadowTransform",
+                        GradleTransformWrapper::class.java,
+                        shadowTransform
+                    )
+                    variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
+                        .use<GradleTransformWrapper>(taskProvider)
+                        .toTransform(
+                            ScopedArtifact.CLASSES,
+                            GradleTransformWrapper::allJars,
+                            GradleTransformWrapper::allDirectories,
+                            GradleTransformWrapper::output
+                        )
+                }
+            }
         }
 
         addFlavorForTransform(baseExtension)
