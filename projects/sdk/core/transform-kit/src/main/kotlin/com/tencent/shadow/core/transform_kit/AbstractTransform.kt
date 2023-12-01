@@ -18,11 +18,15 @@
 
 package com.tencent.shadow.core.transform_kit
 
-import com.android.build.api.transform.TransformInvocation
 import javassist.ClassPool
 import javassist.CtClass
 import org.gradle.api.Project
-import java.io.*
+import java.io.BufferedWriter
+import java.io.DataOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.FileWriter
+import java.io.OutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.system.measureTimeMillis
@@ -46,8 +50,8 @@ abstract class AbstractTransform(
         mDebugClassJarZOS = ZipOutputStream(FileOutputStream(mDebugClassJar))
     }
 
-    override fun beforeTransform(invocation: TransformInvocation) {
-        super.beforeTransform(invocation)
+    override fun beforeTransform() {
+        super.beforeTransform()
         ReplaceClassName.resetErrorCount()
         cleanDebugClassFileDir()
     }
@@ -57,12 +61,12 @@ abstract class AbstractTransform(
         //原本预期是不会产生任何影响的。造成了ApplicationInfoTest失败，测试Activity没有被修改superclass。
 //        mOverrideCheck.prepare(mCtClassInputMap.keys.toSet())
 
-        mTransformManager.setupAll()
-        mTransformManager.fireAll()
+        mTransformManager.setupAll(allInputCtClass)
+        mTransformManager.fireAll(allInputCtClass)
     }
 
-    override fun afterTransform(invocation: TransformInvocation) {
-        super.afterTransform(invocation)
+    override fun afterTransform() {
+        super.afterTransform()
 
         mDebugClassJarZOS.flush()
         mDebugClassJarZOS.close()
@@ -71,18 +75,18 @@ abstract class AbstractTransform(
         //所以需要重新创建一个ClassPool，加载转换后的类，用于各种转换后的检查。
         val debugClassPool = classPoolBuilder.build()
         debugClassPool.appendClassPath(mDebugClassJar.absolutePath)
-        val inputClassNames = mCtClassInputMap.keys.map { it.name }
+        val inputClassNames = allInputCtClass.map { it.name }
         onCheckTransformedClasses(debugClassPool, inputClassNames)
     }
 
-    override fun onOutputClass(entryName: String?, className: String, outputStream: OutputStream) {
-        classPool[className].debugWriteJar(entryName, mDebugClassJarZOS)
-        super.onOutputClass(entryName, className, outputStream)
+    override fun onOutputClass(className: String, outputStream: OutputStream) {
+        classPool[className].debugWriteJar(mDebugClassJarZOS)
+        super.onOutputClass(className, outputStream)
     }
 
-    private fun CtClass.debugWriteJar(outputEntryName: String?, outputStream: ZipOutputStream) {
+    private fun CtClass.debugWriteJar(outputStream: ZipOutputStream) {
         try {
-            val entryName = outputEntryName ?: (name.replace('.', '/') + ".class")
+            val entryName = name.replace('.', '/') + ".class"
             outputStream.putNextEntry(ZipEntry(entryName))
             val p = stopPruning(true)
             toBytecode(DataOutputStream(outputStream))

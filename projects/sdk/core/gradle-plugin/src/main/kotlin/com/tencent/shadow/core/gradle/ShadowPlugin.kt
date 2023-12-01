@@ -24,6 +24,7 @@ import com.android.build.gradle.api.ApplicationVariant
 import com.android.sdklib.AndroidVersion.VersionCodes
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
 import com.tencent.shadow.core.manifest_parser.generatePluginManifest
+import com.tencent.shadow.core.transform.DeprecatedTransformWrapper
 import com.tencent.shadow.core.transform.ShadowTransform
 import com.tencent.shadow.core.transform_kit.AndroidClassPoolBuilder
 import com.tencent.shadow.core.transform_kit.ClassPoolBuilder
@@ -51,11 +52,15 @@ class ShadowPlugin : Plugin<Project> {
 
         val shadowExtension = project.extensions.create("shadow", ShadowExtension::class.java)
         if (!project.hasProperty("disable_shadow_transform")) {
-            baseExtension.registerTransform(ShadowTransform(
-                project,
-                lateInitBuilder,
-                { shadowExtension.transformConfig.useHostContext }
-            ))
+            baseExtension.registerTransform(
+                DeprecatedTransformWrapper(project,
+                    ShadowTransform(
+                        project,
+                        lateInitBuilder,
+                        { shadowExtension.transformConfig.useHostContext }
+                    )
+                )
+            )
         }
 
         addFlavorForTransform(baseExtension)
