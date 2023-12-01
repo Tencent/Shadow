@@ -41,6 +41,12 @@ allprojects {
 ext.disable_shadow_transform = true
 
 android {
+    try {
+        namespace 'app'
+    } catch (Exception ignored) {
+        // AGP 8之前找不到namespace这个方法的，不用设置。
+    }
+
     compileSdkVersion COMPILE_SDK_VERSION
 
     defaultConfig {
