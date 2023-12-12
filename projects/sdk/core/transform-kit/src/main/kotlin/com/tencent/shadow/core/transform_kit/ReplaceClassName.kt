@@ -25,7 +25,7 @@ import javassist.expr.ExprEditor
 import javassist.expr.MethodCall
 
 object ReplaceClassName {
-    private val mNewNames = mutableSetOf<String>()
+    private val oldToNewRenameMap = mutableMapOf<String, String>()
 
     /**
      * MutableMap<defClass, MutableMap<method, MutableSet<useClass>>>
@@ -34,13 +34,13 @@ object ReplaceClassName {
         mutableMapOf()
 
     fun resetErrorCount() {
-        mNewNames.clear()
+        oldToNewRenameMap.clear()
         errorResult.clear()
     }
 
     fun replaceClassName(ctClass: CtClass, oldName: String, newName: String) {
         ctClass.replaceClassName(oldName, newName)
-        mNewNames.add(newName)
+        oldToNewRenameMap[oldName] = newName
     }
 
     fun checkAll(
@@ -49,9 +49,12 @@ object ReplaceClassName {
     ): Map<String, Map<String, Set<String>>> {
         inputClassNames.forEach { inputClassName ->
             val inputClass = classPool[inputClassName]
-            if (inputClass.refClasses.any { mNewNames.contains(it) }) {
-                mNewNames.forEach { newName ->
-                    inputClass.checkMethodExist(classPool[newName])
+            val oldNames = oldToNewRenameMap.keys
+            val newNames = oldToNewRenameMap.values
+            if (inputClass.refClasses.any { newNames.contains(it) }) {
+                oldNames.forEach { oldName ->
+                    val newName = oldToNewRenameMap[oldName]
+                    inputClass.checkMethodExist(classPool[oldName], classPool[newName])
                 }
             }
         }
@@ -61,14 +64,21 @@ object ReplaceClassName {
     /**
      * 检查ctClass对refClassName引用的方法确实都存在
      */
-    private fun CtClass.checkMethodExist(refClass: CtClass) {
+    private fun CtClass.checkMethodExist(oldClass: CtClass, newClass: CtClass) {
         val invokeClass = name
-        val refClassName = refClass.name
+        val refClassName = newClass.name
         instrument(object : ExprEditor() {
             override fun edit(m: MethodCall) {
                 if (m.className == refClassName) {
                     try {
-                        refClass.getMethod(m.methodName, m.signature)
+                        oldClass.getMethod(m.methodName, m.signature)
+                    } catch (ignored: NotFoundException) {
+                        //替换前旧的类就没有这个方法，就不用管替换后的类是否实现了。
+                        return
+                    }
+
+                    try {
+                        newClass.getMethod(m.methodName, m.signature)
                     } catch (ignored: NotFoundException) {
                         val methodString = "${m.methodName}:${m.signature}"
                         var methodMap = errorResult[refClassName]
