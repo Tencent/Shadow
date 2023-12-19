@@ -18,6 +18,8 @@
 
 package com.tencent.shadow.dynamic.apk;
 
+import static android.content.pm.PackageManager.GET_META_DATA;
+
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.PackageInfo;
@@ -25,8 +27,6 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.view.LayoutInflater;
-
-import static android.content.pm.PackageManager.GET_META_DATA;
 
 /**
  * 修改Context的apk路径的Wrapper。可将原Context的Resource和ClassLoader重新修改为新的Apk。
@@ -38,6 +38,8 @@ public class ChangeApkContextWrapper extends ContextWrapper {
     private LayoutInflater mLayoutInflater;
 
     final private ClassLoader mClassloader;
+
+    private Resources.Theme mTheme;
 
     public ChangeApkContextWrapper(Context base, String apkPath, ClassLoader mClassloader) {
         super(base);
@@ -70,7 +72,16 @@ public class ChangeApkContextWrapper extends ContextWrapper {
 
     @Override
     public Resources.Theme getTheme() {
-        return mResources.newTheme();
+        // 模仿android.view.ContextThemeWrapper#initializeTheme
+        if (mTheme == null) {
+            Resources.Theme newTheme = mResources.newTheme();
+            final Resources.Theme theme = getBaseContext().getTheme();
+            if (theme != null) {
+                newTheme.setTo(theme);
+            }
+            mTheme = newTheme;
+        }
+        return mTheme;
     }
 
     @Override
