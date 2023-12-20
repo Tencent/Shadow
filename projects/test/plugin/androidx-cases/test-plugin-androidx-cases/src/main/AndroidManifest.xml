@@ -7,16 +7,16 @@
         android:appComponentFactory="com.tencent.shadow.test.plugin.androidx_cases.lib.TestComponentFactory"
         tools:replace="android:appComponentFactory">
 
-        <activity android:name=".lib.LiveDataWithActivityTestActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".lib.LiveDataWithActivityTestActivity"></activity>
         <activity android:name=".lib.AppComponentFactoryTestActivity" />
         <activity
             android:name=".lib.AppCompatTestActivity"
             android:theme="@style/Theme.AppCompat" />
+        <activity android:name=".lib.FragmentContainerViewTestActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest>
