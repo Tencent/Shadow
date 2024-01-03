@@ -23,6 +23,7 @@ import static com.tencent.shadow.sample.constant.Constant.PART_KEY_PLUGIN_BASE;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -84,6 +85,7 @@ public class MainActivity extends Activity {
                         break;
 
                 }
+                Log.d("MainActivity", "[rjy] onClick intent=" + intent);
                 startActivity(intent);
             }
         });
@@ -97,8 +99,28 @@ public class MainActivity extends Activity {
         });
         rootView.addView(startHostAddPluginViewActivityButton);
 
+        Button myButton = new Button(this);
+        myButton.setText("启动我的插件");
+        myButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, PluginLoadActivity.class);
+            intent.putExtra(Constant.KEY_PLUGIN_PART_KEY, "my-plugin-app");
+            intent.putExtra(Constant.KEY_ACTIVITY_CLASSNAME, "me.rjy.android.shadow.app.MyMainActivity");
+            Log.d("MainActivity", "[rjy] onClick intent=" + intent);
+            startActivity(intent);
+        });
+        rootView.addView(myButton);
+
         setContentView(rootView);
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ClassLoader loader = getClassLoader();
+        while (loader != null) {
+            Log.d("MainActivity", "[rjy] ClassLoader=" + loader);
+            loader = loader.getParent();
+        }
+    }
 }

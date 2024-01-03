@@ -127,6 +127,13 @@ shadow {
                         hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
                         dependsOn = ['sample-base']
                     }
+                    pluginApk3 {
+                        businessName = 'my-plugin-app'
+                        partKey = 'my-plugin-app'
+                        buildTask = ':my-plugin-app:assemblePluginDebug'
+                        apkPath = 'projects/sample/source/sample-plugin/my-plugin-app/build/outputs/apk/plugin/debug/my-plugin-app-plugin-debug.apk'
+                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
+                    }
                     sampleBase {
                         businessName = 'sample-plugin-app'
                         partKey = 'sample-base'
@@ -156,6 +163,13 @@ shadow {
                         apkPath = 'projects/sample/source/sample-plugin/sample-app/build/outputs/apk/plugin/release/sample-app-plugin-release2.apk'
                         hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
                         dependsOn = ['sample-base']
+                    }
+                    pluginApk3 {
+                        businessName = 'my-plugin-app'
+                        partKey = 'my-plugin-app'
+                        buildTask = ':my-plugin-app:assemblePluginRelease'
+                        apkPath = 'projects/sample/source/sample-plugin/my-plugin-app/build/outputs/apk/plugin/release/my-plugin-app-plugin-release.apk'
+                        hostWhiteList = ["com.tencent.shadow.sample.host.lib"]
                     }
                     sampleBase {
                         businessName = 'sample-plugin-app'
