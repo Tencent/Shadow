@@ -26,13 +26,16 @@ import org.gradle.api.tasks.bundling.Zip
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
+import java.util.Locale
 
 internal fun createPackagePluginTask(project: Project, buildType: PluginBuildType): Task {
-    return project.tasks.create("package${buildType.name.capitalize()}Plugin", Zip::class.java) {
+    val buildTypeName = buildType.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+
+    return project.tasks.create("package${buildTypeName}Plugin", Zip::class.java) {
         project.logger.info("PackagePluginTask task run")
 
         //runtime apk file
-        val runtimeApkName: String = buildType.runtimeApkConfig.first
+        val runtimeApkName: String = buildType.runtimeApkConfig.v1
         var runtimeFile: File? = null
         if (runtimeApkName.isNotEmpty()) {
             runtimeFile = ShadowPluginHelper.getRuntimeApkFile(project, buildType, false)
@@ -40,7 +43,7 @@ internal fun createPackagePluginTask(project: Project, buildType: PluginBuildTyp
 
 
         //loader apk file
-        val loaderApkName: String = buildType.loaderApkConfig.first
+        val loaderApkName: String = buildType.loaderApkConfig.v1
         var loaderFile: File? = null
         if (loaderApkName.isNotEmpty()) {
             loaderFile = ShadowPluginHelper.getLoaderApkFile(project, buildType, false)
@@ -74,15 +77,14 @@ internal fun createPackagePluginTask(project: Project, buildType: PluginBuildTyp
         val packagePlugin = project.extensions.findByName("packagePlugin")
         val extension = packagePlugin as PackagePluginExtension
 
-        val suffix = if (extension.archiveSuffix.isEmpty()) "" else extension.archiveSuffix
-        val prefix = if (extension.archivePrefix.isEmpty()) "plugin" else extension.archivePrefix
+        val suffix = extension.archiveSuffix.ifEmpty { "" }
+        val prefix = extension.archivePrefix.ifEmpty { "plugin" }
         if (suffix.isEmpty()) {
-            it.archiveName = "$prefix-${buildType.name}.zip"
+            it.archiveFileName.set("$prefix-${buildType.name}.zip")
         } else {
-            it.archiveName = "$prefix-${buildType.name}-$suffix.zip"
+            it.archiveFileName.set("$prefix-${buildType.name}.zip")
         }
-        it.destinationDir =
-            File(if (extension.destinationDir.isEmpty()) "${project.rootDir}/build" else extension.destinationDir)
+        it.destinationDirectory.set(File(extension.destinationDir.ifEmpty { "${project.rootDir}/build" }))
     }.dependsOn(createGenerateConfigTask(project, buildType))
 }
 
@@ -92,19 +94,19 @@ private fun createGenerateConfigTask(project: Project, buildType: PluginBuildTyp
     val extension = packagePlugin as PackagePluginExtension
 
     //runtime apk build task
-    val runtimeApkName = buildType.runtimeApkConfig.first
+    val runtimeApkName = buildType.runtimeApkConfig.v1
     var runtimeTask = ""
     if (runtimeApkName.isNotEmpty()) {
-        runtimeTask = buildType.runtimeApkConfig.second
+        runtimeTask = buildType.runtimeApkConfig.v2
         project.logger.info("runtime task = $runtimeTask")
     }
 
 
     //loader apk build task
-    val loaderApkName = buildType.loaderApkConfig.first
+    val loaderApkName = buildType.loaderApkConfig.v1
     var loaderTask = ""
     if (loaderApkName.isNotEmpty()) {
-        loaderTask = buildType.loaderApkConfig.second
+        loaderTask = buildType.loaderApkConfig.v2
         project.logger.info("loader task = $loaderTask")
     }
 
@@ -120,7 +122,8 @@ private fun createGenerateConfigTask(project: Project, buildType: PluginBuildTyp
         pluginApkTasks.add(task)
     }
 
-    val task = project.tasks.create("generate${buildType.name.capitalize()}Config") {
+    val buildTypeName = buildType.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+    val task = project.tasks.create("generate${buildTypeName}Config") {
         it.group = "plugin"
         it.description = "生成插件配置文件"
         it.outputs.file(targetConfigFile)
