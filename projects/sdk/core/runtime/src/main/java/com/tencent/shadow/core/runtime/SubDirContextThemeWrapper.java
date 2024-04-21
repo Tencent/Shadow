@@ -336,7 +336,10 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
     }
 
     private String makeSubName(String name) {
-        return getSubDirName() + "_" + name;
+        if (name.indexOf(File.separatorChar) < 0) {
+            return getSubDirName() + "_" + name;
+        }
+        return name;
     }
 
     private static File ensurePrivateDirExists(File dir) {
