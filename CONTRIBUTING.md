@@ -82,6 +82,16 @@ Shadow的`coding`和`core.gradle-plugin`、`core.manifest-parser`、`core.transf
 `-wipe-data -no-snapstorage`使得虚拟机完全恢复到新建状态。
 `-no-boot-anim`稍微加快点启动。
 
+## 启动指定自动化测试用例
+
+随着Android Studio更新，在#1263 解决之前，只能通过命令行执行自动化测试。
+如下命令，传入类名#方法可以指定单个方法。只传入类名可以测试整个类。
+如果测试方法是抽象类中的，需要传入一个具体的实现类。
+
+```shell
+./gradlew :test-dynamic-host:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.tencent.shadow.test.cases.plugin_main.ApplicationContextSubDirTest#testGetDatabasePath
+```
+
 ## 清理工作区
 
 由于复合构建的存在，Gradle clean任务不能总是很好的完成清理工作区的目的。
