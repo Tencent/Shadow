@@ -301,7 +301,8 @@ abstract class SubDirContextThemeWrapper extends ContextThemeWrapper {
 
     @Override
     public File getDatabasePath(String name) {
-        if (getSubDirName() == null) {
+        if (getSubDirName() == null
+                || name.charAt(0) == File.separatorChar) {
             return super.getDatabasePath(name);
         } else {
             return super.getDatabasePath(makeSubName(name));

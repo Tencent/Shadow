@@ -237,6 +237,11 @@ abstract class SubDirContextThemeWrapperTestActivity extends Activity {
                 testContext.getDatabasePath("bar").getAbsolutePath()
         );
 
+        // 传绝对路径给getDatabasePath应该返回路径不变的文件
+        makeItem("getDatabasePath(\"/foo/bar\")", "TAG_GET_DATABASE_ABSOLUTE_PATH_FOO_BAR",
+                testContext.getDatabasePath("/foo/bar").getAbsolutePath()
+        );
+
 
         Context hostContext = getApplication().getBaseContext();
         hostContext.openOrCreateDatabase("foo", MODE_PRIVATE, null);

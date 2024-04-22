@@ -317,6 +317,10 @@ abstract class SubDirContextThemeWrapperTest extends PluginMainAppTest {
                 "TAG_GET_DATABASE_PATH_BAR",
                 hostDatabasePath + "/" + EXPECT_NAME + "_bar"
         );
+        matchTextWithViewTag(
+                "TAG_GET_DATABASE_ABSOLUTE_PATH_FOO_BAR",
+                "/foo/bar"
+        );
     }
 
     @Test
