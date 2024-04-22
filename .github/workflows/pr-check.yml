@@ -14,7 +14,7 @@ jobs:
             arch: x86
           - api-level: 28 #28是项目长期使用的测试API
             arch: x86_64
-          - api-level: 31 #31是目前最新的稳定API
+          - api-level: 34 #目前最新的稳定API
             arch: x86_64
     env:
       DISABLE_TENCENT_MAVEN_MIRROR: true
