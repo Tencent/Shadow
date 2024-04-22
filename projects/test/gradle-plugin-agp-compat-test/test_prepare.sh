@@ -23,6 +23,6 @@ function testUnderAGPVersion() {
   local TestAGPVersion=$1
   rm -rf stub-project/build
 
-  echo ./gradlew -PSetGradleVersion=false -PTestAGPVersion=$TestAGPVersion -PShadowVersion=$ShadowVersion :stub-project:assemblePluginA1B2Debug
-  ./gradlew -PSetGradleVersion=false -PTestAGPVersion=$TestAGPVersion -PShadowVersion=$ShadowVersion :stub-project:assemblePluginA1B2Debug
+  echo ./gradlew -PSetGradleVersion=false -PTestAGPVersion=$TestAGPVersion -PShadowVersion=$ShadowVersion :stub-project:packageA1B2DebugPlugin
+  ./gradlew -PSetGradleVersion=false -PTestAGPVersion=$TestAGPVersion -PShadowVersion=$ShadowVersion :stub-project:packageA1B2DebugPlugin
 }

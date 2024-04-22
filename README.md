@@ -46,7 +46,17 @@ Shadow的所有代码都位于`projects`目录下的3个目录，分别是：
 其中`sample`应该是大家体验Shadow的最佳环境。
 详见`sample`目录中的[README](projects/sample/README.md)介绍。
 
+### 兼容性
+
+Shadow项目有较为完善的自动化测试，因此最新代码对外部环境的版本兼容性可以参考自动化测试的配置。
+
+* [pr-check.yml](.github/workflows/pr-check.yml) 虚拟机自动化测试，包含Android测试机版本和编译环境JDK等版本。
+* [pr-check-gradle-plugin.yml](.github/workflows/pr-check-gradle-plugin.yml) AGP兼容性测试。
+  其中指向的[test_JDK17.sh](projects/test/gradle-plugin-agp-compat-test/test_JDK17.sh)和
+  [test_JDK11.sh](projects/test/gradle-plugin-agp-compat-test/test_JDK11.sh)中定义了被测试的AGP版本。
+
 ## 自己写的测试代码出错？
+
 以我们多年的插件环境下业务开发经验，插件框架是不可能一步到位实现完美的。
 因此，我们相信大部分业务在接入时都是需要一定的二次开发工作。
 Shadow现有的代码满足的是我们自己的业务现在的需求。得益于全动态的设计，
