@@ -126,6 +126,22 @@ publishing {
                 setScm(scm)
             }
         }
+        // Plugin Marker Artifacts
+        // https://docs.gradle.org/current/userguide/plugins.html#sec:plugin_markers
+        pluginMarker(MavenPublication) {
+            def pluginId = 'com.tencent.shadow.plugin'
+            groupId pluginId
+            artifactId pluginId + '.gradle.plugin'
+            version publicationVersion
+
+            pom.withXml {
+                def root = asNode()
+                def dependencies = root.appendNode('dependencies')
+                dependencies.append(getDependencyNode('compile', coreGroupId, 'gradle-plugin', publicationVersion))
+                def scm = root.appendNode('scm')
+                setScm(scm)
+            }
+        }
         manifestParser(MavenPublication) {
             groupId coreGroupId
             artifactId 'manifest-parser'

@@ -1,3 +1,14 @@
+pluginManagement {
+    repositories {
+        if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {
+            maven { url 'https://mirrors.tencent.com/nexus/repository/maven-public/' }
+        } else {
+            google()
+            mavenCentral()
+        }
+        mavenLocal()
+    }
+}
 rootProject.name = 'gradle-plugin-agp-compat-test'
 if (SetGradleVersion != 'true') {
     include 'stub-project'

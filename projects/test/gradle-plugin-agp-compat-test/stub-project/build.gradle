@@ -23,9 +23,15 @@ buildscript {
         classpath "com.tencent.shadow.core:gradle-plugin:$ShadowVersion"
     }
 }
-
-apply plugin: 'com.android.application'
-apply plugin: 'com.tencent.shadow.plugin'
+try {
+    plugins {
+        id 'com.android.application' version "$TestAGPVersion" apply true
+        id 'com.tencent.shadow.plugin' version "$ShadowVersion" apply true
+    }
+} catch (Exception ignored) {
+    apply plugin: 'com.android.application'
+    apply plugin: 'com.tencent.shadow.plugin'
+}
 
 allprojects {
     repositories {
