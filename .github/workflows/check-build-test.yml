@@ -1,0 +1,177 @@
+name: Check & Build & Test
+on:
+  workflow_call:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  check-commit-message:
+    name: 提交日志格式化检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: ./.commitlintrc.yml
+  check-code-format:
+    name: 代码格式化检查
+    runs-on: ubuntu-latest
+    env:
+      AndroidStudioVersion: 2021.1.1.20
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Cache android-studio
+        id: cache-android-studio
+        uses: actions/cache@v4
+        with:
+          path: android-studio
+          key: ${{ runner.os }}-android-studio--${{ env.AndroidStudioVersion }}
+      - name: download android-studio
+        if: steps.cache-android-studio.outputs.cache-hit != 'true'
+        run: |
+          wget "https://redirector.gvt1.com/edgedl/android/studio/ide-zips/$AndroidStudioVersion/android-studio-$AndroidStudioVersion-linux.tar.gz"
+          tar -xvzf "android-studio-$AndroidStudioVersion-linux.tar.gz"
+          rm -rf "android-studio-$AndroidStudioVersion-linux.tar.gz"
+      - name: use android-studio format all files
+        run: ./android-studio/bin/format.sh -s .idea/codeStyles/Project.xml -r -m \*.java,\*.kt,\*.xml .
+      - name: show diff for files not formated
+        run: |
+          if ! git diff --quiet; then
+            git diff --exit-code
+          fi
+  build-sdk:
+    needs: [ check-commit-message, check-code-format ]
+    name: 构建SDK
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: pre-build
+        uses: ./.github/actions/pre-build
+      - name: buildSdk
+        run: ./gradlew buildSdk -S
+      - name: post-build
+        uses: ./.github/actions/post-build
+  build-sample-maven:
+    needs: [ check-commit-message, check-code-format ]
+    name: 构建maven依赖SDK的sample
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: pre-build
+        uses: ./.github/actions/pre-build
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+      - name: build sample/maven/host-project
+        working-directory: projects/sample/maven/host-project
+        run: ./gradlew assemble
+      - name: build sample/maven/manager-project
+        working-directory: projects/sample/maven/manager-project
+        run: ./gradlew assemble
+      - name: build sample/maven/plugin-project
+        working-directory: projects/sample/maven/plugin-project
+        run: ./gradlew assemble
+      - name: post-build
+        uses: ./.github/actions/post-build
+  build-all:
+    needs: build-sdk
+    name: 构建所有源码
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: pre-build
+        uses: ./.github/actions/pre-build
+      - name: buildSdk
+        run: ./gradlew build
+      - name: post-build
+        uses: ./.github/actions/post-build
+  test-agp-compatibility:
+    needs: build-sdk
+    name: AGP兼容性自动化测试
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: pre-build
+        uses: ./.github/actions/pre-build
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+      - name: JDK17环境下AGP测试
+        working-directory: projects/test/gradle-plugin-agp-compat-test
+        run: ./test_JDK17.sh
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+          cache: 'gradle'
+      - name: JDK11环境下AGP测试
+        working-directory: projects/test/gradle-plugin-agp-compat-test
+        run: ./test_JDK11.sh
+      - name: post-build
+        uses: ./.github/actions/post-build
+  test-sdk-jvm:
+    needs: build-sdk
+    name: 自动化测试-JVM部分
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: pre-build
+        uses: ./.github/actions/pre-build
+      - name: jvmTestSdk
+        run: ./gradlew jvmTestSdk -S
+      - name: post-build
+        uses: ./.github/actions/post-build
+  test-sdk-avd:
+    needs: build-sdk
+    name: 自动化测试-AVD部分
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - api-level: 16 #16是最低支持的API
+            arch: x86
+            target: default
+          - api-level: 28 #28是项目长期使用的测试API
+            arch: x86
+            target: default
+          - api-level: 34
+            arch: x86_64
+            target: google_apis
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: pre-build
+        uses: ./.github/actions/pre-build
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: run AVD tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
+          profile: pixel_xl
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew androidTestSdk
+      - name: post-build
+        uses: ./.github/actions/post-build

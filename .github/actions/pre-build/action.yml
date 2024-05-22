@@ -1,0 +1,18 @@
+name: pre-build
+description: '准备构建环境'
+runs:
+  using: "composite"
+  steps:
+    - name: revert gradle distributionUrl in every gradle-wrapper.properties
+      shell: bash
+      run: git grep -l 'mirrors.tencent.com/gradle' -- gradle-wrapper.properties '**/gradle-wrapper.properties' | xargs sed -i 's/mirrors.tencent.com\/gradle/services.gradle.org\/distributions/g'
+    - name: Inject slug/short variables
+      uses: rlespinasse/github-slug-action@v3.x
+    - name: revert gradle wrapper mirror setting
+      shell: bash
+      run: echo "DISABLE_TENCENT_MAVEN_MIRROR=true" >> $GITHUB_ENV
+    - uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
