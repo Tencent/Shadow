@@ -1,0 +1,8 @@
+name: post-build
+description: '清理构建环境'
+runs:
+  using: "composite"
+  steps:
+    - name: stop gradle deamon for actions/cache
+      shell: bash
+      run: ./gradlew --stop
