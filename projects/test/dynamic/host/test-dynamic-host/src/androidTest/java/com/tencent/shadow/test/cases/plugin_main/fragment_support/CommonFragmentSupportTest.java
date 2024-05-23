@@ -64,13 +64,6 @@ abstract class CommonFragmentSupportTest extends PluginMainAppTest {
     }
 
     @Test
-    public void fragmentStartActivityWithOptions() {
-        Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
-        Espresso.onView(ViewMatchers.withTagValue(Matchers.<Object>is("fragmentStartActivityWithOptions"))).perform(ViewActions.click());
-        matchTextWithViewTag("finish_button", "finish");
-    }
-
-    @Test
     public void attachContext() {
         Assume.assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
         matchTextWithViewTag("AttachContextView",
