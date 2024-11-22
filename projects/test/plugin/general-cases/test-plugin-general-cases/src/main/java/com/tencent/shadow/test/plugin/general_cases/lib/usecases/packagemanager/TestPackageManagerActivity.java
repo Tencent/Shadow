@@ -30,6 +30,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.ProviderInfo;
 import android.content.pm.ResolveInfo;
 import android.content.pm.ServiceInfo;
+import android.content.pm.VersionedPackage;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
@@ -151,7 +153,21 @@ public class TestPackageManagerActivity extends Activity {
         String versionName;
         String versionCode;
         try {
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            PackageManager packageManager = getPackageManager();
+            String packageName = getPackageName();
+            PackageInfo packageInfo;
+
+            //'getPackageInfo(java.lang.String, int)' is deprecated as of API 33 ("Tiramisu"; Android 13.0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                packageInfo = packageManager.getPackageInfo(packageName, PackageManager.PackageInfoFlags.of(0));
+
+                //再测试调用一下传VersionedPackage的方法
+                VersionedPackage versionedPackage = new VersionedPackage(packageInfo.packageName, packageInfo.getLongVersionCode());
+                packageInfo = packageManager.getPackageInfo(versionedPackage, PackageManager.PackageInfoFlags.of(0));
+            } else {
+                packageInfo = packageManager.getPackageInfo(packageName, 0);
+            }
+
             versionName = packageInfo.versionName;
             versionCode = Integer.toString(packageInfo.versionCode);
         } catch (PackageManager.NameNotFoundException e) {

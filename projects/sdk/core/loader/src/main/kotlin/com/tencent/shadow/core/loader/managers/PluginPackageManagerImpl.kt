@@ -38,8 +38,18 @@ internal class PluginPackageManagerImpl(
             hostPackageManager.getApplicationInfo(packageName, flags)
         }
 
-    override fun getPackageInfo(packageName: String, flags: Int): PackageInfo? {
-        val hostPackageInfo = hostPackageManager.getPackageInfo(packageName, flags)
+    /**
+     * 所有插件中的各种方法签名的getPackageInfo方法汇总到这里。
+     * 如果包名是插件的，优先返回插件的PackageInfo。
+     * 否则返回从宿主（系统）查询到的PackageInfo。
+     * 直接由getPackageArchiveInfo构造的PackageInfo和从getPackageInfo得到的正常的PackageInfo不完全一致。
+     * 在这里修改它使其尽可能像系统返回的。
+     */
+    private fun getPluginPackageInfoIfPossible(
+        packageName: String,
+        flags: Int,
+        hostPackageInfo: PackageInfo,
+    ): PackageInfo? {
         return if (packageName.isPlugin()) {
             val packageInfo = hostPackageManager.getPackageArchiveInfo(pluginArchiveFilePath, flags)
             if (packageInfo != null) {
@@ -52,6 +62,42 @@ internal class PluginPackageManagerImpl(
             hostPackageInfo
         }
     }
+
+    @Suppress("DEPRECATION")
+    override fun getPackageInfo(packageName: String, flags: Int) =
+        getPluginPackageInfoIfPossible(
+            packageName,
+            flags,
+            hostPackageManager.getPackageInfo(packageName, flags)
+        )
+
+    @Suppress("DEPRECATION")
+    @SuppressLint("NewApi")
+    override fun getPackageInfo(versionedPackage: VersionedPackage, flags: Int) =
+        getPluginPackageInfoIfPossible(
+            versionedPackage.packageName,
+            flags,
+            hostPackageManager.getPackageInfo(versionedPackage, flags)
+        )
+
+    @SuppressLint("NewApi")
+    override fun getPackageInfo(packageName: String, flags: PackageManager.PackageInfoFlags) =
+        getPluginPackageInfoIfPossible(
+            packageName,
+            flags.value.toInt(),//FIXME 这里会丢失flags升级到Long新增的标志位
+            hostPackageManager.getPackageInfo(packageName, flags)
+        )
+
+    @SuppressLint("NewApi")
+    override fun getPackageInfo(
+        versionedPackage: VersionedPackage,
+        flags: PackageManager.PackageInfoFlags
+    ) =
+        getPluginPackageInfoIfPossible(
+            versionedPackage.packageName,
+            flags.value.toInt(),//FIXME 这里会丢失flags升级到Long新增的标志位
+            hostPackageManager.getPackageInfo(versionedPackage, flags)
+        )
 
     override fun getActivityInfo(component: ComponentName, flags: Int): ActivityInfo? =
         getComponentInfo(

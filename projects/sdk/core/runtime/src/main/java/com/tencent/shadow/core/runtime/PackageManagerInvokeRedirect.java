@@ -67,7 +67,19 @@ public class PackageManagerInvokeRedirect {
     @TargetApi(Build.VERSION_CODES.O)
     public static PackageInfo getPackageInfo(ClassLoader classLoaderOfInvokeCode, VersionedPackage versionedPackage,
                                              int flags) throws PackageManager.NameNotFoundException {
-        return getPluginPackageManager(classLoaderOfInvokeCode).getPackageInfo(versionedPackage.getPackageName(), flags);
+        return getPluginPackageManager(classLoaderOfInvokeCode).getPackageInfo(versionedPackage, flags);
+    }
+
+    @TargetApi(Build.VERSION_CODES.TIRAMISU)
+    public static PackageInfo getPackageInfo(ClassLoader classLoaderOfInvokeCode, String packageName,
+                                             PackageManager.PackageInfoFlags flags) throws PackageManager.NameNotFoundException {
+        return getPluginPackageManager(classLoaderOfInvokeCode).getPackageInfo(packageName, flags);
+    }
+
+    @TargetApi(Build.VERSION_CODES.TIRAMISU)
+    public static PackageInfo getPackageInfo(ClassLoader classLoaderOfInvokeCode, VersionedPackage versionedPackage,
+                                             PackageManager.PackageInfoFlags flags) throws PackageManager.NameNotFoundException {
+        return getPluginPackageManager(classLoaderOfInvokeCode).getPackageInfo(versionedPackage, flags);
     }
 
     public static ProviderInfo resolveContentProvider(ClassLoader classLoaderOfInvokeCode, String name, int flags) {

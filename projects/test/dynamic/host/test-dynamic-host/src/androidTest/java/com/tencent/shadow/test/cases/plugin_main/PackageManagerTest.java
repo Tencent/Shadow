@@ -1,6 +1,9 @@
 package com.tencent.shadow.test.cases.plugin_main;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
 import androidx.test.core.app.ApplicationProvider;
 
@@ -55,4 +58,21 @@ public class PackageManagerTest extends PluginMainAppTest {
     public void testGetServiceInfoPackageName() {
         matchTextWithViewTag("getServiceInfo/packageName", "com.tencent.shadow.test.hostapp");
     }
+
+    @Test
+    public void testGetPackageInfoVersionName() throws PackageManager.NameNotFoundException {
+        Context applicationContext = ApplicationProvider.getApplicationContext();
+        String packageName = applicationContext.getPackageName();
+        PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(packageName, 0);
+        matchTextWithViewTag("getPackageInfo/versionName", packageInfo.versionName);
+    }
+
+    @Test
+    public void testGetPackageInfoVersionCode() throws PackageManager.NameNotFoundException {
+        Context applicationContext = ApplicationProvider.getApplicationContext();
+        String packageName = applicationContext.getPackageName();
+        PackageInfo packageInfo = applicationContext.getPackageManager().getPackageInfo(packageName, 0);
+        matchTextWithViewTag("getPackageInfo/versionCode", Integer.toString(packageInfo.versionCode));
+    }
+
 }
