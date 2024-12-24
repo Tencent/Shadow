@@ -10,7 +10,9 @@
         android:theme="@android:style/Theme.DeviceDefault"
         android:icon="@drawable/ic_launcher"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity">
+        <activity
+            android:exported="true"
+            android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

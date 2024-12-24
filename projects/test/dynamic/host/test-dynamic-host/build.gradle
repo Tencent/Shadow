@@ -29,6 +29,16 @@ android {
     testOptions {
         animationsDisabled = true
     }
+    flavorDimensions "targetSdk"
+    productFlavors {
+        target28 {
+            //target28就是defaultConfig
+        }
+        target34 {
+            minSdkVersion 19
+            targetSdkVersion 34
+        }
+    }
 }
 
 dependencies {
@@ -40,22 +50,26 @@ dependencies {
     implementation project(':constant')
 
     testImplementation "junit:junit:$junit_version"
-    androidTestImplementation "androidx.test:core:$androidx_test_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_test_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-remote:$espresso_version"
     implementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
-    androidTestImplementation "androidx.test:runner:$androidx_test_version"
 
     implementation project(':plugin-use-host-code-lib')
     implementation project(':test-manager')
     implementation project(':custom-view')
+
+    androidTestTarget28Implementation "androidx.test:core:$androidx_test_version"
+    androidTestTarget34Implementation "androidx.test:core:1.6.1"
+
+    androidTestTarget28Implementation "androidx.test:runner:$androidx_test_version"
+    androidTestTarget34Implementation "androidx.test:runner:1.6.1"
 }
 
-def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
+def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName, forTask) {
     def outputFile = file("${getBuildDir()}/generated/assets/${name}/${buildType}/${apkName}")
     outputFile.getParentFile().mkdirs()
-    return tasks.create("copy${buildType.capitalize()}${name.capitalize()}Task", Copy) {
+    return tasks.create("copy${buildType.capitalize()}${name.capitalize()}For${forTask.capitalize()}", Copy) {
         group = 'build'
         description = "复制${name}到assets中."
         from(inputFile.getParent()) {
@@ -81,7 +95,8 @@ def generateAssets(generateAssetsTask, buildType) {
             moduleName,
             'pluginmanager.apk',
             pluginManagerApkFile,
-            "assemble${buildType.capitalize()}"
+            "assemble${buildType.capitalize()}",
+            generateAssetsTask.name
     )
 
     def pluginZip = file("${getRootProject().getBuildDir()}/plugin-${buildType}.zip")
@@ -91,14 +106,15 @@ def generateAssets(generateAssetsTask, buildType) {
             'plugin-zip',
             "plugin-${buildType}.zip",
             pluginZip,
-            "package${buildType.capitalize()}Plugin"
+            "package${buildType.capitalize()}Plugin",
+            generateAssetsTask.name
     )
 
 
 }
 
 tasks.whenTaskAdded { task ->
-    if (task.name == "generateDebugAssets") {
+    if (task.name == "generateTarget28DebugAssets" || task.name == "generateTarget34DebugAssets") {
         generateAssets(task, 'debug')
     }
 }
