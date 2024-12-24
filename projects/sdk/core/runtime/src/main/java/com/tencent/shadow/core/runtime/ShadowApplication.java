@@ -29,10 +29,8 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Build;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * 用于在plugin-loader中调用假的Application方法的接口
@@ -88,7 +86,11 @@ public class ShadowApplication extends ShadowContext {
                         intentFilter.addAction(action);
                     }
                 }
-                registerReceiver(receiver, intentFilter);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    registerReceiver(receiver, intentFilter, RECEIVER_EXPORTED);
+                } else {
+                    registerReceiver(receiver, intentFilter);
+                }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
