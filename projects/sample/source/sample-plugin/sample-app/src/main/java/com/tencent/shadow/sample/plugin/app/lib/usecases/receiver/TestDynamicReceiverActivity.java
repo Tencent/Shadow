@@ -22,6 +22,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -69,7 +70,12 @@ public class TestDynamicReceiverActivity extends BaseActivity {
             }
         });
 
-        registerReceiver(new DynamicBroadcastReceiver(), new IntentFilter(INTENT_ACTION));
+        DynamicBroadcastReceiver dynamicBroadcastReceiver = new DynamicBroadcastReceiver();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(dynamicBroadcastReceiver, new IntentFilter(INTENT_ACTION), Context.RECEIVER_EXPORTED);
+        } else {
+            registerReceiver(dynamicBroadcastReceiver, new IntentFilter(INTENT_ACTION));
+        }
     }
 
 
