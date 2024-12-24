@@ -8,7 +8,7 @@ on:
 jobs:
   publish:
     needs: check-build-test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       DISABLE_TENCENT_MAVEN_MIRROR: true
       PUBLISH_RELEASE: true
