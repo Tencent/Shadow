@@ -18,6 +18,8 @@
 
 package com.tencent.shadow.test.dynamic.host.manager;
 
+import android.os.Build;
+
 import com.tencent.shadow.dynamic.host.PluginManagerUpdater;
 
 import java.io.File;
@@ -29,6 +31,12 @@ public class FixedPathPmUpdater implements PluginManagerUpdater {
 
     FixedPathPmUpdater(File apk) {
         this.apk = apk;
+
+        //在API 33以上的系统上，禁止动态加载文件可写入，满足系统安全限制
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+            //noinspection ResultOfMethodCallIgnored
+            apk.setWritable(false);
+        }
     }
 
 

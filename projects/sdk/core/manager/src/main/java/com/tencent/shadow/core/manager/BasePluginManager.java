@@ -136,7 +136,23 @@ public abstract class BasePluginManager {
         String oDexDir = ODexBloc.isEffective() ?
                 AppCacheFolderManager.getODexDir(root, pluginConfig.UUID).getAbsolutePath() : null;
 
+        //在API 33以上的系统上，禁止动态加载文件可写入，满足系统安全限制
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
+            setWritableFalseForPluginFiles(pluginConfig);
+        }
+
         mInstalledDao.insert(pluginConfig, soDirMap, oDexDir);
+    }
+
+    private static void setWritableFalseForPluginFiles(PluginConfig pluginConfig) {
+        List<PluginConfig.FileInfo> list = new ArrayList<>();
+        list.add(pluginConfig.pluginLoader);
+        list.add(pluginConfig.runTime);
+        list.addAll(pluginConfig.plugins.values());
+        for (PluginConfig.FileInfo fileInfo : list) {
+            //noinspection ResultOfMethodCallIgnored
+            fileInfo.file.setWritable(false);
+        }
     }
 
     protected InstalledPlugin.Part getPluginPartByPartKey(String uuid, String partKey) {
