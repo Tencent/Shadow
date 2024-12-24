@@ -71,7 +71,7 @@ def generateHelloAssets(generateAssetsTask, buildType) {
     def moduleName = 'sample-hello-apk'
     def pluginManagerApkFile = file(
             "${project(":sample-hello-apk").getBuildDir()}" +
-                    "/outputs/apk/${buildType}/" +
+                    "/$apkDirName/apk/${buildType}/" +
                     "${moduleName}-${buildType}.apk"
     )
     generateAssetsTask.dependsOn createCopyTask(

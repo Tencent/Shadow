@@ -86,7 +86,7 @@ def generateAssets(generateAssetsTask, buildType) {
     def moduleName = 'test-dynamic-manager'
     def pluginManagerApkFile = file(
             "${project(":test-dynamic-manager").getBuildDir()}" +
-                    "/outputs/apk/${buildType}/" +
+                    "/$apkDirName/apk/${buildType}/" +
                     "${moduleName}-${buildType}.apk"
     )
     generateAssetsTask.dependsOn createCopyTask(

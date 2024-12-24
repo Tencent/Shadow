@@ -12,6 +12,8 @@ buildscript {
             def value = stringValue?.isInteger() ? stringValue as Integer : stringValue
             ext.set(key, value)
         }
+        def apkDirName = (System.getProperty("idea.active")?.toBoolean() ?: false) ? "intermediates" : "outputs"
+        ext.set("apkDirName", apkDirName)
     }
     repositories {
         if (!System.getenv().containsKey("DISABLE_TENCENT_MAVEN_MIRROR")) {

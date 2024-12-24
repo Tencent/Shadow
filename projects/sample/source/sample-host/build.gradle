@@ -66,11 +66,10 @@ def createCopyTask(projectName, buildType, name, apkName, inputFile, taskName) {
 }
 
 def generateAssets(generateAssetsTask, buildType) {
-
     def moduleName = 'sample-manager'
     def pluginManagerApkFile = file(
             "${project(":sample-manager").getBuildDir()}" +
-                    "/outputs/apk/${buildType}/" +
+                    "/$apkDirName/apk/${buildType}/" +
                     "${moduleName}-${buildType}.apk"
     )
     generateAssetsTask.dependsOn createCopyTask(

@@ -56,7 +56,7 @@ open class ShadowPluginHelper {
         }
 
         private fun bytes2HexStr(bytes: ByteArray?): String {
-            val HEX_ARRAY = "0123456789ABCDEF".toCharArray()
+            val hexArray = "0123456789ABCDEF".toCharArray()
             if (bytes == null || bytes.isEmpty()) {
                 return ""
             }
@@ -65,9 +65,9 @@ open class ShadowPluginHelper {
             try {
                 for (i in bytes.indices) {
                     var b = bytes[i]
-                    buf[2 * i + 1] = HEX_ARRAY[(b and 0xF).toInt()]
+                    buf[2 * i + 1] = hexArray[(b and 0xF).toInt()]
                     b = b.toInt().ushr(4).toByte()
-                    buf[2 * i + 0] = HEX_ARRAY[(b and 0xF).toInt()]
+                    buf[2 * i + 0] = hexArray[(b and 0xF).toInt()]
                 }
             } catch (e: Exception) {
                 return ""
@@ -82,16 +82,16 @@ open class ShadowPluginHelper {
             checkExist: Boolean
         ): File {
             val packagePlugin = project.extensions.findByName("packagePlugin")
+            val apkDirName = project.properties["apkDirName"] ?: "outputs"
             val extension = packagePlugin as PackagePluginExtension
-
             val splitList = buildType.runtimeApkConfig.second.split(":")
             val runtimeFileParent =
                 splitList[splitList.lastIndex].replace("assemble", "").toLowerCase()
             val runtimeApkName: String = buildType.runtimeApkConfig.first
-            val runtimeFile = File(
-                "${project.rootDir}" +
-                        "/${extension.runtimeApkProjectPath}/build/outputs/apk/$runtimeFileParent/$runtimeApkName"
-            )
+            val basePath =
+                "${project.rootDir}/${extension.runtimeApkProjectPath}/build/$apkDirName/apk/$runtimeFileParent"
+            val runtimeFile = File(basePath, runtimeApkName)
+
             if (checkExist && !runtimeFile.exists()) {
                 throw IllegalArgumentException(runtimeFile.absolutePath + " , runtime file not exist...")
             }
@@ -106,15 +106,14 @@ open class ShadowPluginHelper {
         ): File {
             val packagePlugin = project.extensions.findByName("packagePlugin")
             val extension = packagePlugin as PackagePluginExtension
-
+            val apkDirName = project.properties["apkDirName"] ?: "outputs"
             val loaderApkName: String = buildType.loaderApkConfig.first
             val splitList = buildType.loaderApkConfig.second.split(":")
             val loaderFileParent =
                 splitList[splitList.lastIndex].replace("assemble", "").toLowerCase()
-            val loaderFile = File(
-                "${project.rootDir}" +
-                        "/${extension.loaderApkProjectPath}/build/outputs/apk/$loaderFileParent/$loaderApkName"
-            )
+            val basePath =
+                "${project.rootDir}/${extension.loaderApkProjectPath}/build/$apkDirName/apk/$loaderFileParent"
+            val loaderFile = File(basePath, loaderApkName)
             if (checkExist && !loaderFile.exists()) {
                 throw IllegalArgumentException(loaderFile.absolutePath + " , loader file not exist...")
             }

@@ -93,7 +93,7 @@ shadow {
                         businessName = 'general-cases'
                         partKey = 'test-plugin-general-cases'
                         buildTask = ':test-plugin-general-cases:assemblePluginDebug'
-                        apkPath = 'projects/test/plugin/general-cases/test-plugin-general-cases/build/outputs/apk/plugin/debug/test-plugin-general-cases-plugin-debug.apk'
+                        apkPath = "projects/test/plugin/general-cases/test-plugin-general-cases/build/$apkDirName/apk/plugin/debug/test-plugin-general-cases-plugin-debug.apk"
                         hostWhiteList = ["androidx.test.espresso",//这个包添加是为了general-cases插件中可以访问测试框架的类
                                          "com.tencent.shadow.test.lib.plugin_use_host_code_lib.interfaces"]//测试插件访问宿主白名单类
                     }
@@ -101,13 +101,13 @@ shadow {
                         businessName = 'plugin-service-for-host'
                         partKey = 'plugin-service-for-host'
                         buildTask = ':plugin-service-for-host:assemblePluginDebug'
-                        apkPath = 'projects/test/plugin/particular-cases/plugin-service-for-host/build/outputs/apk/plugin/debug/plugin-service-for-host-plugin-debug.apk'
+                        apkPath = "projects/test/plugin/particular-cases/plugin-service-for-host/build/$apkDirName/apk/plugin/debug/plugin-service-for-host-plugin-debug.apk"
                     }
                     pluginApk5 {
                         businessName = 'androidx-cases'
                         partKey = 'test-plugin-androidx-cases'
                         buildTask = ':test-plugin-androidx-cases:assemblePluginDebug'
-                        apkPath = 'projects/test/plugin/androidx-cases/test-plugin-androidx-cases/build/outputs/apk/plugin/debug/test-plugin-androidx-cases-plugin-debug.apk'
+                        apkPath = "projects/test/plugin/androidx-cases/test-plugin-androidx-cases/build/$apkDirName/apk/plugin/debug/test-plugin-androidx-cases-plugin-debug.apk"
                     }
                 }
             }

@@ -56,7 +56,7 @@ def createCopyTask(projectName, buildType, name, apkName) {
     def moduleName = split[split.length - 1]
     def outputFile = file("${getBuildDir()}/generated/assets/${name}/${buildType}/${apkName}")
     outputFile.getParentFile().mkdirs()
-    def inputFile = file("${project("${projectName}").getBuildDir()}/outputs/apk/plugin/${buildType}/${moduleName}-plugin-${buildType}.apk")
+    def inputFile = file("${project("${projectName}").getBuildDir()}/$apkDirName/apk/plugin/${buildType}/${moduleName}-plugin-${buildType}.apk")
     return tasks.create("copy${buildType.capitalize()}${name.capitalize()}Task", Copy) {
         group = 'build'
         description = "复制${name}到assets中."
