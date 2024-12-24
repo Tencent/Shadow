@@ -89,7 +89,7 @@ Shadow的`coding`和`core.gradle-plugin`、`core.manifest-parser`、`core.transf
 如果测试方法是抽象类中的，需要传入一个具体的实现类。
 
 ```shell
-./gradlew :test-dynamic-host:connectedDebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.tencent.shadow.test.cases.plugin_main.ApplicationContextSubDirTest#testGetDatabasePath
+./gradlew :test-dynamic-host:connectedTarget28DebugAndroidTest -Pandroid.testInstrumentationRunnerArguments.class=com.tencent.shadow.test.cases.plugin_main.ApplicationContextSubDirTest#testGetDatabasePath
 ```
 
 ## 清理工作区
