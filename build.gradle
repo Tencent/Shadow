@@ -31,3 +31,5 @@ buildscript {
 apply from: 'buildScripts/gradle/common.gradle'
 
 apply from: "buildScripts/gradle/maven.gradle"
+
+apply from: "buildScripts/gradle/fix_issue_1263.gradle"
