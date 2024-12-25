@@ -74,6 +74,10 @@ public class PluginHelper {
 
     private void preparePlugin() {
         try {
+
+            //noinspection ResultOfMethodCallIgnored
+            pluginManagerFile.setWritable(true);
+
             InputStream is = mContext.getAssets().open(sPluginManagerName);
             FileUtils.copyInputStreamToFile(is, pluginManagerFile);
 
