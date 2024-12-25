@@ -1,0 +1,76 @@
+/**
+ * 这个脚本通过hook create*ApkListingFileRedirect任务，
+ * 在它执行完成后，即生成了apk_ide_redirect_file，也应该生成了apk之后，
+ * 补充一个复制build/intermediates/apk到build/outputs/apk的操作。
+ *
+ * 采用这个修复方式是因为Shadow的打包代码设计不是很合理，难以通过少量改动，
+ * 保证引用项目不引入任何兼容性问题。
+ *
+ * 详见issue #1263
+ */
+buildscript {
+    dependencies {
+        classpath files(rootProject.buildscript.configurations.classpath)
+    }
+}
+def taskList = [
+        ":sample-loader:createDebugApkListingFileRedirect",
+        ":sample-loader:createReleaseApkListingFileRedirect",
+        ":sample-runtime:createDebugApkListingFileRedirect",
+        ":sample-runtime:createReleaseApkListingFileRedirect",
+        ":sample-manager:createDebugApkListingFileRedirect",
+        ":sample-manager:createReleaseApkListingFileRedirect",
+        ":sample-app:createPluginDebugApkListingFileRedirect",
+        ":sample-app:createPluginReleaseApkListingFileRedirect",
+        ":sample-base:createPluginDebugApkListingFileRedirect",
+        ":sample-base:createPluginReleaseApkListingFileRedirect",
+
+        ":test-dynamic-loader:createDebugApkListingFileRedirect",
+        ":test-dynamic-loader:createReleaseApkListingFileRedirect",
+        ":test-dynamic-runtime:createDebugApkListingFileRedirect",
+        ":test-dynamic-runtime:createReleaseApkListingFileRedirect",
+        ":test-dynamic-manager:createDebugApkListingFileRedirect",
+        ":test-dynamic-manager:createReleaseApkListingFileRedirect",
+        ":plugin-service-for-host:createPluginDebugApkListingFileRedirect",
+        ":plugin-service-for-host:createPluginReleaseApkListingFileRedirect",
+        ":test-plugin-androidx-cases:createPluginDebugApkListingFileRedirect",
+        ":test-plugin-androidx-cases:createPluginReleaseApkListingFileRedirect",
+        ":test-plugin-general-cases:createPluginDebugApkListingFileRedirect",
+        ":test-plugin-general-cases:createPluginReleaseApkListingFileRedirect",
+
+        ":sample-hello-apk:createDebugApkListingFileRedirect",
+        ":sample-hello-apk:createReleaseApkListingFileRedirect",
+]
+
+afterEvaluate {
+    taskList.forEach {
+        def t = tasks.findByPath(it)
+        copyApkAfterTask(t)
+    }
+}
+
+def copyApkAfterTask(t) {
+    t.doLast {
+        def redirectFile = t.getOutputs().getFiles().singleFile
+        def listingFile = redirectFile.readLines().get(1).replaceFirst("listingFile=", "")
+        def metadataFile = new File(redirectFile.parentFile, listingFile)
+        def metadata = new org.json.JSONObject(metadataFile.text)
+        def outputFile = metadata.getJSONArray("elements").getJSONObject(0).getString("outputFile")
+        def apkFile = new File(metadataFile.parentFile, outputFile)
+        def testRelativePath = redirectFile.relativePath(apkFile)
+        def needCopy = !testRelativePath.matches("^(\\.\\.${File.separatorChar})+outputs${File.separatorChar}.+")
+        if (needCopy) {
+            def matchPath = new File("/build/intermediates").toPath().toString()
+            def intermediatesDir = new File(apkFile.toPath().normalize().toString().find("^.+?$matchPath"))
+            def outputsDir = new File(intermediatesDir.parentFile, "outputs")
+            def r = copy {
+                from intermediatesDir
+                into outputsDir
+                include 'apk/**'
+            }
+            if (r.didWork) {
+                getLogger().info("copy apk from ${intermediatesDir.path} to ${outputsDir.path}")
+            }
+        }
+    }
+}
