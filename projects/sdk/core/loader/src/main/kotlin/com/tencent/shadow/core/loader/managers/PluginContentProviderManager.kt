@@ -71,21 +71,22 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
     fun addContentProviderInfo(
         partKey: String,
         pluginProviderInfo: PluginManifest.ProviderInfo,
-        containerProviderInfo: ContainerProviderInfo
+        containerProviderInfo: ContainerProviderInfo,
+        pluginAuthority: String
     ) {
-        if (providerMap.containsKey(pluginProviderInfo.authorities)) {
+        if (providerMap.containsKey(pluginAuthority)) {
             throw RuntimeException("重复添加 ContentProvider")
         }
 
-        providerAuthorityMap[pluginProviderInfo.authorities] = containerProviderInfo.authority
-        var pluginProviderInfos: HashSet<PluginManifest.ProviderInfo>? = null
+        providerAuthorityMap[pluginAuthority] = containerProviderInfo.authority
+        var pluginProviderInfos: HashSet<PluginManifest.ProviderInfo>?
         if (pluginProviderInfoMap.containsKey(partKey)) {
             pluginProviderInfos = pluginProviderInfoMap[partKey]
         } else {
             pluginProviderInfos = HashSet()
+            pluginProviderInfoMap[partKey] = pluginProviderInfos
         }
         pluginProviderInfos?.add(pluginProviderInfo)
-        pluginProviderInfoMap.put(partKey, pluginProviderInfos)
     }
 
     fun createContentProviderAndCallOnCreate(
@@ -105,7 +106,10 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
                 providerInfo.authority = it.authorities
                 providerInfo.grantUriPermissions = it.grantUriPermissions
                 contentProvider?.attachInfo(context, providerInfo)
-                providerMap[it.authorities] = contentProvider
+                it.authorities
+                    .split(";")
+                    .filter { authority -> authority.isNotBlank() }
+                    .forEach { authority -> providerMap[authority] = contentProvider }
             } catch (e: Exception) {
                 throw RuntimeException(
                     "partKey==$partKey className==${it.className} authorities==${it.authorities}",
