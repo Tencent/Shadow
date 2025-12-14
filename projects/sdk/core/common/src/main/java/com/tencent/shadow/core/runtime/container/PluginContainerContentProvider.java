@@ -38,6 +38,10 @@ public class PluginContainerContentProvider extends ContentProvider {
 
 
     public PluginContainerContentProvider() {
+        ContentProviderDelegateProvider p = ContentProviderDelegateProviderHolder.contentProviderDelegateProvider;
+        if (p != null) {
+            hostContentProviderDelegate = p.getHostContentProviderDelegate();
+        }
         ContentProviderDelegateProviderHolder.setDelegateProviderHolderPrepareListener(new ContentProviderDelegateProviderHolder.DelegateProviderHolderPrepareListener() {
             @Override
             public void onPrepare() {
