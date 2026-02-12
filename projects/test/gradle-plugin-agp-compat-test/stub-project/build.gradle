@@ -63,6 +63,13 @@ android {
         versionName VERSION_NAME
     }
 
+    buildTypes {
+        debug {
+            minifyEnabled true
+            shrinkResources true
+        }
+    }
+
     // 测试插件项目存在自定义flavorDimensions
     flavorDimensions(*flavorDimensionList, 'DimensionA', 'DimensionB')
     productFlavors {

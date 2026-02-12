@@ -1,20 +1,15 @@
 package com.tencent.shadow.core.gradle
 
-import com.android.SdkConstants
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariantOutput
 import com.android.build.gradle.internal.dsl.ProductFlavor
 import com.android.build.gradle.internal.res.LinkApplicationAndroidResourcesTask
-import com.android.build.gradle.internal.scope.InternalArtifactType
 import com.android.sdklib.AndroidVersion.VersionCodes
+import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.file.Directory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import java.io.File
-import kotlin.reflect.full.declaredMemberProperties
-import kotlin.reflect.jvm.isAccessible
 
 internal class AGPCompatImpl : AGPCompat {
 
@@ -24,58 +19,6 @@ internal class AGPCompatImpl : AGPCompat {
         } catch (e: NoSuchMethodError) {
             output.processResources
         }
-
-    override fun getProcessResourcesFile(processResourcesTask: Task, variantName: String): File {
-        val capitalizeVariantName = variantName.capitalize()
-
-        return try {
-            File(
-                processResourcesTask.outputs.files.files.first { it.name.equals("out") },
-                "resources-$variantName.ap_"
-            )
-
-            // 使用 resPackageOutputFolder
-            // 获取的路径和上方路径一致
-            // 备选（不推荐）
-            /*File(
-                (processResourcesTask as LinkApplicationAndroidResourcesTask).resPackageOutputFolder.asFile.get(),
-                "resources-$variantName.ap_"
-            )*/
-        } catch (ignored: Exception) {
-            // 高版本 AGP
-            try {
-                // 通过反射获取 KProperty： linkedResourcesOutputDir、linkedResourcesArtifactType
-                val linkedResourcesOutputDir =
-                    LinkApplicationAndroidResourcesTask::class.declaredMemberProperties.first {
-                        it.name == "linkedResourcesOutputDir"
-                    }.let {
-                        it.isAccessible = true
-                        it.getter.call(processResourcesTask) as DirectoryProperty
-                    }
-
-                @Suppress("UNCHECKED_CAST")
-                val linkedResourcesArtifactType =
-                    LinkApplicationAndroidResourcesTask::class.declaredMemberProperties.first {
-                        it.name == "linkedResourcesArtifactType"
-                    }.let {
-                        it.isAccessible = true
-                        it.getter.call(processResourcesTask) as Property<InternalArtifactType<Directory>>
-                    }
-
-                File(
-                    linkedResourcesOutputDir.asFile.get(),
-                    linkedResourcesArtifactType.get().name().lowercase()
-                        .replace("_", "-") + "-" + variantName + SdkConstants.DOT_RES
-                )
-            } catch (ignored: Exception) {
-                // 反射获取出错，备用
-                File(
-                    processResourcesTask.outputs.files.files.first { it.name.equals("process${capitalizeVariantName}Resources") },
-                    "linked-resources-binary-format-$variantName.ap_"
-                )
-            }
-        }
-    }
 
     @Suppress("PrivateApi")
     override fun getAaptAdditionalParameters(processResourcesTask: Task): List<String> =
@@ -142,6 +85,105 @@ internal class AGPCompatImpl : AGPCompat {
 
         //读取版本号失败，就推测是旧版本的AGP，就应该有旧版本的Transform API
         return true
+    }
+
+    override fun getProcessManifestTask(output: BaseVariantOutput): Task {
+        return try {
+            output.processManifestProvider.get()
+        } catch (_: Error) {
+            output.processManifest
+        }
+    }
+
+    /**
+     * 获取合并后的 AndroidManifest.xml 文件。
+     *
+     * 优先从 processManifest 任务输出获取，否则搜索 intermediates 目录。
+     */
+    override fun getProcessManifestFile(
+        project: Project,
+        pluginVariant: ApplicationVariant,
+        output: BaseVariantOutput
+    ): File {
+        // 1. 优先从任务输出获取
+        try {
+            output.processManifestProvider.get().outputs.files.files.forEach {
+                findFileByName(it, "AndroidManifest.xml")?.let { file -> return file }
+            }
+        } catch (_: Exception) {
+            // 忽略
+        }
+
+        val variantName = pluginVariant.name
+
+        // 2. 搜索中间产物目录
+        return listOf(
+            "intermediates/merged_manifests/$variantName", // AGP 4.x/7.x/8.x
+            "intermediates/manifests/full/$variantName", // AGP 3.x
+        )
+            .map { File(project.buildDir, it) }
+            .first {
+                findFileByName(it, "AndroidManifest.xml") != null
+            }
+    }
+
+    /**
+     * 获取 R.txt 文件。
+     *
+     * 优先从 processResources 任务的输出获取（最准确）， 否则搜索 intermediates 目录。
+     */
+    override fun getRTxtFile(
+        project: Project,
+        processResourcesTask: Task?,
+        variantName: String
+    ): File {
+        // 1. 优先尝试从任务输出中查找
+        if (processResourcesTask != null) {
+            try {
+                processResourcesTask.outputs.files.files.forEach {
+                    findFileByName(it, "R.txt")?.let { file -> return file }
+                }
+            } catch (_: Exception) {
+                // 忽略解析错误，继续走备选路径
+            }
+        }
+
+        // 2. 根据 AGP 版本已知的中间产物路径搜索
+        return listOf(
+            "intermediates/runtime_symbol_list/$variantName", // AGP 4.x/7.x/8.x
+            "intermediates/symbols/$variantName",
+            "intermediates/bundles/$variantName"
+        )
+            .map { File(project.buildDir, it) }
+            .first {
+                findFileByName(it, "R.txt") != null
+            }
+    }
+
+    /**
+     * 搜索指定目录下指定文件名的文件。
+     *
+     * @return 文件对象，若找不到则返回 null 。
+     */
+    private fun findFileByName(file: File, fileName:String): File? {
+        if (!file.exists()) {
+            return null
+        }
+        if (file.isFile && file.name == fileName) {
+            return file
+        }
+        if (file.isDirectory) {
+            val subFiles = file.listFiles()
+            if (subFiles != null) {
+                for (subFile in subFiles) {
+                    val resultFile = findFileByName(subFile, fileName)
+                    if (resultFile != null) {
+                        return resultFile
+                    }
+                }
+            }
+        }
+        return null
     }
 
     companion object {

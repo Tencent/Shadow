@@ -3,7 +3,6 @@ package com.tencent.shadow.core.manifest_parser
 import com.squareup.javapoet.*
 import com.tencent.shadow.core.runtime.PluginManifest
 import java.io.File
-import java.util.*
 import javax.lang.model.element.Modifier
 
 /**
@@ -21,9 +20,15 @@ class PluginManifestGenerator {
      * @param manifestMap   AndroidManifestReader#read的输出Map
      * @param outputDir     生成文件的输出目录
      * @param packageName   生成类的包名
+     * @param resourceMapper 资源映射器。用于将资源名称映射为资源 ID 值
      */
-    fun generate(manifestMap: ManifestMap, outputDir: File, packageName: String) {
-        val pluginManifestBuilder = PluginManifestBuilder(manifestMap)
+    fun generate(
+        manifestMap: ManifestMap,
+        outputDir: File,
+        packageName: String,
+        resourceMapper: (String) -> String
+    ) {
+        val pluginManifestBuilder = PluginManifestBuilder(manifestMap, resourceMapper)
         val pluginManifest = pluginManifestBuilder.build()
         JavaFile.builder(packageName, pluginManifest)
             .build()
@@ -31,7 +36,10 @@ class PluginManifestGenerator {
     }
 }
 
-private class PluginManifestBuilder(val manifestMap: ManifestMap) {
+private class PluginManifestBuilder(
+    val manifestMap: ManifestMap,
+    val resourceMapper: (String) -> String
+) {
     val classBuilder: TypeSpec.Builder =
         TypeSpec.classBuilder("PluginManifest")
             .addSuperinterface(ClassName.get(PluginManifest::class.java))
@@ -172,7 +180,7 @@ private class PluginManifestBuilder(val manifestMap: ManifestMap) {
         manifestValue: Any,
     ): FieldSpec {
 
-        val resIdLiteral = themeStringToResId(manifestValue)
+        val resIdLiteral = themeStringToResId(manifestValue, resourceMapper)
         return privateStaticFinalIntFieldBuilder(fieldName)
             .initializer(
                 CodeBlock.of("$1L", resIdLiteral)
@@ -196,17 +204,17 @@ private class PluginManifestBuilder(val manifestMap: ManifestMap) {
         }
 
         val themeLiteral = makeResIdLiteral(AndroidManifestKeys.theme) {
-            themeStringToResId(it)
+            themeStringToResId(it, resourceMapper)
         }
         val configChangesLiteral = makeResIdLiteral(AndroidManifestKeys.configChanges) {
-            it
+            parseConfigChanges(it)
         }
         val softInputModeLiteral = makeResIdLiteral(AndroidManifestKeys.windowSoftInputMode) {
-            it
+            parseSoftInputMode(it)
         }
 
         val screenOrientation = makeResIdLiteral(AndroidManifestKeys.screenOrientation, "-1") {
-            it
+            parseScreenOrientation(it)
         }
 
         return "new com.tencent.shadow.core.runtime.PluginManifest" +
@@ -279,14 +287,88 @@ private class PluginManifestBuilder(val manifestMap: ManifestMap) {
 
         fun nullCodeBlock() = CodeBlock.of("null")!!
 
-        fun themeStringToResId(manifestValue: Any): String {
+        fun themeStringToResId(manifestValue: Any, resourceMapper: ((String) -> String)): String {
             val formatValue = manifestValue as String // for example: @ref/0x7e0b009e
             if (formatValue.startsWith("@ref/")) {
                 return formatValue.removePrefix("@ref/")
+            } else if (formatValue.startsWith("@")) {
+                // @style/Theme.AppCompat
+                return resourceMapper(formatValue)
             } else {
                 // 其余格式：https://cs.android.com/android-studio/platform/tools/base/+/mirror-goog-studio-main:apkparser/analyzer/src/main/java/com/android/tools/apk/analyzer/BinaryXmlParser.java;l=193
-                throw TODO("不支持其他格式")
+                throw TODO("不支持其他格式: $formatValue")
             }
+        }
+
+        fun parseConfigChanges(value: String): String {
+            if (value.startsWith("0x") || value.toIntOrNull() != null) return value
+            return value.split("|").joinToString("|") {
+                val constant = when (it) {
+                    "mcc" -> "CONFIG_MCC"
+                    "mnc" -> "CONFIG_MNC"
+                    "locale" -> "CONFIG_LOCALE"
+                    "touchscreen" -> "CONFIG_TOUCHSCREEN"
+                    "keyboard" -> "CONFIG_KEYBOARD"
+                    "keyboardHidden" -> "CONFIG_KEYBOARD_HIDDEN"
+                    "navigation" -> "CONFIG_NAVIGATION"
+                    "orientation" -> "CONFIG_ORIENTATION"
+                    "screenLayout" -> "CONFIG_SCREEN_LAYOUT"
+                    "uiMode" -> "CONFIG_UI_MODE"
+                    "screenSize" -> "CONFIG_SCREEN_SIZE"
+                    "smallestScreenSize" -> "CONFIG_SMALLEST_SCREEN_SIZE"
+                    "density" -> "CONFIG_DENSITY"
+                    "layoutDirection" -> "CONFIG_LAYOUT_DIRECTION"
+                    "fontScale" -> "CONFIG_FONT_SCALE"
+                    "colorMode" -> "CONFIG_COLOR_MODE" // Added in API 26
+                    else -> throw IllegalArgumentException("Unknown configChanges: $it")
+                }
+                "android.content.pm.ActivityInfo.$constant"
+            }
+        }
+
+        fun parseSoftInputMode(value: String): String {
+            if (value.startsWith("0x") || value.toIntOrNull() != null) return value
+            return value.split("|").joinToString("|") {
+                val constant = when (it) {
+                    "stateUnspecified" -> "SOFT_INPUT_STATE_UNSPECIFIED"
+                    "stateUnchanged" -> "SOFT_INPUT_STATE_UNCHANGED"
+                    "stateHidden" -> "SOFT_INPUT_STATE_HIDDEN"
+                    "stateAlwaysHidden" -> "SOFT_INPUT_STATE_ALWAYS_HIDDEN"
+                    "stateVisible" -> "SOFT_INPUT_STATE_VISIBLE"
+                    "stateAlwaysVisible" -> "SOFT_INPUT_STATE_ALWAYS_VISIBLE"
+                    "adjustUnspecified" -> "SOFT_INPUT_ADJUST_UNSPECIFIED"
+                    "adjustResize" -> "SOFT_INPUT_ADJUST_RESIZE"
+                    "adjustPan" -> "SOFT_INPUT_ADJUST_PAN"
+                    "adjustNothing" -> "SOFT_INPUT_ADJUST_NOTHING"
+                    "isForwardNavigation" -> "SOFT_INPUT_IS_FORWARD_NAVIGATION"
+                    else -> throw IllegalArgumentException("Unknown windowSoftInputMode: $it")
+                }
+                "android.view.WindowManager.LayoutParams.$constant"
+            }
+        }
+
+        fun parseScreenOrientation(value: String): String {
+            if (value.startsWith("0x") || value.toIntOrNull() != null) return value
+            val constant = when (value) {
+                "unspecified" -> "SCREEN_ORIENTATION_UNSPECIFIED"
+                "landscape" -> "SCREEN_ORIENTATION_LANDSCAPE"
+                "portrait" -> "SCREEN_ORIENTATION_PORTRAIT"
+                "user" -> "SCREEN_ORIENTATION_USER"
+                "behind" -> "SCREEN_ORIENTATION_BEHIND"
+                "sensor" -> "SCREEN_ORIENTATION_SENSOR"
+                "nosensor" -> "SCREEN_ORIENTATION_NOSENSOR"
+                "sensorLandscape" -> "SCREEN_ORIENTATION_SENSOR_LANDSCAPE"
+                "sensorPortrait" -> "SCREEN_ORIENTATION_SENSOR_PORTRAIT"
+                "reverseLandscape" -> "SCREEN_ORIENTATION_REVERSE_LANDSCAPE"
+                "reversePortrait" -> "SCREEN_ORIENTATION_REVERSE_PORTRAIT"
+                "fullSensor" -> "SCREEN_ORIENTATION_FULL_SENSOR"
+                "userLandscape" -> "SCREEN_ORIENTATION_USER_LANDSCAPE"
+                "userPortrait" -> "SCREEN_ORIENTATION_USER_PORTRAIT"
+                "fullUser" -> "SCREEN_ORIENTATION_FULL_USER"
+                "locked" -> "SCREEN_ORIENTATION_LOCKED"
+                else -> throw IllegalArgumentException("Unknown screenOrientation: $value")
+            }
+            return "android.content.pm.ActivityInfo.$constant"
         }
     }
 }

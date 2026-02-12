@@ -22,6 +22,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.BaseVariantOutput
 import com.android.build.gradle.internal.dsl.ProductFlavor
+import org.gradle.api.Project
 import org.gradle.api.Task
 import java.io.File
 
@@ -32,8 +33,11 @@ internal interface AGPCompat {
     fun addFlavorDimension(baseExtension: BaseExtension, dimensionName: String)
     fun setProductFlavorDefault(productFlavor: ProductFlavor, isDefault: Boolean)
     fun getProcessResourcesTask(output: BaseVariantOutput): Task
-    fun getProcessResourcesFile(processResourcesTask: Task, variantName: String): File
+
     fun getAaptAdditionalParameters(processResourcesTask: Task): List<String>
     fun getMinSdkVersion(pluginVariant: ApplicationVariant): Int
     fun hasDeprecatedTransformApi(): Boolean
+    fun getProcessManifestTask(output: BaseVariantOutput): Task
+    fun getProcessManifestFile(project: Project, pluginVariant: ApplicationVariant, output: BaseVariantOutput): File
+    fun getRTxtFile(project: Project, processResourcesTask: Task?, variantName: String): File
 }
