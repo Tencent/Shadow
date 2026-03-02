@@ -25,3 +25,4 @@ typealias ComponentMapKey = String
 typealias ComponentMapValue = Any
 typealias ComponentMap = Map<ComponentMapKey, ComponentMapValue>
 typealias MutableComponentMap = MutableMap<ComponentMapKey, ComponentMapValue>
+typealias ManifestValueParser = (String) -> String
