@@ -26,6 +26,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.sdklib.AndroidVersion.VersionCodes
 import com.tencent.shadow.core.gradle.extensions.PackagePluginExtension
+import com.tencent.shadow.core.manifest_parser.createManifestValueParser
 import com.tencent.shadow.core.manifest_parser.generatePluginManifest
 import com.tencent.shadow.core.transform.DeprecatedTransformWrapper
 import com.tencent.shadow.core.transform.GradleTransformWrapper
@@ -111,7 +112,20 @@ class ShadowPlugin : Plugin<Project> {
 
                 val appExtension: AppExtension =
                     project.extensions.getByType(AppExtension::class.java)
-                createGeneratePluginManifestTasks(project, appExtension, pluginVariant)
+                if (agpCompat.isGeneratePluginManifestByMergedManifest(
+                        project,
+                        appExtension,
+                        pluginVariant
+                    )
+                ) {
+                    createGeneratePluginManifestTasksByMergedManifest(
+                        project,
+                        appExtension,
+                        pluginVariant
+                    )
+                } else {
+                    createGeneratePluginManifestTasks(project, appExtension, pluginVariant)
+                }
             }
         }
 
@@ -268,6 +282,56 @@ class ShadowPlugin : Plugin<Project> {
                 }
             }
         val javacTask = project.tasks.getByName("compile${capitalizeVariantName}JavaWithJavac")
+        javacTask.dependsOn(generatePluginManifestTask)
+
+        // 把PluginManifest.java添加为源码
+        val relativePath =
+            project.projectDir.toPath().relativize(pluginManifestSourceDir.toPath()).toString()
+        (javacTask as JavaCompile).source(project.fileTree(relativePath))
+    }
+
+    private fun createGeneratePluginManifestTasksByMergedManifest(
+        project: Project,
+        appExtension: AppExtension,
+        pluginVariant: ApplicationVariant
+    ) {
+        val output = pluginVariant.outputs.first()
+
+        val variantName = pluginVariant.name
+        val capitalizeVariantName = variantName.capitalize()
+
+        // 添加生成PluginManifest.java任务
+        val pluginManifestSourceDir =
+            File(project.buildDir, "generated/source/pluginManifest/$variantName")
+
+        val javacTask = project.tasks.getByName("compile${capitalizeVariantName}JavaWithJavac")
+
+        val generatePluginManifestTask =
+            project.tasks.register("generate${capitalizeVariantName}PluginManifest") {
+                // 依赖 processManifest 任务以获取最终的 AndroidManifest.xml
+                val processManifestTask = agpCompat.getProcessManifestTask(output)
+                // 依赖 processResources 任务以获取 R.txt
+                val processResourcesTask = agpCompat.getProcessResourcesTask(output)
+                it.dependsOn(processManifestTask)
+                it.dependsOn(processResourcesTask)
+
+                it.outputs.dir(pluginManifestSourceDir).withPropertyName("pluginManifestSourceDir")
+
+                it.doLast {
+                    // 解析合并后的 AndroidManifest.xml + R.txt
+                    // 这种方案直接解析 XML 格式的 AndroidManifest.xml ，不再依赖 aapt2 产生的二进制产物
+                    val mergedManifest =
+                        agpCompat.getProcessManifestFile(project, pluginVariant, output)
+                    val rTxt = agpCompat.getRTxtFile(project, processResourcesTask, variantName)
+                    val manifestValueParser = createManifestValueParser(rTxt)
+                    generatePluginManifest(
+                        mergedManifest,
+                        pluginManifestSourceDir,
+                        "com.tencent.shadow.core.manifest_parser",
+                        manifestValueParser
+                    )
+                }
+            }
         javacTask.dependsOn(generatePluginManifestTask)
 
         // 把PluginManifest.java添加为源码
