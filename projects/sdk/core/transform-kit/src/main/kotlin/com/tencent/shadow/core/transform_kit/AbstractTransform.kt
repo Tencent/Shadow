@@ -74,7 +74,17 @@ abstract class AbstractTransform(
         //CtClass在编辑后，其对象中的各种信息，比如superClass并没有更新。
         //所以需要重新创建一个ClassPool，加载转换后的类，用于各种转换后的检查。
         val debugClassPool = classPoolBuilder.build()
-        debugClassPool.appendClassPath(mDebugClassJar.absolutePath)
+        java.util.jar.JarFile(mDebugClassJar).use { jarFile ->
+            jarFile.entries().iterator().forEach { entry ->
+                if (!entry.name.endsWith(".class")) {
+                    return@forEach
+                }
+                jarFile.getInputStream(entry).use {
+                    // 直接从流创建 CtClass
+                    debugClassPool.makeClass(it)
+                }
+            }
+        }
         val inputClassNames = allInputCtClass.map { it.name }
         onCheckTransformedClasses(debugClassPool, inputClassNames)
     }
