@@ -71,21 +71,22 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
     fun addContentProviderInfo(
         partKey: String,
         pluginProviderInfo: PluginManifest.ProviderInfo,
-        containerProviderInfo: ContainerProviderInfo
+        containerProviderInfo: ContainerProviderInfo,
+        pluginAuthority: String
     ) {
-        if (providerMap.containsKey(pluginProviderInfo.authorities)) {
+        if (providerMap.containsKey(pluginAuthority)) {
             throw RuntimeException("重复添加 ContentProvider")
         }
 
-        providerAuthorityMap[pluginProviderInfo.authorities] = containerProviderInfo.authority
-        var pluginProviderInfos: HashSet<PluginManifest.ProviderInfo>? = null
+        providerAuthorityMap[pluginAuthority] = containerProviderInfo.authority
+        var pluginProviderInfos: HashSet<PluginManifest.ProviderInfo>?
         if (pluginProviderInfoMap.containsKey(partKey)) {
             pluginProviderInfos = pluginProviderInfoMap[partKey]
         } else {
             pluginProviderInfos = HashSet()
+            pluginProviderInfoMap[partKey] = pluginProviderInfos
         }
         pluginProviderInfos?.add(pluginProviderInfo)
-        pluginProviderInfoMap.put(partKey, pluginProviderInfos)
     }
 
     fun createContentProviderAndCallOnCreate(
@@ -105,7 +106,10 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
                 providerInfo.authority = it.authorities
                 providerInfo.grantUriPermissions = it.grantUriPermissions
                 contentProvider?.attachInfo(context, providerInfo)
-                providerMap[it.authorities] = contentProvider
+                it.authorities
+                    .split(";")
+                    .filter { authority -> authority.isNotBlank() }
+                    .forEach { authority -> providerMap[authority] = contentProvider }
             } catch (e: Exception) {
                 throw RuntimeException(
                     "partKey==$partKey className==${it.className} authorities==${it.authorities}",
@@ -134,10 +138,29 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
 
     fun convert2PluginUri(uri: Uri): Uri {
         val containerAuthority: String? = uri.authority
-        if (!providerAuthorityMap.values.contains(containerAuthority)) {
+        val set = providerAuthorityMap.filter { it.value == containerAuthority }
+        if (set.isEmpty()) {
             throw IllegalArgumentException("不能识别的uri Authority:$containerAuthority")
         }
         val uriString = uri.toString()
+        for (entry in set) {
+            val pluginAuthority = entry.key
+            // 通过正则表达式去除 containerAuthority ，支持以下场景：
+            // 1. content://containerAuthority/pluginAuthority（插件内部调用 insert 、query 等方法）
+            // 2. content://containerAuthority/containerAuthority/pluginAuthority（插件内部调用 call 方法）
+            // 3. content://pluginAuthority （外部应用调用 content provider 方法）
+            // 正则表达式分为三个部分：
+            // 1. `^$CONTENT_PREFIX`: 匹配开头的 "content://"。
+            // 2. `((?:$containerAuthority/)+)`: 第一个捕获组。它匹配并捕获零个或多个 "containerAuthority/" 组成的连续前缀。
+            //    - `(?:...)` 是一个非捕获组，仅用于组合。
+            // 3. $pluginAuthority 是 pluginAuthority ，用于作为删除的锚点。
+            val regex = Regex("^$CONTENT_PREFIX((?:$containerAuthority/)?)$pluginAuthority")
+            // 可能存在一个 containerAuthority 匹配多个 pluginAuthority 的场景，所以存在无法匹配的场景
+            val matchResult = regex.find(uriString) ?: continue
+            // 如果找到了匹配的内容，则剔除匹配的 containerAuthority 内容
+            val range = matchResult.groups[1]!!.range
+            return Uri.parse(uriString.substring(0, range.first) + uriString.substring(range.last + 1))
+        }
         return Uri.parse(uriString.replace("$containerAuthority/", ""))
     }
 

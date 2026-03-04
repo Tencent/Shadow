@@ -60,6 +60,10 @@ abstract class ComponentManager : PluginComponentLauncher {
 
     abstract fun onBindContainerContentProvider(pluginContentProvider: ComponentName): ContainerProviderInfo
 
+    open fun onBindContainerContentProvider(pluginContentProvider: ComponentName, pluginAuthority: String): ContainerProviderInfo {
+        return onBindContainerContentProvider(pluginContentProvider)
+    }
+
     override fun startActivity(
         shadowContext: ShadowContext,
         pluginIntent: Intent,
@@ -212,11 +216,16 @@ abstract class ComponentManager : PluginComponentLauncher {
 
         pluginManifest.providers?.forEach {
             val componentName = ComponentName(applicationPackageName, it.className)
-            mPluginContentProviderManager!!.addContentProviderInfo(
-                loadParameters.partKey,
-                it,
-                onBindContainerContentProvider(componentName)
-            )
+            it.authorities.split(";")
+                .filter { authority -> authority.isNotBlank() }
+                .forEach { authority ->
+                    mPluginContentProviderManager!!.addContentProviderInfo(
+                        loadParameters.partKey,
+                        it,
+                        onBindContainerContentProvider(componentName, authority),
+                        authority
+                    )
+                }
         }
 
         pluginManifest.receivers?.forEach {
