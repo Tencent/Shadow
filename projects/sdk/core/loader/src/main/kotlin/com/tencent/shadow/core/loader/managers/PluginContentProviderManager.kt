@@ -138,10 +138,42 @@ class PluginContentProviderManager() : UriConverter.UriParseDelegate {
 
     fun convert2PluginUri(uri: Uri): Uri {
         val containerAuthority: String? = uri.authority
-        if (!providerAuthorityMap.values.contains(containerAuthority)) {
+        val matchAuthorityMap = providerAuthorityMap.filter { it.value == containerAuthority }
+        if (matchAuthorityMap.isEmpty()) {
             throw IllegalArgumentException("不能识别的uri Authority:$containerAuthority")
         }
         val uriString = uri.toString()
+        for (entry in matchAuthorityMap) {
+            val pluginAuthority = entry.key
+            // 通过正则表达式去除 containerAuthority ，支持以下场景：
+            // 1. content://containerAuthority/pluginAuthority（插件内部调用 insert 、query 等方法）
+            // 2. content://containerAuthority/containerAuthority/pluginAuthority（插件内部调用 call 方法）
+            // 3. content://containerAuthority （外部应用调用 content provider 方法且 containerAuthority == pluginAuthority）
+            // 正则表达式结构分解：
+            //   - ^content://：
+            //       - 作用：强制从字符串的最开始进行匹配。
+            //       - 目的：确保只处理标准的 content 协议 URI。
+            //   - ((?:$escapedContainer/)*)（捕获组 1）：
+            //       - $escapedContainer/：这是经过 Regex.escape() 处理后的容器 Authority 字符串，后面紧跟一个斜杠。转义确保了如 a.b 中的点号不会匹配任意字符。
+            //       - (?:...)：非捕获组，仅用于将“容器名+斜杠”作为一个整体进行多次匹配。
+            //       - *（贪婪匹配）：匹配零个或多个连续的容器前缀。使用贪婪模式是为了在 containerAuthority 和 pluginAuthority 相同的情况下（如content://A/A/path），尽可能多地剥离外层容器，只留下最后一个作为插件标识。
+            //   - $escapedPlugin：
+            //       - 作用：匹配插件真实的 Authority 。它是整个正则的锚点，用于确定这个 URI 属于哪个插件。
+            //   - (?=/|$)（正向肯定预查）：
+            //       - 作用：这是一个非占位匹配，要求匹配到的 pluginAuthority 后面必须紧跟一个斜杠 /（表示路径开始）或者字符串结束符 $ 。
+            //       - 目的：防止部分匹配。例如，如果 pluginAuthority 是 A，而 URI 是 content://Ab/path，如果没有这个预查，正则会错误地匹配到 Ab 。
+            val escapedContainer = Regex.escape(containerAuthority!!)
+            val escapedPlugin = Regex.escape(pluginAuthority)
+            val regex = Regex("^$CONTENT_PREFIX((?:$escapedContainer/)*)$escapedPlugin(?=/|$)")
+
+            // 可能存在一个 containerAuthority 匹配多个 pluginAuthority 的场景，所以存在无法匹配的场景
+            val matchResult = regex.find(uriString) ?: continue
+            // 如果找到了匹配的内容，则剔除匹配的 containerAuthority 内容
+            val range = matchResult.groups[1]!!.range
+            return Uri.parse(
+                uriString.substring(0, range.first) + uriString.substring(range.last + 1)
+            )
+        }
         return Uri.parse(uriString.replace("$containerAuthority/", ""))
     }
 

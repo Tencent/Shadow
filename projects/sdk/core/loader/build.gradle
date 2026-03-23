@@ -39,6 +39,8 @@ dependencies {
     compileOnly project(':common')
     api project(':load-parameters')
     compileOnly files(AndroidJar.ANDROID_JAR_PATH)
+    testImplementation "org.mockito:mockito-inline:5.2.0"
+    testImplementation files(AndroidJar.ANDROID_JAR_PATH)
 }
 
 def generateCode = tasks.register('generateCode') {
