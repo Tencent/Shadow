@@ -23,7 +23,8 @@ class AndroidManifestReader {
         val application = readApplication(manifest)
         val globalAttributes = readGlobalAttributes(manifest, application)
         val components = readComponents(application)
-        return globalAttributes.plus(components)
+        val permissions = readUsesPermissions(manifest)
+        return globalAttributes.plus(components).plus(permissions)
     }
 
     private fun readXml(xmlFile: File): Document {
@@ -71,8 +72,27 @@ class AndroidManifestReader {
             AndroidManifestKeys.name,
             AndroidManifestKeys.theme,
             AndroidManifestKeys.appComponentFactory,
+            AndroidManifestKeys.taskAffinity,
         ).forEach(::applicationAttribute)
         return globalAttributes
+    }
+
+    private fun readUsesPermissions(manifest: Element): Map<String, Any> {
+        val nodeList = manifest.getElementsByTagName(AndroidManifestKeys.`uses-permission`)
+        val permissions = mutableListOf<String>()
+        for (i in 0 until nodeList.length) {
+            val node = nodeList.item(i)
+            assert(node.nodeType == Node.ELEMENT_NODE)
+            val permissionName = (node as Element).getAttribute(AndroidManifestKeys.name)
+            if (permissionName.isNotEmpty()) {
+                permissions.add(permissionName)
+            }
+        }
+        return if (permissions.isNotEmpty()) {
+            mapOf(AndroidManifestKeys.`uses-permission` to permissions.toTypedArray())
+        } else {
+            emptyMap()
+        }
     }
 
     private fun readComponents(application: Element?) =
@@ -115,6 +135,8 @@ class AndroidManifestReader {
             AndroidManifestKeys.configChanges,
             AndroidManifestKeys.windowSoftInputMode,
             AndroidManifestKeys.screenOrientation,
+            AndroidManifestKeys.launchMode,
+            AndroidManifestKeys.taskAffinity,
         ).forEach { attributeKey ->
             activityMap.putAttributeIfNotNull(element, attributeKey)
         }
@@ -122,7 +144,9 @@ class AndroidManifestReader {
     }
 
     private fun parseService(element: Element): ComponentMap {
-        return parseComponent(element)
+        val serviceMap = parseComponent(element).toMutableMap()
+        serviceMap.putAttributeIfNotNull(element, AndroidManifestKeys.foregroundServiceType)
+        return serviceMap
     }
 
     private fun parseReceiver(element: Element): ComponentMap {

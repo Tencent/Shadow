@@ -18,25 +18,31 @@
 
 package com.tencent.shadow.core.loader.managers
 
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import com.tencent.shadow.core.loader.ShadowPluginLoader
 import com.tencent.shadow.core.loader.classloaders.PluginClassLoader
 import com.tencent.shadow.core.loader.delegates.ShadowDelegate
+import com.tencent.shadow.core.runtime.HostServiceDelegator
 import com.tencent.shadow.core.runtime.ShadowApplication
 import com.tencent.shadow.core.runtime.ShadowService
+import com.tencent.shadow.core.runtime.container.PluginContainerService
+import com.tencent.shadow.core.runtime.container.PluginContainerServiceDelegate
 import java.util.concurrent.CountDownLatch
 
 /**
  * 插件service管理类，负责插件框架内所有service启动，销毁，生命周期管理
- * Created by jaylanchen on 2018/11/29.
  */
 
 class PluginServiceManager(mPluginLoader: ShadowPluginLoader, mHostContext: Context) {
@@ -69,6 +75,11 @@ class PluginServiceManager(mPluginLoader: ShadowPluginLoader, mHostContext: Cont
             delegate.stopPluginService(intent)
         }
 
+    fun hasPluginService(componentName: ComponentName) =
+        execInMainThread {
+            delegate.hasPluginService(componentName)
+        }
+
     fun bindPluginService(intent: Intent, conn: ServiceConnection, flags: Int) =
         execInMainThread {
             delegate.bindPluginService(intent, conn, flags)
@@ -78,6 +89,29 @@ class PluginServiceManager(mPluginLoader: ShadowPluginLoader, mHostContext: Cont
         execInMainThread {
             delegate.unbindPluginService(conn)
         }
+
+    fun getContainerServiceDelegate(): PluginContainerServiceDelegate {
+        return object : PluginContainerServiceDelegate {
+            override fun onStartCommand(
+                containerService: PluginContainerService,
+                intent: Intent,
+                flags: Int,
+                startId: Int
+            ): Int {
+                return execInMainThread {
+                    delegate.onContainerServiceStartCommand(
+                        containerService, intent, flags, startId
+                    )
+                }
+            }
+
+            override fun onDestroy(containerService: PluginContainerService) {
+                execInMainThread {
+                    delegate.onContainerServiceDestroy(containerService)
+                }
+            }
+        }
+    }
 }
 
 private open class UnsafePluginServiceManager(
@@ -97,6 +131,9 @@ private open class UnsafePluginServiceManager(
     // 所有已启动的service集合
     private val mAliveServicesMap = HashMap<ComponentName, ShadowService>()
 
+    // Android为每个Service组件独立生成startId。
+    private val mServiceStartIdMap = HashMap<ComponentName, Int>()
+
     // 通过startService启动起来的service集合
     private val mServiceStartByStartServiceSet = HashSet<ComponentName>()
 
@@ -106,30 +143,43 @@ private open class UnsafePluginServiceManager(
     private val allDelegates: Collection<ShadowService>
         get() = mAliveServicesMap.values
 
-    companion object {
-        private var startId: Int = 0
-        fun getNewStartId(): Int {
-            startId++
+    private class ContainerServiceRecord(
+        val containerService: PluginContainerService
+    )
 
-            return startId
-        }
-    }
+    private val mPluginToContainerMap = HashMap<ComponentName, ContainerServiceRecord>()
+    private val mContainerToPluginsMap =
+        HashMap<PluginContainerService, LinkedHashSet<ComponentName>>()
 
+    private data class ForegroundServiceRecord(
+        val notificationId: Int,
+        val notification: Notification,
+        val foregroundServiceType: Int
+    )
+
+    private val mForegroundServiceRecords =
+        HashMap<ComponentName, ForegroundServiceRecord>()
+    private val mContainerForegroundPrimary =
+        HashMap<PluginContainerService, ComponentName>()
+    private val mContainerLastStartId =
+        HashMap<PluginContainerService, Int>()
+    private val notificationManager: NotificationManager?
+        get() = mHostContext.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager
+
+    // ====== 原有Service管理 ======
 
     fun startPluginService(intent: Intent): ComponentName? {
         val componentName = intent.component!!
 
-
-        // 检查所请求的service是否已经存在
         if (!mAliveServicesMap.containsKey(componentName)) {
-            // 不存在则创建
             val service = createServiceAndCallOnCreate(intent)
             mAliveServicesMap[componentName] = service
-            // 通过startService启动集合
             mServiceStartByStartServiceSet.add(componentName)
         }
-        mAliveServicesMap[componentName]?.onStartCommand(intent, 0, getNewStartId())
-
+        val newStartId = getNewStartId(componentName)
+        val service = mAliveServicesMap[componentName]!!
+        service.setLastStartId(newStartId)
+        service.onStartCommand(intent, 0, newStartId)
 
         return componentName
     }
@@ -138,68 +188,53 @@ private open class UnsafePluginServiceManager(
         val componentName = intent.component!!
 
         if (mAliveServicesMap.containsKey(componentName)) {
+            if (intent.hasExtra(ShadowService.EXTRA_STOP_SELF_START_ID)
+                && intent.getIntExtra(ShadowService.EXTRA_STOP_SELF_START_ID, -1)
+                != mAliveServicesMap[componentName]!!.lastStartId
+            ) {
+                return false
+            }
             mServiceStopCalledMap.add(componentName)
-
-            // 看是否需要结束掉该service
             return destroyServiceIfNeed(componentName)
         }
 
         return false
     }
 
-    fun bindPluginService(intent: Intent, conn: ServiceConnection, flags: Int): Boolean {
-        // todo #25 目前实现未处理flags,后续实现补上
+    fun hasPluginService(componentName: ComponentName): Boolean =
+        mAliveServicesMap.containsKey(componentName)
 
+    fun bindPluginService(intent: Intent, conn: ServiceConnection, flags: Int): Boolean {
         val componentName = intent.component!!
 
-        // 1. 看要bind的service是否创建并在运行了
         if (!mAliveServicesMap.containsKey(componentName)) {
-            // 如果还没创建，则创建,并保持
             val service = createServiceAndCallOnCreate(intent)
             mAliveServicesMap[componentName] = service
         }
 
         val service = mAliveServicesMap[componentName]!!
 
-        // 2. 检查是否该Service之前是否被绑定过了
         if (!mServiceBinderMap.containsKey(componentName)) {
-            // 还没调用过onBinder,在这里调用
             mServiceBinderMap[componentName] = service.onBind(intent)
         }
 
-        // 3. 如果binder不为空，则要回调onServiceConnected
         mServiceBinderMap[componentName]?.let {
-
-
-            // 检查该connections是否存在了
             if (mServiceConnectionMap.containsKey(componentName)) {
-
                 if (!mServiceConnectionMap[componentName]!!.contains(conn)) {
-                    // 如果service的bind connection集合中不包含该connection,则加入
                     mServiceConnectionMap[componentName]!!.add(conn)
                     mConnectionIntentMap[conn] = intent
-
-
-                    // 回调onServiceConnected
                     conn.onServiceConnected(componentName, it)
-                } else {
-                    // 已经包含该connection了，说明onServiceConnected已经回调过了，所以这里什么也不用干
                 }
-
             } else {
-                // 该connection是第一个bind connection
                 val connectionSet = HashSet<ServiceConnection>()
                 connectionSet.add(conn)
                 mServiceConnectionMap[componentName] = connectionSet
                 mConnectionIntentMap[conn] = intent
-
-                // 回调onServiceConnected
                 conn.onServiceConnected(componentName, it)
             }
         }
 
         return true
-
     }
 
     fun unbindPluginService(connection: ServiceConnection): Pair<Boolean, Boolean> {
@@ -212,60 +247,322 @@ private open class UnsafePluginServiceManager(
                 val intent = mConnectionIntentMap.remove(connection)
 
                 if (connSet.size == 0) {
-                    // 已经没有任何connection了，mServiceConnectionMap移除该service数据
                     mServiceConnectionMap.remove(componentName)
-
-                    // 所有connection都unbind了
                     mAliveServicesMap[componentName]?.onUnbind(intent!!)
                 }
 
-                // 结束该service
                 isPluginServiceStopped = destroyServiceIfNeed(componentName)
-
                 connection.onServiceDisconnected(componentName)
-
                 break
             }
         }
         return Pair(isPluginService, isPluginServiceStopped)
     }
 
+    // ====== 前台Service容器回调 ======
+
+    fun onContainerServiceStartCommand(
+        containerService: PluginContainerService,
+        intent: Intent,
+        flags: Int,
+        containerStartId: Int
+    ): Int {
+        val className = intent.getStringExtra(PluginContainerService.EXTRA_PLUGIN_SERVICE_CLASS)
+            ?: return android.app.Service.START_NOT_STICKY
+        val packageName = intent.getStringExtra(PluginContainerService.EXTRA_PLUGIN_PACKAGE_NAME)
+            ?: return android.app.Service.START_NOT_STICKY
+
+        val componentName = ComponentName(packageName, className)
+
+        val previousContainer = mPluginToContainerMap[componentName]
+        if (previousContainer != null && previousContainer.containerService !== containerService) {
+            throw IllegalStateException(
+                "Plugin Service $componentName is already bound to another container"
+            )
+        }
+        val record = previousContainer ?: ContainerServiceRecord(containerService)
+        mPluginToContainerMap[componentName] = record
+        mContainerToPluginsMap.getOrPut(containerService) { linkedSetOf() }.add(componentName)
+        mContainerLastStartId[containerService] = containerStartId
+
+        if (!mAliveServicesMap.containsKey(componentName)) {
+            val pluginIntent = Intent()
+            pluginIntent.component = componentName
+            val service = newServiceInstance(pluginIntent)
+            service.setHostServiceDelegator(
+                createContainerDelegator(
+                    componentName,
+                    containerService
+                )
+            )
+            mAliveServicesMap[componentName] = service
+            mServiceStartByStartServiceSet.add(componentName)
+            service.onCreate()
+        }
+
+        val pluginService = mAliveServicesMap[componentName]!!
+        pluginService.setHostServiceDelegator(
+            createContainerDelegator(
+                componentName,
+                containerService
+            )
+        )
+
+        val pluginIntent = Intent(intent)
+        pluginIntent.component = componentName
+        val originalExtras = intent.getBundleExtra(PluginContainerService.EXTRA_ORIGINAL_EXTRAS)
+        originalExtras?.classLoader = pluginService.javaClass.classLoader
+        pluginIntent.replaceExtras(originalExtras)
+
+        // 更新lastStartId并调用onStartCommand
+        val pluginStartId = getNewStartId(componentName)
+        pluginService.setLastStartId(pluginStartId)
+        val result = pluginService.onStartCommand(pluginIntent, flags, pluginStartId)
+        if (mPluginLoader.mComponentManager.consumeContainerServiceStopPending(componentName)) {
+            mServiceStopCalledMap.add(componentName)
+            destroyServiceIfNeed(componentName)
+        }
+        return result
+    }
+
+    fun onContainerServiceDestroy(containerService: PluginContainerService) {
+        val containerComponent = ComponentName(containerService, containerService.javaClass)
+        val componentNames = linkedSetOf<ComponentName>()
+        componentNames.addAll(mContainerToPluginsMap.remove(containerService).orEmpty())
+        componentNames.addAll(
+            mPluginLoader.mComponentManager.releaseAllContainerServices(containerComponent)
+        )
+
+        mContainerForegroundPrimary.remove(containerService)
+        mContainerLastStartId.remove(containerService)
+        componentNames.forEach { componentName ->
+            mForegroundServiceRecords.remove(componentName)?.let {
+                notificationManager?.cancel(it.notificationId)
+            }
+        }
+        componentNames.forEach { componentName ->
+            mPluginToContainerMap.remove(componentName)
+            val service = mAliveServicesMap.remove(componentName)
+            mServiceStopCalledMap.remove(componentName)
+            mServiceBinderMap.remove(componentName)
+            mServiceStartByStartServiceSet.remove(componentName)
+            mServiceStartIdMap.remove(componentName)
+            service?.onDestroy()
+        }
+    }
+
+    private fun createContainerDelegator(
+        pluginComponent: ComponentName,
+        container: PluginContainerService
+    ): HostServiceDelegator {
+        return object : HostServiceDelegator {
+            override fun startForeground(id: Int, notification: Notification) {
+                val declaredType = mPluginLoader.mComponentManager
+                    .getServiceInfo(pluginComponent)?.foregroundServiceType ?: 0
+                updatePluginForeground(
+                    pluginComponent, container, id, notification, declaredType
+                )
+            }
+
+            override fun startForeground(
+                id: Int,
+                notification: Notification,
+                foregroundServiceType: Int
+            ) {
+                updatePluginForeground(
+                    pluginComponent, container, id, notification, foregroundServiceType
+                )
+            }
+
+            override fun stopForeground(removeNotification: Boolean) {
+                removePluginForeground(
+                    pluginComponent,
+                    container,
+                    if (removeNotification) Service.STOP_FOREGROUND_REMOVE else 0
+                )
+            }
+
+            override fun stopForeground(flags: Int) {
+                removePluginForeground(pluginComponent, container, flags)
+            }
+        }
+    }
+
+    private fun updatePluginForeground(
+        pluginComponent: ComponentName,
+        container: PluginContainerService,
+        id: Int,
+        notification: Notification,
+        foregroundServiceType: Int
+    ) {
+        mForegroundServiceRecords[pluginComponent] = ForegroundServiceRecord(
+            id, notification, foregroundServiceType
+        )
+        val primary = mContainerForegroundPrimary.getOrPut(container) { pluginComponent }
+        if (primary != pluginComponent) {
+            notificationManager?.notify(id, notification)
+        }
+        applyContainerForegroundState(container)
+    }
+
+    private fun removePluginForeground(
+        pluginComponent: ComponentName,
+        container: PluginContainerService,
+        flags: Int
+    ) {
+        val removed = mForegroundServiceRecords.remove(pluginComponent) ?: return
+        val removeNotification = flags and Service.STOP_FOREGROUND_REMOVE != 0
+        if (removeNotification) {
+            notificationManager?.cancel(removed.notificationId)
+        }
+
+        val remaining = foregroundRecordsFor(container)
+        if (remaining.isEmpty()) {
+            mContainerForegroundPrimary.remove(container)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                container.stopForeground(flags)
+            } else {
+                container.stopForeground(removeNotification)
+            }
+        } else {
+            if (mContainerForegroundPrimary[container] == pluginComponent) {
+                mContainerForegroundPrimary[container] = remaining.entries.first().key
+            }
+            applyContainerForegroundState(container)
+        }
+    }
+
+    private fun applyContainerForegroundState(container: PluginContainerService) {
+        val records = foregroundRecordsFor(container)
+        if (records.isEmpty()) return
+
+        val primaryComponent = mContainerForegroundPrimary[container]
+            ?.takeIf { records.containsKey(it) }
+            ?: records.entries.first().key.also {
+                mContainerForegroundPrimary[container] = it
+            }
+        val primary = records.getValue(primaryComponent)
+        val combinedType = records.values.fold(0) { result, record ->
+            result or record.foregroundServiceType
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && combinedType != 0) {
+            container.startForeground(
+                primary.notificationId,
+                primary.notification,
+                combinedType
+            )
+        } else {
+            container.startForeground(primary.notificationId, primary.notification)
+        }
+    }
+
+    private fun foregroundRecordsFor(
+        container: PluginContainerService
+    ): LinkedHashMap<ComponentName, ForegroundServiceRecord> {
+        val result = linkedMapOf<ComponentName, ForegroundServiceRecord>()
+        mContainerToPluginsMap[container].orEmpty().forEach { component ->
+            mForegroundServiceRecords[component]?.let { result[component] = it }
+        }
+        return result
+    }
+
+    private fun destroyServiceIfNeed(service: ComponentName): Boolean {
+        val destroy = {
+            val serviceDelegate = mAliveServicesMap.remove(service)
+            mServiceStopCalledMap.remove(service)
+            mServiceBinderMap.remove(service)
+            mServiceStartByStartServiceSet.remove(service)
+            mServiceStartIdMap.remove(service)
+
+            val containerRecord = mPluginToContainerMap[service]
+            serviceDelegate!!.onDestroy()
+
+            if (containerRecord != null) {
+                val container = containerRecord.containerService
+                // SDK未主动调用stopForeground时，销毁Service也必须清理其前台状态。
+                removePluginForeground(
+                    service,
+                    container,
+                    Service.STOP_FOREGROUND_REMOVE
+                )
+                mPluginToContainerMap.remove(service)
+                val plugins = mContainerToPluginsMap[container]
+                plugins?.remove(service)
+                if (plugins.isNullOrEmpty()) {
+                    mContainerToPluginsMap.remove(container)
+                }
+
+                val containerComponent = ComponentName(container, container.javaClass)
+                mPluginLoader.mComponentManager.releaseContainerService(
+                    service,
+                    containerComponent
+                )
+                if (plugins.isNullOrEmpty()
+                    && !mPluginLoader.mComponentManager
+                        .hasAllocatedContainerServices(containerComponent)
+                ) {
+                    val containerStartId = mContainerLastStartId[container]
+                    if (containerStartId == null) {
+                        container.stopSelf()
+                    } else {
+                        container.stopSelfResult(containerStartId)
+                    }
+                }
+            }
+        }
+
+        if (!mServiceStartByStartServiceSet.contains(service)) {
+            if (mServiceConnectionMap[service] == null) {
+                destroy()
+                return true
+            }
+        } else {
+            if (mServiceStopCalledMap.contains(service) && !mServiceConnectionMap.containsKey(
+                    service
+                )
+            ) {
+                destroy()
+                return true
+            }
+        }
+
+        return false
+    }
+
+    // ====== 生命周期事件转发 ======
 
     fun onConfigurationChanged(newConfig: Configuration?) {
-        allDelegates.forEach {
-            it.onConfigurationChanged(newConfig)
-        }
+        allDelegates.forEach { it.onConfigurationChanged(newConfig) }
     }
 
     fun onLowMemory() {
-        allDelegates.forEach {
-            it.onLowMemory()
-        }
+        allDelegates.forEach { it.onLowMemory() }
     }
 
     fun onTrimMemory(level: Int) {
-        allDelegates.forEach {
-            it.onTrimMemory(level)
-        }
+        allDelegates.forEach { it.onTrimMemory(level) }
     }
-
 
     fun onTaskRemoved(rootIntent: Intent) {
-        allDelegates.forEach {
-            it.onTaskRemoved(rootIntent)
-        }
+        allDelegates.forEach { it.onTaskRemoved(rootIntent) }
     }
-
 
     fun onDestroy() {
         mServiceBinderMap.clear()
         mServiceConnectionMap.clear()
         mConnectionIntentMap.clear()
         mAliveServicesMap.clear()
+        mServiceStartIdMap.clear()
         mServiceStartByStartServiceSet.clear()
         mServiceStopCalledMap.clear()
+        mPluginToContainerMap.clear()
+        mContainerToPluginsMap.clear()
+        mForegroundServiceRecords.clear()
+        mContainerForegroundPrimary.clear()
+        mContainerLastStartId.clear()
     }
 
+    // ====== Service实例创建 ======
 
     private fun createServiceAndCallOnCreate(intent: Intent): ShadowService {
         val service = newServiceInstance(intent)
@@ -273,6 +570,12 @@ private open class UnsafePluginServiceManager(
         return service
     }
 
+    private fun getNewStartId(componentName: ComponentName): Int {
+        val previous = mServiceStartIdMap[componentName] ?: 0
+        val next = if (previous == Int.MAX_VALUE) 1 else previous + 1
+        mServiceStartIdMap[componentName] = next
+        return next
+    }
 
     private fun newServiceInstance(intent: Intent): ShadowService {
         val componentName = intent.component!!
@@ -293,48 +596,9 @@ private open class UnsafePluginServiceManager(
         service.setBusinessName(businessName)
         service.setPluginPartKey(partKey)
 
-        //和ShadowActivityDelegate.initPluginActivity一样，attachBaseContext放到最后
         service.setHostContextAsBase(mHostContext)
         return service
     }
-
-
-    private fun destroyServiceIfNeed(service: ComponentName): Boolean {
-
-        val destroy = {
-            // 移除该service，及相关数据
-            val serviceDelegate = mAliveServicesMap.remove(service)
-            mServiceStopCalledMap.remove(service)
-            mServiceBinderMap.remove(service)
-            mServiceStartByStartServiceSet.remove(service)
-
-            // 调用service的onDestroy
-            serviceDelegate!!.onDestroy()
-        }
-
-        // 如果不是通过startService启动的，则所有connection unbind后就可以结束了
-        if (!mServiceStartByStartServiceSet.contains(service)) {
-            if (mServiceConnectionMap[service] == null) {
-                // 结束该service
-                destroy()
-                return true
-            }
-        } else {
-            // 如果该service，有通过startService,则必须调用过stopService且没有bind了，才能销毁
-            if (mServiceStopCalledMap.contains(service) && !mServiceConnectionMap.containsKey(
-                    service
-                )
-            ) {
-                // 结束该service
-                destroy()
-                return true
-            }
-
-        }
-
-        return false
-    }
-
 }
 
 private class TmpShadowDelegate : ShadowDelegate() {

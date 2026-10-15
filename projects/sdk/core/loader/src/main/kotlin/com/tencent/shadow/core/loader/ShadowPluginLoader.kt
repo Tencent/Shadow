@@ -109,6 +109,7 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
 
     fun onCreate() {
         mComponentManager = getComponentManager()
+        mComponentManager.setPluginLoaderDelegateProviderKey(delegateProviderKey)
         mComponentManager.setPluginContentProviderManager(mPluginContentProviderManager)
     }
 
@@ -151,6 +152,10 @@ abstract class ShadowPluginLoader(hostAppContext: Context) : DelegateProvider, D
             }
 
             mComponentManager.setPluginServiceManager(mPluginServiceManager)
+            PluginContainerServiceDelegateHolder.setDelegate(
+                delegateProviderKey,
+                mPluginServiceManager.getContainerServiceDelegate()
+            )
         }
 
         return LoadPluginBloc.loadPlugin(

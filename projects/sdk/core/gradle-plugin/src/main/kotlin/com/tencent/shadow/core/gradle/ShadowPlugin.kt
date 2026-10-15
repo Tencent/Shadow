@@ -491,7 +491,8 @@ class ShadowPlugin : Plugin<Project> {
     ) {
         val sdkDirectory = baseExtension.sdkDirectory
         val compileSdkVersion =
-            baseExtension.compileSdkVersion ?: throw IllegalStateException("compileSdkVersion获取失败")
+            baseExtension.compileSdkVersion
+                ?: throw IllegalStateException("compileSdkVersion获取失败")
         val androidJarPath = "platforms/${compileSdkVersion}/android.jar"
         val androidJar = File(sdkDirectory, androidJarPath)
 

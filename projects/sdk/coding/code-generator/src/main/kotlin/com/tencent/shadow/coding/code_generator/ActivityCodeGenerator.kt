@@ -148,9 +148,9 @@ class ActivityCodeGenerator {
             fun addMethod(name: String, vararg args: Class<*>) {
                 val method =
                     try {
-                        clazz.getDeclaredMethod(name, * args)
+                        clazz.getDeclaredMethod(name, *args)
                     } catch (e: NoSuchMethodException) {
-                        clazz.getMethod(name, * args)
+                        clazz.getMethod(name, *args)
                     }
                 set.add(method)
             }
@@ -456,14 +456,17 @@ class ActivityCodeGenerator {
                         .build().writeTo(outputDir)
                 }
             }
+
             "runtime" -> {
                 JavaFile.builder(RUNTIME_PACKAGE, pluginActivity.build())
                     .build().writeTo(outputDir)
             }
+
             "loader" -> {
                 JavaFile.builder(DELEGATE_PACKAGE, shadowActivityDelegate.build())
                     .build().writeTo(outputDir)
             }
+
             else -> throw IllegalArgumentException("非法的moduleName：$moduleName")
         }
     }

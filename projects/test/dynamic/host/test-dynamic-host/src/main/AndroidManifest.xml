@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.tencent.shadow.test.dynamic.host">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+
     <application
         android:allowBackup="true"
         android:label="Shadow Dyanamic测试宿主App"
@@ -67,7 +70,31 @@
             android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
             android:hardwareAccelerated="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+        <!--独立Task容器池：taskAffinity需与TestComponentManager.getContainerActivityPool一致-->
+        <activity
+            android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginIndependentTask1ProxyActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="${applicationId}.shadow_task_1"
+            android:screenOrientation="portrait"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
+            android:hardwareAccelerated="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+
+        <activity
+            android:name="com.tencent.shadow.test.dynamic.runtime.container.PluginIndependentTask2ProxyActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="${applicationId}.shadow_task_2"
+            android:screenOrientation="portrait"
+            android:configChanges="mcc|mnc|locale|touchscreen|keyboard|keyboardHidden|navigation|screenLayout|fontScale|uiMode|orientation|screenSize|smallestScreenSize|layoutDirection"
+            android:hardwareAccelerated="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
         <!--dynamic activity注册 end -->
+
+        <!--插件前台Service容器：foregroundServiceType需覆盖插件Service声明的类型-->
+        <service
+            android:name="com.tencent.shadow.core.runtime.container.PluginContainerService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 
 </manifest>

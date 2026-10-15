@@ -9,6 +9,8 @@ sealed class AndroidManifestKeys {
         const val configChanges = "android:configChanges"
         const val screenOrientation = "android:screenOrientation"
         const val windowSoftInputMode = "android:windowSoftInputMode"
+        const val launchMode = "android:launchMode"
+        const val taskAffinity = "android:taskAffinity"
         const val authorities = "android:authorities"
         const val `intent-filter` = "intent-filter"
         const val action = "action"
@@ -19,6 +21,8 @@ sealed class AndroidManifestKeys {
         const val provider = "provider"
         const val receiver = "receiver"
         const val grantUriPermissions = "android:grantUriPermissions"
+        const val foregroundServiceType = "android:foregroundServiceType"
+        const val `uses-permission` = "uses-permission"
     }
 }
 typealias ComponentMapKey = String

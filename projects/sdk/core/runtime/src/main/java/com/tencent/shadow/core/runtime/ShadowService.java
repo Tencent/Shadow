@@ -28,16 +28,29 @@ import android.os.IBinder;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 
-/**
- * Created by tracyluo on 2018/6/5.
- */
 public abstract class ShadowService extends ShadowContext {
 
+    public static final String EXTRA_STOP_SELF_START_ID =
+            "com.tencent.shadow.extra.STOP_SELF_START_ID";
+
+    private HostServiceDelegator mHostServiceDelegator;
+    private int mLastStartId;
+
+    public void setHostServiceDelegator(HostServiceDelegator delegator) {
+        mHostServiceDelegator = delegator;
+    }
+
+    public void setLastStartId(int startId) {
+        mLastStartId = startId;
+    }
+
+    public int getLastStartId() {
+        return mLastStartId;
+    }
 
     public final void setHostContextAsBase(Context context) {
         attachBaseContext(context);
     }
-
 
     public IBinder onBind(Intent intent) {
         return null;
@@ -85,44 +98,52 @@ public abstract class ShadowService extends ShadowContext {
 
     @Deprecated
     public final void setForeground(boolean isForeground) {
-        //todo #37 支持Service设置Foreground
     }
 
     public final void startForeground(int id, Notification notification) {
-        //mHostServiceDelegator.startForeground(id, notification);
-        //todo #37 支持Service设置Foreground
-    }
-
-    public final void stopForeground(boolean removeNotification) {
-        //todo #37 支持Service设置Foreground
-        //mHostServiceDelegator.stopForeground(removeNotification);
+        requireHostServiceDelegator().startForeground(id, notification);
     }
 
     public final void startForeground(int id, Notification notification, int foregroundServiceType) {
+        requireHostServiceDelegator().startForeground(id, notification, foregroundServiceType);
+    }
 
+    public final void stopForeground(boolean removeNotification) {
+        if (mHostServiceDelegator != null) {
+            mHostServiceDelegator.stopForeground(removeNotification);
+        }
     }
 
     public final void stopForeground(int flags) {
-
+        if (mHostServiceDelegator != null) {
+            mHostServiceDelegator.stopForeground(flags);
+        }
     }
 
     public final void stopSelf() {
         stopService(new Intent(this, getClass()));
     }
 
-    /**
-     * 插件环境下Service不支持调用带参数的stopSelf
-     */
     public final void stopSelf(int startId) {
-        stopSelf();
+        stopService(new Intent(this, getClass()).putExtra(EXTRA_STOP_SELF_START_ID, startId));
     }
 
-    /**
-     * 插件环境下Service不支持调用带参数的stopSelf
-     */
     public final boolean stopSelfResult(int startId) {
+        if (startId != mLastStartId) {
+            return false;
+        }
         stopSelf();
         return true;
+    }
+
+    private HostServiceDelegator requireHostServiceDelegator() {
+        if (mHostServiceDelegator == null) {
+            throw new IllegalStateException(
+                    "Plugin Service must be mapped to a real host Service by "
+                            + "ComponentManager.onBindContainerService() before calling startForeground()"
+            );
+        }
+        return mHostServiceDelegator;
     }
 
     public final ShadowApplication getApplication() {

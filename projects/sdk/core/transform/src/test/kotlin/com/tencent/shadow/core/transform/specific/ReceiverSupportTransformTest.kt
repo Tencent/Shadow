@@ -16,14 +16,14 @@ class ReceiverSupportTransformTest : AbstractTransformTest() {
         val classPool = ClassPool(null)
         classPool.appendSystemPath()
         val allInputClass = classPool[
-                arrayOf(
-                    "test.AceReceiver",
-                    "test.BarReceiver",
-                    "test.CatReceiver",
-                    "test.DogReceiver",
-                    "test.EggReceiver",
-                    "test.EggReceiver\$FoxReceiver",
-                )
+            arrayOf(
+                "test.AceReceiver",
+                "test.BarReceiver",
+                "test.CatReceiver",
+                "test.DogReceiver",
+                "test.EggReceiver",
+                "test.EggReceiver\$FoxReceiver",
+            )
         ].toMutableSet()
 
         val applicationTransform = ReceiverSupportTransform()
