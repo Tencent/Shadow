@@ -48,6 +48,7 @@ private class PluginManifestBuilder(
     fun build(): TypeSpec {
         listOf(
             *buildApplicationFields(),
+            buildUsesPermissionsField(),
             buildActivityInfoArrayField(),
             buildServiceInfoArrayField(),
             buildReceiverInfoArrayField(),
@@ -76,6 +77,28 @@ private class PluginManifestBuilder(
         }
 
         return (stringFields + resIdFields).toTypedArray()
+    }
+
+    private fun buildUsesPermissionsField(): FieldSpec {
+        @Suppress("UNCHECKED_CAST")
+        val permissions = manifestMap[AndroidManifestKeys.`uses-permission`] as? Array<String>
+
+        val stringArrayType = ArrayTypeName.of(ClassName.get(String::class.java))
+
+        val codeBlock = if (permissions != null && permissions.isNotEmpty()) {
+            val literal = permissions.joinToString(
+                separator = "\", \"",
+                prefix = "new String[] {\"",
+                postfix = "\"}"
+            )
+            CodeBlock.of("\$L", literal)
+        } else {
+            nullCodeBlock()
+        }
+
+        return privateStaticFinalFieldBuilder(stringArrayType, "usesPermissions")
+            .initializer(codeBlock)
+            .build()
     }
 
     private fun buildActivityInfoArrayField() = buildComponentArrayField(
@@ -217,19 +240,72 @@ private class PluginManifestBuilder(
             parseScreenOrientation(it)
         }
 
+        val launchModeLiteral = makeResIdLiteral(AndroidManifestKeys.launchMode) {
+            it
+        }
+
+        val taskAffinityValue = when {
+            componentMap.containsKey(AndroidManifestKeys.taskAffinity) ->
+                componentMap[AndroidManifestKeys.taskAffinity] as String
+
+            manifestMap.containsKey(AndroidManifestKeys.taskAffinity) ->
+                manifestMap[AndroidManifestKeys.taskAffinity] as String
+
+            else -> manifestMap[AndroidManifestKeys.`package`] as String
+        }
+        val taskAffinityLiteral = "\"$taskAffinityValue\""
+
         return "new com.tencent.shadow.core.runtime.PluginManifest" +
                 ".ActivityInfo(" +
                 "\"${componentMap[AndroidManifestKeys.name]}\", " +
                 "$themeLiteral ," +
                 "$configChangesLiteral ," +
                 "$softInputModeLiteral ," +
-                screenOrientation +
+                "$screenOrientation ," +
+                "$launchModeLiteral ," +
+                taskAffinityLiteral +
                 ")"
     }
 
     private fun toNewServiceInfo(componentMap: ComponentMap): String {
+        val fgType = componentMap[AndroidManifestKeys.foregroundServiceType] as String?
+        val fgTypeValue = parseForegroundServiceType(fgType)
         return "new com.tencent.shadow.core.runtime.PluginManifest" +
-                ".ServiceInfo(\"${componentMap[AndroidManifestKeys.name]}\")"
+                ".ServiceInfo(\"${componentMap[AndroidManifestKeys.name]}\", $fgTypeValue)"
+    }
+
+    private fun parseForegroundServiceType(value: String?): Int {
+        if (value.isNullOrEmpty()) return 0
+        // Android manifest中foregroundServiceType可以是十六进制整数或管道分隔的字符串常量
+        try {
+            return Integer.decode(value)
+        } catch (_: NumberFormatException) {
+        }
+        // 解析字符串常量组合如 "mediaProjection|microphone|camera"
+        var result = 0
+        for (part in value.split("|")) {
+            result = result or when (part.trim()) {
+                "dataSync" -> 1
+                "mediaPlayback" -> 2
+                "phoneCall" -> 4
+                "location" -> 8
+                "connectedDevice" -> 16
+                "mediaProjection" -> 32
+                "camera" -> 64
+                "microphone" -> 128
+                "health" -> 256
+                "remoteMessaging" -> 512
+                "systemExempted" -> 1024
+                "shortService" -> 2048
+                "mediaProcessing" -> 8192
+                "specialUse" -> 1073741824
+                "none" -> 0
+                else -> throw IllegalArgumentException(
+                    "Unknown android:foregroundServiceType value: ${part.trim()}"
+                )
+            }
+        }
+        return result
     }
 
     private fun toNewReceiverInfo(componentMap: ComponentMap): String {

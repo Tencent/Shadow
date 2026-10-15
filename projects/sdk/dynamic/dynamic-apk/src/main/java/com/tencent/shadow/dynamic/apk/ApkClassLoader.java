@@ -112,7 +112,7 @@ public class ApkClassLoader extends DexClassLoader {
             Object interfaceImplement = interfaceImplementClass.newInstance();
             return clazz.cast(interfaceImplement);
         } catch (ClassNotFoundException | InstantiationException
-                | ClassCastException | IllegalAccessException e) {
+                 | ClassCastException | IllegalAccessException e) {
             throw new Exception(e);
         }
     }

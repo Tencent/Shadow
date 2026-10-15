@@ -50,7 +50,11 @@ abstract class SimpleRenameTransformTest(
         }
 
         allInputClass.forEach {
-            Assert.assertEquals("父类应该都变为了新的父类", it.classFile.superclass, newSuperClassName)
+            Assert.assertEquals(
+                "父类应该都变为了新的父类",
+                it.classFile.superclass,
+                newSuperClassName
+            )
 
             Assert.assertTrue(
                 "原来的方法应该找不到了",

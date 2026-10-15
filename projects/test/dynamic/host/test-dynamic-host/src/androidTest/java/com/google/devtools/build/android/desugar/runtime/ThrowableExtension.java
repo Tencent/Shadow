@@ -121,8 +121,8 @@ public final class ThrowableExtension {
                     } catch (NoSuchMethodException | SecurityException e) {
                         throw new AssertionError(resource.getClass() + " does not have a close() method.", e);
                     } catch (IllegalAccessException
-                            | IllegalArgumentException
-                            | ExceptionInInitializerError e) {
+                             | IllegalArgumentException
+                             | ExceptionInInitializerError e) {
                         throw new AssertionError("Fail to call close() on " + resource.getClass(), e);
                     } catch (InvocationTargetException e) {
                         // Exception occurs during the invocation to the close method. The cause is the real

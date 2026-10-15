@@ -32,12 +32,14 @@ import android.view.WindowManager
 import com.tencent.shadow.coding.java_build_config.BuildConfig
 import com.tencent.shadow.core.common.LoggerFactory
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_ACTIVITY_INFO_KEY
+import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_ACTIVITY_LEASE_ID_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_BUSINESS_NAME_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CALLING_ACTIVITY_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_CLASS_NAME_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_EXTRAS_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_LOADER_BUNDLE_KEY
 import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_PART_KEY
+import com.tencent.shadow.core.loader.managers.ComponentManager.Companion.CM_PACKAGE_NAME_KEY
 import com.tencent.shadow.core.runtime.PluginActivity
 import com.tencent.shadow.core.runtime.PluginManifest
 import com.tencent.shadow.core.runtime.ShadowActivity
@@ -66,6 +68,8 @@ open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivity
     private var mPluginActivityCreated = false
     private var mDependenciesInjected = false
     private var mRecreateCalled = false
+    private var mActivityLeaseId = 0L
+    private lateinit var mPluginActivityComponent: ComponentName
 
     /**
      * 判断是否调用过OnWindowAttributesChanged，如果调用过就说明需要在onCreate之前调用
@@ -99,6 +103,9 @@ open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivity
         mBundleForPluginLoader = bundleForPluginLoader
         bundleForPluginLoader.classLoader = this.javaClass.classLoader
         val pluginActivityClassName = bundleForPluginLoader.getString(CM_CLASS_NAME_KEY)!!
+        val pluginPackageName = bundleForPluginLoader.getString(CM_PACKAGE_NAME_KEY)!!
+        mPluginActivityComponent = ComponentName(pluginPackageName, pluginActivityClassName)
+        mActivityLeaseId = bundleForPluginLoader.getLong(CM_ACTIVITY_LEASE_ID_KEY, 0L)
         val pluginActivityInfo: PluginManifest.ActivityInfo =
             bundleForPluginLoader.getParcelable(CM_ACTIVITY_INFO_KEY)!!
         mPluginActivityInfo = pluginActivityInfo
@@ -197,9 +204,40 @@ open class ShadowActivityDelegate(private val mDI: DI) : GeneratedShadowActivity
     override fun getLoaderVersion() = BuildConfig.VERSION_NAME
 
     override fun onNewIntent(intent: Intent) {
+        if (mActivityLeaseId != 0L) {
+            val incomingLeaseId = intent.getBundleExtra(CM_LOADER_BUNDLE_KEY)
+                ?.getLong(CM_ACTIVITY_LEASE_ID_KEY, 0L) ?: 0L
+            if (incomingLeaseId != mActivityLeaseId) {
+                mLogger.error(
+                    "Reject stale Activity container intent. component={}, currentLease={}, incomingLease={}",
+                    mPluginActivityComponent,
+                    mActivityLeaseId,
+                    incomingLeaseId
+                )
+                return
+            }
+        }
         val pluginExtras: Bundle? = intent.getBundleExtra(CM_EXTRAS_BUNDLE_KEY)
         intent.replaceExtras(pluginExtras)
         mPluginActivity.onNewIntent(intent)
+    }
+
+    override fun onDestroy() {
+        val hostActivity = mHostActivityDelegator.hostActivity as Activity
+        val releaseLease = mActivityLeaseId != 0L &&
+                hostActivity.isFinishing &&
+                !hostActivity.isChangingConfigurations
+        try {
+            super.onDestroy()
+        } finally {
+            if (releaseLease) {
+                mComponentManager.releaseContainerActivity(
+                    mPluginActivityComponent,
+                    ComponentName(hostActivity.packageName, hostActivity.javaClass.name),
+                    mActivityLeaseId
+                )
+            }
+        }
     }
 
     override fun onNavigateUpFromChild(arg0: Activity?): Boolean {

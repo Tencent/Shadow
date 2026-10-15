@@ -22,7 +22,10 @@ jobs:
     name: 代码格式化检查
     runs-on: ubuntu-22.04
     env:
-      AndroidStudioVersion: 2021.1.1.20
+      # 版本号和文件名见 https://developer.android.com/studio/archive
+      # 或 https://jb.gg/android-studio-releases-list.xml
+      AndroidStudioVersion: 2026.1.1.10
+      AndroidStudioFileName: android-studio-quail1-patch2-linux.tar.gz
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -35,9 +38,9 @@ jobs:
       - name: download android-studio
         if: steps.cache-android-studio.outputs.cache-hit != 'true'
         run: |
-          wget "https://redirector.gvt1.com/edgedl/android/studio/ide-zips/$AndroidStudioVersion/android-studio-$AndroidStudioVersion-linux.tar.gz"
-          tar -xvzf "android-studio-$AndroidStudioVersion-linux.tar.gz"
-          rm -rf "android-studio-$AndroidStudioVersion-linux.tar.gz"
+          wget -q "https://redirector.gvt1.com/edgedl/android/studio/ide-zips/$AndroidStudioVersion/$AndroidStudioFileName"
+          tar -xzf "$AndroidStudioFileName"
+          rm -rf "$AndroidStudioFileName"
       - name: use android-studio format all files
         run: ./android-studio/bin/format.sh -s .idea/codeStyles/Project.xml -r -m \*.java,\*.kt,\*.xml .
       - name: show diff for files not formated

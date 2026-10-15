@@ -4,6 +4,12 @@
 
     <uses-feature android:glEsVersion="0x00020000" />
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:name=".lib.gallery.TestApplication"
         android:icon="@android:drawable/sym_def_app_icon"
@@ -42,6 +48,50 @@
         <activity android:name=".lib.usecases.activity.TestActivityReCreateBySystem" />
 
         <activity android:name=".lib.usecases.service.TestStartServiceActivity" />
+
+        <activity android:name=".lib.usecases.service.ThirdPartyForegroundServiceTestActivity" />
+
+        <activity
+            android:name=".lib.usecases.task.IndependentTaskTestActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.tencent.shadow.test.plugin.independent_task" />
+
+        <service
+            android:name=".lib.usecases.service.MockScreenShareService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
+
+        <service
+            android:name=".lib.usecases.service.MockMicrophoneService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <service
+            android:name=".lib.usecases.service.MockThirdForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <service
+            android:name=".lib.usecases.service.MockFourthForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+
+        <activity
+            android:name=".lib.usecases.task.TestIndependentTaskActivity"
+            android:launchMode="singleTask"
+            android:taskAffinity="com.tencent.shadow.test.plugin.independent_task_auto" />
+
+        <activity android:name=".lib.usecases.service.TestForegroundServiceActivity" />
+
+        <service
+            android:name=".lib.usecases.service.TestForegroundServiceA"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <service
+            android:name=".lib.usecases.service.TestForegroundServiceB"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
 
         <activity android:name=".lib.usecases.receiver.TestReceiverActivity" />
 

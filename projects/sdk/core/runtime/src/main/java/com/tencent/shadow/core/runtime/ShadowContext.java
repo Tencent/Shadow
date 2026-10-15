@@ -139,6 +139,8 @@ public class ShadowContext extends SubDirContextThemeWrapper {
 
         Pair<Boolean, ComponentName> startService(ShadowContext context, Intent service);
 
+        Pair<Boolean, ComponentName> startForegroundService(ShadowContext context, Intent service);
+
         Pair<Boolean, Boolean> stopService(ShadowContext context, Intent name);
 
         Pair<Boolean, Boolean> bindService(ShadowContext context, Intent service, ServiceConnection conn, int flags);
@@ -205,6 +207,17 @@ public class ShadowContext extends SubDirContextThemeWrapper {
         Pair<Boolean, ComponentName> ret = mPluginComponentLauncher.startService(this, service);
         if (!ret.first)
             return super.startService(service);
+        return ret.second;
+    }
+
+    @Override
+    public ComponentName startForegroundService(Intent service) {
+        if (service.getComponent() == null) {
+            return super.startForegroundService(service);
+        }
+        Pair<Boolean, ComponentName> ret = mPluginComponentLauncher.startForegroundService(this, service);
+        if (!ret.first)
+            return super.startForegroundService(service);
         return ret.second;
     }
 

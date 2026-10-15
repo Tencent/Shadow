@@ -45,6 +45,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 reply.writeString(PluginLoader.DESCRIPTOR)
                 return true
             }
+
             PluginLoader.TRANSACTION_loadPlugin -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 val _arg0: String
@@ -57,6 +58,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 }
                 return true
             }
+
             PluginLoader.TRANSACTION_getLoadedPlugin -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 try {
@@ -69,6 +71,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
 
                 return true
             }
+
             PluginLoader.TRANSACTION_callApplicationOnCreate -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 val _arg0: String
@@ -82,6 +85,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
 
                 return true
             }
+
             PluginLoader.TRANSACTION_convertActivityIntent -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 val intent = if (0 != data.readInt()) {
@@ -109,6 +113,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 }
                 return true
             }
+
             PluginLoader.TRANSACTION_startPluginService -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 val intent = if (0 != data.readInt()) {
@@ -135,6 +140,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 }
                 return true
             }
+
             PluginLoader.TRANSACTION_stopPluginService -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 val intent = if (0 != data.readInt()) {
@@ -152,6 +158,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 }
                 return true
             }
+
             PluginLoader.TRANSACTION_bindPluginService -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 val intent = if (0 != data.readInt()) {
@@ -176,6 +183,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 }
                 return true
             }
+
             PluginLoader.TRANSACTION_unbindService -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 try {
@@ -186,6 +194,7 @@ internal class PluginLoaderBinder(private val mDynamicPluginLoader: DynamicPlugi
                 }
                 return true
             }
+
             PluginLoader.TRANSACTION_startActivityInPluginProcess -> {
                 data.enforceInterface(PluginLoader.DESCRIPTOR)
                 try {
